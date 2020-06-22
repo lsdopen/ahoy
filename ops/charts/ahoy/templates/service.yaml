@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: ahoy-server
+  name: ahoy-server
+  namespace: ahoy
+  annotations:
+    cloud.google.com/app-protocols: '{"8443-tcp":"HTTPS"}'
+    service.alpha.kubernetes.io/app-protocols: '{"8443-tcp":"HTTPS"}'
+spec:
+  selector:
+    app: ahoy-server
+  ports:
+    - name: 8443-tcp
+      port: 8443
+      protocol: TCP
+      targetPort: 8443
+  sessionAffinity: None
+  type: NodePort

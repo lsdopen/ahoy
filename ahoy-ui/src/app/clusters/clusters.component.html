@@ -1,0 +1,38 @@
+<app-content [title]="title" [buttonBar]="buttonBar">
+
+  <div *ngIf="clusters && clusters.length > 0" fxFlex>
+
+    <table fxFlex fxGrow mat-table [dataSource]="clusters" class="mat-elevation-z0">
+      <ng-container matColumnDef="cluster">
+        <td mat-cell *matCellDef="let cluster" routerLink="/cluster/{{cluster.id}}">{{cluster.name}}</td>
+      </ng-container>
+      <ng-container matColumnDef="host">
+        <td mat-cell *matCellDef="let cluster">{{cluster.host}}</td>
+      </ng-container>
+      <ng-container matColumnDef="delete">
+        <td mat-cell *matCellDef="let cluster" [matTooltip]="cluster.inCluster ? 'May not delete built-in cluster' : ''">
+          <button mat-stroked-button [disabled]="cluster.inCluster" (click)="delete(cluster)">delete</button>
+        </td>
+      </ng-container>
+      <tr mat-row *matRowDef="let cluster; columns: ['cluster', 'host', 'delete'];"></tr>
+    </table>
+
+  </div>
+
+  <div *ngIf="clusters && clusters.length === 0" fxFlex fxLayoutAlign="center center">
+    <div class="mat-subheading-2">
+      There are no clusters setup, click <a routerLink="/cluster/new">here</a> to configure a cluster..
+    </div>
+  </div>
+
+</app-content>
+
+<ng-template #title>
+  <div class="mat-title">Clusters</div>
+</ng-template>
+
+<ng-template #buttonBar>
+  <app-button-bar>
+    <button mat-button routerLink="/cluster/new">New</button>
+  </app-button-bar>
+</ng-template>

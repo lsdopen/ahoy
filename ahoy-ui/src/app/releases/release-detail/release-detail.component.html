@@ -1,0 +1,44 @@
+<ng-container *ngIf="release && environmentRelease && releaseVersion && releasesForValidation">
+  <form #releaseForm="ngForm">
+    <app-content [title]="title" [buttonBar]="buttonBar">
+      <app-detail>
+        <mat-form-field>
+          <input matInput [(ngModel)]="release.name" placeholder="Name" name="releaseName"
+                 readonly="{{editMode}}"
+                 required
+                 pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
+                 [appReleaseNameUnique]="releasesForValidation"
+                 [ignoreOwnId]="release.id">
+          <mat-hint>should start with and use lower case letters and numbers</mat-hint>
+          <mat-error *ngIf="releaseForm.form.controls.releaseName?.hasError('pattern')">
+            <strong>invalid</strong>
+          </mat-error>
+          <mat-error *ngIf="releaseForm.form.controls.releaseName?.hasError('releaseNameNotUnique')">
+            <strong>release already exists</strong>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput [(ngModel)]="releaseVersion.version" placeholder="Version" name="version"
+                 required
+                 [appReleaseVersionUnique]="release.releaseVersions"
+                 [ignoreOwnId]="releaseVersion.id">
+          <mat-error *ngIf="releaseForm.form.controls.version?.hasError('releaseVersionNotUnique')">
+            <strong>release version already exists</strong>
+          </mat-error>
+        </mat-form-field>
+      </app-detail>
+    </app-content>
+  </form>
+
+  <ng-template #title>
+    <div *ngIf="environment" class="mat-title">Release in {{environment.name}} - {{environment.cluster.name}}</div>
+  </ng-template>
+
+  <ng-template #buttonBar>
+    <app-button-bar>
+      <button mat-button (click)="save()" [disabled]="releaseForm.invalid">Save</button>
+      <button mat-button (click)="cancel()">Cancel</button>
+    </app-button-bar>
+  </ng-template>
+
+</ng-container>

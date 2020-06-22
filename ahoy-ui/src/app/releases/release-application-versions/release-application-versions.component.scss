@@ -1,0 +1,23 @@
+.mat-column-application {
+  cursor: pointer;
+}
+
+.mat-cell {
+  padding-right: 10px;
+}
+
+.mat-column-version,
+.mat-column-remove,
+.mat-column-environment-config,
+.mat-column-launch,
+.mat-column-status {
+  text-align: right;
+  width: 10px;
+}
+
+.app-green-button {
+  color: green;
+}
+
+.app-normal-button {
+}

@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    app: ahoy-server
+  name: ahoy-server
+  namespace: ahoy
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+spec:
+  {{ if .Values.ahoyTlsSecret }}
+  tls:
+    - secretName: {{ .Values.ahoyTlsSecret }}
+  {{ end }}
+  rules:
+    - host: {{ .Values.ahoyHost }}
+      http:
+        paths:
+          - backend:
+              serviceName: ahoy-server
+              servicePort: 8443

@@ -1,0 +1,19 @@
+<h2 mat-dialog-title>Add release to {{environment.name}} - {{environment.cluster.name}}</h2>
+
+<form #f="ngForm">
+  <mat-dialog-content fxFlex fxLayout="column">
+    <mat-form-field>
+      <mat-label>release</mat-label>
+      <mat-select [(ngModel)]="selected" name="release" required>
+        <mat-option *ngFor="let release of releases" [value]="release">
+          {{release.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-dialog-content>
+</form>
+
+<mat-dialog-actions>
+  <button mat-button [mat-dialog-close]>Cancel</button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="selected" [disabled]="f.invalid">Ok</button>
+</mat-dialog-actions>

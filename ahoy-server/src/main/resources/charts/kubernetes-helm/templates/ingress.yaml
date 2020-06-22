@@ -1,0 +1,19 @@
+{{- define "ingress.app" -}}
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    manager: ahoy
+    app: {{ .app.name }}
+    releaseName: {{ .glob.releaseName }}
+    environment: {{ .glob.environment }}
+  name: {{ .glob.releaseName }}-{{ .app.name }}
+spec:
+  rules:
+  - host: {{ .app.routeHostname }}
+    http:
+      paths:
+      - backend:
+          serviceName: {{ .glob.releaseName }}-{{ .app.name }}
+          servicePort: {{ .app.routeTargetPort }}
+{{- end -}}

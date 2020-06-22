@@ -1,0 +1,55 @@
+<app-content [title]="title" [buttonBar]="buttonBar">
+
+  <div *ngIf="environments && environments.length > 0" fxFlex>
+
+    <table fxFlex fxGrow mat-table [dataSource]="environments" class="mat-elevation-z0">
+      <ng-container matColumnDef="environment">
+        <td mat-cell *matCellDef="let environment" routerLink="/releases" [queryParams]="{environmentId: environment.id}">{{environment.name}}</td>
+      </ng-container>
+      <ng-container matColumnDef="duplicate">
+        <td mat-cell *matCellDef="let environment">
+          <button mat-stroked-button routerLink="/environment/new" [queryParams]="{clusterId: selectedCluster.id, sourceEnvironmentId: environment.id}">duplicate</button>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="delete">
+        <td mat-cell *matCellDef="let environment">
+          <button mat-stroked-button (click)="delete(environment)">delete</button>
+        </td>
+      </ng-container>
+      <tr mat-row *matRowDef="let environment; columns: ['environment', 'duplicate', 'delete'];"></tr>
+    </table>
+
+  </div>
+
+  <div *ngIf="clusters && clusters.length === 0" fxFlex fxLayoutAlign="center center">
+    <div class="mat-subheading-2">
+      There are no clusters setup, click <a routerLink="/cluster/new">here</a> to configure a cluster..
+    </div>
+  </div>
+
+  <div *ngIf="selectedCluster && (environments && (environments.length === 0))" fxFlex fxLayoutAlign="center center">
+    <div class="mat-subheading-2">
+      There are no environments in this cluster, click <a routerLink="/environment/new" [queryParams]="{clusterId: selectedCluster.id}">here</a> to create an environment..
+    </div>
+  </div>
+
+</app-content>
+
+<ng-template #title>
+  <div *ngIf="selectedCluster" class="mat-title" fxFlex fxLayout="row" fxLayoutGap="10px">
+    <mat-label fxFlex="none">Environments in</mat-label>
+    <mat-select style="width: 150px" [(ngModel)]="selectedCluster" name="environment" required
+                (selectionChange)="clusterChanged()" [compareWith]="compareClusters">
+      <mat-option *ngFor="let cluster of clusters" [value]="cluster">
+        {{cluster.name}}
+      </mat-option>
+    </mat-select>
+  </div>
+  <div *ngIf="!selectedCluster" class="mat-title">Environments</div>
+</ng-template>
+
+<ng-template #buttonBar>
+  <app-button-bar *ngIf="selectedCluster">
+    <button mat-button routerLink="/environment/new" [queryParams]="{clusterId: selectedCluster.id}">New</button>
+  </app-button-bar>
+</ng-template>

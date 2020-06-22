@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: ahoy-server
+  name: ahoy-properties-prod
+  namespace: ahoy
+data:
+  application-prod.properties: |
+    ahoy.repo-path=./cache/repo
+
+    server.port=8443
+    server.ssl.key-store-type=PKCS12
+    server.ssl.key-store=classpath:keystore/ahoy.p12
+    server.ssl.key-store-password=changeit
+    server.ssl.key-alias=ahoy
+
+    spring.datasource.url=jdbc:postgresql://ahoy-postgresql.ahoy.svc/ahoy
+    spring.datasource.platform=postgres
+    spring.datasource.username={{ .Values.postgresql.postgresqlUsername }}
+    spring.datasource.password={{ .Values.postgresql.postgresqlPassword }}
+    spring.datasource.driverClassName=org.postgresql.Driver
+    spring.jpa.database-platform=org.hibernate.dialect.PostgreSQL10Dialect
+    spring.jpa.hibernate.ddl-auto=update
+    spring.jpa.show-sql=false

@@ -1,0 +1,13 @@
+<div fxFlex fxLayout="column" class="content-area">
+  <div fxFlex="none" fxLayout="row">
+    <div fxFlex="none">
+      <ng-container *ngTemplateOutlet="title"></ng-container>
+    </div>
+    <div fxFlex="grow" fxLayoutAlign="end">
+      <ng-container *ngTemplateOutlet="buttonBar"></ng-container>
+    </div>
+  </div>
+  <div fxFlex="grow" fxLayout="column">
+    <ng-content></ng-content>
+  </div>
+</div>

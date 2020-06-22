@@ -1,0 +1,7 @@
+apiVersion: v2
+name: ahoy
+version: '1.0.0-SNAPSHOT'
+dependencies:
+  - name: postgresql
+    version: "8.10.4"
+    repository: "https://charts.bitnami.com/bitnami"

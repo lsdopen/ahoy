@@ -1,0 +1,65 @@
+<app-content [title]="title" [buttonBar]="buttonBar">
+  <app-task-events-listener (taskEventEmitter)="taskEventOccurred($event)"></app-task-events-listener>
+
+  <div *ngIf="selectedEnvironment && environmentReleases && environmentReleases.length > 0" fxFlex>
+
+    <table fxFlex fxGrow mat-table [dataSource]="environmentReleases" class="mat-elevation-z0">
+      <ng-container matColumnDef="release">
+        <td mat-cell *matCellDef="let er" routerLink="/release/{{er.id.environmentId}}/{{er.id.releaseId}}/version/{{er.currentReleaseVersion ? er.currentReleaseVersion.id : er.latestReleaseVersion.id}}">{{er.release.name}}</td>
+      </ng-container>
+      <ng-container matColumnDef="state">
+        <td mat-cell *matCellDef="let er">{{er.deployed ? 'Deployed' : ''}}</td>
+      </ng-container>
+      <ng-container matColumnDef="applicationsReady">
+        <td mat-cell *matCellDef="let er">
+          <app-environment-release-status [environmentRelease]="er"></app-environment-release-status>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="version">
+        <td mat-cell *matCellDef="let er">
+          <app-environment-release-versions [environmentRelease]="er"></app-environment-release-versions>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="remove">
+        <td mat-cell *matCellDef="let er">
+          <button mat-stroked-button (click)="removeRelease(er)">remove</button>
+        </td>
+      </ng-container>
+      <tr mat-row *matRowDef="let er; columns: ['release', 'state', 'applicationsReady', 'version', 'remove'];"></tr>
+    </table>
+
+  </div>
+
+  <div *ngIf="environments && environments.length === 0" fxFlex fxLayoutAlign="center center">
+    <div class="mat-subheading-2">
+      There are no environments setup, click <a routerLink="/environments">here</a> to manage environments..
+    </div>
+  </div>
+
+  <div *ngIf="selectedEnvironment && (environmentReleases && (environmentReleases.length === 0))" fxFlex fxLayoutAlign="center center">
+    <div class="mat-subheading-2">
+      There are no releases in this environment, create a <a routerLink="/release/edit/{{selectedEnvironment.id}}/new">new</a> release or <a [routerLink]="" (click)="addRelease()">add</a> a existing release..
+    </div>
+  </div>
+
+</app-content>
+
+<ng-template #title>
+  <div *ngIf="selectedEnvironment" class="mat-title" fxFlex fxLayout="row" fxLayoutGap="10px">
+    <mat-label fxFlex="none">Releases in</mat-label>
+    <mat-select style="width: 150px" [(ngModel)]="selectedEnvironment" name="environment" required
+                (selectionChange)="environmentChanged()" [compareWith]="compareEnvironments">
+      <mat-option *ngFor="let environment of environments" [value]="environment">
+        {{environment.name}} - {{environment.cluster.name}}
+      </mat-option>
+    </mat-select>
+  </div>
+  <div *ngIf="!selectedEnvironment" class="mat-title">Releases</div>
+</ng-template>
+
+<ng-template #buttonBar>
+  <app-button-bar *ngIf="selectedEnvironment">
+    <button mat-button routerLink="/release/edit/{{selectedEnvironment.id}}/new">New</button>
+    <button mat-button (click)="addRelease()">Add</button>
+  </app-button-bar>
+</ng-template>

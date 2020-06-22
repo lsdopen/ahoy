@@ -1,0 +1,111 @@
+import {Injectable} from '@angular/core';
+import {EMPTY, Observable, of} from 'rxjs';
+import {catchError, flatMap, map, tap} from 'rxjs/operators';
+import {RestClientService} from '../util/rest-client.service';
+import {LoggerService} from '../util/logger.service';
+import {Cluster} from './cluster';
+import {Notification} from '../notifications/notification';
+import {NotificationsService} from '../notifications/notifications.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ClusterService {
+  private lastClusterId: number;
+
+  constructor(
+    private log: LoggerService,
+    private restClient: RestClientService,
+    private notificationsService: NotificationsService) {
+    this.lastClusterId = 0;
+  }
+
+  getAll(): Observable<Cluster[]> {
+    const url = `/clusters`;
+    return this.restClient.get<any>(url).pipe(
+      map(response => response._embedded.clusters as Cluster[]),
+      tap(apps => this.log.debug(`fetched ${apps.length} clusters`))
+    );
+  }
+
+  get(id: number): Observable<Cluster> {
+    const url = `/clusters/${id}`;
+    return this.restClient.get<Cluster>(url).pipe(
+      tap((cluster) => {
+        if (cluster) {
+          this.lastClusterId = cluster.id;
+        }
+        this.log.debug('fetched cluster', cluster);
+      })
+    );
+  }
+
+  save(cluster: Cluster): Observable<Cluster> {
+    this.log.debug('saving cluster: ', cluster);
+
+    if (!cluster.id) {
+      return this.restClient.post<Cluster>('/clusters', cluster).pipe(
+        tap((newCluster) => {
+          this.lastClusterId = newCluster.id;
+          this.log.debug('saved new cluster', newCluster);
+        })
+      );
+
+    } else {
+      const url = `/clusters/${cluster.id}`;
+      return this.restClient.put(url, cluster).pipe(
+        tap((updatedCluster) => {
+          this.lastClusterId = updatedCluster.id;
+          this.log.debug('updated cluster', updatedCluster);
+        })
+      );
+    }
+  }
+
+  delete(cluster: Cluster): Observable<Cluster> {
+    const id = cluster.id;
+    const url = `/clusters/${id}`;
+
+    return this.restClient.delete<Cluster>(url).pipe(
+      tap(() => this.log.debug('deleted cluster', cluster))
+    );
+  }
+
+  destroy(cluster: Cluster): Observable<Cluster> {
+    this.log.debug('destroying cluster: ', cluster);
+
+    const id = cluster.id;
+    const url = `/clusters/destroy/${id}`;
+
+    return this.restClient.delete<Cluster>(url, true).pipe(
+      tap((destroyedCluster) => {
+        this.log.debug('destroyed cluster', cluster);
+        const text = `${destroyedCluster.name} ` + `was destroyed`;
+        this.notificationsService.notification(new Notification(text));
+      }),
+      catchError(() => {
+        const text = `Failed to destroy cluster ${cluster.name}`;
+        this.notificationsService.notification(new Notification(text, true));
+        return EMPTY;
+      })
+    );
+  }
+
+  getLastUsedId(): Observable<number> {
+    if (this.lastClusterId === 0) {
+      this.log.debug('no last used cluster found, finding first cluster...');
+      return this.getAll().pipe(
+        flatMap((clusters) => {
+          this.lastClusterId = clusters.length > 0 ? clusters[0].id : 0;
+          return of(this.lastClusterId);
+        })
+      );
+    } else {
+      return of(this.lastClusterId);
+    }
+  }
+
+  link(id: number): string {
+    return this.restClient.getLink('/clusters', id);
+  }
+}

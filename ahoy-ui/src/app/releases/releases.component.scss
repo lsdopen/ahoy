@@ -1,0 +1,28 @@
+:host {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+.mat-column-release {
+  cursor: pointer;
+}
+
+.mat-cell {
+  padding-right: 10px;
+}
+
+.mat-column-status {
+  width: 10px;
+}
+
+.mat-column-applicationsReady {
+  width: 10px;
+  white-space: nowrap;
+}
+
+.mat-column-version,
+.mat-column-remove {
+  text-align: right;
+  width: 10px;
+}

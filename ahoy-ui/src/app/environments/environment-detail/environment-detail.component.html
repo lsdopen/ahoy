@@ -1,0 +1,28 @@
+<ng-container *ngIf="cluster && environment && environmentsForValidation">
+  <form #environmentForm="ngForm">
+    <app-content [title]="title" [buttonBar]="buttonBar">
+      <app-detail>
+        <mat-form-field>
+          <input matInput [(ngModel)]="environment.name" placeholder="Name" name="environmentName" required
+                 [appEnvironmentNameUnique]="environmentsForValidation"
+                 [ignoreOwnId]="environment.id">
+          <mat-error *ngIf="environmentForm.form.controls.environmentName?.hasError('environmentNameNotUnique')">
+            <strong>environment already exists</strong>
+          </mat-error>
+        </mat-form-field>
+      </app-detail>
+    </app-content>
+  </form>
+
+  <ng-template #title>
+    <div *ngIf="!sourceEnvironment" class="mat-title">New environment in {{cluster.name}}</div>
+    <div *ngIf="sourceEnvironment" class="mat-title">Duplicate environment {{sourceEnvironment.name}} in {{cluster.name}}</div>
+  </ng-template>
+
+  <ng-template #buttonBar>
+    <app-button-bar>
+      <button mat-button (click)="save()" [disabled]="environmentForm.invalid">Save</button>
+      <button mat-button (click)="cancel()">Cancel</button>
+    </app-button-bar>
+  </ng-template>
+</ng-container>

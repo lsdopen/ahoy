@@ -1,0 +1,41 @@
+<h2 *ngIf="!applicationMode" mat-dialog-title>Add application to {{environmentRelease.release.name}}:{{releaseVersion.version}} in {{environmentRelease.environment.name}}</h2>
+<h2 *ngIf="applicationMode" mat-dialog-title>Upgrade {{currentApplicationVersion.application.name}}:{{currentApplicationVersion.version}} version to</h2>
+
+<form #applicationForm="ngForm">
+  <mat-dialog-content fxFlex fxLayout="column">
+
+    <div fxFlex fxLayout="row" fxLayoutAlign="end">
+      <button mat-button *ngIf="!applicationMode" [mat-dialog-close]="undefined" routerLink="/application/new" [queryParams]="{releaseVersionId: releaseVersion.id}">New Application</button>
+      <button mat-button *ngIf="applicationMode" [mat-dialog-close]="undefined" routerLink="/application/{{selectedApplication.id}}/version/new" [queryParams]="{releaseVersionId: releaseVersion.id, applicationVersionId: currentApplicationVersion.id}">New Version</button>
+    </div>
+
+    <mat-form-field *ngIf="!applicationMode">
+      <mat-label>Application</mat-label>
+      <mat-select [(ngModel)]="selectedApplication" name="application" (selectionChange)="applicationChanged()"
+                  required
+                  [appApplicationAllowed]="linkedApplications">
+        <mat-option *ngFor="let application of applications" [value]="application">
+          {{application.name}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="applicationForm.form.controls.application?.hasError('applicationNameNotUnique')">
+        <strong>application already linked</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Version</mat-label>
+      <mat-select [(ngModel)]="selectedVersion" name="applicationVersion" required>
+        <mat-option *ngFor="let applicationVersion of applicationVersions" [value]="applicationVersion">
+          {{applicationVersion.version}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+  </mat-dialog-content>
+</form>
+
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]>Cancel</button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="selectedVersion" [disabled]="applicationForm.invalid">Ok</button>
+</div>

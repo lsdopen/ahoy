@@ -1,0 +1,23 @@
+<button mat-icon-button [matMenuTriggerFor]="beforeMenu" (menuClosed)="closedNotifications()" [disabled]="!(notifications.length > 0)">
+  <mat-icon *ngIf="viewed">notifications_none</mat-icon>
+  <mat-icon *ngIf="!viewed">notifications_active</mat-icon>
+</button>
+
+<div style="height: 5px">
+  <mat-progress-bar mode="indeterminate" *ngIf="showProgress()"></mat-progress-bar>
+</div>
+
+<mat-menu #beforeMenu="matMenu" xPosition="before">
+  <span mat-menu-item>{{unreadNotifications()}} unread notifications:</span>
+  <mat-divider></mat-divider>
+  <mat-list *ngFor="let notification of notifications?.reverse()" dense class="notification">
+    <mat-list-item>
+      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="5px" (click)="showDescription(notification)">
+        <mat-icon *ngIf="!notification.error" color="primary">info</mat-icon>
+        <mat-icon *ngIf="notification.error" color="warn">warning</mat-icon>
+        <span class="notification-item" [class.unread]="!notification.viewed">{{notification.text}}</span>
+      </div>
+    </mat-list-item>
+  </mat-list>
+</mat-menu>
+

@@ -1,0 +1,95 @@
+<ng-container *ngIf="config">
+  <form #environmentConfigForm="ngForm">
+    <app-content [title]="title" [buttonBar]="buttonBar">
+      <app-detail>
+
+        <div fxLayout="column" fxLayoutGap="10px">
+
+          <mat-form-field style="width: 100px">
+            <input matInput type="number" [min]="0" [max]="100" [(ngModel)]="config.replicas" placeholder="Replicas" name="environmentConfigReplicas"
+                   required>
+          </mat-form-field>
+
+          <mat-expansion-panel [(expanded)]="routeCategory" (afterExpand)="routeExpand()">
+            <mat-expansion-panel-header>
+              <mat-panel-title>Route</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div fxLayout="column">
+              <mat-form-field style="width: 30%">
+                <input matInput [(ngModel)]="config.routeHostname" placeholder="Hostname" name="environmentConfigRouteHostname"
+                       pattern="(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])"
+                       required="{{routeCategory}}">
+                <mat-error *ngIf="environmentConfigForm.form.controls.environmentConfigRouteHostname?.hasError('pattern')">
+                  <strong>invalid</strong>
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field style="width: 30%;margin-top: 5px;">
+                <mat-select [(ngModel)]="config.routeTargetPort" placeholder="Target Port" name="environmentConfigRouteTargetPort"
+                            required="{{routeCategory}}">
+                  <mat-option>--</mat-option>
+                  <mat-option *ngFor="let port of applicationVersion.servicePorts" [value]="port">
+                    {{port}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel [(expanded)]="environmentVariablesCategory">
+            <mat-expansion-panel-header>
+              <mat-panel-title>Environment Variables</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <app-application-env-variables
+              [environmentVariables]="config.environmentVariables">
+            </app-application-env-variables>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel [(expanded)]="configFileCategory">
+            <mat-expansion-panel-header>
+              <mat-panel-title>Configuration File</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div fxLayout="column" class="form-area">
+              <mat-form-field>
+                <input matInput [(ngModel)]="applicationVersion.configPath" placeholder="Path" name="applicationConfigPath" disabled="true">
+                <mat-hint>Application configuration file path; required for environment configuration file</mat-hint>
+              </mat-form-field>
+
+              <mat-form-field style="margin-top: 15px">
+                <input matInput [(ngModel)]="config.configFileName" placeholder="Name" name="environmentConfigName" required="{{configFileCategory}}">
+              </mat-form-field>
+
+              <mat-form-field fxFill>
+            <textarea matInput [(ngModel)]="config.configFileContent" placeholder="Config"
+                      name="environmentConfig"
+                      type="text"
+                      matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="20"
+                      required="{{configFileCategory}}"></textarea>
+              </mat-form-field>
+            </div>
+          </mat-expansion-panel>
+
+        </div>
+
+      </app-detail>
+    </app-content>
+  </form>
+
+  <ng-template #title>
+    <div *ngIf="environmentRelease && releaseVersion && applicationVersion"
+         class="mat-title" matTooltip="... in {{environmentRelease.release.name}}:{{releaseVersion.version}} in {{environmentRelease.environment.name}} - {{environmentRelease.environment.cluster.name}}">
+      Environment configuration of {{applicationVersion.application.name}}:{{applicationVersion.version}}
+    </div>
+  </ng-template>
+
+  <ng-template #buttonBar>
+    <app-button-bar>
+      <button mat-button (click)="save()" [disabled]="environmentConfigForm.invalid">Save</button>
+      <button mat-button (click)="cancel()">Cancel</button>
+    </app-button-bar>
+  </ng-template>
+
+</ng-container>

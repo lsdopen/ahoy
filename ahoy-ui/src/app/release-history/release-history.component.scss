@@ -1,0 +1,9 @@
+:host {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+.mat-column-version, .mat-column-description {
+  cursor: pointer;
+}

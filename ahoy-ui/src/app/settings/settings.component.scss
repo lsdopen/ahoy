@@ -1,0 +1,19 @@
+@import 'src/theme';
+
+:host {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+.setup-notice {
+  color: mat-color($app-accent, text);
+}
+
+.settings-drawer {
+  background: transparent;
+}
+
+.settings-active {
+  background: mat-color($app-background);
+}

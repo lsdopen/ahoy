@@ -1,0 +1,20 @@
+{{- define "route.app" -}}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    manager: ahoy
+    app: {{ .app.name }}
+    releaseName: {{ .glob.releaseName }}
+    environment: {{ .glob.environment }}
+  name: {{ .glob.releaseName }}-{{ .app.name }}
+spec:
+  host: {{ .app.routeHostname }}
+  port:
+    targetPort: {{ .app.routeTargetPort }}-tcp
+  to:
+    kind: Service
+    name: {{ .glob.releaseName }}-{{ .app.name }}
+    weight: 100
+  wildcardPolicy: None
+  {{- end -}}

@@ -1,0 +1,29 @@
+<app-task-events-listener (taskEventEmitter)="taskEventOccurred($event)"></app-task-events-listener>
+
+<mat-card>
+  <mat-card-header>
+    <mat-card-title routerLink="/releases" [queryParams]="{environmentId: environment.id}">{{environment.name}}</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <table fxFlex fxGrow mat-table [dataSource]="environmentReleases" class="mat-elevation-z0">
+      <ng-container matColumnDef="environment">
+        <td mat-cell *matCellDef="let er">{{er.release.name}}</td>
+      </ng-container>
+      <ng-container matColumnDef="state">
+        <td mat-cell *matCellDef="let er">{{er.deployed ? 'Deployed' : ''}}</td>
+      </ng-container>
+      <ng-container matColumnDef="applicationsReady">
+        <td mat-cell *matCellDef="let er">
+          <app-environment-release-status [environmentRelease]="er"></app-environment-release-status>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="version">
+        <td mat-cell *matCellDef="let er">
+          <app-environment-release-versions [environmentRelease]="er"></app-environment-release-versions>
+        </td>
+      </ng-container>
+      <tr mat-row *matRowDef="let er; columns: ['environment', 'state', 'applicationsReady', 'version'];" routerLink="/release/{{er.id.environmentId}}/{{er.id.releaseId}}/version/{{er.currentReleaseVersion ? er.currentReleaseVersion.id : er.latestReleaseVersion.id}}"></tr>
+    </table>
+  </mat-card-content>
+</mat-card>

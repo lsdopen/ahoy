@@ -1,0 +1,34 @@
+<div fxFlex fxLayout="column">
+  <table fxFlex fxGrow mat-table [dataSource]="data" class="mat-elevation-z0" style="width: 550px">
+    <ng-container matColumnDef="key">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input matInput [(ngModel)]="newEnvironmentVariableKey" placeholder="Variable" name="newEnvironmentVariableKey">
+        </mat-form-field>
+      </th>
+      <td mat-cell *matCellDef="let environmentVariable">{{environmentVariable.key}}</td>
+    </ng-container>
+    <ng-container matColumnDef="value">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input matInput [(ngModel)]="newEnvironmentVariableValue" placeholder="Value" name="newEnvironmentVariableValue">
+        </mat-form-field>
+      </th>
+      <td mat-cell *matCellDef="let environmentVariable">{{environmentVariable.value}}</td>
+    </ng-container>
+    <ng-container matColumnDef="remove">
+      <th mat-header-cell *matHeaderCellDef>
+        <button mat-icon-button (click)="addEnvironmentVariable()">
+          <mat-icon>add_circle</mat-icon>
+        </button>
+      </th>
+      <td mat-cell *matCellDef="let environmentVariable">
+        <button mat-icon-button (click)="removeEnvironmentVariable(environmentVariable.key)">
+          <mat-icon>remove_circle</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns;"></tr>
+    <tr mat-row *matRowDef="let element; columns: displayedColumns;"></tr>
+  </table>
+</div>

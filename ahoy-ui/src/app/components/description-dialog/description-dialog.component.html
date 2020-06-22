@@ -1,0 +1,13 @@
+<h1 mat-dialog-title>{{description.title}}</h1>
+
+<mat-dialog-content class="mat-body-1">
+  <div fxLayout="column">
+    <mat-form-field>
+      <textarea matInput matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="20" readonly>{{description.text}}</textarea>
+    </mat-form-field>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-raised-button color="primary" [mat-dialog-close]>Ok</button>
+</mat-dialog-actions>

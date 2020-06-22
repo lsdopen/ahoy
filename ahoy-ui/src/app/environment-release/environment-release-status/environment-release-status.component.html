@@ -1,0 +1,6 @@
+<ng-container *ngIf="environmentRelease.currentReleaseVersion">
+  <span class="{{style()}}"
+        matTooltip="{{environmentRelease.status}}: {{applicationsReady}} out of {{applicationsTotal}} applications ready">
+    {{applicationsReady}} / {{applicationsTotal}}
+  </span>
+</ng-container>

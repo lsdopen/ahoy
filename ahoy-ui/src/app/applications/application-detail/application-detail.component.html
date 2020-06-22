@@ -1,0 +1,53 @@
+<ng-container *ngIf="application">
+  <form #applicationForm="ngForm">
+    <app-content [title]="title" [buttonBar]="buttonBar">
+      <app-detail>
+        <mat-form-field>
+          <input matInput [(ngModel)]="application.name" placeholder="Name" name="applicationName"
+                 required
+                 pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
+                 [appApplicationNameUnique]="applicationsForValidation"
+                 [ignoreOwnId]="application.id">
+          <mat-hint>should start with and use lower case letters and numbers</mat-hint>
+          <mat-error *ngIf="applicationForm.form.controls.applicationName?.hasError('pattern')">
+            <strong>invalid</strong>
+          </mat-error>
+          <mat-error *ngIf="applicationForm.form.controls.applicationName?.hasError('applicationNameNotUnique')">
+            <strong>application name already exists</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="!editMode">
+          <input matInput [(ngModel)]="applicationVersion.version" placeholder="Version" name="applicationVersion"
+                 required>
+        </mat-form-field>
+
+        <app-docker-registries *ngIf="!editMode" [applicationVersion]="applicationVersion"></app-docker-registries>
+
+        <mat-form-field *ngIf="!editMode">
+          <input matInput [(ngModel)]="applicationVersion.image" placeholder="Image" name="applicationImage" required>
+        </mat-form-field>
+      </app-detail>
+
+      <ng-container *ngIf="editMode">
+        <mat-divider></mat-divider>
+
+        <app-application-versions
+          [application]="application">
+        </app-application-versions>
+      </ng-container>
+
+    </app-content>
+  </form>
+
+  <ng-template #title>
+    <div class="mat-title">Application</div>
+  </ng-template>
+
+  <ng-template #buttonBar>
+    <app-button-bar>
+      <button mat-button (click)="save()" [disabled]="applicationForm.invalid">Save</button>
+      <button mat-button (click)="cancel()">Cancel</button>
+    </app-button-bar>
+  </ng-template>
+</ng-container>

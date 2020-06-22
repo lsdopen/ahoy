@@ -1,0 +1,5 @@
+<div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="5px">
+  <mat-icon *ngIf="!notification.error" color="primary">info</mat-icon>
+  <mat-icon *ngIf="notification.error" color="warn">warning</mat-icon>
+  <span class="mat-body">{{notification.text}}</span>
+</div>

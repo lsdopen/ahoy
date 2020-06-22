@@ -1,0 +1,30 @@
+{{- define "service.app" -}}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    manager: ahoy
+    app: {{ .app.name }}
+    releaseName: {{ .glob.releaseName }}
+    environment: {{ .glob.environment }}
+  name: {{ .glob.releaseName }}-{{ .app.name }}
+spec:
+  {{ if .app.servicePorts }}
+  ports:
+    {{- range .app.servicePorts }}
+    - name: {{ . }}-tcp
+      port: {{ . }}
+      protocol: TCP
+      targetPort: {{ . }}
+    {{- end }}
+  {{ end }}
+  selector:
+    app: {{ .app.name }}
+    releaseName: {{ .glob.releaseName }}
+  sessionAffinity: None
+  {{ if and .app.routeHostname .app.routeTargetPort }}
+  type: NodePort
+  {{ else }}
+  type: ClusterIP
+  {{ end }}
+{{- end -}}

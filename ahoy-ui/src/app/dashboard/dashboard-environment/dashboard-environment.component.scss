@@ -1,0 +1,30 @@
+.mat-card {
+  margin: 5px;
+  width: 400px;
+}
+
+.mat-card-title {
+  cursor: pointer;
+}
+
+.mat-row {
+  cursor: pointer;
+}
+
+.mat-cell {
+  padding-right: 5px;
+}
+
+.mat-column-status {
+  width: 10px;
+}
+
+.mat-column-applicationsReady {
+  width: 10px;
+  white-space: nowrap;
+}
+
+.mat-column-version {
+  text-align: right;
+  width: 10px;
+}

@@ -1,0 +1,31 @@
+<ng-container>
+
+  <app-content [title]="title" [buttonBar]="buttonBar">
+    <div fxFlex fxLayout="column">
+      <span *ngIf="setup" class="mat-subheading-1 setup-notice">Please note: in order to continue you need to set up the following:</span>
+
+      <mat-drawer-container fxFlex>
+        <mat-drawer mode="side" opened class="settings-drawer">
+          <mat-nav-list>
+            <mat-list-item routerLink="/settings/git" [routerLinkActive]="['settings-active']">Git repository</mat-list-item>
+            <mat-list-item routerLink="/settings/argo" [routerLinkActive]="['settings-active']">Argo CD</mat-list-item>
+            <mat-list-item routerLink="/settings/docker" [routerLinkActive]="['settings-active']">Docker registries</mat-list-item>
+          </mat-nav-list>
+        </mat-drawer>
+        <mat-drawer-content>
+          <router-outlet></router-outlet>
+        </mat-drawer-content>
+      </mat-drawer-container>
+    </div>
+  </app-content>
+
+  <ng-template #title>
+    <div class="mat-title">Settings</div>
+  </ng-template>
+
+  <ng-template #buttonBar>
+    <app-button-bar>
+      <button mat-button routerLink="/dashboard">Done</button>
+    </app-button-bar>
+  </ng-template>
+</ng-container>

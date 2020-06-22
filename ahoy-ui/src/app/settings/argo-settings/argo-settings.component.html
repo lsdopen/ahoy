@@ -1,0 +1,37 @@
+<ng-container *ngIf="argoSettings">
+  <form #settingsForm="ngForm">
+    <app-content [title]="title" [buttonBar]="buttonBar">
+      <app-detail>
+
+        <div fxLayout="column" class="form-area">
+          <mat-form-field>
+            <input matInput [(ngModel)]="argoSettings.argoServer" placeholder="Server"
+                   name="argoServer"
+                   required>
+          </mat-form-field>
+          <div fxLayout="column">
+            <mat-form-field>
+              <input matInput [(ngModel)]="argoSettings.argoToken" placeholder="Token"
+                     name="argoToken"
+                     [type]="hideArgoToken ? 'password' : 'text'"
+                     required/>
+              <mat-icon matSuffix style="cursor: pointer" (click)="hideArgoToken = !hideArgoToken">{{hideArgoToken ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+
+      </app-detail>
+    </app-content>
+  </form>
+
+  <ng-template #title>
+    <div class="mat-title">Argo CD</div>
+  </ng-template>
+
+  <ng-template #buttonBar>
+    <app-button-bar>
+      <button mat-raised-button color="accent" (click)="save()" [disabled]="settingsForm.invalid">Save</button>
+    </app-button-bar>
+  </ng-template>
+
+</ng-container>

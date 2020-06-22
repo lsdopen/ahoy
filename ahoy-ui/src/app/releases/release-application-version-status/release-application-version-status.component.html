@@ -1,0 +1,9 @@
+<ng-container *ngIf="applicationVersion.status">
+  <div fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="start center">
+    <mat-icon *ngIf="applicationVersion.status.status === 'Healthy'" class="status-success">directions_run</mat-icon>
+    <mat-icon *ngIf="applicationVersion.status.status !== 'Healthy'" class="status-warn">highlight_off</mat-icon>
+    <span>
+      {{applicationVersion.status.status}}
+    </span>
+  </div>
+</ng-container>

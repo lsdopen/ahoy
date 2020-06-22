@@ -1,0 +1,54 @@
+<ng-container *ngIf="cluster">
+  <form #clusterForm="ngForm">
+    <app-content [title]="title" [buttonBar]="buttonBar">
+      <app-detail>
+        <mat-form-field>
+          <mat-label>Type</mat-label>
+          <mat-select [(ngModel)]="cluster.type" name="clusterType" required>
+            <mat-option *ngFor="let type of types" [value]="type.value">
+              {{type.viewValue}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput [(ngModel)]="cluster.name" placeholder="Name" name="clusterName" required>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput [(ngModel)]="cluster.masterUrl" placeholder="Master URL" name="clusterMasterUrl" required>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput [(ngModel)]="cluster.host" placeholder="Host" name="clusterHost" required>
+        </mat-form-field>
+        <mat-form-field *ngIf="cluster.type === 'OPENSHIFT'">
+          <input matInput [(ngModel)]="cluster.dockerRegistry" placeholder="Docker registry" name="clusterDockerRegistry" required>
+        </mat-form-field>
+        <div fxLayout="column">
+          <mat-form-field>
+            <input matInput class="text-area-settings" [(ngModel)]="cluster.token" placeholder="Token"
+                   name="clusterToken"
+                   [type]="hideToken ? 'password' : 'text'"
+                   required/>
+            <mat-icon matSuffix style="cursor: pointer" (click)="hideToken = !hideToken">{{hideToken ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </mat-form-field>
+          <mat-form-field>
+            <textarea matInput class="text-area-settings" [(ngModel)]="cluster.caCertData" placeholder="CA Certificate"
+                      name="caCertData"
+                      type="text"
+                      matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="20" required></textarea>
+          </mat-form-field>
+        </div>
+      </app-detail>
+    </app-content>
+  </form>
+
+  <ng-template #title>
+    <div class="mat-title">Cluster</div>
+  </ng-template>
+
+  <ng-template #buttonBar>
+    <app-button-bar>
+      <button mat-button (click)="save()" [disabled]="clusterForm.invalid">Save</button>
+      <button mat-button (click)="cancel()">Cancel</button>
+    </app-button-bar>
+  </ng-template>
+</ng-container>

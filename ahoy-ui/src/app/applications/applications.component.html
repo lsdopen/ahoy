@@ -1,0 +1,37 @@
+<app-content [title]="title" [buttonBar]="buttonBar">
+
+  <table *ngIf="applications && applications.length > 0" fxFlex fxGrow mat-table [dataSource]="applications" class="mat-elevation-z0">
+    <ng-container matColumnDef="application">
+      <td mat-cell *matCellDef="let application" routerLink="/application/{{application.id}}">{{application.name}}</td>
+    </ng-container>
+    <ng-container matColumnDef="version">
+      <td mat-cell *matCellDef="let application">
+        <span *ngIf="application.latestApplicationVersion">{{application.latestApplicationVersion.version}}</span>
+        <span *ngIf="!application.latestApplicationVersion">-</span>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="delete">
+      <td mat-cell *matCellDef="let element">
+        <button mat-stroked-button (click)="delete(element)">delete</button>
+      </td>
+    </ng-container>
+    <tr mat-row *matRowDef="let application; columns: ['application', 'version', 'delete'];"></tr>
+  </table>
+
+  <div *ngIf="applications && applications.length === 0" fxFlex fxLayoutAlign="center center">
+    <div class="mat-subheading-2">
+      There are no applications setup, create a <a routerLink="/application/new">new</a> application..
+    </div>
+  </div>
+
+</app-content>
+
+<ng-template #title>
+  <div class="mat-title">Applications</div>
+</ng-template>
+
+<ng-template #buttonBar>
+  <app-button-bar>
+    <button mat-button routerLink="/application/new">New</button>
+  </app-button-bar>
+</ng-template>

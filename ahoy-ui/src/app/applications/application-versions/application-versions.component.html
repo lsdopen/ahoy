@@ -1,0 +1,32 @@
+<ng-container *ngIf="application">
+
+  <app-content [title]="title" [buttonBar]="buttonBar">
+
+    <table fxFlex fxGrow mat-table [dataSource]="dataSource" class="mat-elevation-z0">
+      <ng-container matColumnDef="version">
+        <td mat-cell *matCellDef="let element" routerLink="version/{{element.id}}">{{element.version}}</td>
+      </ng-container>
+      <ng-container matColumnDef="image">
+        <td mat-cell *matCellDef="let element">{{element.image}}</td>
+      </ng-container>
+      <ng-container matColumnDef="remove">
+        <td mat-cell *matCellDef="let element">
+          <button mat-stroked-button (click)="removeApplicationVersion(element)">remove</button>
+        </td>
+      </ng-container>
+      <tr mat-row *matRowDef="let element; columns: ['version', 'image', 'remove'];"></tr>
+    </table>
+
+  </app-content>
+
+  <ng-template #title>
+    <div class="mat-title">Versions</div>
+  </ng-template>
+
+  <ng-template #buttonBar>
+    <app-button-bar>
+      <button mat-button routerLink="version/new" [queryParams]="{applicationVersionId: lastVersionId()}">New Version</button>
+    </app-button-bar>
+  </ng-template>
+
+</ng-container>

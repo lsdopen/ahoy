@@ -1,0 +1,18 @@
+:host {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+.mat-cell {
+  padding-right: 10px;
+}
+
+.mat-column-environment {
+  cursor: pointer;
+}
+
+.mat-column-duplicate, .mat-column-delete {
+  text-align: right;
+  width: 10px;
+}

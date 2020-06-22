@@ -1,0 +1,78 @@
+<ng-container *ngIf="environmentRelease && releaseVersion">
+  <app-content [title]="title" [buttonBar]="buttonBar">
+    <app-task-events-listener (taskEventEmitter)="taskEventOccurred($event)"></app-task-events-listener>
+
+    <div fxFlex fxLayout="column">
+
+      <div fxFlex="none" fxLayout="row">
+        <div fxFlex class="mat-h4">
+          <mat-form-field>
+            <mat-select [(ngModel)]="releaseVersion" name="selectedReleaseVersion" (selectionChange)="releaseVersionChanged()" [compareWith]="compareReleaseVersions">
+              <mat-option *ngFor="let selectedReleaseVersion of environmentRelease.release.releaseVersions" [value]="selectedReleaseVersion">
+                {{selectedReleaseVersion.version}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <table fxFlex mat-table [dataSource]="environmentReleases" class="mat-elevation-z0" style="margin-bottom: 10px">
+          <ng-container matColumnDef="environment">
+            <td mat-cell *matCellDef="let er">{{er.environment.name}}</td>
+          </ng-container>
+          <ng-container matColumnDef="cluster">
+            <td mat-cell *matCellDef="let er">{{er.environment.cluster.name}}</td>
+          </ng-container>
+          <ng-container matColumnDef="state">
+            <td mat-cell *matCellDef="let er">{{er.deployed ? 'Deployed' : ''}}</td>
+          </ng-container>
+          <ng-container matColumnDef="applicationsReady">
+            <td mat-cell *matCellDef="let er">
+              <app-environment-release-status [environmentRelease]="er"></app-environment-release-status>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="version">
+            <td mat-cell *matCellDef="let er">
+              <app-environment-release-versions [environmentRelease]="er"></app-environment-release-versions>
+            </td>
+          </ng-container>
+          <tr mat-row [ngClass]="{'highlight-row': isCurrentEnvironmentRelease(er)}" *matRowDef="let er; columns: ['environment', 'cluster', 'state', 'applicationsReady', 'version'];" (click)="reload(er.id.environmentId, releaseVersion.id)"></tr>
+        </table>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div fxFlex>
+        <app-release-application-versions
+          [environmentRelease]="environmentRelease"
+          [releaseVersion]="releaseVersion"
+          [releaseChanged]="releaseChanged">
+        </app-release-application-versions>
+      </div>
+
+    </div>
+
+  </app-content>
+
+  <ng-template #title>
+    <div class="mat-title">{{environmentRelease.release.name}} in {{environmentRelease.environment.name}} - {{environmentRelease.environment.cluster.name}}</div>
+  </ng-template>
+
+  <ng-template #buttonBar>
+    <app-button-bar>
+      <button mat-button *ngIf="canDeploy()" (click)="deploy()">Deploy</button>
+      <button mat-button *ngIf="canRedeploy()" (click)="deploy()">Redeploy</button>
+      <button mat-button *ngIf="canUndeploy()" (click)="undeploy()">Undeploy</button>
+      <button mat-button *ngIf="canPromote()" (click)="promote()">Promote</button>
+      <button mat-button *ngIf="canUpgrade()" (click)="upgrade()">Upgrade</button>
+      <button mat-button *ngIf="canRollback()" (click)="rollback()">Rollback</button>
+      <button mat-button [matMenuTriggerFor]="optionsMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #optionsMenu="matMenu" xPosition="before">
+        <button mat-menu-item *ngIf="canEdit()" routerLink="/release/edit/{{environmentRelease.id.environmentId}}/{{environmentRelease.id.releaseId}}/version/{{releaseVersion.id}}">Edit</button>
+        <button mat-menu-item routerLink="/releasehistory/{{environmentRelease.id.releaseId}}">History</button>
+        <button mat-menu-item *ngIf="canCopyEnvConfig()" (click)="copyEnvConfig()">Copy config</button>
+      </mat-menu>
+    </app-button-bar>
+  </ng-template>
+</ng-container>

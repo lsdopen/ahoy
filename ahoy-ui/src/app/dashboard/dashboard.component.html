@@ -1,0 +1,32 @@
+<app-content [title]="title">
+
+  <div *ngIf="environments && environments.length > 0" fxFlex="1 1 100%" fxLayout="row">
+    <app-dashboard-environment *ngFor="let environment of environments" [environment]="environment"></app-dashboard-environment>
+  </div>
+
+  <div *ngIf="clusters && clusters.length === 0" fxFlex fxLayoutAlign="center center">
+    <div class="mat-subheading-2">
+      There are no clusters setup, click <a routerLink="/cluster/new">here</a> to configure a cluster..
+    </div>
+  </div>
+
+  <div *ngIf="selectedCluster && (environments && (environments.length === 0))" fxFlex fxLayoutAlign="center center">
+    <div class="mat-subheading-2">
+      There are no environments in this cluster, click <a routerLink="/environment/new" [queryParams]="{clusterId: selectedCluster.id}">here</a> to create an environment..
+    </div>
+  </div>
+
+</app-content>
+
+<ng-template #title>
+  <div *ngIf="selectedCluster" class="mat-title" fxFlex fxLayout="row" fxLayoutGap="10px">
+    <mat-label fxFlex="none">Dashboard for</mat-label>
+    <mat-select style="width: 150px" [(ngModel)]="selectedCluster" name="environment" required
+                (selectionChange)="clusterChanged()" [compareWith]="compareClusters">
+      <mat-option *ngFor="let cluster of clusters" [value]="cluster">
+        {{cluster.name}}
+      </mat-option>
+    </mat-select>
+  </div>
+  <div *ngIf="!selectedCluster" class="mat-title">Dashboard</div>
+</ng-template>

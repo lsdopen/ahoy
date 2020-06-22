@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ahoy-server
+  name: ahoy-server
+  namespace: ahoy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ahoy-server
+  template:
+    metadata:
+      labels:
+        app: ahoy-server
+    spec:
+      serviceAccountName: ahoy
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      volumes:
+        - name: properties-prod
+          configMap:
+            name: ahoy-properties-prod
+      containers:
+        - image: openlsd/ahoy:1.0.0-SNAPSHOT
+          imagePullPolicy: Always
+          name: ahoy-server
+          ports:
+            - containerPort: 8443
+              protocol: TCP
+          volumeMounts:
+            - name: properties-prod
+              mountPath: "/home/ahoy/config"
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8443
+              scheme: HTTPS
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8443
+              scheme: HTTPS
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources: {}

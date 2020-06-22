@@ -1,0 +1,19 @@
+<h2 mat-dialog-title>Upgrade release {{release.name}}:{{releaseVersion.version}} to version:</h2>
+
+<form #releaseVersionForm="ngForm">
+  <mat-dialog-content fxFlex fxLayout="column">
+    <mat-form-field>
+      <input matInput [(ngModel)]="version" placeholder="Version" name="version"
+             required
+             [appReleaseVersionUnique]="release.releaseVersions">
+      <mat-error *ngIf="releaseVersionForm.form.controls.version?.hasError('releaseVersionNotUnique')">
+        <strong>release version already exists</strong>
+      </mat-error>
+    </mat-form-field>
+  </mat-dialog-content>
+</form>
+
+<mat-dialog-actions>
+  <button mat-button [mat-dialog-close]>Cancel</button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="version" [disabled]="releaseVersionForm.invalid">Ok</button>
+</mat-dialog-actions>

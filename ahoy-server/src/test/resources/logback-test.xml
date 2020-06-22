@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+	<property name="CONSOLE_LOG_PATTERN" value="%d{HH:mm:ss.SSS} %highlight(%-5level) [%-20thread] %cyan(%36logger{36}) - %msg %n"/>
+
+	<include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+	<root level="INFO">
+		<appender-ref ref="CONSOLE"/>
+	</root>
+
+	<logger name="org.springframework" level="ERROR"/>
+	<logger name="za.co.lsd.ahoy" level="DEBUG"/>
+
+</configuration>

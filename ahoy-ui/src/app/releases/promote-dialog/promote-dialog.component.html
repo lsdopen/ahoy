@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>Promote release {{release.name}}:{{releaseVersion.version}} to</h2>
+
+<form #f="ngForm">
+  <mat-dialog-content fxFlex fxLayout="column">
+
+    <div fxFlex fxLayout="row" fxLayoutAlign="end">
+      <button mat-button [mat-dialog-close]="undefined" routerLink="/environment/new" [queryParams]="{clusterId: cluster.id, environmentId: environmentRelease.id.environmentId, releaseId: environmentRelease.id.releaseId}">New Environment</button>
+    </div>
+
+    <mat-form-field>
+      <mat-label>environment</mat-label>
+      <mat-select [(ngModel)]="selected" name="environment" required>
+        <mat-option *ngFor="let environment of environments" [value]="environment">
+          {{environment.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-dialog-content>
+</form>
+
+<mat-dialog-actions>
+  <button mat-button [mat-dialog-close]>Cancel</button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="selected" [disabled]="f.invalid">Ok</button>
+</mat-dialog-actions>

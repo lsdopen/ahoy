@@ -1,0 +1,11 @@
+<ng-container *ngIf="dockerRegistries" class="form-area">
+  <mat-form-field>
+    <mat-select [(ngModel)]="applicationVersion.dockerRegistry" placeholder="Docker Registry" name="dockerRegistry"
+                [compareWith]="compareRegistries">
+      <mat-option>--</mat-option>
+      <mat-option *ngFor="let registry of dockerRegistries" [value]="registry">
+        {{registry.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</ng-container>

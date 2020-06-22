@@ -1,0 +1,15 @@
+<ng-container *ngIf="environmentRelease">
+  <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="5px">
+
+    <div *ngIf="environmentRelease.currentReleaseVersion" fxLayout="row" fxLayoutAlign="center center" class="current-release-version">
+      <mat-icon color="primary">label</mat-icon>
+      <span *ngIf="environmentRelease.currentReleaseVersion" class="mat-body">{{environmentRelease.currentReleaseVersion.version}}</span>
+    </div>
+
+    <div *ngIf="environmentRelease.latestReleaseVersion" fxLayout="row" fxLayoutAlign="center center" class="latest-release-version">
+      <mat-icon color="accent">label</mat-icon>
+      <span *ngIf="environmentRelease.latestReleaseVersion" class="mat-body">{{environmentRelease.latestReleaseVersion.version}}</span>
+    </div>
+
+  </div>
+</ng-container>

@@ -1,0 +1,63 @@
+<ng-container *ngIf="dockerSettings">
+  <form #settingsForm="ngForm">
+    <app-content [title]="title" [buttonBar]="buttonBar">
+      <app-detail>
+
+        <div fxLayout="column" class="form-area">
+
+          <div fxFlex fxLayout="row">
+            <mat-tab-group fxFlex="grow" [(selectedIndex)]="selectedIndex">
+              <mat-tab *ngFor="let dockerRegsitry of dockerSettings.dockerRegistries; let registryIndex = index"
+                       label="{{dockerRegsitry.name ? dockerRegsitry.name : '<new>'}}">
+                <div fxFlex fxLayout="column" fxLayoutAlign="start start">
+                  <mat-form-field style="width: 30%; margin-top: 10px">
+                    <input matInput [(ngModel)]="dockerSettings.dockerRegistries[registryIndex].name" placeholder="Name"
+                           name="dockerRegistryName{{registryIndex}}" required>
+                  </mat-form-field>
+                  <mat-form-field style="width: 30%; margin-top: 10px">
+                    <input matInput [(ngModel)]="dockerSettings.dockerRegistries[registryIndex].server" placeholder="Server"
+                           name="dockerServerName{{registryIndex}}" required>
+                  </mat-form-field>
+
+                  <mat-checkbox [(ngModel)]="dockerSettings.dockerRegistries[registryIndex].secure" name="dockerServerSecure{{registryIndex}}">Secure</mat-checkbox>
+
+                  <mat-form-field *ngIf="dockerSettings.dockerRegistries[registryIndex].secure" style="width: 30%; margin-top: 10px">
+                    <input matInput [(ngModel)]="dockerSettings.dockerRegistries[registryIndex].username" placeholder="Username"
+                           name="dockerUsername{{registryIndex}}" required>
+                  </mat-form-field>
+                  <mat-form-field *ngIf="dockerSettings.dockerRegistries[registryIndex].secure" style="width: 30%; margin-top: 10px">
+                    <input matInput [(ngModel)]="dockerSettings.dockerRegistries[registryIndex].password" placeholder="Password"
+                           [type]="hideDockerPassword ? 'password' : 'text'"
+                           name="dockerPassword{{registryIndex}}" required>
+                    <mat-icon matSuffix style="cursor: pointer" (click)="hideDockerPassword = !hideDockerPassword">{{hideDockerPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                  </mat-form-field>
+                </div>
+              </mat-tab>
+            </mat-tab-group>
+
+            <div fxFlex fxLayout="column">
+              <button mat-icon-button (click)="addDockerRegistry()">
+                <mat-icon>add_circle</mat-icon>
+              </button>
+              <button mat-icon-button (click)="deleteRegistry()">
+                <mat-icon>remove_circle</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </app-detail>
+    </app-content>
+  </form>
+
+  <ng-template #title>
+    <div class="mat-title">Docker registries</div>
+  </ng-template>
+
+  <ng-template #buttonBar>
+    <app-button-bar>
+      <button mat-raised-button color="accent" (click)="save()" [disabled]="settingsForm.invalid">Save</button>
+    </app-button-bar>
+  </ng-template>
+
+</ng-container>

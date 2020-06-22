@@ -1,0 +1,16 @@
+.notification.mat-list-base[dense] {
+  padding-top: 8px;
+  padding-bottom: 0;
+  cursor: pointer;
+}
+
+.notification-item {
+  width: 200px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.unread {
+  font-weight: bold;
+}

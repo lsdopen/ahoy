@@ -1,0 +1,65 @@
+<ng-container *ngIf="release">
+  <app-content [title]="title" [buttonBar]="buttonBar">
+
+    <div *ngIf="release && (releaseHistories && releaseHistories.length > 0)" fxFlex>
+
+      <table fxFlex fxGrow mat-table [dataSource]="releaseHistories" class="mat-elevation-z0">
+        <ng-container matColumnDef="version">
+          <th mat-header-cell *matHeaderCellDef>Version</th>
+          <td mat-cell *matCellDef="let rh"
+              routerLink="/release/{{rh.environmentRelease.id.environmentId}}/{{rh.environmentRelease.id.releaseId}}/version/{{rh.releaseVersion.id}}">
+            {{rh.releaseVersion.version}}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef>Action</th>
+          <td mat-cell *matCellDef="let rh">{{rh.action | titlecase}}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let rh">{{rh.status | titlecase}}</td>
+        </ng-container>
+        <ng-container matColumnDef="environment">
+          <th mat-header-cell *matHeaderCellDef>Environment</th>
+          <td mat-cell *matCellDef="let rh">{{rh.environmentRelease.environment.name}}</td>
+        </ng-container>
+        <ng-container matColumnDef="cluster">
+          <th mat-header-cell *matHeaderCellDef>Cluster</th>
+          <td mat-cell *matCellDef="let rh">{{rh.environmentRelease.environment.cluster.name}}</td>
+        </ng-container>
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>Date</th>
+          <td mat-cell *matCellDef="let rh">{{rh.time | date:'short'}}</td>
+        </ng-container>
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Description</th>
+          <td mat-cell *matCellDef="let rh" (click)="showDescription(rh)">
+            <mat-icon>info</mat-icon>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let rh; columns: displayedColumns;"></tr>
+      </table>
+
+    </div>
+
+    <div *ngIf="release && (releaseHistories && (releaseHistories.length === 0))" fxFlex fxLayoutAlign="center center">
+      <div class="mat-subheading-2">
+        There are no release history items, these will accumulate over time after managing releases..
+      </div>
+    </div>
+
+  </app-content>
+
+  <ng-template #title>
+    <div class="mat-title">History for {{release.name}}</div>
+  </ng-template>
+
+  <ng-template #buttonBar>
+    <app-button-bar>
+      <button mat-button (click)="done()">Done</button>
+    </app-button-bar>
+  </ng-template>
+
+</ng-container>
