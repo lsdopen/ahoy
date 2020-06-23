@@ -187,6 +187,7 @@
 						<configuration>
 							<repository>openlsd/ahoy</repository>
 							<tag>${project.version}</tag>
+							<useMavenSettingsForAuth>true</useMavenSettingsForAuth>
 							<buildArgs>
 								<JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
 							</buildArgs>
