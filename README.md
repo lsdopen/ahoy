@@ -15,10 +15,10 @@ rm helm-v3.2.1-linux-amd64.tar.gz linux-amd64/ -rf
 
 ### Installation on Kubernetes
 
-Clone git repo
+Add helm repo
 ```
-git clone https://gitlab.lsd.co.za/lsd/boost.git
-cd /ops/charts/ahoy
+helm repo add openlsd https://openlsd.github.io/charts
+helm repo update
 ```
 
 Create Ahoy namespace
@@ -28,19 +28,14 @@ kubectl create namespace ahoy
 
 Customise the Ahoy installation by editing the values in values-k8s.yaml.
 
-Ahoy depends on Postgres, so we are going to install Posgres while the Helm chart
-
-```
-helm dependency update
-```
+Example value files available at: https://github.com/openlsd/charts/tree/master/charts/ahoy
 
 We are now ready to install Ahoy
 ```
-helm install ahoy --namespace ahoy --values values-k8s.yaml .
+helm install ahoy --namespace ahoy --values values-k8s.yaml --devel openlsd/ahoy
 ```
 
 Note for GKE installation: you need to create a TLS secret and supply the secret name in the values file.
-{: .alert .alert-gitlab-orange}
 ```
 kubectl create secret tls ahoy-tls-secret -n ahoy --cert ahoy.crt --key ahoy.key
 ```
@@ -51,12 +46,12 @@ Hint: to create a self-signed certificate if you don't already have a certificat
 openssl req -newkey rsa:2048 -nodes -keyout ahoy.key -x509 -days 365 -out ahoy.crt
 ```
 
-### Installation on Openshift
+### Installation on OpenShift
 
-Clone git repo
+Add helm repo
 ```
-git clone https://gitlab.lsd.co.za/lsd/boost.git
-cd /ops/charts/ahoy
+helm repo add openlsd https://openlsd.github.io/charts
+helm repo update
 ```
 
 Create Ahoy project
@@ -66,20 +61,16 @@ oc new-project ahoy --display-name="Ahoy" --description="Ahoy, your Kubernetes r
 
 Customise the Ahoy installation by editing the values in values-ocp.yaml.
 
-Ahoy depends on Postgres, so we are going to install Posgres while the Helm chart
+Example value files available at: https://github.com/openlsd/charts/tree/master/charts/ahoy
 
-```
-helm dependency update
-```
-
-Openshift restrict the use of UID by default. To allow Postgres to start up you will need allow the anyuid SCC
+OpenShift restricts the use of UID by default. To allow Postgres to start up you will need allow the anyuid SCC
 ```
 oc adm policy add-scc-to-user anyuid -z default -n ahoy
 ```
 
 We are now ready to install Ahoy
 ```
-helm install ahoy --namespace ahoy --values values-ocp.yaml .
+helm install ahoy --namespace ahoy --values values-ocp.yaml --devel openlsd/ahoy
 ```
 
 ## Uninstall
