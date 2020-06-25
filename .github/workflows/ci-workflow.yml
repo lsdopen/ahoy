@@ -41,7 +41,7 @@ jobs:
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: mvn -B -s .m2/settings.xml deploy -Dmaven.test.skip -Pdocker
+        run: mvn -B -s .m2/settings.xml deploy -Pdocker
 
       - name: Publish Test Report
         uses: scacap/action-surefire-report@v1
