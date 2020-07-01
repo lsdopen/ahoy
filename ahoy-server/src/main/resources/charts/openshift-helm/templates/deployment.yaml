@@ -1,15 +1,21 @@
 {{- define "deployment.app" -}}
-apiVersion: apps.openshift.io/v1
-kind: DeploymentConfig
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   labels:
     manager: ahoy
-    app: {{ .glob.releaseName }}
+    app: {{ .app.name }}
     releaseName: {{ .glob.releaseName }}
     environment: {{ .glob.environment }}
   name: {{ .glob.releaseName }}-{{ .app.name }}
 spec:
   replicas: {{ .app.replicas }}
+  selector:
+    matchLabels:
+      manager: ahoy
+      app: {{ .app.name }}
+      releaseName: {{ .glob.releaseName }}
+      environment: {{ .glob.environment }}
   template:
     metadata:
       labels:
@@ -18,18 +24,22 @@ spec:
         releaseName: {{ .glob.releaseName }}
         environment: {{ .glob.environment }}
     spec:
+      {{ if .app.dockerConfigJson }}
+      imagePullSecrets:
+        - name: {{ .glob.releaseName }}-{{ .app.name }}
+      {{ end }}
       containers:
-        - image: {{ .glob.dockerRegistry }}/{{ .glob.imageNamespace }}/{{ .glob.releaseName }}-{{ .app.name }}:{{ .app.version }}
-          imagePullPolicy: Always
-          name: {{ .glob.releaseName }}-{{ .app.name }}
-          {{ if .app.environmentVariables }}
-          env:
-            {{- range $name, $value := .app.environmentVariables }}
-            - name: {{ $name }}
-              value: '{{ $value }}'
-            {{- end }}
-          {{ end }}
-          {{ if .app.servicePorts }}
+          - image: {{ .app.image }}
+            imagePullPolicy: Always
+            name: {{ .glob.releaseName }}-{{ .app.name }}
+            {{ if .app.environmentVariables }}
+            env:
+                {{- range $name, $value := .app.environmentVariables }}
+                  - name: {{ $name }}
+                  value: '{{ $value }}'
+              {{- end }}
+        {{ end }}
+        {{ if .app.servicePorts }}
           ports:
             {{- range .app.servicePorts }}
             - containerPort: {{ . }}

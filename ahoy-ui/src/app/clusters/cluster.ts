@@ -21,7 +21,6 @@ export class Cluster {
   token: string;
   caCertData: string;
   host: string;
-  dockerRegistry: string;
   type: string;
   inCluster = false;
 }

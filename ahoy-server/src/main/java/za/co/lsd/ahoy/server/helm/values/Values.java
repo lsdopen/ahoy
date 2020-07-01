@@ -29,8 +29,6 @@ import java.util.Map;
 @AllArgsConstructor
 public class Values {
 	public String host;
-	public String dockerRegistry;
-	public String imageNamespace;
 	public String environment;
 	public String releaseName;
 	public String releaseVersion;

@@ -35,9 +35,6 @@
         <mat-form-field>
           <input matInput [(ngModel)]="cluster.host" placeholder="Host" name="clusterHost" required>
         </mat-form-field>
-        <mat-form-field *ngIf="cluster.type === 'OPENSHIFT'">
-          <input matInput [(ngModel)]="cluster.dockerRegistry" placeholder="Docker registry" name="clusterDockerRegistry" required>
-        </mat-form-field>
         <div fxLayout="column">
           <mat-form-field>
             <input matInput class="text-area-settings" [(ngModel)]="cluster.token" placeholder="Token"

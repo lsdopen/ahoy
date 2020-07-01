@@ -35,7 +35,6 @@ public class OpenShiftTemplateWriter extends BaseTemplateWriter {
 
 		for (ApplicationVersion applicationVersion : releaseVersion.getApplicationVersions()) {
 			Application application = applicationVersion.getApplication();
-			addTemplate(application, "imagestream", templatesPath);
 			addTemplate(application, "configmap", templatesPath);
 			addTemplate(application, "deployment", templatesPath);
 			DockerRegistry dockerRegistry = applicationVersion.getDockerRegistry();

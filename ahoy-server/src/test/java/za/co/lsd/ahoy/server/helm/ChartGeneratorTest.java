@@ -47,7 +47,8 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = AhoyServerApplication.class)
@@ -123,7 +124,6 @@ public class ChartGeneratorTest {
 			.environment("dev")
 			.releaseName("release1")
 			.releaseVersion("1.0.0")
-			.imageNamespace("dev")
 			.applications(expectedApps)
 			.build();
 
@@ -134,7 +134,6 @@ public class ChartGeneratorTest {
 	public void generateFullKubernetes() throws Exception {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		cluster.setDockerRegistry("docker-registry");
 		cluster.setHost("my-host");
 		Environment environment = new Environment("dev", cluster);
 		Release release = new Release("release1");
@@ -219,11 +218,9 @@ public class ChartGeneratorTest {
 
 		Values expectedValues = Values.builder()
 			.host("my-host")
-			.dockerRegistry("docker-registry")
 			.environment("dev")
 			.releaseName("release1")
 			.releaseVersion("1.0.0")
-			.imageNamespace("dev")
 			.applications(expectedApps)
 			.build();
 
@@ -294,13 +291,11 @@ public class ChartGeneratorTest {
 		assertTrue("We should have a chart yaml", Files.exists(basePath.resolve("Chart.yaml")));
 		Path valuesPath = basePath.resolve("values.yaml");
 		assertTrue("We should have a values yaml", Files.exists(valuesPath));
-		assertEquals("Incorrect amount of template files", 9, Files.list(templatesPath).filter(Files::isRegularFile).count());
+		assertEquals("Incorrect amount of template files", 7, Files.list(templatesPath).filter(Files::isRegularFile).count());
 		assertTrue("We should have a configmap template", Files.exists(templatesPath.resolve("configmap.yaml")));
 		assertTrue("We should have a configmap-app1 template", Files.exists(templatesPath.resolve("configmap-app1.yaml")));
 		assertTrue("We should have a deployment template", Files.exists(templatesPath.resolve("deployment.yaml")));
 		assertTrue("We should have a deployment-app1 template", Files.exists(templatesPath.resolve("deployment-app1.yaml")));
-		assertTrue("We should have a imagestream template", Files.exists(templatesPath.resolve("imagestream.yaml")));
-		assertTrue("We should have a imagestream-app1 template", Files.exists(templatesPath.resolve("imagestream-app1.yaml")));
 		assertTrue("We should have a route template", Files.exists(templatesPath.resolve("route.yaml")));
 		assertTrue("We should have a service template", Files.exists(templatesPath.resolve("service.yaml")));
 		assertTrue("We should have a secret-dockerconfig template", Files.exists(templatesPath.resolve("secret-dockerconfig.yaml")));
@@ -322,7 +317,6 @@ public class ChartGeneratorTest {
 			.environment("dev")
 			.releaseName("release1")
 			.releaseVersion("1.0.0")
-			.imageNamespace("dev")
 			.applications(expectedApps)
 			.build();
 
@@ -333,7 +327,6 @@ public class ChartGeneratorTest {
 	public void generateFullOpenShift() throws Exception {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://openshift.default.svc", ClusterType.OPENSHIFT);
-		cluster.setDockerRegistry("docker-registry");
 		cluster.setHost("my-host");
 		Environment environment = new Environment("dev", cluster);
 		Release release = new Release("release1");
@@ -375,13 +368,11 @@ public class ChartGeneratorTest {
 		assertTrue("We should have a chart yaml", Files.exists(basePath.resolve("Chart.yaml")));
 		Path valuesPath = basePath.resolve("values.yaml");
 		assertTrue("We should have a values yaml", Files.exists(valuesPath));
-		assertEquals("Incorrect amount of template files", 12, Files.list(templatesPath).filter(Files::isRegularFile).count());
+		assertEquals("Incorrect amount of template files", 10, Files.list(templatesPath).filter(Files::isRegularFile).count());
 		assertTrue("We should have a configmap template", Files.exists(templatesPath.resolve("configmap.yaml")));
 		assertTrue("We should have a configmap-app1 template", Files.exists(templatesPath.resolve("configmap-app1.yaml")));
 		assertTrue("We should have a deployment template", Files.exists(templatesPath.resolve("deployment.yaml")));
 		assertTrue("We should have a deployment-app1 template", Files.exists(templatesPath.resolve("deployment-app1.yaml")));
-		assertTrue("We should have a imagestream template", Files.exists(templatesPath.resolve("imagestream.yaml")));
-		assertTrue("We should have a imagestream-app1 template", Files.exists(templatesPath.resolve("imagestream-app1.yaml")));
 		assertTrue("We should have a route template", Files.exists(templatesPath.resolve("route.yaml")));
 		assertTrue("We should have a route-app1 template", Files.exists(templatesPath.resolve("route-app1.yaml")));
 		assertTrue("We should have a service template", Files.exists(templatesPath.resolve("service.yaml")));
@@ -420,11 +411,9 @@ public class ChartGeneratorTest {
 
 		Values expectedValues = Values.builder()
 			.host("my-host")
-			.dockerRegistry("docker-registry")
 			.environment("dev")
 			.releaseName("release1")
 			.releaseVersion("1.0.0")
-			.imageNamespace("dev")
 			.applications(expectedApps)
 			.build();
 
@@ -460,13 +449,11 @@ public class ChartGeneratorTest {
 		assertEquals("Incorrect amount of chart files", 2, Files.list(basePath).filter(Files::isRegularFile).count());
 		assertTrue("We should have a chart yaml", Files.exists(basePath.resolve("Chart.yaml")));
 		assertTrue("We should have a values yaml", Files.exists(basePath.resolve("values.yaml")));
-		assertEquals("Incorrect amount of template files", 9, Files.list(templatesPath).filter(Files::isRegularFile).count());
+		assertEquals("Incorrect amount of template files", 7, Files.list(templatesPath).filter(Files::isRegularFile).count());
 		assertTrue("We should have a configmap template", Files.exists(templatesPath.resolve("configmap.yaml")));
 		assertTrue("We should have a configmap-app1 template", Files.exists(templatesPath.resolve("configmap-app1.yaml")));
 		assertTrue("We should have a deployment template", Files.exists(templatesPath.resolve("deployment.yaml")));
 		assertTrue("We should have a deployment-app1 template", Files.exists(templatesPath.resolve("deployment-app1.yaml")));
-		assertTrue("We should have a imagestream template", Files.exists(templatesPath.resolve("imagestream.yaml")));
-		assertTrue("We should have a imagestream-app1 template", Files.exists(templatesPath.resolve("imagestream-app1.yaml")));
 		assertTrue("We should have a route template", Files.exists(templatesPath.resolve("route.yaml")));
 		assertTrue("We should have a service template", Files.exists(templatesPath.resolve("service.yaml")));
 		assertTrue("We should have a secret-dockerconfig template", Files.exists(templatesPath.resolve("secret-dockerconfig.yaml")));

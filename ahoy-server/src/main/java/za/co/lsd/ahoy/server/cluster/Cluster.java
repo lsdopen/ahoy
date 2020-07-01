@@ -47,7 +47,6 @@ public class Cluster {
 	private String caCertData;
 	@NotNull
 	private String host;
-	private String dockerRegistry;
 	@NotNull
 	private boolean inCluster;
 	@NotNull

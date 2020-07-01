@@ -110,8 +110,6 @@ public class ChartGenerator {
 
 		Values.ValuesBuilder valuesBuilder = Values.builder()
 			.host(cluster.getHost())
-			.dockerRegistry(cluster.getDockerRegistry())
-			.imageNamespace(environment.getName())
 			.environment(environment.getName())
 			.releaseName(releaseVersion.getRelease().getName())
 			.releaseVersion(releaseVersion.getVersion());
