@@ -6,7 +6,7 @@ Ahoy relies on Helm version 3.
 
 TL;DR installation of Helm
 
-```
+```shell script
 wget https://get.helm.sh/helm-v3.2.1-linux-amd64.tar.gz
 tar zxvf helm-v3.2.1-linux-amd64.tar.gz
 sudo mv linux-amd64/helm /usr/local/bin/
@@ -16,7 +16,7 @@ rm helm-v3.2.1-linux-amd64.tar.gz linux-amd64/ -rf
 ### Installation on Kubernetes
 
 Add helm repo
-```
+```shell script
 helm repo add openlsd https://openlsd.github.io/charts
 helm repo update
 ```
@@ -49,7 +49,7 @@ openssl req -newkey rsa:2048 -nodes -keyout ahoy.key -x509 -days 365 -out ahoy.c
 ### Installation on OpenShift
 
 Add helm repo
-```
+```shell script
 helm repo add openlsd https://openlsd.github.io/charts
 helm repo update
 ```
@@ -202,17 +202,21 @@ Import the keys:
 
 Ahoy requires a service account to manage the Kubernetes cluster, to create this service account and get a token for the service account, follow these instructions:
 
-`kubectl describe secrets -n ahoy ahoy-token-*****`
+```shell script
+kubectl create serviceaccount -n ahoy ahoy
+kubectl create clusterrolebinding ahoy --clusterrole cluster-admin --serviceaccount=ahoy:ahoy
+kubectl describe secrets -n ahoy ahoy-token-*****
+```
 
 ### OpenShift
 
 Ahoy requires a service account to manage the OpenShift cluster, to create this service account and get a token for the service account, follow these instructions:
 
-`oc create serviceaccount ahoy -n ahoy`
-
-`oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:ahoy:ahoy`
-
-`oc serviceaccounts get-token -n ahoy ahoy` 
+```shell script
+oc create serviceaccount ahoy -n ahoy
+oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:ahoy:ahoy
+oc serviceaccounts get-token -n ahoy ahoy
+```
 
 ### Minikube
 
