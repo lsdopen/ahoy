@@ -202,11 +202,11 @@ Ahoy requires a service account to manage the Kubernetes cluster, to create this
 
 Ahoy requires a service account to manage the OpenShift cluster, to create this service account and get a token for the service account, follow these instructions:
 
-`oc create serviceaccount ahoy -n default`
+`oc create serviceaccount ahoy -n ahoy`
 
-`oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:default:ahoy`
+`oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:ahoy:ahoy`
 
-`oc serviceaccounts get-token -n default ahoy` 
+`oc serviceaccounts get-token -n ahoy ahoy` 
 
 ### Minikube
 

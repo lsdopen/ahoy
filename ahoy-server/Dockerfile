@@ -12,14 +12,10 @@ RUN apt-get -yq update
 RUN apt-get -yqq install kubectl
 
 # kubeseal
-RUN wget -nv https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.12.3/kubeseal-linux-amd64 -O kubeseal
+RUN wget -nv https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.12.3/kubeseal-linux-amd64 -O kubeseal --no-check-certificate
 RUN install -m 755 kubeseal /usr/local/bin/kubeseal
 
-# create ahoy user and group
-RUN groupadd -g 1000 ahoy && useradd -u 1000 -g ahoy -s /bin/sh ahoy
-RUN mkdir /home/ahoy && chown -R ahoy:ahoy /home/ahoy
-WORKDIR /home/ahoy
-USER ahoy:ahoy
+WORKDIR /tmp
 
 # add app jar
 ARG JAR_FILE
@@ -29,4 +25,4 @@ ADD ${JAR_FILE} app.jar
 ENV SPRING_PROFILES=prod
 EXPOSE 8443
 
-ENTRYPOINT ["sh","-c","java -Dspring.profiles.active=$SPRING_PROFILES -jar app.jar", "--spring.config.location=/home/ahoy/config/"]
+ENTRYPOINT ["sh","-c","java -Dspring.profiles.active=$SPRING_PROFILES -jar app.jar", "--spring.config.location=/tmp/config/"]
