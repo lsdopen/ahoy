@@ -79,21 +79,12 @@ To delete Ahoy:
 
 `helm delete ahoy --namespace ahoy`
 
-### Sealed Secrets
-
-[Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets) is required for Ahoy to commit secrets to git:
-
-[Install Sealed Secrets CRD and controller](https://github.com/bitnami-labs/sealed-secrets/releases)
-
-If you require Ahoy to manage more than one cluster, export the keys to be used on subsequent clusters:
-
-`kubectl -n kube-system get secrets sealed-secrets-key***** -o yaml > sealed-secret.keys`
-
 ## Setup
 
-Ahoy makes use of Git and ArgoCD to manage releases to clusters.
-These need to be setup before you'll be able to manage releases. 
-Do this by configuring their settings from the Ahoy UI on the Settings page. 
+Ahoy makes use of Git, ArgoCD and Sealed Secrets to manage releases to clusters.
+These need to be installed and setup before you'll be able to manage releases.
+
+Once installed, configure their settings from the Ahoy UI on the Settings page. 
 
 ### Git
 
@@ -104,7 +95,8 @@ For SSH authentication, please note to generate the key pair using the PEM forma
 
 `ssh-keygen -t rsa -m PEM`
 
-Add SSH known host for your repository:
+Some default known hosts will be added for you, but if you're using your own git repository, 
+add SSH known host for your repository:
 
 `ssh-keyscan -t rsa <your repo: example github.com>`
 
@@ -117,6 +109,9 @@ github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXY
 ### ArgoCD
 
 [Install ArgoCD](https://argoproj.github.io/argo-cd/getting_started)
+
+NB: Remember to update password for ArgoCD, there is no need to add the current cluster as ArgoCD and Ahoy 
+setup the current cluster automatically for you.
 
 Add Ahoy user to argocd:
 
@@ -150,9 +145,20 @@ Enter the token generated above.
 
 Add any private docker registries where your application images may reside.
 
+### Sealed Secrets
+
+[Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets) is required for Ahoy to commit secrets to git:
+
+[Install Sealed Secrets CRD and controller](https://github.com/bitnami-labs/sealed-secrets/releases)
+
+If you require Ahoy to manage more than one cluster, export the keys to be used on subsequent clusters:
+
+`kubectl -n kube-system get secrets sealed-secrets-key***** -o yaml > sealed-secret.keys`
+
 ## Adding new clusters
 
-A default built-in cluster named `in-cluster` will automatically be added to Ahoy and ArgoCD. For each new cluster you would like to manage, setup the following:
+A default built-in cluster named `in-cluster` will automatically be added to Ahoy and ArgoCD.
+For each new cluster you would like to manage, setup the following:
 
 ### Clusters
 
