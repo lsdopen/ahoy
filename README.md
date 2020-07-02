@@ -1,5 +1,7 @@
 # Ahoy
 
+![CI](https://github.com/openlsd/ahoy/workflows/CI/badge.svg)
+
 ## Installation on Kubernetes
 
 Ahoy relies on Helm version 3.
