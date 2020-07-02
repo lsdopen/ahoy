@@ -29,17 +29,17 @@ spec:
         - name: {{ .glob.releaseName }}-{{ .app.name }}
       {{ end }}
       containers:
-          - image: {{ .app.image }}
-            imagePullPolicy: Always
-            name: {{ .glob.releaseName }}-{{ .app.name }}
-            {{ if .app.environmentVariables }}
-            env:
-                {{- range $name, $value := .app.environmentVariables }}
-                  - name: {{ $name }}
-                  value: '{{ $value }}'
-              {{- end }}
-        {{ end }}
-        {{ if .app.servicePorts }}
+        - image: {{ .app.image }}
+          imagePullPolicy: Always
+          name: {{ .glob.releaseName }}-{{ .app.name }}
+          {{ if .app.environmentVariables }}
+          env:
+            {{- range $name, $value := .app.environmentVariables }}
+            - name: {{ $name }}
+              value: '{{ $value }}'
+            {{- end }}
+          {{ end }}
+          {{ if .app.servicePorts }}
           ports:
             {{- range .app.servicePorts }}
             - containerPort: {{ . }}
