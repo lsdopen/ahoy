@@ -19,6 +19,7 @@ package za.co.lsd.ahoy.server.cluster;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.Type;
 import za.co.lsd.ahoy.server.environments.Environment;
 
@@ -40,10 +41,12 @@ public class Cluster {
 	@NotNull
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
+	@ToString.Exclude
 	private String token;
 	@NotNull
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
+	@ToString.Exclude
 	private String caCertData;
 	@NotNull
 	private String host;
@@ -55,6 +58,7 @@ public class Cluster {
 
 	@OneToMany(mappedBy = "cluster", cascade = CascadeType.REMOVE)
 	@JsonIgnore
+	@ToString.Exclude
 	private List<Environment> environments;
 
 	public Cluster(@NotNull String name, @NotNull String masterUrl, @NotNull ClusterType type) {
@@ -68,15 +72,5 @@ public class Cluster {
 		this.name = name;
 		this.masterUrl = masterUrl;
 		this.type = type;
-	}
-
-	@Override
-	public String toString() {
-		return "Cluster{" +
-			"id=" + id +
-			", name='" + name + '\'' +
-			", masterUrl='" + masterUrl + '\'' +
-			", type=" + type +
-			'}';
 	}
 }

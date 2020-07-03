@@ -18,6 +18,7 @@ package za.co.lsd.ahoy.server.cluster;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import za.co.lsd.ahoy.server.AhoyServerProperties;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -28,9 +29,11 @@ import java.nio.file.Paths;
 @Component
 @Slf4j
 public class InitDefaultCluster {
+	private final AhoyServerProperties serverProperties;
 	private final ClusterRepository clusterRepository;
 
-	public InitDefaultCluster(ClusterRepository clusterRepository) {
+	public InitDefaultCluster(AhoyServerProperties serverProperties, ClusterRepository clusterRepository) {
+		this.serverProperties = serverProperties;
 		this.clusterRepository = clusterRepository;
 	}
 
@@ -43,8 +46,14 @@ public class InitDefaultCluster {
 
 			if (Files.exists(token) && Files.exists(caCrt)) {
 				log.info("Found token and ca.crt files");
-				Cluster cluster = new Cluster("in-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-				cluster.setHost("minikube.host");
+
+				ClusterType clusterType = ClusterType.KUBERNETES;
+				if ("openshift".equals(serverProperties.getClusterType())) {
+					clusterType = ClusterType.OPENSHIFT;
+				}
+
+				Cluster cluster = new Cluster("in-cluster", "https://kubernetes.default.svc", clusterType);
+				cluster.setHost(serverProperties.getHost());
 				cluster.setToken(Files.readString(token));
 				cluster.setCaCertData(Files.readString(caCrt));
 				cluster.setInCluster(true);

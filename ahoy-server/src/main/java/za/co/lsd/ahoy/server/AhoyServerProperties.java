@@ -28,6 +28,8 @@ import javax.annotation.PostConstruct;
 @Data
 @Slf4j
 public class AhoyServerProperties {
+	private String host = "default.host";
+	private String clusterType = "kubernetes";
 	private String repoPath;
 
 	@PostConstruct
