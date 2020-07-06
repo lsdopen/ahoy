@@ -12,6 +12,7 @@ TL;DR installation of Helm
 wget https://get.helm.sh/helm-v3.2.1-linux-amd64.tar.gz
 tar zxvf helm-v3.2.1-linux-amd64.tar.gz
 sudo mv linux-amd64/helm /usr/local/bin/
+sudo chmod 0755 /usr/local/bin/helm
 rm helm-v3.2.1-linux-amd64.tar.gz linux-amd64/ -rf
 ```
 
