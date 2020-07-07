@@ -135,7 +135,7 @@
               </mat-form-field>
 
               <div fxFlex fxLayout="row">
-                <mat-tab-group fxFlex="grow" [(selectedIndex)]="selectedIndex">
+                <mat-tab-group fxFlex="grow" [(selectedIndex)]="selectedConfigIndex">
                   <mat-tab *ngFor="let config of applicationVersion.configs; let configIndex = index"
                            label="{{config.name ? config.name : '<new>'}}">
                     <div fxFlex fxLayout="column" fxLayoutAlign="start start">
@@ -166,6 +166,81 @@
             </div>
 
           </mat-expansion-panel>
+
+          <mat-expansion-panel [(expanded)]="volumesCategory">
+            <mat-expansion-panel-header>
+              <mat-panel-title>Volumes</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div fxLayout="column" class="form-area">
+
+              <div fxFlex fxLayout="row">
+                <mat-tab-group fxFlex="grow" [(selectedIndex)]="selectedVolumeIndex">
+                  <mat-tab *ngFor="let volume of applicationVersion.volumes; let volumeIndex = index"
+                           label="{{volume.name ? volume.name : '<new>'}}">
+                    <div fxFlex fxLayout="column" fxLayoutAlign="start start">
+                      <mat-form-field style="width: 30%; margin-top: 10px">
+                        <input matInput [(ngModel)]="applicationVersion.volumes[volumeIndex].name" placeholder="Name"
+                               name="volumeName{{volumeIndex}}"
+                               required
+                               pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$">
+                        <mat-hint>should start with and use lower case letters and numbers</mat-hint>
+                      </mat-form-field>
+
+                      <mat-form-field>
+                        <input matInput [(ngModel)]="applicationVersion.volumes[volumeIndex].mountPath"
+                               placeholder="Mount path"
+                               name="volumeMountPath{{volumeIndex}}" required>
+                      </mat-form-field>
+
+                      <mat-form-field>
+                        <input matInput [(ngModel)]="applicationVersion.volumes[volumeIndex].storageClassName"
+                               placeholder="Storage class name"
+                               name="volumeStorageClassName{{volumeIndex}}">
+                      </mat-form-field>
+
+                      <mat-form-field>
+                        <mat-select [(ngModel)]="applicationVersion.volumes[volumeIndex].accessMode"
+                                    name="volumeAccessMode{{volumeIndex}}" required>
+                          <mat-option value="ReadWriteOnce">ReadWriteOnce</mat-option>
+                          <mat-option value="ReadWriteMany">ReadWriteMany</mat-option>
+                          <mat-option value="ReadOnlyMany">ReadOnlyMany</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+
+                      <div fxLayout="row" fxLayoutGap="10px">
+                        <mat-form-field>
+                          <input matInput [(ngModel)]="applicationVersion.volumes[volumeIndex].size"
+                                 placeholder="Storage size"
+                                 name="volumeStorageSize{{volumeIndex}}" required>
+                        </mat-form-field>
+
+                        <mat-form-field>
+                          <mat-select [(ngModel)]="applicationVersion.volumes[volumeIndex].sizeStorageUnit"
+                                      name="volumeStorageSizeUnit{{volumeIndex}}" required>
+                            <mat-option value="Mi">Mi</mat-option>
+                            <mat-option value="Gi">Gi</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+
+                    </div>
+                  </mat-tab>
+                </mat-tab-group>
+
+                <div fxFlex fxLayout="column">
+                  <button mat-icon-button (click)="addVolume()">
+                    <mat-icon>add_circle</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="deleteVolume()">
+                    <mat-icon>remove_circle</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </mat-expansion-panel>
+
         </div>
 
       </app-detail>

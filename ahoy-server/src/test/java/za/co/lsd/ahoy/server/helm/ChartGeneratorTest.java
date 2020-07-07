@@ -36,6 +36,7 @@ import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.helm.values.ApplicationConfigValues;
 import za.co.lsd.ahoy.server.helm.values.ApplicationValues;
+import za.co.lsd.ahoy.server.helm.values.ApplicationVolumeValues;
 import za.co.lsd.ahoy.server.helm.values.Values;
 import za.co.lsd.ahoy.server.releases.Release;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
@@ -100,7 +101,7 @@ public class ChartGeneratorTest {
 		assertTrue("We should have a values yaml", Files.exists(valuesPath));
 		assertEquals("Incorrect amount of template files", 7, Files.list(templatesPath).filter(Files::isRegularFile).count());
 		assertTrue("We should have a configmap template", Files.exists(templatesPath.resolve("configmap.yaml")));
-		assertTrue("We should have a configmap-app1 template", Files.exists(templatesPath.resolve("configmap-app1.yaml")));
+		assertTrue("We should have a pvc template", Files.exists(templatesPath.resolve("pvc.yaml")));
 		assertTrue("We should have a deployment template", Files.exists(templatesPath.resolve("deployment.yaml")));
 		assertTrue("We should have a deployment-app1 template", Files.exists(templatesPath.resolve("deployment-app1.yaml")));
 		assertTrue("We should have a ingress template", Files.exists(templatesPath.resolve("ingress.yaml")));
@@ -116,6 +117,7 @@ public class ChartGeneratorTest {
 			.replicas(1)
 			.environmentVariables(new LinkedHashMap<>())
 			.configs(new LinkedHashMap<>())
+			.volumes(new LinkedHashMap<>())
 			.build();
 		Map<String, ApplicationValues> expectedApps = new LinkedHashMap<>();
 		expectedApps.put("app1", expectedApplicationValues);
@@ -159,6 +161,9 @@ public class ChartGeneratorTest {
 		environmentConfig.setConfigFileName("application-dev.properties");
 		environmentConfig.setConfigFileContent("anothergreeting=hello");
 
+		List<ApplicationVolume> appVolumes = Collections.singletonList(new ApplicationVolume("my-volume", "/opt/vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi));
+		applicationVersion.setVolumes(appVolumes);
+
 		Map<String, String> environmentVariablesEnv = Collections.singletonMap("DEV_ENV", "VAR");
 		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
 
@@ -175,9 +180,11 @@ public class ChartGeneratorTest {
 		assertTrue("We should have a chart yaml", Files.exists(basePath.resolve("Chart.yaml")));
 		Path valuesPath = basePath.resolve("values.yaml");
 		assertTrue("We should have a values yaml", Files.exists(valuesPath));
-		assertEquals("Incorrect amount of template files", 10, Files.list(templatesPath).filter(Files::isRegularFile).count());
+		assertEquals("Incorrect amount of template files", 12, Files.list(templatesPath).filter(Files::isRegularFile).count());
 		assertTrue("We should have a configmap template", Files.exists(templatesPath.resolve("configmap.yaml")));
 		assertTrue("We should have a configmap-app1 template", Files.exists(templatesPath.resolve("configmap-app1.yaml")));
+		assertTrue("We should have a pvc template", Files.exists(templatesPath.resolve("pvc.yaml")));
+		assertTrue("We should have a pvc-app1 template", Files.exists(templatesPath.resolve("pvc-app1.yaml")));
 		assertTrue("We should have a deployment template", Files.exists(templatesPath.resolve("deployment.yaml")));
 		assertTrue("We should have a deployment-app1 template", Files.exists(templatesPath.resolve("deployment-app1.yaml")));
 		assertTrue("We should have a ingress template", Files.exists(templatesPath.resolve("ingress.yaml")));
@@ -197,6 +204,9 @@ public class ChartGeneratorTest {
 		configs.put("application-config-1", new ApplicationConfigValues("application.properties", "greeting=hello"));
 		configs.put("application-config-env", new ApplicationConfigValues("application-dev.properties", "anothergreeting=hello"));
 
+		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
+		volumes.put("application-volume-1", new ApplicationVolumeValues("my-volume", "/opt/vol", "standard", "ReadWriteOnce", "2Gi"));
+
 		ApplicationValues expectedApplicationValues = ApplicationValues.builder()
 			.name("app1")
 			.version("1.0.0")
@@ -212,6 +222,7 @@ public class ChartGeneratorTest {
 			.environmentVariables(expectedEnvironmentVariables)
 			.configPath("/opt/config")
 			.configs(configs)
+			.volumes(volumes)
 			.build();
 		Map<String, ApplicationValues> expectedApps = new LinkedHashMap<>();
 		expectedApps.put("app1", expectedApplicationValues);
@@ -258,7 +269,7 @@ public class ChartGeneratorTest {
 		assertTrue("We should have a values yaml", Files.exists(basePath.resolve("values.yaml")));
 		assertEquals("Incorrect amount of template files", 7, Files.list(templatesPath).filter(Files::isRegularFile).count());
 		assertTrue("We should have a configmap template", Files.exists(templatesPath.resolve("configmap.yaml")));
-		assertTrue("We should have a configmap-app1 template", Files.exists(templatesPath.resolve("configmap-app1.yaml")));
+		assertTrue("We should have a pvc template", Files.exists(templatesPath.resolve("pvc.yaml")));
 		assertTrue("We should have a deployment template", Files.exists(templatesPath.resolve("deployment.yaml")));
 		assertTrue("We should have a deployment-app1 template", Files.exists(templatesPath.resolve("deployment-app1.yaml")));
 		assertTrue("We should have a ingress template", Files.exists(templatesPath.resolve("ingress.yaml")));
@@ -293,7 +304,7 @@ public class ChartGeneratorTest {
 		assertTrue("We should have a values yaml", Files.exists(valuesPath));
 		assertEquals("Incorrect amount of template files", 7, Files.list(templatesPath).filter(Files::isRegularFile).count());
 		assertTrue("We should have a configmap template", Files.exists(templatesPath.resolve("configmap.yaml")));
-		assertTrue("We should have a configmap-app1 template", Files.exists(templatesPath.resolve("configmap-app1.yaml")));
+		assertTrue("We should have a pvc template", Files.exists(templatesPath.resolve("pvc.yaml")));
 		assertTrue("We should have a deployment template", Files.exists(templatesPath.resolve("deployment.yaml")));
 		assertTrue("We should have a deployment-app1 template", Files.exists(templatesPath.resolve("deployment-app1.yaml")));
 		assertTrue("We should have a route template", Files.exists(templatesPath.resolve("route.yaml")));
@@ -309,6 +320,7 @@ public class ChartGeneratorTest {
 			.replicas(1)
 			.environmentVariables(new LinkedHashMap<>())
 			.configs(new LinkedHashMap<>())
+			.volumes(new LinkedHashMap<>())
 			.build();
 		Map<String, ApplicationValues> expectedApps = new LinkedHashMap<>();
 		expectedApps.put("app1", expectedApplicationValues);
@@ -352,6 +364,9 @@ public class ChartGeneratorTest {
 		environmentConfig.setConfigFileName("application-dev.properties");
 		environmentConfig.setConfigFileContent("anothergreeting=hello");
 
+		List<ApplicationVolume> appVolumes = Collections.singletonList(new ApplicationVolume("my-volume", "/opt/vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi));
+		applicationVersion.setVolumes(appVolumes);
+
 		Map<String, String> environmentVariablesEnv = Collections.singletonMap("DEV_ENV", "VAR");
 		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
 
@@ -368,9 +383,11 @@ public class ChartGeneratorTest {
 		assertTrue("We should have a chart yaml", Files.exists(basePath.resolve("Chart.yaml")));
 		Path valuesPath = basePath.resolve("values.yaml");
 		assertTrue("We should have a values yaml", Files.exists(valuesPath));
-		assertEquals("Incorrect amount of template files", 10, Files.list(templatesPath).filter(Files::isRegularFile).count());
+		assertEquals("Incorrect amount of template files", 12, Files.list(templatesPath).filter(Files::isRegularFile).count());
 		assertTrue("We should have a configmap template", Files.exists(templatesPath.resolve("configmap.yaml")));
 		assertTrue("We should have a configmap-app1 template", Files.exists(templatesPath.resolve("configmap-app1.yaml")));
+		assertTrue("We should have a pvc template", Files.exists(templatesPath.resolve("pvc.yaml")));
+		assertTrue("We should have a pvc-app1 template", Files.exists(templatesPath.resolve("pvc-app1.yaml")));
 		assertTrue("We should have a deployment template", Files.exists(templatesPath.resolve("deployment.yaml")));
 		assertTrue("We should have a deployment-app1 template", Files.exists(templatesPath.resolve("deployment-app1.yaml")));
 		assertTrue("We should have a route template", Files.exists(templatesPath.resolve("route.yaml")));
@@ -390,6 +407,9 @@ public class ChartGeneratorTest {
 		configs.put("application-config-1", new ApplicationConfigValues("application.properties", "greeting=hello"));
 		configs.put("application-config-env", new ApplicationConfigValues("application-dev.properties", "anothergreeting=hello"));
 
+		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
+		volumes.put("application-volume-1", new ApplicationVolumeValues("my-volume", "/opt/vol", "standard", "ReadWriteOnce", "2Gi"));
+
 		ApplicationValues expectedApplicationValues = ApplicationValues.builder()
 			.name("app1")
 			.version("1.0.0")
@@ -405,6 +425,7 @@ public class ChartGeneratorTest {
 			.environmentVariables(expectedEnvironmentVariables)
 			.configPath("/opt/config")
 			.configs(configs)
+			.volumes(volumes)
 			.build();
 		Map<String, ApplicationValues> expectedApps = new LinkedHashMap<>();
 		expectedApps.put("app1", expectedApplicationValues);
@@ -451,7 +472,7 @@ public class ChartGeneratorTest {
 		assertTrue("We should have a values yaml", Files.exists(basePath.resolve("values.yaml")));
 		assertEquals("Incorrect amount of template files", 7, Files.list(templatesPath).filter(Files::isRegularFile).count());
 		assertTrue("We should have a configmap template", Files.exists(templatesPath.resolve("configmap.yaml")));
-		assertTrue("We should have a configmap-app1 template", Files.exists(templatesPath.resolve("configmap-app1.yaml")));
+		assertTrue("We should have a pvc template", Files.exists(templatesPath.resolve("pvc.yaml")));
 		assertTrue("We should have a deployment template", Files.exists(templatesPath.resolve("deployment.yaml")));
 		assertTrue("We should have a deployment-app1 template", Files.exists(templatesPath.resolve("deployment-app1.yaml")));
 		assertTrue("We should have a route template", Files.exists(templatesPath.resolve("route.yaml")));

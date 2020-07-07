@@ -36,6 +36,7 @@ export class ApplicationVersion {
   servicePorts: number[];
   application: Application | string;
   configs: ApplicationConfig[];
+  volumes: ApplicationVolume[];
   configPath: string;
   environmentConfig: ApplicationEnvironmentConfig;
   status: ApplicationReleaseStatus;
@@ -45,6 +46,16 @@ export class ApplicationConfig {
   id: number;
   name: string;
   config: string;
+}
+
+export class ApplicationVolume {
+  id: number;
+  name: string;
+  mountPath: string;
+  storageClassName = "standard";
+  accessMode = "ReadWriteOnce";
+  size: number;
+  sizeStorageUnit = "Gi";
 }
 
 export class ApplicationEnvironmentConfig {

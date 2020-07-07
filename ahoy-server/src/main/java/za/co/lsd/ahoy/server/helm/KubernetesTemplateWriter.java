@@ -35,8 +35,16 @@ public class KubernetesTemplateWriter extends BaseTemplateWriter {
 
 		for (ApplicationVersion applicationVersion : releaseVersion.getApplicationVersions()) {
 			Application application = applicationVersion.getApplication();
-			addTemplate(application, "configmap", templatesPath);
 			addTemplate(application, "deployment", templatesPath);
+
+			if (applicationVersion.hasConfigs()) {
+				addTemplate(application, "configmap", templatesPath);
+			}
+
+			if (applicationVersion.hasVolumes()) {
+				addTemplate(application, "pvc", templatesPath);
+			}
+
 			DockerRegistry dockerRegistry = applicationVersion.getDockerRegistry();
 			if (dockerRegistry != null && dockerRegistry.getSecure()) {
 				addTemplate(application, "secret-dockerconfig", templatesPath);

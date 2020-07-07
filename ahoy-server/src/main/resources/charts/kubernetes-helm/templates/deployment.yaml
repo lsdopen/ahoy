@@ -69,15 +69,28 @@ spec:
             timeoutSeconds: 5
           {{ end }}
           resources: {}
-          {{ if and .app.configs .app.configPath }}
+          {{ if or .app.configs .app.volumes }}
           volumeMounts:
+            {{ if .app.configs}}
             - name: application-config
               mountPath: {{ .app.configPath }}
+            {{ end }}
+            {{- range $name, $volume := .app.volumes }}
+            - name: {{ $volume.name }}
+              mountPath: {{ $volume.mountPath }}
+            {{- end }}
           {{ end }}
-      {{ if and .app.configs .app.configPath }}
+      {{ if or .app.configs .app.volumes}}
       volumes:
+        {{ if .app.configs}}
         - name: application-config
           configMap:
             name: {{ .glob.releaseName }}-{{ .app.name }}
+        {{ end }}
+        {{- range $name, $volume := .app.volumes }}
+        - name: {{ $volume.name }}
+          persistentVolumeClaim:
+            claimName: {{ $.glob.releaseName }}-{{ $.app.name }}-{{ $volume.name }}
+        {{- end}}
       {{ end }}
   {{- end -}}

@@ -1,0 +1,21 @@
+{{- define "pvc.app" -}}
+  {{- range $name, $volume := .app.volumes }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    manager: ahoy
+    app: {{ $.app.name }}
+    releaseName: {{ $.glob.releaseName }}
+    environment: {{ $.glob.environment }}
+  name: {{ $.glob.releaseName }}-{{ $.app.name }}-{{ $volume.name }}
+spec:
+  storageClassName: {{ $volume.storageClassName }}
+  accessModes:
+    - {{ $volume.accessMode }}
+  resources:
+    requests:
+      storage: {{ $volume.size }}
+  {{- end }}
+  {{- end -}}

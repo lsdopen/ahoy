@@ -62,10 +62,22 @@ public class ApplicationVersion {
 	@JsonManagedReference
 	private List<ApplicationConfig> configs;
 
+	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference
+	private List<ApplicationVolume> volumes;
+
 	public ApplicationVersion(@NotNull String version, @NotNull String image, Application application) {
 		this.version = version;
 		this.image = image;
 		this.application = application;
+	}
+
+	public boolean hasConfigs() {
+		return configs != null && configs.size() > 0;
+	}
+
+	public boolean hasVolumes() {
+		return volumes != null && volumes.size() > 0;
 	}
 
 	@Override

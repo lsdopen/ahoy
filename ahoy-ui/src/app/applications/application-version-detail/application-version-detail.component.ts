@@ -18,7 +18,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ApplicationService} from '../application.service';
 import {LoggerService} from '../../util/logger.service';
-import {Application, ApplicationConfig, ApplicationVersion} from '../application';
+import {Application, ApplicationConfig, ApplicationVersion, ApplicationVolume} from '../application';
 import {Location} from '@angular/common';
 import {ReleasesService} from '../../releases/releases.service';
 import {MatTableDataSource} from '@angular/material/table';
@@ -31,9 +31,10 @@ import {MatTableDataSource} from '@angular/material/table';
 export class ApplicationVersionDetailComponent implements OnInit {
   private releaseVersionId: number;
   private applicationVersionId: number;
+  application: Application;
+  applicationVersion: ApplicationVersion;
   editMode: boolean;
   editingVersion: string;
-  selectedIndex: number;
   newServicePort: number;
   portsDataSource = new MatTableDataSource<number>();
   portsDisplayedColumns = ['port', 'remove'];
@@ -41,8 +42,9 @@ export class ApplicationVersionDetailComponent implements OnInit {
   healthChecksCategory = false;
   environmentVariablesCategory = false;
   configFilesCategory = false;
-  application: Application;
-  applicationVersion: ApplicationVersion;
+  selectedConfigIndex: number;
+  volumesCategory = false;
+  selectedVolumeIndex: number;
 
   constructor(
     private route: ActivatedRoute,
@@ -66,6 +68,7 @@ export class ApplicationVersionDetailComponent implements OnInit {
           this.editMode = false;
           this.applicationVersion = new ApplicationVersion();
           this.applicationVersion.configs = [];
+          this.applicationVersion.volumes = [];
           this.applicationVersion.servicePorts = [];
           this.applicationVersion.environmentVariables = {};
           this.applicationVersion.healthEndpointScheme = 'HTTP';
@@ -75,6 +78,7 @@ export class ApplicationVersionDetailComponent implements OnInit {
           if (this.applicationVersionId && this.applicationVersionId > 0) {
             this.applicationService.getVersion(this.applicationVersionId)
               .subscribe((applicationVersion) => {
+                this.applicationVersion.dockerRegistry = applicationVersion.dockerRegistry;
                 this.applicationVersion.image = applicationVersion.image;
 
                 this.applicationVersion.environmentVariables = applicationVersion.environmentVariables;
@@ -86,7 +90,8 @@ export class ApplicationVersionDetailComponent implements OnInit {
                 this.applicationVersion.healthEndpointPort = applicationVersion.healthEndpointPort;
                 this.applicationVersion.healthEndpointScheme = applicationVersion.healthEndpointScheme;
 
-                this.applicationVersion.configs = this.clone(applicationVersion.configs);
+                this.applicationVersion.configs = this.cloneConfigs(applicationVersion.configs);
+                this.applicationVersion.volumes = this.cloneVolumes(applicationVersion.volumes);
                 this.applicationVersion.configPath = applicationVersion.configPath;
 
                 this.setCategoriesExpanded();
@@ -127,6 +132,10 @@ export class ApplicationVersionDetailComponent implements OnInit {
     if (this.applicationVersion.configPath) {
       this.configFilesCategory = true;
     }
+
+    if (this.applicationVersion.volumes.length > 0) {
+      this.volumesCategory = true;
+    }
   }
 
   save() {
@@ -151,15 +160,15 @@ export class ApplicationVersionDetailComponent implements OnInit {
 
   addConfig() {
     this.applicationVersion.configs.push(new ApplicationConfig());
-    this.selectedIndex = this.applicationVersion.configs.length - 1;
+    this.selectedConfigIndex = this.applicationVersion.configs.length - 1;
   }
 
   deleteConfig() {
-    this.applicationVersion.configs.splice(this.selectedIndex, 1);
-    this.selectedIndex = this.selectedIndex - 1;
+    this.applicationVersion.configs.splice(this.selectedConfigIndex, 1);
+    this.selectedConfigIndex = this.selectedConfigIndex - 1;
   }
 
-  private clone(configs: ApplicationConfig[]): ApplicationConfig[] {
+  private cloneConfigs(configs: ApplicationConfig[]): ApplicationConfig[] {
     return configs.map((applicationConfig) => {
       const appConfig = new ApplicationConfig();
       appConfig.name = applicationConfig.name;
@@ -179,5 +188,28 @@ export class ApplicationVersionDetailComponent implements OnInit {
   removeServicePort(portIndex: number) {
     this.applicationVersion.servicePorts.splice(portIndex, 1);
     this.portsDataSource.data = this.applicationVersion.servicePorts;
+  }
+
+  addVolume() {
+    this.applicationVersion.volumes.push(new ApplicationVolume());
+    this.selectedVolumeIndex = this.applicationVersion.volumes.length - 1;
+  }
+
+  deleteVolume() {
+    this.applicationVersion.volumes.splice(this.selectedVolumeIndex, 1);
+    this.selectedVolumeIndex = this.selectedVolumeIndex - 1;
+  }
+
+  private cloneVolumes(volumes: ApplicationVolume[]): ApplicationVolume[] {
+    return volumes.map((applicationVolume) => {
+      const appVolume = new ApplicationVolume();
+      appVolume.name = applicationVolume.name;
+      appVolume.mountPath = applicationVolume.mountPath;
+      appVolume.storageClassName = applicationVolume.storageClassName;
+      appVolume.accessMode = applicationVolume.accessMode;
+      appVolume.size = applicationVolume.size;
+      appVolume.sizeStorageUnit = applicationVolume.sizeStorageUnit;
+      return appVolume;
+    });
   }
 }

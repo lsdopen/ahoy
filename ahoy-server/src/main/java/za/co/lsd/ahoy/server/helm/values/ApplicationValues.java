@@ -24,6 +24,7 @@ import org.springframework.util.StringUtils;
 import za.co.lsd.ahoy.server.applications.ApplicationConfig;
 import za.co.lsd.ahoy.server.applications.ApplicationEnvironmentConfig;
 import za.co.lsd.ahoy.server.applications.ApplicationVersion;
+import za.co.lsd.ahoy.server.applications.ApplicationVolume;
 import za.co.lsd.ahoy.server.docker.DockerRegistry;
 import za.co.lsd.ahoy.server.helm.DockerConfigSealedSecretProducer;
 
@@ -51,6 +52,7 @@ public class ApplicationValues {
 	public String healthEndpointScheme;
 	public Map<String, ApplicationConfigValues> configs;
 	public String configPath;
+	public Map<String, ApplicationVolumeValues> volumes;
 
 	public static ApplicationValues build(ApplicationVersion applicationVersion, ApplicationEnvironmentConfig environmentConfig, DockerConfigSealedSecretProducer dockerConfigSealedSecretProducer) throws IOException {
 		ApplicationValuesBuilder builder = builder()
@@ -80,6 +82,14 @@ public class ApplicationValues {
 			}
 		}
 
+		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
+		if (applicationVersion.getVolumes() != null) {
+			int index = 1;
+			for (ApplicationVolume applicationVolume : applicationVersion.getVolumes()) {
+				volumes.put("application-volume-" + index++, new ApplicationVolumeValues(applicationVolume));
+			}
+		}
+
 		if (environmentConfig != null) {
 			if (!StringUtils.isEmpty(environmentConfig.getConfigFileName()) && !StringUtils.isEmpty(environmentConfig.getConfigFileContent())) {
 				configs.put("application-config-env", new ApplicationConfigValues(environmentConfig));
@@ -100,7 +110,8 @@ public class ApplicationValues {
 
 		builder
 			.environmentVariables(environmentVariables)
-			.configs(configs);
+			.configs(configs)
+			.volumes(volumes);
 
 		return builder.build();
 	}
