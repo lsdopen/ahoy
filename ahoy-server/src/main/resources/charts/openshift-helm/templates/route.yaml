@@ -17,4 +17,6 @@ spec:
     name: {{ .glob.releaseName }}-{{ .app.name }}
     weight: 100
   wildcardPolicy: None
+status:
+  ingress: []
   {{- end -}}
