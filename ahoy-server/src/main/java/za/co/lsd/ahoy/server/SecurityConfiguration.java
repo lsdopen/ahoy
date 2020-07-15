@@ -19,6 +19,7 @@ package za.co.lsd.ahoy.server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.web.cors.CorsConfiguration;
@@ -28,6 +29,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
@@ -36,7 +38,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.cors().and()
 			.csrf()
 			.disable()
-			.headers().frameOptions().disable();
+			.headers().frameOptions().disable().and()
+			.authorizeRequests()
+			.antMatchers("/api/**").hasAuthority("SCOPE_ahoy")
+			.antMatchers("/ws/**").permitAll()
+			.anyRequest().authenticated()
+			.and()
+			.oauth2ResourceServer()
+			.jwt();
 
 		http
 			.sessionManagement()

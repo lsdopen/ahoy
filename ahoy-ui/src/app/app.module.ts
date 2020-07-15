@@ -91,6 +91,7 @@ import {VerifyValidatorDirective} from './components/confirm-dialog/verify-valid
 import {GitSettingsComponent} from './settings/git-settings/git-settings.component';
 import {ArgoSettingsComponent} from './settings/argo-settings/argo-settings.component';
 import {DockerSettingsComponent} from './settings/docker-settings/docker-settings.component';
+import {OAuthModule} from "angular-oauth2-oidc";
 
 @NgModule({
   declarations: [
@@ -146,6 +147,12 @@ import {DockerSettingsComponent} from './settings/docker-settings/docker-setting
     FormsModule,
     AppRoutingModule,
     HttpClientModule,
+    OAuthModule.forRoot({
+      resourceServer: {
+        allowedUrls: ['http://localhost:8080/api', 'http://localhost:8080/ws'],
+        sendAccessToken: true
+      }
+    }),
     BrowserAnimationsModule,
     FlexLayoutModule,
     MatIconModule,

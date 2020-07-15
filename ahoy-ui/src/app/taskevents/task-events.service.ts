@@ -19,6 +19,7 @@ import * as Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
 import {LoggerService} from '../util/logger.service';
 import {TaskEvent} from './task-events';
+import {AuthService} from "../util/auth.service";
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +31,8 @@ export class TaskEventsService {
   private stompClient;
   public taskEvents = new EventEmitter<TaskEvent>();
 
-  constructor(private log: LoggerService) {
+  constructor(private authService: AuthService,
+              private log: LoggerService) {
     if (isDevMode()) {
       this.serverUrl = 'http://localhost:8080' + this.serverUrl;
     }
@@ -45,7 +47,7 @@ export class TaskEventsService {
     this.stompClient = Stomp.over(ws);
     this.stompClient.debug = null;
     const that = this;
-    this.stompClient.connect({}, frame => {
+    this.stompClient.connect({'X-Authorization': 'Bearer ' + this.authService.accessToken()}, frame => {
       this.log.debug('Websocket connection established:', ws);
       that.stompClient.subscribe('/events', (message) => that.receivedAppMessage(message));
       that.stompClient.subscribe('/user/events', (message) => that.receivedUserMessage(message));
