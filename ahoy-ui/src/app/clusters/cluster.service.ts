@@ -37,7 +37,7 @@ export class ClusterService {
   }
 
   getAll(): Observable<Cluster[]> {
-    const url = `/clusters`;
+    const url = `/data/clusters`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.clusters as Cluster[]),
       tap(apps => this.log.debug(`fetched ${apps.length} clusters`))
@@ -45,7 +45,7 @@ export class ClusterService {
   }
 
   get(id: number): Observable<Cluster> {
-    const url = `/clusters/${id}`;
+    const url = `/data/clusters/${id}`;
     return this.restClient.get<Cluster>(url).pipe(
       tap((cluster) => {
         if (cluster) {
@@ -60,7 +60,7 @@ export class ClusterService {
     this.log.debug('saving cluster: ', cluster);
 
     if (!cluster.id) {
-      return this.restClient.post<Cluster>('/clusters', cluster).pipe(
+      return this.restClient.post<Cluster>('/data/clusters', cluster).pipe(
         tap((newCluster) => {
           this.lastClusterId = newCluster.id;
           this.log.debug('saved new cluster', newCluster);
@@ -68,7 +68,7 @@ export class ClusterService {
       );
 
     } else {
-      const url = `/clusters/${cluster.id}`;
+      const url = `/data/clusters/${cluster.id}`;
       return this.restClient.put(url, cluster).pipe(
         tap((updatedCluster) => {
           this.lastClusterId = updatedCluster.id;
@@ -80,7 +80,7 @@ export class ClusterService {
 
   delete(cluster: Cluster): Observable<Cluster> {
     const id = cluster.id;
-    const url = `/clusters/${id}`;
+    const url = `/data/clusters/${id}`;
 
     return this.restClient.delete<Cluster>(url).pipe(
       tap(() => this.log.debug('deleted cluster', cluster))
@@ -91,7 +91,7 @@ export class ClusterService {
     this.log.debug('destroying cluster: ', cluster);
 
     const id = cluster.id;
-    const url = `/clusters/destroy/${id}`;
+    const url = `/data/clusters/destroy/${id}`;
 
     return this.restClient.delete<Cluster>(url, true).pipe(
       tap((destroyedCluster) => {
@@ -122,6 +122,6 @@ export class ClusterService {
   }
 
   link(id: number): string {
-    return this.restClient.getLink('/clusters', id);
+    return this.restClient.getLink('/data/clusters', id);
   }
 }

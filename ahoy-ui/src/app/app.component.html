@@ -18,7 +18,9 @@
 
   <mat-toolbar class="app-toolbar mat-elevation-z6" color="primary">
     <span class="title" routerLink="/dashboard">{{title}}</span>
-    <div fxFlex fxLayoutAlign="end">
+    <div fxFlex fxLayoutAlign="end center">
+
+      <span *ngIf="identityClaim()">{{ identityClaim().name }}</span>
 
       <app-notifications></app-notifications>
 

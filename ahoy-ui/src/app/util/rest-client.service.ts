@@ -25,7 +25,7 @@ import {NotificationsService} from '../notifications/notifications.service';
   providedIn: 'root'
 })
 export class RestClientService {
-  private appsUrl = '/api';
+  private appsUrl = '';
   private defaultOptions = {};
   private defaultHeaders = {'Content-Type': 'application/json'};
 
@@ -71,14 +71,6 @@ export class RestClientService {
     return this.http.get<T>(this.appsUrl + path, this.createOptions()).pipe(
       tap(() => this.stopProgress(progress)),
       catchError(this.handleError<T>(progress, defaultIfNotFound))
-    );
-  }
-
-  getAll<T>(path: string, progress = false): Observable<T[]> {
-    this.startProgress(progress);
-    return this.http.get<T[]>(this.appsUrl + path).pipe(
-      tap(() => this.stopProgress(progress)),
-      catchError(this.handleError<T[]>(progress))
     );
   }
 

@@ -41,7 +41,7 @@ export class EnvironmentReleaseService {
   }
 
   getReleasesByEnvironment(environmentId: number): Observable<EnvironmentRelease[]> {
-    const url = `/environments/${environmentId}/environmentReleases?projection=environmentRelease`;
+    const url = `/data/environments/${environmentId}/environmentReleases?projection=environmentRelease`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.environmentReleases as EnvironmentRelease[]),
       tap((envReleases) => this.log.debug(`fetched ${envReleases.length} environment releases for environment=${environmentId}`))
@@ -49,7 +49,7 @@ export class EnvironmentReleaseService {
   }
 
   getReleasesByRelease(releaseId: number): Observable<EnvironmentRelease[]> {
-    const url = `/environmentReleases/search/byRelease?releaseId=${releaseId}&projection=environmentRelease`;
+    const url = `/data/environmentReleases/search/byRelease?releaseId=${releaseId}&projection=environmentRelease`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.environmentReleases as EnvironmentRelease[]),
       tap((envReleases) => this.log.debug(`fetched ${envReleases.length} environment releases for release=${releaseId}`))
@@ -57,7 +57,7 @@ export class EnvironmentReleaseService {
   }
 
   get(environmentId: number, releaseId: number): Observable<EnvironmentRelease> {
-    const url = `/environmentReleases/${environmentId}_${releaseId}?projection=environmentRelease`;
+    const url = `/data/environmentReleases/${environmentId}_${releaseId}?projection=environmentRelease`;
     return this.restClient.get<EnvironmentRelease>(url).pipe(
       tap((envRelease) => this.log.debug('fetched environment release', envRelease))
     );
@@ -65,7 +65,7 @@ export class EnvironmentReleaseService {
 
   save(environmentRelease: EnvironmentRelease): Observable<EnvironmentRelease> {
     this.log.debug('saving environment release', environmentRelease);
-    return this.restClient.post<EnvironmentRelease>('/environmentReleases', environmentRelease).pipe(
+    return this.restClient.post<EnvironmentRelease>('/data/environmentReleases', environmentRelease).pipe(
       tap((envRelease) => this.log.debug('saved new environment release in environment', envRelease))
     );
   }

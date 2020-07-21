@@ -32,7 +32,7 @@ export class ReleaseHistoryService {
   }
 
   getAll(): Observable<ReleaseHistory[]> {
-    const url = `/releaseHistories`;
+    const url = `/data/releaseHistories`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.releases as ReleaseHistory[]),
       tap((relHistories) => this.log.debug(`fetched ${relHistories.length} release history items`))
@@ -40,7 +40,7 @@ export class ReleaseHistoryService {
   }
 
   getAllByReleaseId(releaseId: number): Observable<ReleaseHistory[]> {
-    const url = `/releaseHistories/search/findByReleaseId?releaseId=${releaseId}&projection=releaseHistory`;
+    const url = `/data/releaseHistories/search/findByReleaseId?releaseId=${releaseId}&projection=releaseHistory`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.releaseHistories as ReleaseHistory[]),
       tap((relHistories) => this.log.debug(`fetched ${relHistories.length} release history items`))
@@ -48,7 +48,7 @@ export class ReleaseHistoryService {
   }
 
   get(id: number): Observable<ReleaseHistory> {
-    const url = `/releaseHistories/${id}`;
+    const url = `/data/releaseHistories/${id}`;
     return this.restClient.get<ReleaseHistory>(url).pipe(
       tap((releaseHistory) => this.log.debug('fetched release history', releaseHistory))
     );

@@ -18,13 +18,17 @@ import {Injectable} from '@angular/core';
 import {Router} from "@angular/router";
 import {AuthConfig, NullValidationHandler, OAuthService} from "angular-oauth2-oidc";
 import {LoggerService} from "./logger.service";
+import {Observable} from "rxjs";
+import {tap} from "rxjs/operators";
+import {AuthInfo} from "./auth";
+import {RestClientService} from "./rest-client.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private authConfig: AuthConfig = {
-    issuer: 'http://localhost:8081/auth/realms/Ahoy',
+    issuer: '',
     redirectUri: window.location.origin + '/#/dashboard?',
     postLogoutRedirectUri: window.location.origin + '/#/dashboard',
     clientId: 'ahoy',
@@ -37,14 +41,18 @@ export class AuthService {
 
   constructor(private router: Router,
               private oAuthService: OAuthService,
+              private restClient: RestClientService,
               private log: LoggerService) {
 
-    this.oAuthService.configure(this.authConfig);
-    this.oAuthService.tokenValidationHandler = new NullValidationHandler();
-    this.oAuthService.loadDiscoveryDocument().then(token => {
-      this.oAuthService.tryLogin().then(_ => {
-        this.router.navigate(['/']);
-      })
+    this.getAuthInfo().subscribe((authInfo) => {
+      this.authConfig.issuer = authInfo.issuer;
+      this.oAuthService.configure(this.authConfig);
+      this.oAuthService.tokenValidationHandler = new NullValidationHandler();
+      this.oAuthService.loadDiscoveryDocument().then(token => {
+        this.oAuthService.tryLogin().then(_ => {
+          this.router.navigate(['/']);
+        })
+      });
     });
   }
 
@@ -61,7 +69,18 @@ export class AuthService {
     return this.oAuthService.getAccessToken();
   }
 
+  public identityClaim(): object {
+    return this.oAuthService.getIdentityClaims();
+  }
+
   public isAuthenticated(): boolean {
     return this.oAuthService.hasValidIdToken() && this.oAuthService.hasValidAccessToken();
+  }
+
+  private getAuthInfo(): Observable<AuthInfo> {
+    const url = `/auth/info`;
+    return this.restClient.get<AuthInfo>(url, false, null).pipe(
+      tap((authInfo) => this.log.debug('fetched auth info', authInfo))
+    );
   }
 }

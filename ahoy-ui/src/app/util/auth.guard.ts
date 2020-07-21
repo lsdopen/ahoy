@@ -31,11 +31,12 @@ export class AuthGuard implements CanActivate {
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     const authenticated = this.authService.isAuthenticated();
-    this.log.debug('User authenticated: ', authenticated)
+    this.log.debug('user authenticated: ', authenticated)
 
     if (!authenticated) {
-      this.log.debug('User not authenticated, starting login flow');
+      this.log.debug('user not authenticated, starting login flow');
       this.authService.login();
+      return false;
     }
 
     return true;

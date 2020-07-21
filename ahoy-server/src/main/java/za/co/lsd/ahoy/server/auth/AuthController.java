@@ -14,28 +14,23 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server;
+package za.co.lsd.ahoy.server.auth;
 
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
+@RestController
+@RequestMapping("/auth")
+public class AuthController {
+	private final AuthInfo authInfo;
 
-@Component
-@ConfigurationProperties("ahoy")
-@Data
-@Slf4j
-public class AhoyServerProperties {
-	private String host = "default.host";
-	private String clusterType = "kubernetes";
-	private String repoPath;
-	private String authIssuer;
-	private String uiAuthIssuer;
+	public AuthController(AuthInfo authInfo) {
+		this.authInfo = authInfo;
+	}
 
-	@PostConstruct
-	public void logSummary() {
-		log.info(toString());
+	@GetMapping("/info")
+	public AuthInfo authInfo() {
+		return authInfo;
 	}
 }

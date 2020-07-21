@@ -32,7 +32,7 @@ export class DockerSettingsService {
   }
 
   get(): Observable<DockerSettings> {
-    const url = `/dockerSettings/1`;
+    const url = `/data/dockerSettings/1`;
     return this.restClient.get<DockerSettings>(url, false, () => {
       return new DockerSettings(1);
     }).pipe(
@@ -43,7 +43,7 @@ export class DockerSettingsService {
   }
 
   exists(): Observable<boolean> {
-    const url = `/dockerSettings/1`;
+    const url = `/data/dockerSettings/1`;
     return this.restClient.exists(url, false).pipe(
       tap((exists) => {
         this.log.debug('checked docker settings exists: ', exists);
@@ -54,7 +54,7 @@ export class DockerSettingsService {
   save(dockerSettings: DockerSettings): Observable<DockerSettings> {
     this.log.debug('saving docker settings: ', dockerSettings);
 
-    return this.restClient.post<DockerSettings>('/dockerSettings', dockerSettings, true).pipe(
+    return this.restClient.post<DockerSettings>('/data/dockerSettings', dockerSettings, true).pipe(
       tap((savedSettings) => this.log.debug('saved docker settings', savedSettings))
     );
   }

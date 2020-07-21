@@ -41,7 +41,7 @@ export class GitSettingsService {
   }
 
   get(): Observable<GitSettings> {
-    const url = `/gitSettings/1`;
+    const url = `/data/gitSettings/1`;
     return this.restClient.get<GitSettings>(url, false, () => {
       const gitSettings = new GitSettings(1);
       gitSettings.sshKnownHosts = this.defaultKnownHosts;
@@ -54,7 +54,7 @@ export class GitSettingsService {
   }
 
   exists(): Observable<boolean> {
-    const url = `/gitSettings/1`;
+    const url = `/data/gitSettings/1`;
     return this.restClient.exists(url, false).pipe(
       tap((exists) => {
         this.log.debug('checked git settings exists: ', exists);
@@ -65,7 +65,7 @@ export class GitSettingsService {
   save(gitSettings: GitSettings): Observable<DockerSettings> {
     this.log.debug('saving git settings: ', gitSettings);
 
-    return this.restClient.post<DockerSettings>('/gitSettings', gitSettings, true).pipe(
+    return this.restClient.post<DockerSettings>('/data/gitSettings', gitSettings, true).pipe(
       tap((savedSettings) => this.log.debug('saved git settings', savedSettings))
     );
   }

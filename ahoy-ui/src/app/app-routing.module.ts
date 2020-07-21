@@ -37,7 +37,7 @@ import {DockerSettingsComponent} from './settings/docker-settings/docker-setting
 import {AuthGuard} from "./util/auth.guard";
 
 const routes: Routes = [
-  {path: '', redirectTo: '/dashboard', pathMatch: 'full', canActivate: [AuthGuard, SettingsGuard]},
+  {path: '', redirectTo: '/dashboard', pathMatch: 'full', canActivate: [AuthGuard]},
   {path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard, SettingsGuard]},
   {path: 'releases', component: ReleasesComponent, canActivate: [AuthGuard, SettingsGuard]},
   {path: 'release/:environmentId/:releaseId/version/:releaseVersionId', component: ReleaseManageComponent, canActivate: [AuthGuard]},

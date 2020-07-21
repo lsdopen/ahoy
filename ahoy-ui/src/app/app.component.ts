@@ -35,4 +35,8 @@ export class AppComponent {
   logout() {
     this.authService.logout();
   }
+
+  identityClaim() {
+    return this.authService.identityClaim();
+  }
 }

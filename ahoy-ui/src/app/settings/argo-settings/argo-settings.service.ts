@@ -32,7 +32,7 @@ export class ArgoSettingsService {
   }
 
   get(): Observable<ArgoSettings> {
-    const url = `/argoSettings/1`;
+    const url = `/data/argoSettings/1`;
     return this.restClient.get<ArgoSettings>(url, false, () => {
       return new ArgoSettings(1);
     }).pipe(
@@ -43,7 +43,7 @@ export class ArgoSettingsService {
   }
 
   exists(): Observable<boolean> {
-    const url = `/argoSettings/1`;
+    const url = `/data/argoSettings/1`;
     return this.restClient.exists(url, false).pipe(
       tap((exists) => {
         this.log.debug('checked argo settings exists: ', exists);
@@ -54,7 +54,7 @@ export class ArgoSettingsService {
   save(argoSettings: ArgoSettings): Observable<ArgoSettings> {
     this.log.debug('saving argo settings: ', argoSettings);
 
-    return this.restClient.post<ArgoSettings>('/argoSettings', argoSettings, true).pipe(
+    return this.restClient.post<ArgoSettings>('/data/argoSettings', argoSettings, true).pipe(
       tap((savedSettings) => this.log.debug('saved argo settings', savedSettings))
     );
   }

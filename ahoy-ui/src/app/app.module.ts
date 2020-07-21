@@ -149,7 +149,7 @@ import {OAuthModule} from "angular-oauth2-oidc";
     HttpClientModule,
     OAuthModule.forRoot({
       resourceServer: {
-        allowedUrls: ['http://localhost:8080/api', 'http://localhost:8080/ws'],
+        allowedUrls: ['http://localhost:8080/data', 'http://localhost:8080/api', '/data', '/api'],
         sendAccessToken: true
       }
     }),

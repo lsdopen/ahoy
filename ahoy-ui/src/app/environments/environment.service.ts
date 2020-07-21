@@ -38,14 +38,14 @@ export class EnvironmentService {
   }
 
   getAll(): Observable<Environment[]> {
-    return this.restClient.get<any>('/environments?projection=environment').pipe(
+    return this.restClient.get<any>('/data/environments?projection=environment').pipe(
       map(response => response._embedded.environments as Environment[]),
       tap((envs) => this.log.debug(`fetched ${envs.length} environments`))
     );
   }
 
   getAllEnvironmentsByCluster(clusterId: number): Observable<Environment[]> {
-    const url = `/clusters/${clusterId}/environments`;
+    const url = `/data/clusters/${clusterId}/environments`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.environments as Environment[]),
       tap((envs) => this.log.debug(`fetched ${envs.length} environments for cluster=${clusterId}`))
@@ -53,7 +53,7 @@ export class EnvironmentService {
   }
 
   getAllForPromotion(environmentRelease: EnvironmentRelease): Observable<Environment[]> {
-    const url = `/environments/search/forPromotion?releaseId=${environmentRelease.id.releaseId}`;
+    const url = `/data/environments/search/forPromotion?releaseId=${environmentRelease.id.releaseId}`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.environments as Environment[]),
       tap((envs) => this.log.debug(`fetched ${envs.length} environments`))
@@ -61,7 +61,7 @@ export class EnvironmentService {
   }
 
   get(id: number): Observable<Environment> {
-    const url = `/environments/${id}?projection=environment`;
+    const url = `/data/environments/${id}?projection=environment`;
     return this.restClient.get<Environment>(url).pipe(
       tap((env) => {
         this.lastEnvironmentId = env.id;
@@ -73,7 +73,7 @@ export class EnvironmentService {
   create(environment: Environment): Observable<Environment> {
     this.log.debug('creating environment: ', environment);
 
-    const url = `/environments/create`;
+    const url = `/data/environments/create`;
 
     return this.restClient.post<Environment>(url, environment, true).pipe(
       tap((createdEnvironment) => {
@@ -93,7 +93,7 @@ export class EnvironmentService {
     this.log.debug('destroying environment: ', environment);
 
     const id = environment.id;
-    const url = `/environments/destroy/${id}`;
+    const url = `/data/environments/destroy/${id}`;
 
     return this.restClient.delete<Environment>(url, true).pipe(
       tap((destroyedEnvironment) => {
@@ -112,7 +112,7 @@ export class EnvironmentService {
   duplicate(sourceEnvironment: Environment, destEnvironment: Environment): Observable<Environment> {
     this.log.debug('duplicating environment: ', sourceEnvironment);
 
-    const url = `/environments/duplicate/${sourceEnvironment.id}/${destEnvironment.id}`;
+    const url = `/data/environments/duplicate/${sourceEnvironment.id}/${destEnvironment.id}`;
 
     return this.restClient.post<Environment>(url, null, true).pipe(
       tap((duplicatedEnvironment) => {
@@ -143,6 +143,6 @@ export class EnvironmentService {
   }
 
   link(id: number): string {
-    return this.restClient.getLink('/environments', id);
+    return this.restClient.getLink('/data/environments', id);
   }
 }
