@@ -39,4 +39,8 @@ export class AppComponent {
   identityClaim() {
     return this.authService.identityClaim();
   }
+
+  issuer(): string {
+    return this.authService.issuer();
+  }
 }

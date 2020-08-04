@@ -30,6 +30,7 @@
 
       <mat-menu #beforeMenu="matMenu" xPosition="before">
         <button mat-menu-item routerLink="/settings">Settings</button>
+        <a mat-menu-item href="{{issuer()}}/account/?referrer=ahoy">Account</a>
         <mat-divider></mat-divider>
         <button mat-menu-item (click)="logout()">Logout</button>
       </mat-menu>

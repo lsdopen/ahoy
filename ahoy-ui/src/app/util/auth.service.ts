@@ -65,6 +65,10 @@ export class AuthService {
     this.oAuthService.logOut();
   }
 
+  public issuer(): string {
+    return this.authConfig.issuer;
+  }
+
   public accessToken(): string {
     return this.oAuthService.getAccessToken();
   }
