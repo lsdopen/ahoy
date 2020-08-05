@@ -17,12 +17,17 @@
 import {async, TestBed} from '@angular/core/testing';
 import {AppComponent} from './app.component';
 import {AppModule} from './app.module';
+import {AuthService} from "./util/auth.service";
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [],
-      imports: [AppModule]
+      imports: [AppModule],
+      providers: [
+        AppComponent,
+        {provide: AuthService, useClass: MockAuthService}
+      ]
     }).compileComponents();
   }));
 
@@ -38,3 +43,6 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('Ahoy');
   });
 });
+
+class MockAuthService {
+}
