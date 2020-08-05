@@ -82,6 +82,17 @@ To delete Ahoy:
 
 `helm delete ahoy --namespace ahoy`
 
+## Login
+
+Ahoy makes use of [Keycloak](https://www.keycloak.org/) for authentication and authorisation. 
+
+Use the default user credentials to log in for the first time:
+```text
+Username: ahoy
+Password: ahoy
+```
+Note: on first login you'll be required to update the password for the default ahoy user.
+
 ## Setup
 
 Ahoy makes use of Git, ArgoCD and Sealed Secrets to manage releases to clusters.
