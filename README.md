@@ -66,9 +66,12 @@ Customise the Ahoy installation by editing the values in values-ocp.yaml.
 
 Example value files available at: https://github.com/openlsd/charts/tree/master/charts/ahoy
 
-OpenShift restricts the use of UID by default. To allow Postgres to start up you will need allow the anyuid SCC
+OpenShift restricts the use of UID by default. 
+
+To allow Postgres and Keycloak to start up you will need allow the anyuid SCC
 ```
 oc adm policy add-scc-to-user anyuid -z default -n ahoy
+oc adm policy add-scc-to-user anyuid -z ahoy-keycloak -n ahoy
 ```
 
 We are now ready to install Ahoy
