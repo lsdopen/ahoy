@@ -31,11 +31,17 @@ public class AhoyServerProperties {
 	private String host = "default.host";
 	private String clusterType = "kubernetes";
 	private String repoPath;
-	private String authIssuer;
-	private String uiAuthIssuer;
+	private Auth auth;
 
 	@PostConstruct
 	public void logSummary() {
 		log.info(toString());
+	}
+
+	@Data
+	public static class Auth {
+		private String clientId;
+		private String issuer;
+		private String jwkSetUri;
 	}
 }
