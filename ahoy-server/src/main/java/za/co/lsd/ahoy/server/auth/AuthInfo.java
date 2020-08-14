@@ -23,6 +23,8 @@ import org.springframework.stereotype.Component;
 @Component
 @Data
 public class AuthInfo {
-	@Value("${ahoy.ui-auth-issuer}")
+	@Value("${ahoy.auth.client-id}")
+	private String clientId;
+	@Value("${ahoy.auth.issuer}")
 	private String issuer;
 }

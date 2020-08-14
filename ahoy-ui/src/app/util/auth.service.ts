@@ -29,9 +29,9 @@ import {RestClientService} from "./rest-client.service";
 export class AuthService {
   private authConfig: AuthConfig = {
     issuer: '',
-    redirectUri: window.location.origin + '/#/dashboard?',
-    postLogoutRedirectUri: window.location.origin + '/#/dashboard',
-    clientId: 'ahoy',
+    redirectUri: window.location.origin,
+    postLogoutRedirectUri: window.location.origin,
+    clientId: '',
     scope: 'openid profile email offline_access ahoy',
     responseType: 'code',
     // at_hash is not present in JWT token
@@ -45,6 +45,7 @@ export class AuthService {
               private log: LoggerService) {
 
     this.getAuthInfo().subscribe((authInfo) => {
+      this.authConfig.clientId = authInfo.clientId;
       this.authConfig.issuer = authInfo.issuer;
       this.oAuthService.configure(this.authConfig);
       this.oAuthService.tokenValidationHandler = new NullValidationHandler();

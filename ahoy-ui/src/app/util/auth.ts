@@ -15,5 +15,6 @@
  */
 
 export class AuthInfo {
+  clientId: string;
   issuer: string;
 }
