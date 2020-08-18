@@ -18,7 +18,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ApplicationService} from '../application.service';
 import {LoggerService} from '../../util/logger.service';
-import {Application, ApplicationConfig, ApplicationVersion, ApplicationVolume} from '../application';
+import {Application, ApplicationConfig, ApplicationSecret, ApplicationVersion, ApplicationVolume} from '../application';
 import {Location} from '@angular/common';
 import {ReleasesService} from '../../releases/releases.service';
 import {MatTableDataSource} from '@angular/material/table';
@@ -45,6 +45,8 @@ export class ApplicationVersionDetailComponent implements OnInit {
   selectedConfigIndex: number;
   volumesCategory = false;
   selectedVolumeIndex: number;
+  secretsCategory = false;
+  selectedSecretIndex: number;
 
   constructor(
     private route: ActivatedRoute,
@@ -69,6 +71,7 @@ export class ApplicationVersionDetailComponent implements OnInit {
           this.applicationVersion = new ApplicationVersion();
           this.applicationVersion.configs = [];
           this.applicationVersion.volumes = [];
+          this.applicationVersion.secrets = [];
           this.applicationVersion.servicePorts = [];
           this.applicationVersion.environmentVariables = {};
           this.applicationVersion.healthEndpointScheme = 'HTTP';
@@ -92,6 +95,7 @@ export class ApplicationVersionDetailComponent implements OnInit {
 
                 this.applicationVersion.configs = this.cloneConfigs(applicationVersion.configs);
                 this.applicationVersion.volumes = this.cloneVolumes(applicationVersion.volumes);
+                this.applicationVersion.secrets = this.cloneSecrets(applicationVersion.secrets);
                 this.applicationVersion.configPath = applicationVersion.configPath;
 
                 this.setCategoriesExpanded();
@@ -135,6 +139,11 @@ export class ApplicationVersionDetailComponent implements OnInit {
 
     if (this.applicationVersion.volumes.length > 0) {
       this.volumesCategory = true;
+    }
+
+    if (this.applicationVersion.secrets.length > 0) {
+      this.secretsCategory = true;
+      this.selectedSecretIndex = 0;
     }
   }
 
@@ -210,6 +219,27 @@ export class ApplicationVersionDetailComponent implements OnInit {
       appVolume.size = applicationVolume.size;
       appVolume.sizeStorageUnit = applicationVolume.sizeStorageUnit;
       return appVolume;
+    });
+  }
+
+  addSecret() {
+    let applicationSecret = new ApplicationSecret();
+    applicationSecret.data = {};
+    this.applicationVersion.secrets.push(applicationSecret);
+    this.selectedSecretIndex = this.applicationVersion.secrets.length - 1;
+  }
+
+  deleteSecret() {
+    this.applicationVersion.secrets.splice(this.selectedSecretIndex, 1);
+    this.selectedSecretIndex = this.selectedSecretIndex - 1;
+  }
+
+  private cloneSecrets(secrets: ApplicationSecret[]): ApplicationSecret[] {
+    return secrets.map((applicationSecret) => {
+      const appSecret = new ApplicationSecret();
+      appSecret.name = applicationSecret.name;
+      appSecret.data = applicationSecret.data;
+      return appSecret;
     });
   }
 }

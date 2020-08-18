@@ -46,6 +46,8 @@ public interface ApplicationVersionProjection {
 
 	List<ApplicationVolume> getVolumes();
 
+	List<ApplicationSecret> getSecrets();
+
 	String getConfigPath();
 
 	Application getApplication();

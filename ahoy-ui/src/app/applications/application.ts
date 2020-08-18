@@ -37,6 +37,7 @@ export class ApplicationVersion {
   application: Application | string;
   configs: ApplicationConfig[];
   volumes: ApplicationVolume[];
+  secrets: ApplicationSecret[];
   configPath: string;
   environmentConfig: ApplicationEnvironmentConfig;
   status: ApplicationReleaseStatus;
@@ -56,6 +57,12 @@ export class ApplicationVolume {
   accessMode = "ReadWriteOnce";
   size: number;
   sizeStorageUnit = "Gi";
+}
+
+export class ApplicationSecret {
+  id: number;
+  name: string;
+  data: { [key: string]: string };
 }
 
 export class ApplicationEnvironmentConfig {

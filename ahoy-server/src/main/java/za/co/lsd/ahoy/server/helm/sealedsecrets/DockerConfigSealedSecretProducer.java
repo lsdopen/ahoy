@@ -14,19 +14,20 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.helm;
+package za.co.lsd.ahoy.server.helm.sealedsecrets;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Component;
 import za.co.lsd.ahoy.server.docker.DockerRegistry;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
+
+import static za.co.lsd.ahoy.server.util.ProcessUtil.errorFrom;
+import static za.co.lsd.ahoy.server.util.ProcessUtil.outputFrom;
 
 @Component
 @Slf4j
@@ -58,14 +59,6 @@ public class DockerConfigSealedSecretProducer {
 		} catch (InterruptedException e) {
 			throw new RuntimeException("Failed to produce docker config sealed secret", e);
 		}
-	}
-
-	private static String outputFrom(Process process) throws IOException {
-		return IOUtils.toString(new InputStreamReader(process.getInputStream()));
-	}
-
-	private static String errorFrom(Process process) throws IOException {
-		return IOUtils.toString(new InputStreamReader(process.getErrorStream()));
 	}
 
 	private static String extractDockerConfigJson(String sealedSecret) throws IOException {

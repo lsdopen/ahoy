@@ -45,6 +45,10 @@ public class OpenShiftTemplateWriter extends BaseTemplateWriter {
 				addTemplate(application, "pvc", templatesPath);
 			}
 
+			if (applicationVersion.hasSecrets()) {
+				addTemplate(application, "secret-generic", templatesPath);
+			}
+
 			DockerRegistry dockerRegistry = applicationVersion.getDockerRegistry();
 			if (dockerRegistry != null && dockerRegistry.getSecure()) {
 				addTemplate(application, "secret-dockerconfig", templatesPath);

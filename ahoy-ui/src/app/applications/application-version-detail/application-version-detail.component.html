@@ -145,10 +145,10 @@
                       </mat-form-field>
 
                       <mat-form-field fxFill>
-                    <textarea matInput [(ngModel)]="applicationVersion.configs[configIndex].config" placeholder="Config"
-                              name="applicationConfig{{configIndex}}"
-                              type="text"
-                              matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="20" required></textarea>
+                        <textarea matInput [(ngModel)]="applicationVersion.configs[configIndex].config" placeholder="Config"
+                                  name="applicationConfig{{configIndex}}"
+                                  type="text"
+                                  matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="20" required></textarea>
                       </mat-form-field>
                     </div>
                   </mat-tab>
@@ -233,6 +233,47 @@
                     <mat-icon>add_circle</mat-icon>
                   </button>
                   <button mat-icon-button (click)="deleteVolume()">
+                    <mat-icon>remove_circle</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </mat-expansion-panel>
+
+          <mat-expansion-panel [(expanded)]="secretsCategory">
+            <mat-expansion-panel-header>
+              <mat-panel-title>Secrets</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div fxLayout="column" class="form-area">
+
+              <div fxFlex fxLayout="row">
+                <mat-tab-group fxFlex="grow" [(selectedIndex)]="selectedSecretIndex">
+                  <mat-tab *ngFor="let secret of applicationVersion.secrets; let secretIndex = index"
+                           label="{{secret.name ? secret.name : '<new>'}}">
+                    <div fxFlex fxLayout="column" fxLayoutAlign="start start">
+                      <mat-form-field style="width: 30%; margin-top: 10px">
+                        <input matInput [(ngModel)]="applicationVersion.secrets[secretIndex].name" placeholder="Name"
+                               name="secretName{{secretIndex}}"
+                               required
+                               pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$">
+                        <mat-hint>should start with and use lower case letters and numbers</mat-hint>
+                      </mat-form-field>
+
+                      <app-application-secret-data fxFill
+                        [secretData]="applicationVersion.secrets[secretIndex].data">
+                      </app-application-secret-data>
+
+                    </div>
+                  </mat-tab>
+                </mat-tab-group>
+
+                <div fxFlex fxLayout="column">
+                  <button mat-icon-button (click)="addSecret()">
+                    <mat-icon>add_circle</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="deleteSecret()">
                     <mat-icon>remove_circle</mat-icon>
                   </button>
                 </div>

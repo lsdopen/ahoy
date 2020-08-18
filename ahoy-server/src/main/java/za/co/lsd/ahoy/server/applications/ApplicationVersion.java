@@ -66,6 +66,10 @@ public class ApplicationVersion {
 	@JsonManagedReference
 	private List<ApplicationVolume> volumes;
 
+	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference
+	private List<ApplicationSecret> secrets;
+
 	public ApplicationVersion(@NotNull String version, @NotNull String image, Application application) {
 		this.version = version;
 		this.image = image;
@@ -78,6 +82,10 @@ public class ApplicationVersion {
 
 	public boolean hasVolumes() {
 		return volumes != null && volumes.size() > 0;
+	}
+
+	public boolean hasSecrets() {
+		return secrets != null && secrets.size() > 0;
 	}
 
 	@Override

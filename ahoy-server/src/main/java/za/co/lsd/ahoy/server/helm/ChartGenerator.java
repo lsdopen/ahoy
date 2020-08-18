@@ -30,6 +30,8 @@ import za.co.lsd.ahoy.server.applications.ApplicationVersion;
 import za.co.lsd.ahoy.server.cluster.Cluster;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environments.Environment;
+import za.co.lsd.ahoy.server.helm.sealedsecrets.DockerConfigSealedSecretProducer;
+import za.co.lsd.ahoy.server.helm.sealedsecrets.SecretDataSealedSecretProducer;
 import za.co.lsd.ahoy.server.helm.values.ApplicationValues;
 import za.co.lsd.ahoy.server.helm.values.Values;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
@@ -47,6 +49,7 @@ public class ChartGenerator {
 	private ObjectProvider<TemplateWriter> templateWriterFactory;
 	private ApplicationEnvironmentConfigProvider environmentConfigProvider;
 	private DockerConfigSealedSecretProducer dockerConfigSealedSecretProducer;
+	private SecretDataSealedSecretProducer secretDataSealedSecretProducer;
 	private ObjectFactory<Yaml> yamlObjectFactory;
 
 	@Autowired
@@ -62,6 +65,11 @@ public class ChartGenerator {
 	@Autowired
 	public void setDockerConfigSealedSecretProducer(DockerConfigSealedSecretProducer dockerConfigSealedSecretProducer) {
 		this.dockerConfigSealedSecretProducer = dockerConfigSealedSecretProducer;
+	}
+
+	@Autowired
+	public void setSecretDataSealedSecretProducer(SecretDataSealedSecretProducer secretDataSealedSecretProducer) {
+		this.secretDataSealedSecretProducer = secretDataSealedSecretProducer;
 	}
 
 	@Autowired
@@ -120,7 +128,7 @@ public class ChartGenerator {
 			ApplicationEnvironmentConfig applicationEnvironmentConfig =
 				environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion)
 					.orElse(null);
-			apps.put(HelmUtils.valuesName(application), ApplicationValues.build(applicationVersion, applicationEnvironmentConfig, dockerConfigSealedSecretProducer));
+			apps.put(HelmUtils.valuesName(application), ApplicationValues.build(applicationVersion, applicationEnvironmentConfig, dockerConfigSealedSecretProducer, secretDataSealedSecretProducer));
 
 			log.debug("Added values for application '{}' in environment '{}'", application.getName(), environment.getName());
 		}

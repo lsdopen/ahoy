@@ -92,6 +92,7 @@ import {GitSettingsComponent} from './settings/git-settings/git-settings.compone
 import {ArgoSettingsComponent} from './settings/argo-settings/argo-settings.component';
 import {DockerSettingsComponent} from './settings/docker-settings/docker-settings.component';
 import {OAuthModule} from "angular-oauth2-oidc";
+import {ApplicationSecretDataComponent} from "./applications/application-secret-data/application-secret-data.component";
 
 @NgModule({
   declarations: [
@@ -140,7 +141,8 @@ import {OAuthModule} from "angular-oauth2-oidc";
     VerifyValidatorDirective,
     GitSettingsComponent,
     ArgoSettingsComponent,
-    DockerSettingsComponent
+    DockerSettingsComponent,
+    ApplicationSecretDataComponent
   ],
   imports: [
     BrowserModule,

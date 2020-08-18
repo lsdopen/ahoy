@@ -21,12 +21,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
-import za.co.lsd.ahoy.server.applications.ApplicationConfig;
-import za.co.lsd.ahoy.server.applications.ApplicationEnvironmentConfig;
-import za.co.lsd.ahoy.server.applications.ApplicationVersion;
-import za.co.lsd.ahoy.server.applications.ApplicationVolume;
+import za.co.lsd.ahoy.server.applications.*;
 import za.co.lsd.ahoy.server.docker.DockerRegistry;
-import za.co.lsd.ahoy.server.helm.DockerConfigSealedSecretProducer;
+import za.co.lsd.ahoy.server.helm.sealedsecrets.DockerConfigSealedSecretProducer;
+import za.co.lsd.ahoy.server.helm.sealedsecrets.SecretDataSealedSecretProducer;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -53,8 +51,9 @@ public class ApplicationValues {
 	public Map<String, ApplicationConfigValues> configs;
 	public String configPath;
 	public Map<String, ApplicationVolumeValues> volumes;
+	public Map<String, ApplicationSecretValues> secrets;
 
-	public static ApplicationValues build(ApplicationVersion applicationVersion, ApplicationEnvironmentConfig environmentConfig, DockerConfigSealedSecretProducer dockerConfigSealedSecretProducer) throws IOException {
+	public static ApplicationValues build(ApplicationVersion applicationVersion, ApplicationEnvironmentConfig environmentConfig, DockerConfigSealedSecretProducer dockerConfigSealedSecretProducer, SecretDataSealedSecretProducer secretDataSealedSecretProducer) throws IOException {
 		ApplicationValuesBuilder builder = builder()
 			.name(applicationVersion.getApplication().getName())
 			.image(applicationVersion.getImage())
@@ -90,6 +89,15 @@ public class ApplicationValues {
 			}
 		}
 
+		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
+		if (applicationVersion.getSecrets() != null) {
+			int index = 1;
+			for (ApplicationSecret applicationSecret : applicationVersion.getSecrets()) {
+				Map<String, String> encryptedData = secretDataSealedSecretProducer.produce(applicationSecret);
+				secrets.put("application-secret-" + index++, new ApplicationSecretValues(applicationSecret.getName(), encryptedData));
+			}
+		}
+
 		if (environmentConfig != null) {
 			if (!StringUtils.isEmpty(environmentConfig.getConfigFileName()) && !StringUtils.isEmpty(environmentConfig.getConfigFileContent())) {
 				configs.put("application-config-env", new ApplicationConfigValues(environmentConfig));
@@ -111,7 +119,8 @@ public class ApplicationValues {
 		builder
 			.environmentVariables(environmentVariables)
 			.configs(configs)
-			.volumes(volumes);
+			.volumes(volumes)
+			.secrets(secrets);
 
 		return builder.build();
 	}

@@ -34,10 +34,9 @@ import za.co.lsd.ahoy.server.cluster.ClusterType;
 import za.co.lsd.ahoy.server.docker.DockerRegistry;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environments.Environment;
-import za.co.lsd.ahoy.server.helm.values.ApplicationConfigValues;
-import za.co.lsd.ahoy.server.helm.values.ApplicationValues;
-import za.co.lsd.ahoy.server.helm.values.ApplicationVolumeValues;
-import za.co.lsd.ahoy.server.helm.values.Values;
+import za.co.lsd.ahoy.server.helm.sealedsecrets.DockerConfigSealedSecretProducer;
+import za.co.lsd.ahoy.server.helm.sealedsecrets.SecretDataSealedSecretProducer;
+import za.co.lsd.ahoy.server.helm.values.*;
 import za.co.lsd.ahoy.server.releases.Release;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 
@@ -61,6 +60,8 @@ public class ChartGeneratorTest {
 	private ApplicationEnvironmentConfigProvider environmentConfigProvider;
 	@MockBean
 	private DockerConfigSealedSecretProducer dockerConfigSealedSecretProducer;
+	@MockBean
+	private SecretDataSealedSecretProducer secretDataSealedSecretProducer;
 	@Autowired
 	private Yaml yaml;
 	@Rule
@@ -72,6 +73,7 @@ public class ChartGeneratorTest {
 		repoPath = temporaryFolder.newFolder("repo").toPath();
 
 		when(dockerConfigSealedSecretProducer.produce(any())).thenReturn("encrypted-docker-config");
+		when(secretDataSealedSecretProducer.produce(any())).thenReturn(Collections.singletonMap("secret-key", "secret-value"));
 	}
 
 	@Test
@@ -99,7 +101,7 @@ public class ChartGeneratorTest {
 		assertTrue("We should have a chart yaml", Files.exists(basePath.resolve("Chart.yaml")));
 		Path valuesPath = basePath.resolve("values.yaml");
 		assertTrue("We should have a values yaml", Files.exists(valuesPath));
-		assertEquals("Incorrect amount of template files", 7, Files.list(templatesPath).filter(Files::isRegularFile).count());
+		assertEquals("Incorrect amount of template files", 8, Files.list(templatesPath).filter(Files::isRegularFile).count());
 		assertTrue("We should have a configmap template", Files.exists(templatesPath.resolve("configmap.yaml")));
 		assertTrue("We should have a pvc template", Files.exists(templatesPath.resolve("pvc.yaml")));
 		assertTrue("We should have a deployment template", Files.exists(templatesPath.resolve("deployment.yaml")));
@@ -107,6 +109,7 @@ public class ChartGeneratorTest {
 		assertTrue("We should have a ingress template", Files.exists(templatesPath.resolve("ingress.yaml")));
 		assertTrue("We should have a service template", Files.exists(templatesPath.resolve("service.yaml")));
 		assertTrue("We should have a secret-dockerconfig template", Files.exists(templatesPath.resolve("secret-dockerconfig.yaml")));
+		assertTrue("We should have a secret-generic template", Files.exists(templatesPath.resolve("secret-generic.yaml")));
 
 		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
 
@@ -118,6 +121,7 @@ public class ChartGeneratorTest {
 			.environmentVariables(new LinkedHashMap<>())
 			.configs(new LinkedHashMap<>())
 			.volumes(new LinkedHashMap<>())
+			.secrets(new LinkedHashMap<>())
 			.build();
 		Map<String, ApplicationValues> expectedApps = new LinkedHashMap<>();
 		expectedApps.put("app1", expectedApplicationValues);
@@ -164,6 +168,9 @@ public class ChartGeneratorTest {
 		List<ApplicationVolume> appVolumes = Collections.singletonList(new ApplicationVolume("my-volume", "/opt/vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi));
 		applicationVersion.setVolumes(appVolumes);
 
+		List<ApplicationSecret> appSecrets = Collections.singletonList(new ApplicationSecret("my-secret", Collections.singletonMap("secret-key", "secret-value")));
+		applicationVersion.setSecrets(appSecrets);
+
 		Map<String, String> environmentVariablesEnv = Collections.singletonMap("DEV_ENV", "VAR");
 		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
 
@@ -180,7 +187,7 @@ public class ChartGeneratorTest {
 		assertTrue("We should have a chart yaml", Files.exists(basePath.resolve("Chart.yaml")));
 		Path valuesPath = basePath.resolve("values.yaml");
 		assertTrue("We should have a values yaml", Files.exists(valuesPath));
-		assertEquals("Incorrect amount of template files", 12, Files.list(templatesPath).filter(Files::isRegularFile).count());
+		assertEquals("Incorrect amount of template files", 14, Files.list(templatesPath).filter(Files::isRegularFile).count());
 		assertTrue("We should have a configmap template", Files.exists(templatesPath.resolve("configmap.yaml")));
 		assertTrue("We should have a configmap-app1 template", Files.exists(templatesPath.resolve("configmap-app1.yaml")));
 		assertTrue("We should have a pvc template", Files.exists(templatesPath.resolve("pvc.yaml")));
@@ -193,6 +200,8 @@ public class ChartGeneratorTest {
 		assertTrue("We should have a service-app1 template", Files.exists(templatesPath.resolve("service-app1.yaml")));
 		assertTrue("We should have a secret-dockerconfig template", Files.exists(templatesPath.resolve("secret-dockerconfig.yaml")));
 		assertTrue("We should have a secret-dockerconfig-app1 template", Files.exists(templatesPath.resolve("secret-dockerconfig-app1.yaml")));
+		assertTrue("We should have a secret-generic template", Files.exists(templatesPath.resolve("secret-generic.yaml")));
+		assertTrue("We should have a secret-generic-app1 template", Files.exists(templatesPath.resolve("secret-generic-app1.yaml")));
 
 		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
 
@@ -206,6 +215,9 @@ public class ChartGeneratorTest {
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
 		volumes.put("application-volume-1", new ApplicationVolumeValues("my-volume", "/opt/vol", "standard", "ReadWriteOnce", "2Gi"));
+
+		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
+		secrets.put("application-secret-1", new ApplicationSecretValues("my-secret", Collections.singletonMap("secret-key", "secret-value")));
 
 		ApplicationValues expectedApplicationValues = ApplicationValues.builder()
 			.name("app1")
@@ -223,6 +235,7 @@ public class ChartGeneratorTest {
 			.configPath("/opt/config")
 			.configs(configs)
 			.volumes(volumes)
+			.secrets(secrets)
 			.build();
 		Map<String, ApplicationValues> expectedApps = new LinkedHashMap<>();
 		expectedApps.put("app1", expectedApplicationValues);
@@ -267,7 +280,7 @@ public class ChartGeneratorTest {
 		assertEquals("Incorrect amount of chart files", 2, Files.list(basePath).filter(Files::isRegularFile).count());
 		assertTrue("We should have a chart yaml", Files.exists(basePath.resolve("Chart.yaml")));
 		assertTrue("We should have a values yaml", Files.exists(basePath.resolve("values.yaml")));
-		assertEquals("Incorrect amount of template files", 7, Files.list(templatesPath).filter(Files::isRegularFile).count());
+		assertEquals("Incorrect amount of template files", 8, Files.list(templatesPath).filter(Files::isRegularFile).count());
 		assertTrue("We should have a configmap template", Files.exists(templatesPath.resolve("configmap.yaml")));
 		assertTrue("We should have a pvc template", Files.exists(templatesPath.resolve("pvc.yaml")));
 		assertTrue("We should have a deployment template", Files.exists(templatesPath.resolve("deployment.yaml")));
@@ -275,6 +288,7 @@ public class ChartGeneratorTest {
 		assertTrue("We should have a ingress template", Files.exists(templatesPath.resolve("ingress.yaml")));
 		assertTrue("We should have a service template", Files.exists(templatesPath.resolve("service.yaml")));
 		assertTrue("We should have a secret-dockerconfig template", Files.exists(templatesPath.resolve("secret-dockerconfig.yaml")));
+		assertTrue("We should have a secret-generic template", Files.exists(templatesPath.resolve("secret-generic.yaml")));
 	}
 
 	@Test
@@ -302,7 +316,7 @@ public class ChartGeneratorTest {
 		assertTrue("We should have a chart yaml", Files.exists(basePath.resolve("Chart.yaml")));
 		Path valuesPath = basePath.resolve("values.yaml");
 		assertTrue("We should have a values yaml", Files.exists(valuesPath));
-		assertEquals("Incorrect amount of template files", 7, Files.list(templatesPath).filter(Files::isRegularFile).count());
+		assertEquals("Incorrect amount of template files", 8, Files.list(templatesPath).filter(Files::isRegularFile).count());
 		assertTrue("We should have a configmap template", Files.exists(templatesPath.resolve("configmap.yaml")));
 		assertTrue("We should have a pvc template", Files.exists(templatesPath.resolve("pvc.yaml")));
 		assertTrue("We should have a deployment template", Files.exists(templatesPath.resolve("deployment.yaml")));
@@ -310,6 +324,7 @@ public class ChartGeneratorTest {
 		assertTrue("We should have a route template", Files.exists(templatesPath.resolve("route.yaml")));
 		assertTrue("We should have a service template", Files.exists(templatesPath.resolve("service.yaml")));
 		assertTrue("We should have a secret-dockerconfig template", Files.exists(templatesPath.resolve("secret-dockerconfig.yaml")));
+		assertTrue("We should have a secret-generic template", Files.exists(templatesPath.resolve("secret-generic.yaml")));
 
 		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
 
@@ -321,6 +336,7 @@ public class ChartGeneratorTest {
 			.environmentVariables(new LinkedHashMap<>())
 			.configs(new LinkedHashMap<>())
 			.volumes(new LinkedHashMap<>())
+			.secrets(new LinkedHashMap<>())
 			.build();
 		Map<String, ApplicationValues> expectedApps = new LinkedHashMap<>();
 		expectedApps.put("app1", expectedApplicationValues);
@@ -367,6 +383,9 @@ public class ChartGeneratorTest {
 		List<ApplicationVolume> appVolumes = Collections.singletonList(new ApplicationVolume("my-volume", "/opt/vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi));
 		applicationVersion.setVolumes(appVolumes);
 
+		List<ApplicationSecret> appSecrets = Collections.singletonList(new ApplicationSecret("my-secret", Collections.singletonMap("secret-key", "secret-value")));
+		applicationVersion.setSecrets(appSecrets);
+
 		Map<String, String> environmentVariablesEnv = Collections.singletonMap("DEV_ENV", "VAR");
 		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
 
@@ -383,7 +402,7 @@ public class ChartGeneratorTest {
 		assertTrue("We should have a chart yaml", Files.exists(basePath.resolve("Chart.yaml")));
 		Path valuesPath = basePath.resolve("values.yaml");
 		assertTrue("We should have a values yaml", Files.exists(valuesPath));
-		assertEquals("Incorrect amount of template files", 12, Files.list(templatesPath).filter(Files::isRegularFile).count());
+		assertEquals("Incorrect amount of template files", 14, Files.list(templatesPath).filter(Files::isRegularFile).count());
 		assertTrue("We should have a configmap template", Files.exists(templatesPath.resolve("configmap.yaml")));
 		assertTrue("We should have a configmap-app1 template", Files.exists(templatesPath.resolve("configmap-app1.yaml")));
 		assertTrue("We should have a pvc template", Files.exists(templatesPath.resolve("pvc.yaml")));
@@ -396,6 +415,8 @@ public class ChartGeneratorTest {
 		assertTrue("We should have a service-app1 template", Files.exists(templatesPath.resolve("service-app1.yaml")));
 		assertTrue("We should have a secret-dockerconfig template", Files.exists(templatesPath.resolve("secret-dockerconfig.yaml")));
 		assertTrue("We should have a secret-dockerconfig-app1 template", Files.exists(templatesPath.resolve("secret-dockerconfig-app1.yaml")));
+		assertTrue("We should have a secret-generic template", Files.exists(templatesPath.resolve("secret-generic.yaml")));
+		assertTrue("We should have a secret-generic-app1 template", Files.exists(templatesPath.resolve("secret-generic-app1.yaml")));
 
 		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
 
@@ -409,6 +430,9 @@ public class ChartGeneratorTest {
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
 		volumes.put("application-volume-1", new ApplicationVolumeValues("my-volume", "/opt/vol", "standard", "ReadWriteOnce", "2Gi"));
+
+		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
+		secrets.put("application-secret-1", new ApplicationSecretValues("my-secret", Collections.singletonMap("secret-key", "secret-value")));
 
 		ApplicationValues expectedApplicationValues = ApplicationValues.builder()
 			.name("app1")
@@ -426,6 +450,7 @@ public class ChartGeneratorTest {
 			.configPath("/opt/config")
 			.configs(configs)
 			.volumes(volumes)
+			.secrets(secrets)
 			.build();
 		Map<String, ApplicationValues> expectedApps = new LinkedHashMap<>();
 		expectedApps.put("app1", expectedApplicationValues);
@@ -470,7 +495,7 @@ public class ChartGeneratorTest {
 		assertEquals("Incorrect amount of chart files", 2, Files.list(basePath).filter(Files::isRegularFile).count());
 		assertTrue("We should have a chart yaml", Files.exists(basePath.resolve("Chart.yaml")));
 		assertTrue("We should have a values yaml", Files.exists(basePath.resolve("values.yaml")));
-		assertEquals("Incorrect amount of template files", 7, Files.list(templatesPath).filter(Files::isRegularFile).count());
+		assertEquals("Incorrect amount of template files", 8, Files.list(templatesPath).filter(Files::isRegularFile).count());
 		assertTrue("We should have a configmap template", Files.exists(templatesPath.resolve("configmap.yaml")));
 		assertTrue("We should have a pvc template", Files.exists(templatesPath.resolve("pvc.yaml")));
 		assertTrue("We should have a deployment template", Files.exists(templatesPath.resolve("deployment.yaml")));
@@ -478,5 +503,6 @@ public class ChartGeneratorTest {
 		assertTrue("We should have a route template", Files.exists(templatesPath.resolve("route.yaml")));
 		assertTrue("We should have a service template", Files.exists(templatesPath.resolve("service.yaml")));
 		assertTrue("We should have a secret-dockerconfig template", Files.exists(templatesPath.resolve("secret-dockerconfig.yaml")));
+		assertTrue("We should have a secret-generic template", Files.exists(templatesPath.resolve("secret-generic.yaml")));
 	}
 }
