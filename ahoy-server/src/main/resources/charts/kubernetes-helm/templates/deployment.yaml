@@ -89,8 +89,14 @@ spec:
         {{ end }}
         {{- range $name, $volume := .app.volumes }}
         - name: {{ $volume.name }}
+          {{ if eq $volume.type "PersistentVolume"}}
           persistentVolumeClaim:
             claimName: {{ $.glob.releaseName }}-{{ $.app.name }}-{{ $volume.name }}
+          {{ end }}
+          {{ if eq $volume.type "Secret"}}
+          secret:
+            secretName: {{ $.glob.releaseName }}-{{ $.app.name }}-{{ $volume.secretName }}
+          {{ end }}
         {{- end}}
       {{ end }}
   {{- end -}}

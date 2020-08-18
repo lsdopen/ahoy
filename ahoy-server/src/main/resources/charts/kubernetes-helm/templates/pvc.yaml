@@ -1,5 +1,6 @@
 {{- define "pvc.app" -}}
   {{- range $name, $volume := .app.volumes }}
+  {{ if eq $volume.type "PersistentVolume"}}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -17,5 +18,6 @@ spec:
   resources:
     requests:
       storage: {{ $volume.size }}
+  {{ end }}
   {{- end }}
   {{- end -}}

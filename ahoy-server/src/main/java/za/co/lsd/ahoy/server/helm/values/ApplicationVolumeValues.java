@@ -20,6 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import za.co.lsd.ahoy.server.applications.ApplicationVolume;
+import za.co.lsd.ahoy.server.applications.VolumeType;
 
 @Data
 @NoArgsConstructor
@@ -27,15 +28,38 @@ import za.co.lsd.ahoy.server.applications.ApplicationVolume;
 public class ApplicationVolumeValues {
 	private String name;
 	private String mountPath;
+	private String type;
 	private String storageClassName;
 	private String accessMode;
 	private String size;
+	private String secretName;
 
 	public ApplicationVolumeValues(ApplicationVolume volume) {
 		this.name = volume.getName();
 		this.mountPath = volume.getMountPath();
-		this.storageClassName = volume.getStorageClassName();
-		this.accessMode = volume.getAccessMode().name();
-		this.size = volume.getSize() + volume.getSizeStorageUnit().name();
+		this.type = volume.getType().name();
+		if (volume.getType().equals(VolumeType.PersistentVolume)) {
+			this.storageClassName = volume.getStorageClassName();
+			this.accessMode = volume.getAccessMode().name();
+			this.size = volume.getSize() + volume.getSizeStorageUnit().name();
+		} else if (volume.getType().equals(VolumeType.Secret)) {
+			this.secretName = volume.getSecretName();
+		}
+	}
+
+	public ApplicationVolumeValues(String name, String mountPath, String storageClassName, String accessMode, String size) {
+		this.name = name;
+		this.mountPath = mountPath;
+		this.type = VolumeType.PersistentVolume.name();
+		this.storageClassName = storageClassName;
+		this.accessMode = accessMode;
+		this.size = size;
+	}
+
+	public ApplicationVolumeValues(String name, String mountPath, String secretName) {
+		this.name = name;
+		this.mountPath = mountPath;
+		this.type = VolumeType.Secret.name();
+		this.secretName = secretName;
 	}
 }

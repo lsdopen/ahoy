@@ -194,32 +194,54 @@
                       </mat-form-field>
 
                       <mat-form-field>
-                        <input matInput [(ngModel)]="applicationVersion.volumes[volumeIndex].storageClassName"
-                               placeholder="Storage class name"
-                               name="volumeStorageClassName{{volumeIndex}}">
-                      </mat-form-field>
-
-                      <mat-form-field>
-                        <mat-select [(ngModel)]="applicationVersion.volumes[volumeIndex].accessMode"
-                                    name="volumeAccessMode{{volumeIndex}}" required>
-                          <mat-option value="ReadWriteOnce">ReadWriteOnce</mat-option>
-                          <mat-option value="ReadWriteMany">ReadWriteMany</mat-option>
-                          <mat-option value="ReadOnlyMany">ReadOnlyMany</mat-option>
+                        <mat-select [(ngModel)]="applicationVersion.volumes[volumeIndex].type"
+                                    name="volumeType{{volumeIndex}}" required placeholder="Type">
+                          <mat-option value="PersistentVolume">Persistent Volume</mat-option>
+                          <mat-option value="Secret">Secret</mat-option>
                         </mat-select>
                       </mat-form-field>
 
-                      <div fxLayout="row" fxLayoutGap="10px">
+                      <div *ngIf="applicationVersion.volumes[volumeIndex].type === 'PersistentVolume'" fxLayout="column" class="form-area">
                         <mat-form-field>
-                          <input matInput [(ngModel)]="applicationVersion.volumes[volumeIndex].size"
-                                 placeholder="Storage size"
-                                 name="volumeStorageSize{{volumeIndex}}" required>
+                          <input matInput [(ngModel)]="applicationVersion.volumes[volumeIndex].storageClassName"
+                                 placeholder="Storage class name"
+                                 name="volumeStorageClassName{{volumeIndex}}">
                         </mat-form-field>
 
                         <mat-form-field>
-                          <mat-select [(ngModel)]="applicationVersion.volumes[volumeIndex].sizeStorageUnit"
-                                      name="volumeStorageSizeUnit{{volumeIndex}}" required>
-                            <mat-option value="Mi">Mi</mat-option>
-                            <mat-option value="Gi">Gi</mat-option>
+                          <mat-select [(ngModel)]="applicationVersion.volumes[volumeIndex].accessMode"
+                                      name="volumeAccessMode{{volumeIndex}}" required placeholder="Access Mode">
+                            <mat-option value="ReadWriteOnce">ReadWriteOnce</mat-option>
+                            <mat-option value="ReadWriteMany">ReadWriteMany</mat-option>
+                            <mat-option value="ReadOnlyMany">ReadOnlyMany</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+
+                        <div fxLayout="row" fxLayoutGap="10px">
+                          <mat-form-field>
+                            <input matInput [(ngModel)]="applicationVersion.volumes[volumeIndex].size"
+                                   placeholder="Storage size"
+                                   name="volumeStorageSize{{volumeIndex}}" required>
+                          </mat-form-field>
+
+                          <mat-form-field>
+                            <mat-select [(ngModel)]="applicationVersion.volumes[volumeIndex].sizeStorageUnit"
+                                        name="volumeStorageSizeUnit{{volumeIndex}}" required placeholder="Unit">
+                              <mat-option value="Mi">Mi</mat-option>
+                              <mat-option value="Gi">Gi</mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                        </div>
+                      </div>
+
+                      <div *ngIf="applicationVersion.volumes[volumeIndex].type === 'Secret'" fxLayout="column" class="form-area">
+                        <mat-form-field>
+                          <mat-select [(ngModel)]="applicationVersion.volumes[volumeIndex].secretName"
+                                      name="volumeSecretName{{volumeIndex}}" required placeholder="Secret">
+                            <mat-option>--</mat-option>
+                            <mat-option *ngFor="let secret of applicationVersion.secrets" [value]="secret.name">
+                              {{secret.name}}
+                            </mat-option>
                           </mat-select>
                         </mat-form-field>
                       </div>
@@ -257,12 +279,14 @@
                         <input matInput [(ngModel)]="applicationVersion.secrets[secretIndex].name" placeholder="Name"
                                name="secretName{{secretIndex}}"
                                required
+                               [readonly]="secretInUse()"
+                               [matTooltip]="secretInUse() ? 'Secret in use' : ''"
                                pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$">
                         <mat-hint>should start with and use lower case letters and numbers</mat-hint>
                       </mat-form-field>
 
                       <app-application-secret-data fxFill
-                        [secretData]="applicationVersion.secrets[secretIndex].data">
+                                                   [secretData]="applicationVersion.secrets[secretIndex].data">
                       </app-application-secret-data>
 
                     </div>
@@ -273,8 +297,8 @@
                   <button mat-icon-button (click)="addSecret()">
                     <mat-icon>add_circle</mat-icon>
                   </button>
-                  <button mat-icon-button (click)="deleteSecret()">
-                    <mat-icon>remove_circle</mat-icon>
+                  <button mat-icon-button (click)="deleteSecret()" [disabled]="secretInUse()">
+                    <mat-icon [matTooltip]="secretInUse() ? 'Secret in use' : ''">remove_circle</mat-icon>
                   </button>
                 </div>
               </div>

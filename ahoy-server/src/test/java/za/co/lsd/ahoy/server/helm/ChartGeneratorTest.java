@@ -165,7 +165,10 @@ public class ChartGeneratorTest {
 		environmentConfig.setConfigFileName("application-dev.properties");
 		environmentConfig.setConfigFileContent("anothergreeting=hello");
 
-		List<ApplicationVolume> appVolumes = Collections.singletonList(new ApplicationVolume("my-volume", "/opt/vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi));
+		List<ApplicationVolume> appVolumes = Arrays.asList(
+			new ApplicationVolume("my-volume", "/opt/vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
+			new ApplicationVolume("my-secret-volume", "/opt/secret-vol", "my-secret")
+		);
 		applicationVersion.setVolumes(appVolumes);
 
 		List<ApplicationSecret> appSecrets = Collections.singletonList(new ApplicationSecret("my-secret", Collections.singletonMap("secret-key", "secret-value")));
@@ -215,6 +218,7 @@ public class ChartGeneratorTest {
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
 		volumes.put("application-volume-1", new ApplicationVolumeValues("my-volume", "/opt/vol", "standard", "ReadWriteOnce", "2Gi"));
+		volumes.put("application-volume-2", new ApplicationVolumeValues("my-secret-volume", "/opt/secret-vol", "my-secret"));
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
 		secrets.put("application-secret-1", new ApplicationSecretValues("my-secret", Collections.singletonMap("secret-key", "secret-value")));
@@ -380,7 +384,10 @@ public class ChartGeneratorTest {
 		environmentConfig.setConfigFileName("application-dev.properties");
 		environmentConfig.setConfigFileContent("anothergreeting=hello");
 
-		List<ApplicationVolume> appVolumes = Collections.singletonList(new ApplicationVolume("my-volume", "/opt/vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi));
+		List<ApplicationVolume> appVolumes = Arrays.asList(
+			new ApplicationVolume("my-volume", "/opt/vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
+			new ApplicationVolume("my-secret-volume", "/opt/secret-vol", "my-secret")
+		);
 		applicationVersion.setVolumes(appVolumes);
 
 		List<ApplicationSecret> appSecrets = Collections.singletonList(new ApplicationSecret("my-secret", Collections.singletonMap("secret-key", "secret-value")));
@@ -430,6 +437,7 @@ public class ChartGeneratorTest {
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
 		volumes.put("application-volume-1", new ApplicationVolumeValues("my-volume", "/opt/vol", "standard", "ReadWriteOnce", "2Gi"));
+		volumes.put("application-volume-2", new ApplicationVolumeValues("my-secret-volume", "/opt/secret-vol", "my-secret"));
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
 		secrets.put("application-secret-1", new ApplicationSecretValues("my-secret", Collections.singletonMap("secret-key", "secret-value")));

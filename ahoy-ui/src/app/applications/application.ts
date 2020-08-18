@@ -53,10 +53,12 @@ export class ApplicationVolume {
   id: number;
   name: string;
   mountPath: string;
+  type: string;
   storageClassName = "standard";
   accessMode = "ReadWriteOnce";
   size: number;
   sizeStorageUnit = "Gi";
+  secretName: string;
 }
 
 export class ApplicationSecret {

@@ -36,18 +36,20 @@ public class ApplicationVolume {
 	private String name;
 	@NotNull
 	private String mountPath;
-	/**
-	 * storageClassName is optional
-	 */
-	private String storageClassName;
 	@NotNull
+	@Enumerated(EnumType.STRING)
+	private VolumeType type;
+
+	// PersistentVolume
+	private String storageClassName;
 	@Enumerated(EnumType.STRING)
 	private VolumeAccessMode accessMode;
-	@NotNull
 	private Long size;
-	@NotNull
 	@Enumerated(EnumType.STRING)
 	private StorageUnit sizeStorageUnit;
+
+	// Secret
+	private String secretName;
 
 	@ManyToOne
 	@JsonBackReference
@@ -57,9 +59,17 @@ public class ApplicationVolume {
 	public ApplicationVolume(String name, String mountPath, String storageClassName, VolumeAccessMode accessMode, Long size, StorageUnit sizeStorageUnit) {
 		this.name = name;
 		this.mountPath = mountPath;
+		this.type = VolumeType.PersistentVolume;
 		this.storageClassName = storageClassName;
 		this.accessMode = accessMode;
 		this.size = size;
 		this.sizeStorageUnit = sizeStorageUnit;
+	}
+
+	public ApplicationVolume(String name, String mountPath, String secretName) {
+		this.name = name;
+		this.mountPath = mountPath;
+		this.type = VolumeType.Secret;
+		this.secretName = secretName;
 	}
 }
