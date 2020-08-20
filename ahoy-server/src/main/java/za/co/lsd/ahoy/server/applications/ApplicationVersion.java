@@ -25,7 +25,6 @@ import za.co.lsd.ahoy.server.util.IntegerListConverter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Map;
 
 @Entity
 @Data
@@ -46,9 +45,6 @@ public class ApplicationVersion {
 	@Convert(converter = IntegerListConverter.class)
 	private List<Integer> servicePorts;
 
-	@ElementCollection
-	private Map<String, String> environmentVariables;
-
 	private String healthEndpointPath;
 	private Integer healthEndpointPort;
 	private String healthEndpointScheme;
@@ -57,6 +53,10 @@ public class ApplicationVersion {
 	private Application application;
 
 	private String configPath;
+
+	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference("applicationVersionReference")
+	private List<ApplicationEnvironmentVariable> environmentVariables;
 
 	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference

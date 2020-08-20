@@ -29,7 +29,7 @@ export class ApplicationVersion {
   dockerRegistry: DockerRegistry;
   image: string;
   version: string;
-  environmentVariables: { [key: string]: string };
+  environmentVariables: ApplicationEnvironmentVariable[];
   healthEndpointPath: string;
   healthEndpointPort: number;
   healthEndpointScheme: string;
@@ -41,6 +41,32 @@ export class ApplicationVersion {
   configPath: string;
   environmentConfig: ApplicationEnvironmentConfig;
   status: ApplicationReleaseStatus;
+}
+
+export class ApplicationEnvironmentVariable {
+  id: number;
+  key: string;
+  value: string;
+  type: string;
+  secretName: string;
+  secretKey: string;
+
+  static newValueType(key: string, value: string): ApplicationEnvironmentVariable {
+    let environmentVariable = new ApplicationEnvironmentVariable();
+    environmentVariable.type = 'Value';
+    environmentVariable.key = key;
+    environmentVariable.value = value;
+    return environmentVariable;
+  }
+
+  static newSecretType(key: string, secretName: string, secretKey: string): ApplicationEnvironmentVariable {
+    let environmentVariable = new ApplicationEnvironmentVariable();
+    environmentVariable.type = 'Secret';
+    environmentVariable.key = key;
+    environmentVariable.secretName = secretName;
+    environmentVariable.secretKey = secretKey;
+    return environmentVariable;
+  }
 }
 
 export class ApplicationConfig {
@@ -72,7 +98,7 @@ export class ApplicationEnvironmentConfig {
   replicas: number;
   routeHostname: string;
   routeTargetPort: number;
-  environmentVariables: { [key: string]: string };
+  environmentVariables: ApplicationEnvironmentVariable[];
   configFileName: string;
   configFileContent: string;
 }

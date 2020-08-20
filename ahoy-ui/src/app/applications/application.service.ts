@@ -134,7 +134,7 @@ export class ApplicationService {
       const defaultConfig = new ApplicationEnvironmentConfig();
       defaultConfig.id = id;
       defaultConfig.replicas = 1;
-      defaultConfig.environmentVariables = {};
+      defaultConfig.environmentVariables = [];
       return defaultConfig;
     }).pipe(
       tap((config) => this.log.debug('fetched application environment config', config))

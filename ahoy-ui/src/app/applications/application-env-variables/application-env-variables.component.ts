@@ -15,6 +15,8 @@
  */
 
 import {Component, Input, OnInit} from '@angular/core';
+import {ApplicationEnvironmentVariable, ApplicationSecret} from "../application";
+import {MatTableDataSource} from "@angular/material/table";
 
 @Component({
   selector: 'app-application-env-variables',
@@ -22,11 +24,15 @@ import {Component, Input, OnInit} from '@angular/core';
   styleUrls: ['./application-env-variables.component.scss']
 })
 export class ApplicationEnvVariablesComponent implements OnInit {
-  @Input() environmentVariables: { [key: string]: string };
-  private newEnvironmentVariableKey: string;
-  private newEnvironmentVariableValue: string;
-  data: EnvironmentVariable[];
+  @Input() environmentVariables: ApplicationEnvironmentVariable[];
+  @Input() secrets: ApplicationSecret[];
+  data = new MatTableDataSource<ApplicationEnvironmentVariable>();
   displayedColumns = ['key', 'value', 'remove'];
+  type: string = 'Value';
+  key: string;
+  value: string;
+  secret: ApplicationSecret;
+  secretKey: string;
 
   constructor() {
   }
@@ -36,35 +42,37 @@ export class ApplicationEnvVariablesComponent implements OnInit {
   }
 
   addEnvironmentVariable() {
-    if (this.newEnvironmentVariableKey && this.newEnvironmentVariableValue) {
-      this.environmentVariables[this.newEnvironmentVariableKey] = this.newEnvironmentVariableValue;
+    if (this.key) {
+      let existingEnvVar = this.environmentVariables.find(envVar => envVar.key === this.key);
+      if (this.type === 'Value' && this.value) {
+        if (existingEnvVar) {
+          existingEnvVar.value = this.value;
+        } else {
+          this.environmentVariables.push(ApplicationEnvironmentVariable.newValueType(this.key, this.value))
+        }
+      } else if (this.type === 'Secret' && this.secret && this.secretKey) {
+        if (existingEnvVar) {
+          existingEnvVar.secretName = this.secret.name;
+          existingEnvVar.secretKey = this.secretKey;
+        } else {
+          this.environmentVariables.push(ApplicationEnvironmentVariable.newSecretType(this.key, this.secret.name, this.secretKey))
+        }
+      }
       this.refresh();
-      this.newEnvironmentVariableKey = null;
-      this.newEnvironmentVariableValue = null;
+      this.key = null;
+      this.value = null;
+      this.secret = null;
+      this.secretKey = null;
     }
   }
 
-  removeEnvironmentVariable(key: string) {
-    delete this.environmentVariables[key];
+  removeEnvironmentVariable(environmentVariable: ApplicationEnvironmentVariable) {
+    let index = this.environmentVariables.indexOf(environmentVariable);
+    this.environmentVariables.splice(index, 1);
     this.refresh();
   }
 
   refresh() {
-    this.data = [];
-    if (this.environmentVariables) {
-      for (const key of Object.keys(this.environmentVariables)) {
-        this.data.push(new EnvironmentVariable(key, this.environmentVariables[key]));
-      }
-    }
-  }
-}
-
-export class EnvironmentVariable {
-  key: string;
-  value: string;
-
-  constructor(key: string, value: string) {
-    this.key = key;
-    this.value = value;
+    this.data.data = this.environmentVariables;
   }
 }

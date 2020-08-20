@@ -59,7 +59,7 @@
             </mat-expansion-panel-header>
 
             <app-application-env-variables
-              [environmentVariables]="config.environmentVariables">
+              [environmentVariables]="config.environmentVariables" [secrets]="applicationVersion.secrets">
             </app-application-env-variables>
           </mat-expansion-panel>
 

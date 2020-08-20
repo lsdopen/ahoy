@@ -44,7 +44,7 @@ public class ApplicationValues {
 	public Integer replicas;
 	public String routeHostname;
 	public Integer routeTargetPort;
-	public Map<String, String> environmentVariables;
+	public Map<String, EnvironmentVariableValues> environmentVariables;
 	public String healthEndpointPath;
 	public Integer healthEndpointPort;
 	public String healthEndpointScheme;
@@ -69,9 +69,12 @@ public class ApplicationValues {
 			builder.dockerConfigJson(dockerConfigSealedSecretProducer.produce(dockerRegistry));
 		}
 
-		Map<String, String> environmentVariables = new LinkedHashMap<>();
-		if (applicationVersion.getEnvironmentVariables() != null)
-			environmentVariables.putAll(applicationVersion.getEnvironmentVariables());
+		Map<String, EnvironmentVariableValues> environmentVariables = new LinkedHashMap<>();
+		if (applicationVersion.getEnvironmentVariables() != null) {
+			for (ApplicationEnvironmentVariable environmentVariable : applicationVersion.getEnvironmentVariables()) {
+				environmentVariables.put(environmentVariable.getKey(), new EnvironmentVariableValues(environmentVariable));
+			}
+		}
 
 		Map<String, ApplicationConfigValues> configs = new LinkedHashMap<>();
 		if (applicationVersion.getConfigs() != null) {
@@ -104,7 +107,9 @@ public class ApplicationValues {
 			}
 
 			if (environmentConfig.getEnvironmentVariables() != null) {
-				environmentVariables.putAll(environmentConfig.getEnvironmentVariables());
+				for (ApplicationEnvironmentVariable environmentVariable : environmentConfig.getEnvironmentVariables()) {
+					environmentVariables.put(environmentVariable.getKey(), new EnvironmentVariableValues(environmentVariable));
+				}
 			}
 
 			builder

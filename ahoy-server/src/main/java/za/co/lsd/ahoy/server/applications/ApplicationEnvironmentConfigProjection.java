@@ -20,7 +20,7 @@ import org.springframework.data.rest.core.config.Projection;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 
-import java.util.Map;
+import java.util.List;
 
 @Projection(name = "applicationEnvironmentConfig", types = {ApplicationEnvironmentConfig.class})
 public interface ApplicationEnvironmentConfigProjection {
@@ -30,7 +30,7 @@ public interface ApplicationEnvironmentConfigProjection {
 
 	Integer getRouteTargetPort();
 
-	Map<String, String> getEnvironmentVariables();
+	List<ApplicationEnvironmentVariable> getEnvironmentVariables();
 
 	String getConfigFileName();
 

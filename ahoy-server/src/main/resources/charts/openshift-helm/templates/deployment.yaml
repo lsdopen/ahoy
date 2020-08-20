@@ -34,9 +34,18 @@ spec:
           name: {{ .glob.releaseName }}-{{ .app.name }}
           {{ if .app.environmentVariables }}
           env:
-            {{- range $name, $value := .app.environmentVariables }}
+            {{- range $name, $envVariable := .app.environmentVariables }}
+            {{ if eq $envVariable.type "Value"}}
             - name: {{ $name }}
-              value: '{{ $value }}'
+              value: '{{ $envVariable.value }}'
+            {{ end }}
+            {{ if eq $envVariable.type "Secret"}}
+            - name: {{ $name }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.glob.releaseName }}-{{ $.app.name }}-{{ $envVariable.secretName }}
+                  key: {{ $envVariable.secretKey }}
+            {{ end }}
             {{- end }}
           {{ end }}
           {{ if .app.servicePorts }}

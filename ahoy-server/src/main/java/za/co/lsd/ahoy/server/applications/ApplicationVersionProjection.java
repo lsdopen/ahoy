@@ -20,7 +20,6 @@ import org.springframework.data.rest.core.config.Projection;
 import za.co.lsd.ahoy.server.docker.DockerRegistry;
 
 import java.util.List;
-import java.util.Map;
 
 @Projection(name = "applicationVersion", types = {ApplicationVersion.class})
 public interface ApplicationVersionProjection {
@@ -34,7 +33,7 @@ public interface ApplicationVersionProjection {
 
 	List<Integer> getServicePorts();
 
-	Map<String, String> getEnvironmentVariables();
+	List<ApplicationEnvironmentVariable> getEnvironmentVariables();
 
 	String getHealthEndpointPath();
 

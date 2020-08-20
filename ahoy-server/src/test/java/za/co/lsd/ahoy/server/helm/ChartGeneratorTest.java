@@ -150,7 +150,10 @@ public class ChartGeneratorTest {
 		applicationVersion.setDockerRegistry(new DockerRegistry("docker-registry", "docker-server", "username", "password"));
 		List<Integer> servicePorts = Collections.singletonList(8080);
 		applicationVersion.setServicePorts(servicePorts);
-		Map<String, String> environmentVariables = Collections.singletonMap("ENV", "VAR");
+		List<ApplicationEnvironmentVariable> environmentVariables = Arrays.asList(
+			new ApplicationEnvironmentVariable("ENV", "VAR"),
+			new ApplicationEnvironmentVariable("SECRET_ENV", "my-secret", "secret-key")
+		);
 		applicationVersion.setEnvironmentVariables(environmentVariables);
 		applicationVersion.setHealthEndpointPath("/");
 		applicationVersion.setHealthEndpointPort(8080);
@@ -174,7 +177,10 @@ public class ChartGeneratorTest {
 		List<ApplicationSecret> appSecrets = Collections.singletonList(new ApplicationSecret("my-secret", Collections.singletonMap("secret-key", "secret-value")));
 		applicationVersion.setSecrets(appSecrets);
 
-		Map<String, String> environmentVariablesEnv = Collections.singletonMap("DEV_ENV", "VAR");
+		List<ApplicationEnvironmentVariable> environmentVariablesEnv = Arrays.asList(
+			new ApplicationEnvironmentVariable("DEV_ENV", "VAR"),
+			new ApplicationEnvironmentVariable("SECRET_DEV_ENV", "my-secret", "secret-key")
+		);
 		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
 
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.of(environmentConfig));
@@ -208,9 +214,11 @@ public class ChartGeneratorTest {
 
 		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
 
-		Map<String, String> expectedEnvironmentVariables = new LinkedHashMap<>();
-		expectedEnvironmentVariables.putAll(environmentVariables);
-		expectedEnvironmentVariables.putAll(environmentVariablesEnv);
+		Map<String, EnvironmentVariableValues> expectedEnvironmentVariables = new LinkedHashMap<>();
+		expectedEnvironmentVariables.put("ENV", new EnvironmentVariableValues("ENV", "VAR"));
+		expectedEnvironmentVariables.put("SECRET_ENV", new EnvironmentVariableValues("SECRET_ENV", "my-secret", "secret-key"));
+		expectedEnvironmentVariables.put("DEV_ENV", new EnvironmentVariableValues("DEV_ENV", "VAR"));
+		expectedEnvironmentVariables.put("SECRET_DEV_ENV", new EnvironmentVariableValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
 
 		Map<String, ApplicationConfigValues> configs = new LinkedHashMap<>();
 		configs.put("application-config-1", new ApplicationConfigValues("application.properties", "greeting=hello"));
@@ -369,7 +377,10 @@ public class ChartGeneratorTest {
 		applicationVersion.setDockerRegistry(new DockerRegistry("docker-registry", "docker-server", "username", "password"));
 		List<Integer> servicePorts = Collections.singletonList(8080);
 		applicationVersion.setServicePorts(servicePorts);
-		Map<String, String> environmentVariables = Collections.singletonMap("ENV", "VAR");
+		List<ApplicationEnvironmentVariable> environmentVariables = Arrays.asList(
+			new ApplicationEnvironmentVariable("ENV", "VAR"),
+			new ApplicationEnvironmentVariable("SECRET_ENV", "my-secret", "secret-key")
+		);
 		applicationVersion.setEnvironmentVariables(environmentVariables);
 		applicationVersion.setHealthEndpointPath("/");
 		applicationVersion.setHealthEndpointPort(8080);
@@ -393,7 +404,10 @@ public class ChartGeneratorTest {
 		List<ApplicationSecret> appSecrets = Collections.singletonList(new ApplicationSecret("my-secret", Collections.singletonMap("secret-key", "secret-value")));
 		applicationVersion.setSecrets(appSecrets);
 
-		Map<String, String> environmentVariablesEnv = Collections.singletonMap("DEV_ENV", "VAR");
+		List<ApplicationEnvironmentVariable> environmentVariablesEnv = Arrays.asList(
+			new ApplicationEnvironmentVariable("DEV_ENV", "VAR"),
+			new ApplicationEnvironmentVariable("SECRET_DEV_ENV", "my-secret", "secret-key")
+		);
 		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
 
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.of(environmentConfig));
@@ -427,9 +441,11 @@ public class ChartGeneratorTest {
 
 		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
 
-		Map<String, String> expectedEnvironmentVariables = new LinkedHashMap<>();
-		expectedEnvironmentVariables.putAll(environmentVariables);
-		expectedEnvironmentVariables.putAll(environmentVariablesEnv);
+		Map<String, EnvironmentVariableValues> expectedEnvironmentVariables = new LinkedHashMap<>();
+		expectedEnvironmentVariables.put("ENV", new EnvironmentVariableValues("ENV", "VAR"));
+		expectedEnvironmentVariables.put("SECRET_ENV", new EnvironmentVariableValues("SECRET_ENV", "my-secret", "secret-key"));
+		expectedEnvironmentVariables.put("DEV_ENV", new EnvironmentVariableValues("DEV_ENV", "VAR"));
+		expectedEnvironmentVariables.put("SECRET_DEV_ENV", new EnvironmentVariableValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
 
 		Map<String, ApplicationConfigValues> configs = new LinkedHashMap<>();
 		configs.put("application-config-1", new ApplicationConfigValues("application.properties", "greeting=hello"));

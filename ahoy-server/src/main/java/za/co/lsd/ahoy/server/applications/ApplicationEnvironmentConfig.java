@@ -16,16 +16,14 @@
 
 package za.co.lsd.ahoy.server.applications;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -39,8 +37,9 @@ public class ApplicationEnvironmentConfig {
 	private String routeHostname;
 	private Integer routeTargetPort;
 
-	@ElementCollection
-	private Map<String, String> environmentVariables;
+	@OneToMany(mappedBy = "applicationEnvironmentConfig", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference("applicationEnvironmentConfigReference")
+	private List<ApplicationEnvironmentVariable> environmentVariables;
 
 	private String configFileName;
 	@Lob
@@ -52,7 +51,7 @@ public class ApplicationEnvironmentConfig {
 		this.replicas = applicationEnvironmentConfig.getReplicas();
 		this.routeHostname = applicationEnvironmentConfig.getRouteHostname();
 		this.routeTargetPort = applicationEnvironmentConfig.getRouteTargetPort();
-		this.environmentVariables = new LinkedHashMap<>(applicationEnvironmentConfig.getEnvironmentVariables());
+		this.environmentVariables = new ArrayList<>(applicationEnvironmentConfig.getEnvironmentVariables());
 		this.configFileName = applicationEnvironmentConfig.getConfigFileName();
 		this.configFileContent = applicationEnvironmentConfig.getConfigFileContent();
 	}
