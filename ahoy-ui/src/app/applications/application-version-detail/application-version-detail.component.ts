@@ -73,7 +73,7 @@ export class ApplicationVersionDetailComponent implements OnInit {
           this.applicationVersion.volumes = [];
           this.applicationVersion.secrets = [];
           this.applicationVersion.servicePorts = [];
-          this.applicationVersion.environmentVariables = {};
+          this.applicationVersion.environmentVariables = [];
           this.applicationVersion.healthEndpointScheme = 'HTTP';
           this.portsDataSource.data = this.applicationVersion.servicePorts;
 
