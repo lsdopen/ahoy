@@ -21,6 +21,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.introspector.Property;
+import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
 import za.co.lsd.ahoy.server.cluster.ClusterType;
@@ -53,7 +55,15 @@ public class HelmConfiguration {
 		options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 		options.setPrettyFlow(true);
 
-		Representer representer = new Representer();
+		Representer representer = new Representer() {
+			@Override
+			protected NodeTuple representJavaBeanProperty(Object javaBean, Property property, Object propertyValue, Tag customTag) {
+				// if value of property is null, ignore it.
+				return propertyValue == null ?
+					null :
+					super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
+			}
+		};
 		representer.addClassTag(Chart.class, Tag.MAP);
 		representer.addClassTag(Values.class, Tag.MAP);
 		representer.addClassTag(ApplicationValues.class, Tag.MAP);

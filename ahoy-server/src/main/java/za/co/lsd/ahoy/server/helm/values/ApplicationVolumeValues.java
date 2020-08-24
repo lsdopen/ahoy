@@ -41,7 +41,7 @@ public class ApplicationVolumeValues {
 		if (volume.getType().equals(VolumeType.PersistentVolume)) {
 			this.storageClassName = volume.getStorageClassName();
 			this.accessMode = volume.getAccessMode().name();
-			this.size = volume.getSize() + volume.getSizeStorageUnit().name();
+			this.size = volume.getSize() == null ? null : volume.getSize() + volume.getSizeStorageUnit().name();
 		} else if (volume.getType().equals(VolumeType.Secret)) {
 			this.secretName = volume.getSecretName();
 		}

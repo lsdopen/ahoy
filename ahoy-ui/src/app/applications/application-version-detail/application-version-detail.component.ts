@@ -236,8 +236,14 @@ export class ApplicationVersionDetailComponent implements OnInit {
 
   secretInUse(): boolean {
     let secret = this.applicationVersion.secrets[this.selectedSecretIndex];
-    return this.applicationVersion.volumes
-      .filter(volume => volume.type === 'Secret' && volume.secretName === secret.name).length > 0;
+    if (secret && secret.name) {
+      let inUseInVolumes = this.applicationVersion.volumes
+        .filter(volume => volume.type === 'Secret' && volume.secretName === secret.name).length > 0;
+      let inUseInEnvironmentVariables = this.applicationVersion.environmentVariables
+        .filter(envVar => envVar.type === 'Secret' && envVar.secretName === secret.name).length > 0;
+      return inUseInVolumes || inUseInEnvironmentVariables;
+    }
+    return false;
   }
 
   private cloneSecrets(secrets: ApplicationSecret[]): ApplicationSecret[] {

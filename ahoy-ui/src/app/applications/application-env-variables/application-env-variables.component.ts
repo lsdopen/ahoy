@@ -50,6 +50,9 @@ export class ApplicationEnvVariablesComponent implements OnInit {
         } else {
           this.environmentVariables.push(ApplicationEnvironmentVariable.newValueType(this.key, this.value))
         }
+        this.key = null;
+        this.value = null;
+
       } else if (this.type === 'Secret' && this.secret && this.secretKey) {
         if (existingEnvVar) {
           existingEnvVar.secretName = this.secret.name;
@@ -57,12 +60,11 @@ export class ApplicationEnvVariablesComponent implements OnInit {
         } else {
           this.environmentVariables.push(ApplicationEnvironmentVariable.newSecretType(this.key, this.secret.name, this.secretKey))
         }
+        this.key = null;
+        this.secret = null;
+        this.secretKey = null;
       }
       this.refresh();
-      this.key = null;
-      this.value = null;
-      this.secret = null;
-      this.secretKey = null;
     }
   }
 
