@@ -19,9 +19,9 @@
     <app-content [title]="title" [buttonBar]="buttonBar">
       <app-detail>
 
-        <div fxLayout="column" fxLayoutGap="10px">
+        <div fxLayout="column" fxLayoutGap="10px" class="form-area">
 
-          <mat-form-field style="width: 100px">
+          <mat-form-field>
             <input matInput type="number" [min]="0" [max]="100" [(ngModel)]="config.replicas" placeholder="Replicas" name="environmentConfigReplicas"
                    required>
           </mat-form-field>
@@ -31,8 +31,8 @@
               <mat-panel-title>Route</mat-panel-title>
             </mat-expansion-panel-header>
 
-            <div fxLayout="column">
-              <mat-form-field style="width: 30%">
+            <div fxLayout="column" class="form-area">
+              <mat-form-field>
                 <input matInput [(ngModel)]="config.routeHostname" placeholder="Hostname" name="environmentConfigRouteHostname"
                        pattern="(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])"
                        required="{{routeCategory}}">
@@ -41,7 +41,7 @@
                 </mat-error>
               </mat-form-field>
 
-              <mat-form-field style="width: 30%;margin-top: 5px;">
+              <mat-form-field>
                 <mat-select [(ngModel)]="config.routeTargetPort" placeholder="Target Port" name="environmentConfigRouteTargetPort"
                             required="{{routeCategory}}">
                   <mat-option>--</mat-option>
