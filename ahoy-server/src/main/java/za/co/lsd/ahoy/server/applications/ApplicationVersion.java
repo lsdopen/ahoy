@@ -67,7 +67,7 @@ public class ApplicationVersion {
 	private List<ApplicationVolume> volumes;
 
 	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonManagedReference
+	@JsonManagedReference("applicationVersionReference")
 	private List<ApplicationSecret> secrets;
 
 	public ApplicationVersion(@NotNull String version, @NotNull String image, Application application) {

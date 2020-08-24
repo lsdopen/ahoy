@@ -32,6 +32,8 @@ public interface ApplicationEnvironmentConfigProjection {
 
 	List<ApplicationEnvironmentVariable> getEnvironmentVariables();
 
+	List<ApplicationSecret> getSecrets();
+
 	String getConfigFileName();
 
 	String getConfigFileContent();

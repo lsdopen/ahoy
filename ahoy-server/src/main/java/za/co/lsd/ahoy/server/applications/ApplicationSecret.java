@@ -41,9 +41,14 @@ public class ApplicationSecret {
 	private Map<String, String> data;
 
 	@ManyToOne
-	@JsonBackReference
+	@JsonBackReference("applicationVersionReference")
 	@ToString.Exclude
 	private ApplicationVersion applicationVersion;
+
+	@ManyToOne
+	@JsonBackReference("applicationEnvironmentConfigReference")
+	@ToString.Exclude
+	private ApplicationEnvironmentConfig applicationEnvironmentConfig;
 
 	public ApplicationSecret(String name, Map<String, String> data) {
 		this.name = name;

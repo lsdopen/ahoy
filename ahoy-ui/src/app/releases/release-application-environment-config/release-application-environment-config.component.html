@@ -59,7 +59,7 @@
             </mat-expansion-panel-header>
 
             <app-application-env-variables
-              [environmentVariables]="config.environmentVariables" [secrets]="applicationVersion.secrets">
+              [environmentVariables]="config.environmentVariables" [secrets]="config.secrets">
             </app-application-env-variables>
           </mat-expansion-panel>
 
@@ -86,6 +86,46 @@
                       required="{{configFileCategory}}"></textarea>
               </mat-form-field>
             </div>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel [(expanded)]="secretsCategory">
+            <mat-expansion-panel-header>
+              <mat-panel-title>Secrets</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div fxFlex fxLayout="row">
+              <mat-tab-group fxFlex="grow" [(selectedIndex)]="selectedSecretIndex">
+                <mat-tab *ngFor="let secret of config.secrets; let secretIndex = index"
+                         label="{{secret.name ? secret.name : '<new>'}}">
+                  <div fxFlex fxLayout="column" fxLayoutAlign="start start" class="form-area">
+                    <mat-form-field style="margin-top: 10px">
+                      <input matInput [(ngModel)]="config.secrets[secretIndex].name" placeholder="Name"
+                             name="secretName{{secretIndex}}"
+                             required
+                             [readonly]="secretInUse()"
+                             [matTooltip]="secretInUse() ? 'Secret in use' : ''"
+                             pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$">
+                      <mat-hint>should start with and use lower case letters and numbers</mat-hint>
+                    </mat-form-field>
+
+                    <app-application-secret-data fxFill
+                                                 [secretData]="config.secrets[secretIndex].data">
+                    </app-application-secret-data>
+
+                  </div>
+                </mat-tab>
+              </mat-tab-group>
+
+              <div fxFlex fxLayout="column">
+                <button mat-icon-button (click)="addSecret()">
+                  <mat-icon>add_circle</mat-icon>
+                </button>
+                <button mat-icon-button (click)="deleteSecret()" [disabled]="secretInUse()">
+                  <mat-icon [matTooltip]="secretInUse() ? 'Secret in use' : ''">remove_circle</mat-icon>
+                </button>
+              </div>
+            </div>
+
           </mat-expansion-panel>
 
         </div>

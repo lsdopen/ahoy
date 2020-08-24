@@ -99,6 +99,7 @@ export class ApplicationEnvironmentConfig {
   routeHostname: string;
   routeTargetPort: number;
   environmentVariables: ApplicationEnvironmentVariable[];
+  secrets: ApplicationSecret[];
   configFileName: string;
   configFileContent: string;
 }

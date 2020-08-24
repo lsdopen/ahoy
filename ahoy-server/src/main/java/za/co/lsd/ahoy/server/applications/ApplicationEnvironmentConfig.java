@@ -41,6 +41,10 @@ public class ApplicationEnvironmentConfig {
 	@JsonManagedReference("applicationEnvironmentConfigReference")
 	private List<ApplicationEnvironmentVariable> environmentVariables;
 
+	@OneToMany(mappedBy = "applicationEnvironmentConfig", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference("applicationEnvironmentConfigReference")
+	private List<ApplicationSecret> secrets;
+
 	private String configFileName;
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")

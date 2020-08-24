@@ -94,10 +94,9 @@ public class ApplicationValues {
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
 		if (applicationVersion.getSecrets() != null) {
-			int index = 1;
 			for (ApplicationSecret applicationSecret : applicationVersion.getSecrets()) {
 				Map<String, String> encryptedData = secretDataSealedSecretProducer.produce(applicationSecret);
-				secrets.put("application-secret-" + index++, new ApplicationSecretValues(applicationSecret.getName(), encryptedData));
+				secrets.put(applicationSecret.getName(), new ApplicationSecretValues(applicationSecret.getName(), encryptedData));
 			}
 		}
 
@@ -109,6 +108,13 @@ public class ApplicationValues {
 			if (environmentConfig.getEnvironmentVariables() != null) {
 				for (ApplicationEnvironmentVariable environmentVariable : environmentConfig.getEnvironmentVariables()) {
 					environmentVariables.put(environmentVariable.getKey(), new EnvironmentVariableValues(environmentVariable));
+				}
+			}
+
+			if (environmentConfig.getSecrets() != null) {
+				for (ApplicationSecret applicationSecret : environmentConfig.getSecrets()) {
+					Map<String, String> encryptedData = secretDataSealedSecretProducer.produce(applicationSecret);
+					secrets.put(applicationSecret.getName(), new ApplicationSecretValues(applicationSecret.getName(), encryptedData));
 				}
 			}
 

@@ -15,12 +15,7 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {
-    Application,
-    ApplicationEnvironmentConfig,
-    ApplicationEnvironmentConfigId,
-    ApplicationVersion
-} from '../../applications/application';
+import {Application, ApplicationEnvironmentConfig, ApplicationEnvironmentConfigId, ApplicationSecret, ApplicationVersion} from '../../applications/application';
 import {LoggerService} from '../../util/logger.service';
 import {ActivatedRoute} from '@angular/router';
 import {ApplicationService} from '../../applications/application.service';
@@ -46,6 +41,8 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   routeCategory = false;
   environmentVariablesCategory = false;
   configFileCategory = false;
+  secretsCategory = false;
+  selectedSecretIndex: number;
 
   constructor(
     private log: LoggerService,
@@ -80,28 +77,36 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
         flatMap((applicationVersion: ApplicationVersion) => {
           this.applicationVersion = applicationVersion;
           return this.applicationService.getEnvironmentConfig(id);
-        })
-      ).subscribe((config) => {
-      this.config = config;
+        }))
+      .subscribe((config) => {
+        this.config = config;
 
-      const releaseName = (this.environmentRelease.release as Release).name;
-      const appName = (this.applicationVersion.application as Application).name;
-      const envName = (this.environmentRelease.environment as Environment).name;
-      const clusterHost = (this.environmentRelease.environment as Environment).cluster.host;
-      this.exampleRouteHost = `${releaseName}-${appName}-${envName}.${clusterHost}`;
+        const releaseName = (this.environmentRelease.release as Release).name;
+        const appName = (this.applicationVersion.application as Application).name;
+        const envName = (this.environmentRelease.environment as Environment).name;
+        const clusterHost = (this.environmentRelease.environment as Environment).cluster.host;
+        this.exampleRouteHost = `${releaseName}-${appName}-${envName}.${clusterHost}`;
+        this.setCategoriesExpanded();
+      });
+  }
 
-      if (this.config.routeHostname) {
-        this.routeCategory = true;
-      }
+  private setCategoriesExpanded() {
+    if (this.config.routeHostname) {
+      this.routeCategory = true;
+    }
 
-      if (this.config.environmentVariables && Object.keys(this.config.environmentVariables).length > 0) {
-        this.environmentVariablesCategory = true;
-      }
+    if (this.config.environmentVariables && Object.keys(this.config.environmentVariables).length > 0) {
+      this.environmentVariablesCategory = true;
+    }
 
-      if (this.config.configFileName) {
-        this.configFileCategory = true;
-      }
-    });
+    if (this.config.secrets.length > 0) {
+      this.secretsCategory = true;
+      this.selectedSecretIndex = 0;
+    }
+
+    if (this.config.configFileName) {
+      this.configFileCategory = true;
+    }
   }
 
   save() {
@@ -117,5 +122,27 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
     if (!this.config.routeHostname) {
       this.config.routeHostname = this.exampleRouteHost;
     }
+  }
+
+  addSecret() {
+    let applicationSecret = new ApplicationSecret();
+    applicationSecret.data = {};
+    this.config.secrets.push(applicationSecret);
+    this.selectedSecretIndex = this.config.secrets.length - 1;
+  }
+
+  deleteSecret() {
+    this.config.secrets.splice(this.selectedSecretIndex, 1);
+    this.selectedSecretIndex = this.selectedSecretIndex - 1;
+  }
+
+  secretInUse(): boolean {
+    let secret = this.config.secrets[this.selectedSecretIndex];
+    if (secret && secret.name) {
+      let inUseInEnvironmentVariables = this.config.environmentVariables
+        .filter(envVar => envVar.type === 'Secret' && envVar.secretName === secret.name).length > 0;
+      return inUseInEnvironmentVariables;
+    }
+    return false;
   }
 }

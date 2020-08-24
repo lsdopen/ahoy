@@ -135,6 +135,7 @@ export class ApplicationService {
       defaultConfig.id = id;
       defaultConfig.replicas = 1;
       defaultConfig.environmentVariables = [];
+      defaultConfig.secrets = [];
       return defaultConfig;
     }).pipe(
       tap((config) => this.log.debug('fetched application environment config', config))

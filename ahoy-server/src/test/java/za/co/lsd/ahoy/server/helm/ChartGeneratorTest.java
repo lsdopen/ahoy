@@ -73,7 +73,10 @@ public class ChartGeneratorTest {
 		repoPath = temporaryFolder.newFolder("repo").toPath();
 
 		when(dockerConfigSealedSecretProducer.produce(any())).thenReturn("encrypted-docker-config");
-		when(secretDataSealedSecretProducer.produce(any())).thenReturn(Collections.singletonMap("secret-key", "secret-value"));
+		when(secretDataSealedSecretProducer.produce(any(ApplicationSecret.class))).thenAnswer(invocationOnMock -> {
+			ApplicationSecret applicationSecret = (ApplicationSecret) invocationOnMock.getArguments()[0];
+			return applicationSecret.getData();
+		});
 	}
 
 	@Test
@@ -183,6 +186,9 @@ public class ChartGeneratorTest {
 		);
 		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
 
+		List<ApplicationSecret> envSecrets = Collections.singletonList(new ApplicationSecret("my-env-secret", Collections.singletonMap("env-secret-key", "env-secret-value")));
+		environmentConfig.setSecrets(envSecrets);
+
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.of(environmentConfig));
 
 		Path basePath = repoPath.resolve(cluster.getName()).resolve(environment.getName()).resolve(release.getName());
@@ -229,7 +235,8 @@ public class ChartGeneratorTest {
 		volumes.put("application-volume-2", new ApplicationVolumeValues("my-secret-volume", "/opt/secret-vol", "my-secret"));
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
-		secrets.put("application-secret-1", new ApplicationSecretValues("my-secret", Collections.singletonMap("secret-key", "secret-value")));
+		secrets.put("my-secret", new ApplicationSecretValues("my-secret", Collections.singletonMap("secret-key", "secret-value")));
+		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", Collections.singletonMap("env-secret-key", "env-secret-value")));
 
 		ApplicationValues expectedApplicationValues = ApplicationValues.builder()
 			.name("app1")
@@ -410,6 +417,9 @@ public class ChartGeneratorTest {
 		);
 		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
 
+		List<ApplicationSecret> envSecrets = Collections.singletonList(new ApplicationSecret("my-env-secret", Collections.singletonMap("env-secret-key", "env-secret-value")));
+		environmentConfig.setSecrets(envSecrets);
+
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.of(environmentConfig));
 
 		Path basePath = repoPath.resolve(cluster.getName()).resolve(environment.getName()).resolve(release.getName());
@@ -456,7 +466,8 @@ public class ChartGeneratorTest {
 		volumes.put("application-volume-2", new ApplicationVolumeValues("my-secret-volume", "/opt/secret-vol", "my-secret"));
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
-		secrets.put("application-secret-1", new ApplicationSecretValues("my-secret", Collections.singletonMap("secret-key", "secret-value")));
+		secrets.put("my-secret", new ApplicationSecretValues("my-secret", Collections.singletonMap("secret-key", "secret-value")));
+		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", Collections.singletonMap("env-secret-key", "env-secret-value")));
 
 		ApplicationValues expectedApplicationValues = ApplicationValues.builder()
 			.name("app1")
