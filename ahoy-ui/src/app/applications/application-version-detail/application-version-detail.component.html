@@ -78,8 +78,8 @@
               <mat-panel-title>Health Checks</mat-panel-title>
             </mat-expansion-panel-header>
 
-            <div fxLayout="column">
-              <mat-form-field style="width: 30%">
+            <div fxLayout="column" class="form-area">
+              <mat-form-field>
                 <input matInput [(ngModel)]="applicationVersion.healthEndpointPath" placeholder="Health Endpoint Path"
                        name="applicationHealthEndpointPath"
                        pattern="(/[^\s]*)"
@@ -89,7 +89,7 @@
                 </mat-error>
               </mat-form-field>
 
-              <mat-form-field style="width: 30%;">
+              <mat-form-field>
                 <mat-label>Health Endpoint Port</mat-label>
                 <mat-select [(ngModel)]="applicationVersion.healthEndpointPort" name="applicationHealthEndpointPort" required="{{healthChecksCategory}}">
                   <mat-option>--</mat-option>
@@ -99,7 +99,7 @@
                 </mat-select>
               </mat-form-field>
 
-              <mat-form-field style="width: 30%;">
+              <mat-form-field>
                 <mat-label>Health Endpoint Scheme</mat-label>
                 <mat-select [(ngModel)]="applicationVersion.healthEndpointScheme" name="applicationHealthEndpointScheme" required="{{healthChecksCategory}}">
                   <mat-option value="HTTP">HTTP</mat-option>
@@ -138,8 +138,8 @@
                 <mat-tab-group fxFlex="grow" [(selectedIndex)]="selectedConfigIndex">
                   <mat-tab *ngFor="let config of applicationVersion.configs; let configIndex = index"
                            label="{{config.name ? config.name : '<new>'}}">
-                    <div fxFlex fxLayout="column" fxLayoutAlign="start start">
-                      <mat-form-field style="width: 30%; margin-top: 10px">
+                    <div fxFlex fxLayout="column" fxLayoutAlign="start start" class="form-area">
+                      <mat-form-field style="margin-top: 10px">
                         <input matInput [(ngModel)]="applicationVersion.configs[configIndex].name" placeholder="Name"
                                name="applicationConfigName{{configIndex}}" required>
                       </mat-form-field>
@@ -178,8 +178,8 @@
                 <mat-tab-group fxFlex="grow" [(selectedIndex)]="selectedVolumeIndex">
                   <mat-tab *ngFor="let volume of applicationVersion.volumes; let volumeIndex = index"
                            label="{{volume.name ? volume.name : '<new>'}}">
-                    <div fxFlex fxLayout="column" fxLayoutAlign="start start">
-                      <mat-form-field style="width: 30%; margin-top: 10px">
+                    <div fxFlex fxLayout="column" fxLayoutAlign="start start" class="form-area">
+                      <mat-form-field style="margin-top: 10px">
                         <input matInput [(ngModel)]="applicationVersion.volumes[volumeIndex].name" placeholder="Name"
                                name="volumeName{{volumeIndex}}"
                                required
@@ -268,39 +268,36 @@
               <mat-panel-title>Secrets</mat-panel-title>
             </mat-expansion-panel-header>
 
-            <div fxLayout="column" class="form-area">
+            <div fxFlex fxLayout="row">
+              <mat-tab-group fxFlex="grow" [(selectedIndex)]="selectedSecretIndex">
+                <mat-tab *ngFor="let secret of applicationVersion.secrets; let secretIndex = index"
+                         label="{{secret.name ? secret.name : '<new>'}}">
+                  <div fxFlex fxLayout="column" fxLayoutAlign="start start" class="form-area">
+                    <mat-form-field style="margin-top: 10px">
+                      <input matInput [(ngModel)]="applicationVersion.secrets[secretIndex].name" placeholder="Name"
+                             name="secretName{{secretIndex}}"
+                             required
+                             [readonly]="secretInUse()"
+                             [matTooltip]="secretInUse() ? 'Secret in use' : ''"
+                             pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$">
+                      <mat-hint>should start with and use lower case letters and numbers</mat-hint>
+                    </mat-form-field>
 
-              <div fxFlex fxLayout="row">
-                <mat-tab-group fxFlex="grow" [(selectedIndex)]="selectedSecretIndex">
-                  <mat-tab *ngFor="let secret of applicationVersion.secrets; let secretIndex = index"
-                           label="{{secret.name ? secret.name : '<new>'}}">
-                    <div fxFlex fxLayout="column" fxLayoutAlign="start start">
-                      <mat-form-field style="width: 30%; margin-top: 10px">
-                        <input matInput [(ngModel)]="applicationVersion.secrets[secretIndex].name" placeholder="Name"
-                               name="secretName{{secretIndex}}"
-                               required
-                               [readonly]="secretInUse()"
-                               [matTooltip]="secretInUse() ? 'Secret in use' : ''"
-                               pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$">
-                        <mat-hint>should start with and use lower case letters and numbers</mat-hint>
-                      </mat-form-field>
+                    <app-application-secret-data fxFill
+                                                 [secretData]="applicationVersion.secrets[secretIndex].data">
+                    </app-application-secret-data>
 
-                      <app-application-secret-data fxFill
-                                                   [secretData]="applicationVersion.secrets[secretIndex].data">
-                      </app-application-secret-data>
+                  </div>
+                </mat-tab>
+              </mat-tab-group>
 
-                    </div>
-                  </mat-tab>
-                </mat-tab-group>
-
-                <div fxFlex fxLayout="column">
-                  <button mat-icon-button (click)="addSecret()">
-                    <mat-icon>add_circle</mat-icon>
-                  </button>
-                  <button mat-icon-button (click)="deleteSecret()" [disabled]="secretInUse()">
-                    <mat-icon [matTooltip]="secretInUse() ? 'Secret in use' : ''">remove_circle</mat-icon>
-                  </button>
-                </div>
+              <div fxFlex fxLayout="column">
+                <button mat-icon-button (click)="addSecret()">
+                  <mat-icon>add_circle</mat-icon>
+                </button>
+                <button mat-icon-button (click)="deleteSecret()" [disabled]="secretInUse()">
+                  <mat-icon [matTooltip]="secretInUse() ? 'Secret in use' : ''">remove_circle</mat-icon>
+                </button>
               </div>
             </div>
 

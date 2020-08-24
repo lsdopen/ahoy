@@ -27,6 +27,7 @@ export class ApplicationSecretDataComponent implements OnInit {
   newDataValue: string;
   data: SecretData[];
   displayedColumns = ['key', 'value', 'remove'];
+  hideValue = true;
 
   constructor() {
   }
