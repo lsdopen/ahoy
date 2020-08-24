@@ -1,6 +1,6 @@
 # Ahoy
 
-![CI](https://github.com/openlsd/ahoy/workflows/CI/badge.svg)
+![CI](https://github.com/lsdopen/ahoy/workflows/CI/badge.svg)
 
 ## Installation on Kubernetes
 
@@ -20,7 +20,7 @@ rm helm-v3.2.1-linux-amd64.tar.gz linux-amd64/ -rf
 
 Add helm repo
 ```shell script
-helm repo add openlsd https://openlsd.github.io/charts
+helm repo add lsdopen https://lsdopen.github.io/charts
 helm repo update
 ```
 
@@ -31,11 +31,11 @@ kubectl create namespace ahoy
 
 Customise the Ahoy installation by editing the values in values-k8s.yaml.
 
-Example value files available at: https://github.com/openlsd/charts/tree/master/charts/ahoy
+Example value files available at: https://github.com/lsdopen/charts/tree/master/charts/ahoy
 
 We are now ready to install Ahoy
 ```
-helm install ahoy --namespace ahoy --values values-k8s.yaml --devel openlsd/ahoy
+helm install ahoy --namespace ahoy --values values-k8s.yaml --devel lsdopen/ahoy
 ```
 
 Note for GKE installation: you need to create a TLS secret and supply the secret name in the values file.
@@ -53,7 +53,7 @@ openssl req -newkey rsa:2048 -nodes -keyout ahoy.key -x509 -days 365 -out ahoy.c
 
 Add helm repo
 ```shell script
-helm repo add openlsd https://openlsd.github.io/charts
+helm repo add lsdopen https://lsdopen.github.io/charts
 helm repo update
 ```
 
@@ -64,7 +64,7 @@ oc new-project ahoy --display-name="Ahoy" --description="Ahoy, your Kubernetes r
 
 Customise the Ahoy installation by editing the values in values-ocp.yaml.
 
-Example value files available at: https://github.com/openlsd/charts/tree/master/charts/ahoy
+Example value files available at: https://github.com/lsdopen/charts/tree/master/charts/ahoy
 
 OpenShift restricts the use of UID by default. 
 
@@ -76,7 +76,7 @@ oc adm policy add-scc-to-user anyuid -z ahoy-keycloak -n ahoy
 
 We are now ready to install Ahoy
 ```
-helm install ahoy --namespace ahoy --values values-ocp.yaml --devel openlsd/ahoy
+helm install ahoy --namespace ahoy --values values-ocp.yaml --devel lsdopen/ahoy
 ```
 
 ## Uninstall

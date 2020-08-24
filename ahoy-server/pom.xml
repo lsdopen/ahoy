@@ -201,7 +201,7 @@
 							</execution>
 						</executions>
 						<configuration>
-							<repository>openlsd/ahoy</repository>
+							<repository>lsdopen/ahoy</repository>
 							<tag>${project.version}</tag>
 							<useMavenSettingsForAuth>true</useMavenSettingsForAuth>
 							<buildArgs>
