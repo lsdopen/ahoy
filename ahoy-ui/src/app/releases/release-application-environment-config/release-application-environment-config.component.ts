@@ -15,7 +15,7 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {Application, ApplicationEnvironmentConfig, ApplicationEnvironmentConfigId, ApplicationSecret, ApplicationVersion} from '../../applications/application';
+import {Application, ApplicationConfig, ApplicationEnvironmentConfig, ApplicationEnvironmentConfigId, ApplicationSecret, ApplicationVersion} from '../../applications/application';
 import {LoggerService} from '../../util/logger.service';
 import {ActivatedRoute} from '@angular/router';
 import {ApplicationService} from '../../applications/application.service';
@@ -41,6 +41,7 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   routeCategory = false;
   environmentVariablesCategory = false;
   configFileCategory = false;
+  selectedConfigIndex: number;
   secretsCategory = false;
   selectedSecretIndex: number;
 
@@ -99,13 +100,14 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
       this.environmentVariablesCategory = true;
     }
 
+    if (this.config.configs.length > 0) {
+      this.configFileCategory = true;
+      this.selectedConfigIndex = 0;
+    }
+
     if (this.config.secrets.length > 0) {
       this.secretsCategory = true;
       this.selectedSecretIndex = 0;
-    }
-
-    if (this.config.configFileName) {
-      this.configFileCategory = true;
     }
   }
 
@@ -122,6 +124,16 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
     if (!this.config.routeHostname) {
       this.config.routeHostname = this.exampleRouteHost;
     }
+  }
+
+  addConfig() {
+    this.config.configs.push(new ApplicationConfig());
+    this.selectedConfigIndex = this.config.configs.length - 1;
+  }
+
+  deleteConfig() {
+    this.config.configs.splice(this.selectedConfigIndex, 1);
+    this.selectedConfigIndex = this.selectedConfigIndex - 1;
   }
 
   addSecret() {

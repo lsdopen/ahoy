@@ -135,10 +135,12 @@ export class ApplicationVersionDetailComponent implements OnInit {
 
     if (this.applicationVersion.configPath) {
       this.configFilesCategory = true;
+      this.selectedConfigIndex = 0;
     }
 
     if (this.applicationVersion.volumes.length > 0) {
       this.volumesCategory = true;
+      this.selectedVolumeIndex = 0;
     }
 
     if (this.applicationVersion.secrets.length > 0) {

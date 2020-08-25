@@ -23,53 +23,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 import za.co.lsd.ahoy.server.ReleaseUtils;
-import za.co.lsd.ahoy.server.applications.Application;
-import za.co.lsd.ahoy.server.applications.ApplicationEnvironmentConfig;
-import za.co.lsd.ahoy.server.applications.ApplicationEnvironmentConfigProvider;
-import za.co.lsd.ahoy.server.applications.ApplicationVersion;
-import za.co.lsd.ahoy.server.cluster.Cluster;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
-import za.co.lsd.ahoy.server.environments.Environment;
-import za.co.lsd.ahoy.server.helm.sealedsecrets.DockerConfigSealedSecretProducer;
-import za.co.lsd.ahoy.server.helm.sealedsecrets.SecretDataSealedSecretProducer;
-import za.co.lsd.ahoy.server.helm.values.ApplicationValues;
 import za.co.lsd.ahoy.server.helm.values.Values;
+import za.co.lsd.ahoy.server.helm.values.ValuesBuilder;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Objects;
 
 @Component
 @Slf4j
 public class ChartGenerator {
+	private final ValuesBuilder valuesBuilder;
 	private ObjectProvider<TemplateWriter> templateWriterFactory;
-	private ApplicationEnvironmentConfigProvider environmentConfigProvider;
-	private DockerConfigSealedSecretProducer dockerConfigSealedSecretProducer;
-	private SecretDataSealedSecretProducer secretDataSealedSecretProducer;
 	private ObjectFactory<Yaml> yamlObjectFactory;
+
+	public ChartGenerator(ValuesBuilder valuesBuilder) {
+		this.valuesBuilder = valuesBuilder;
+	}
 
 	@Autowired
 	public void setTemplateWriterFactory(ObjectProvider<TemplateWriter> templateWriterFactory) {
 		this.templateWriterFactory = templateWriterFactory;
-	}
-
-	@Autowired
-	public void setEnvironmentConfigProvider(ApplicationEnvironmentConfigProvider environmentConfigProvider) {
-		this.environmentConfigProvider = environmentConfigProvider;
-	}
-
-	@Autowired
-	public void setDockerConfigSealedSecretProducer(DockerConfigSealedSecretProducer dockerConfigSealedSecretProducer) {
-		this.dockerConfigSealedSecretProducer = dockerConfigSealedSecretProducer;
-	}
-
-	@Autowired
-	public void setSecretDataSealedSecretProducer(SecretDataSealedSecretProducer secretDataSealedSecretProducer) {
-		this.secretDataSealedSecretProducer = secretDataSealedSecretProducer;
 	}
 
 	@Autowired
@@ -113,28 +90,7 @@ public class ChartGenerator {
 	}
 
 	private void writeValues(EnvironmentRelease environmentRelease, ReleaseVersion releaseVersion, Path releasePath, Yaml yaml) throws IOException {
-		Environment environment = environmentRelease.getEnvironment();
-		Cluster cluster = environment.getCluster();
-
-		Values.ValuesBuilder valuesBuilder = Values.builder()
-			.host(cluster.getHost())
-			.environment(environment.getName())
-			.releaseName(releaseVersion.getRelease().getName())
-			.releaseVersion(releaseVersion.getVersion());
-
-		Map<String, ApplicationValues> apps = new LinkedHashMap<>();
-		for (ApplicationVersion applicationVersion : releaseVersion.getApplicationVersions()) {
-			Application application = applicationVersion.getApplication();
-			ApplicationEnvironmentConfig applicationEnvironmentConfig =
-				environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion)
-					.orElse(null);
-			apps.put(HelmUtils.valuesName(application), ApplicationValues.build(applicationVersion, applicationEnvironmentConfig, dockerConfigSealedSecretProducer, secretDataSealedSecretProducer));
-
-			log.debug("Added values for application '{}' in environment '{}'", application.getName(), environment.getName());
-		}
-		valuesBuilder.applications(apps);
-
-		Values values = valuesBuilder.build();
+		Values values = valuesBuilder.build(environmentRelease, releaseVersion);
 		log.debug("Writing values: {}", values);
 		Path valuesPath = releasePath.resolve("values.yaml");
 		HelmUtils.dump(values, valuesPath, yaml);

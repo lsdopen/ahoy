@@ -168,8 +168,8 @@ public class ChartGeneratorTest {
 
 		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
 		environmentConfig.setReplicas(2);
-		environmentConfig.setConfigFileName("application-dev.properties");
-		environmentConfig.setConfigFileContent("anothergreeting=hello");
+		List<ApplicationConfig> appEnvConfigs = Collections.singletonList(new ApplicationConfig("application-dev.properties", "anothergreeting=hello"));
+		environmentConfig.setConfigs(appEnvConfigs);
 
 		List<ApplicationVolume> appVolumes = Arrays.asList(
 			new ApplicationVolume("my-volume", "/opt/vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
@@ -227,8 +227,8 @@ public class ChartGeneratorTest {
 		expectedEnvironmentVariables.put("SECRET_DEV_ENV", new EnvironmentVariableValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
 
 		Map<String, ApplicationConfigValues> configs = new LinkedHashMap<>();
-		configs.put("application-config-1", new ApplicationConfigValues("application.properties", "greeting=hello"));
-		configs.put("application-config-env", new ApplicationConfigValues("application-dev.properties", "anothergreeting=hello"));
+		configs.put("application-config-188deccf", new ApplicationConfigValues("application.properties", "greeting=hello"));
+		configs.put("application-config-c1fcd7e5", new ApplicationConfigValues("application-dev.properties", "anothergreeting=hello"));
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
 		volumes.put("application-volume-1", new ApplicationVolumeValues("my-volume", "/opt/vol", "standard", "ReadWriteOnce", "2Gi"));
@@ -254,6 +254,104 @@ public class ChartGeneratorTest {
 			.configPath("/opt/config")
 			.configs(configs)
 			.volumes(volumes)
+			.secrets(secrets)
+			.build();
+		Map<String, ApplicationValues> expectedApps = new LinkedHashMap<>();
+		expectedApps.put("app1", expectedApplicationValues);
+
+		Values expectedValues = Values.builder()
+			.host("my-host")
+			.environment("dev")
+			.releaseName("release1")
+			.releaseVersion("1.0.0")
+			.applications(expectedApps)
+			.build();
+
+		assertEquals("Values incorrect", expectedValues, actualValues);
+	}
+
+	@Test
+	public void generateEnvConfigOnlyKubernetes() throws Exception {
+		// given
+		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
+		cluster.setHost("my-host");
+		Environment environment = new Environment("dev", cluster);
+		Release release = new Release("release1");
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
+
+		Application application = new Application("app1");
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+
+		// needed for route
+		List<Integer> servicePorts = Collections.singletonList(8080);
+		applicationVersion.setServicePorts(servicePorts);
+
+		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion));
+
+		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
+		environmentConfig.setReplicas(2);
+		List<ApplicationConfig> appEnvConfigs = Collections.singletonList(new ApplicationConfig("application-dev.properties", "anothergreeting=hello"));
+		environmentConfig.setConfigs(appEnvConfigs);
+
+		List<ApplicationEnvironmentVariable> environmentVariablesEnv = Arrays.asList(
+			new ApplicationEnvironmentVariable("DEV_ENV", "VAR"),
+			new ApplicationEnvironmentVariable("SECRET_DEV_ENV", "my-secret", "secret-key")
+		);
+		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
+
+		List<ApplicationSecret> envSecrets = Collections.singletonList(new ApplicationSecret("my-env-secret", Collections.singletonMap("env-secret-key", "env-secret-value")));
+		environmentConfig.setSecrets(envSecrets);
+
+		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.of(environmentConfig));
+
+		Path basePath = repoPath.resolve(cluster.getName()).resolve(environment.getName()).resolve(release.getName());
+		Path templatesPath = basePath.resolve("templates");
+
+		// when
+		chartGenerator.generate(environmentRelease, releaseVersion, repoPath);
+
+		// then
+		assertEquals("Incorrect amount of chart files", 2, Files.list(basePath).filter(Files::isRegularFile).count());
+		assertTrue("We should have a chart yaml", Files.exists(basePath.resolve("Chart.yaml")));
+		Path valuesPath = basePath.resolve("values.yaml");
+		assertTrue("We should have a values yaml", Files.exists(valuesPath));
+		assertEquals("Incorrect amount of template files", 12, Files.list(templatesPath).filter(Files::isRegularFile).count());
+		assertTrue("We should have a configmap template", Files.exists(templatesPath.resolve("configmap.yaml")));
+		assertTrue("We should have a configmap-app1 template", Files.exists(templatesPath.resolve("configmap-app1.yaml")));
+		assertTrue("We should have a pvc template", Files.exists(templatesPath.resolve("pvc.yaml")));
+		assertTrue("We should have a deployment template", Files.exists(templatesPath.resolve("deployment.yaml")));
+		assertTrue("We should have a deployment-app1 template", Files.exists(templatesPath.resolve("deployment-app1.yaml")));
+		assertTrue("We should have a ingress template", Files.exists(templatesPath.resolve("ingress.yaml")));
+		assertTrue("We should have a ingress-app1 template", Files.exists(templatesPath.resolve("ingress-app1.yaml")));
+		assertTrue("We should have a service template", Files.exists(templatesPath.resolve("service.yaml")));
+		assertTrue("We should have a service-app1 template", Files.exists(templatesPath.resolve("service-app1.yaml")));
+		assertTrue("We should have a secret-dockerconfig template", Files.exists(templatesPath.resolve("secret-dockerconfig.yaml")));
+		assertTrue("We should have a secret-generic template", Files.exists(templatesPath.resolve("secret-generic.yaml")));
+		assertTrue("We should have a secret-generic-app1 template", Files.exists(templatesPath.resolve("secret-generic-app1.yaml")));
+
+		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
+
+		Map<String, EnvironmentVariableValues> expectedEnvironmentVariables = new LinkedHashMap<>();
+		expectedEnvironmentVariables.put("DEV_ENV", new EnvironmentVariableValues("DEV_ENV", "VAR"));
+		expectedEnvironmentVariables.put("SECRET_DEV_ENV", new EnvironmentVariableValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
+
+		Map<String, ApplicationConfigValues> configs = new LinkedHashMap<>();
+		configs.put("application-config-c1fcd7e5", new ApplicationConfigValues("application-dev.properties", "anothergreeting=hello"));
+
+		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
+		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", Collections.singletonMap("env-secret-key", "env-secret-value")));
+
+		ApplicationValues expectedApplicationValues = ApplicationValues.builder()
+			.name("app1")
+			.version("1.0.0")
+			.image("image")
+			.servicePorts(servicePorts)
+			.replicas(2)
+			.routeHostname("myapp1-route")
+			.routeTargetPort(8080)
+			.environmentVariables(expectedEnvironmentVariables)
+			.configs(configs)
+			.volumes(Collections.emptyMap())
 			.secrets(secrets)
 			.build();
 		Map<String, ApplicationValues> expectedApps = new LinkedHashMap<>();
@@ -399,8 +497,8 @@ public class ChartGeneratorTest {
 
 		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
 		environmentConfig.setReplicas(2);
-		environmentConfig.setConfigFileName("application-dev.properties");
-		environmentConfig.setConfigFileContent("anothergreeting=hello");
+		List<ApplicationConfig> appEnvConfigs = Collections.singletonList(new ApplicationConfig("application-dev.properties", "anothergreeting=hello"));
+		environmentConfig.setConfigs(appEnvConfigs);
 
 		List<ApplicationVolume> appVolumes = Arrays.asList(
 			new ApplicationVolume("my-volume", "/opt/vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
@@ -458,8 +556,8 @@ public class ChartGeneratorTest {
 		expectedEnvironmentVariables.put("SECRET_DEV_ENV", new EnvironmentVariableValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
 
 		Map<String, ApplicationConfigValues> configs = new LinkedHashMap<>();
-		configs.put("application-config-1", new ApplicationConfigValues("application.properties", "greeting=hello"));
-		configs.put("application-config-env", new ApplicationConfigValues("application-dev.properties", "anothergreeting=hello"));
+		configs.put("application-config-188deccf", new ApplicationConfigValues("application.properties", "greeting=hello"));
+		configs.put("application-config-c1fcd7e5", new ApplicationConfigValues("application-dev.properties", "anothergreeting=hello"));
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
 		volumes.put("application-volume-1", new ApplicationVolumeValues("my-volume", "/opt/vol", "standard", "ReadWriteOnce", "2Gi"));
@@ -485,6 +583,101 @@ public class ChartGeneratorTest {
 			.configPath("/opt/config")
 			.configs(configs)
 			.volumes(volumes)
+			.secrets(secrets)
+			.build();
+		Map<String, ApplicationValues> expectedApps = new LinkedHashMap<>();
+		expectedApps.put("app1", expectedApplicationValues);
+
+		Values expectedValues = Values.builder()
+			.host("my-host")
+			.environment("dev")
+			.releaseName("release1")
+			.releaseVersion("1.0.0")
+			.applications(expectedApps)
+			.build();
+
+		assertEquals("Values incorrect", expectedValues, actualValues);
+	}
+
+	@Test
+	public void generateEnvConfigOnlyOpenShift() throws Exception {
+		// given
+		Cluster cluster = new Cluster("test-cluster", "https://openshift.default.svc", ClusterType.OPENSHIFT);
+		cluster.setHost("my-host");
+		Environment environment = new Environment("dev", cluster);
+		Release release = new Release("release1");
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
+
+		Application application = new Application("app1");
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		List<Integer> servicePorts = Collections.singletonList(8080);
+		applicationVersion.setServicePorts(servicePorts);
+		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion));
+
+		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
+		environmentConfig.setReplicas(2);
+		List<ApplicationConfig> appEnvConfigs = Collections.singletonList(new ApplicationConfig("application-dev.properties", "anothergreeting=hello"));
+		environmentConfig.setConfigs(appEnvConfigs);
+
+		List<ApplicationEnvironmentVariable> environmentVariablesEnv = Arrays.asList(
+			new ApplicationEnvironmentVariable("DEV_ENV", "VAR"),
+			new ApplicationEnvironmentVariable("SECRET_DEV_ENV", "my-secret", "secret-key")
+		);
+		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
+
+		List<ApplicationSecret> envSecrets = Collections.singletonList(new ApplicationSecret("my-env-secret", Collections.singletonMap("env-secret-key", "env-secret-value")));
+		environmentConfig.setSecrets(envSecrets);
+
+		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.of(environmentConfig));
+
+		Path basePath = repoPath.resolve(cluster.getName()).resolve(environment.getName()).resolve(release.getName());
+		Path templatesPath = basePath.resolve("templates");
+
+		// when
+		chartGenerator.generate(environmentRelease, releaseVersion, repoPath);
+
+		// then
+		assertEquals("Incorrect amount of chart files", 2, Files.list(basePath).filter(Files::isRegularFile).count());
+		assertTrue("We should have a chart yaml", Files.exists(basePath.resolve("Chart.yaml")));
+		Path valuesPath = basePath.resolve("values.yaml");
+		assertTrue("We should have a values yaml", Files.exists(valuesPath));
+		assertEquals("Incorrect amount of template files", 12, Files.list(templatesPath).filter(Files::isRegularFile).count());
+		assertTrue("We should have a configmap template", Files.exists(templatesPath.resolve("configmap.yaml")));
+		assertTrue("We should have a configmap-app1 template", Files.exists(templatesPath.resolve("configmap-app1.yaml")));
+		assertTrue("We should have a pvc template", Files.exists(templatesPath.resolve("pvc.yaml")));
+		assertTrue("We should have a deployment template", Files.exists(templatesPath.resolve("deployment.yaml")));
+		assertTrue("We should have a deployment-app1 template", Files.exists(templatesPath.resolve("deployment-app1.yaml")));
+		assertTrue("We should have a route template", Files.exists(templatesPath.resolve("route.yaml")));
+		assertTrue("We should have a route-app1 template", Files.exists(templatesPath.resolve("route-app1.yaml")));
+		assertTrue("We should have a service template", Files.exists(templatesPath.resolve("service.yaml")));
+		assertTrue("We should have a service-app1 template", Files.exists(templatesPath.resolve("service-app1.yaml")));
+		assertTrue("We should have a secret-dockerconfig template", Files.exists(templatesPath.resolve("secret-dockerconfig.yaml")));
+		assertTrue("We should have a secret-generic template", Files.exists(templatesPath.resolve("secret-generic.yaml")));
+		assertTrue("We should have a secret-generic-app1 template", Files.exists(templatesPath.resolve("secret-generic-app1.yaml")));
+
+		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
+
+		Map<String, EnvironmentVariableValues> expectedEnvironmentVariables = new LinkedHashMap<>();
+		expectedEnvironmentVariables.put("DEV_ENV", new EnvironmentVariableValues("DEV_ENV", "VAR"));
+		expectedEnvironmentVariables.put("SECRET_DEV_ENV", new EnvironmentVariableValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
+
+		Map<String, ApplicationConfigValues> configs = new LinkedHashMap<>();
+		configs.put("application-config-c1fcd7e5", new ApplicationConfigValues("application-dev.properties", "anothergreeting=hello"));
+
+		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
+		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", Collections.singletonMap("env-secret-key", "env-secret-value")));
+
+		ApplicationValues expectedApplicationValues = ApplicationValues.builder()
+			.name("app1")
+			.version("1.0.0")
+			.image("image")
+			.servicePorts(servicePorts)
+			.replicas(2)
+			.routeHostname("myapp1-route")
+			.routeTargetPort(8080)
+			.environmentVariables(expectedEnvironmentVariables)
+			.configs(configs)
+			.volumes(Collections.emptyMap())
 			.secrets(secrets)
 			.build();
 		Map<String, ApplicationValues> expectedApps = new LinkedHashMap<>();

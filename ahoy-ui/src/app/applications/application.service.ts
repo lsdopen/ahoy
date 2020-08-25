@@ -135,6 +135,7 @@ export class ApplicationService {
       defaultConfig.id = id;
       defaultConfig.replicas = 1;
       defaultConfig.environmentVariables = [];
+      defaultConfig.configs = [];
       defaultConfig.secrets = [];
       return defaultConfig;
     }).pipe(

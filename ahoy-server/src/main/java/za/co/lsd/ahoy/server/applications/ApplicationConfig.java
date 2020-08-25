@@ -39,8 +39,12 @@ public class ApplicationConfig {
 	private String config;
 
 	@ManyToOne
-	@JsonBackReference
+	@JsonBackReference("applicationVersionReference")
 	private ApplicationVersion applicationVersion;
+
+	@ManyToOne
+	@JsonBackReference("applicationEnvironmentConfigReference")
+	private ApplicationEnvironmentConfig applicationEnvironmentConfig;
 
 	public ApplicationConfig(@NotNull String name, String config) {
 		this.name = name;

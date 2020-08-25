@@ -37,7 +37,11 @@ public class KubernetesTemplateWriter extends BaseTemplateWriter {
 			Application application = applicationVersion.getApplication();
 			addTemplate(application, "deployment", templatesPath);
 
-			if (applicationVersion.hasConfigs()) {
+			ApplicationEnvironmentConfig applicationEnvironmentConfig =
+				environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion)
+					.orElse(null);
+
+			if (applicationVersion.hasConfigs() || (applicationEnvironmentConfig != null && applicationEnvironmentConfig.hasConfigs())) {
 				addTemplate(application, "configmap", templatesPath);
 			}
 
@@ -45,7 +49,7 @@ public class KubernetesTemplateWriter extends BaseTemplateWriter {
 				addTemplate(application, "pvc", templatesPath);
 			}
 
-			if (applicationVersion.hasSecrets()) {
+			if (applicationVersion.hasSecrets() || (applicationEnvironmentConfig != null && applicationEnvironmentConfig.hasSecrets())) {
 				addTemplate(application, "secret-generic", templatesPath);
 			}
 
@@ -57,9 +61,6 @@ public class KubernetesTemplateWriter extends BaseTemplateWriter {
 				applicationVersion.getServicePorts().size() > 0) {
 				addTemplate(application, "service", templatesPath);
 
-				ApplicationEnvironmentConfig applicationEnvironmentConfig =
-					environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion)
-						.orElse(null);
 				if (applicationEnvironmentConfig != null && applicationEnvironmentConfig.getRouteHostname() != null && applicationEnvironmentConfig.getRouteTargetPort() != null) {
 					addTemplate(application, "ingress", templatesPath);
 				}

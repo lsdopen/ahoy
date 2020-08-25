@@ -59,7 +59,7 @@ public class ApplicationVersion {
 	private List<ApplicationEnvironmentVariable> environmentVariables;
 
 	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonManagedReference
+	@JsonManagedReference("applicationVersionReference")
 	private List<ApplicationConfig> configs;
 
 	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)

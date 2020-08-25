@@ -20,7 +20,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import za.co.lsd.ahoy.server.applications.ApplicationConfig;
-import za.co.lsd.ahoy.server.applications.ApplicationEnvironmentConfig;
 
 @Data
 @NoArgsConstructor
@@ -32,10 +31,5 @@ public class ApplicationConfigValues {
 	public ApplicationConfigValues(ApplicationConfig config) {
 		this.name = config.getName();
 		this.config = config.getConfig();
-	}
-
-	public ApplicationConfigValues(ApplicationEnvironmentConfig config) {
-		this.name = config.getConfigFileName();
-		this.config = config.getConfigFileContent();
 	}
 }

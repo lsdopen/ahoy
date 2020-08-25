@@ -99,9 +99,8 @@ export class ApplicationEnvironmentConfig {
   routeHostname: string;
   routeTargetPort: number;
   environmentVariables: ApplicationEnvironmentVariable[];
+  configs: ApplicationConfig[];
   secrets: ApplicationSecret[];
-  configFileName: string;
-  configFileContent: string;
 }
 
 export class ApplicationEnvironmentConfigId {

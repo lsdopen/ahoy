@@ -19,9 +19,11 @@ package za.co.lsd.ahoy.server.applications;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,12 +45,11 @@ public class ApplicationEnvironmentConfig {
 
 	@OneToMany(mappedBy = "applicationEnvironmentConfig", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("applicationEnvironmentConfigReference")
-	private List<ApplicationSecret> secrets;
+	private List<ApplicationConfig> configs;
 
-	private String configFileName;
-	@Lob
-	@Type(type = "org.hibernate.type.TextType")
-	private String configFileContent;
+	@OneToMany(mappedBy = "applicationEnvironmentConfig", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference("applicationEnvironmentConfigReference")
+	private List<ApplicationSecret> secrets;
 
 	public ApplicationEnvironmentConfig(ApplicationDeploymentId id, ApplicationEnvironmentConfig applicationEnvironmentConfig) {
 		this.id = id;
@@ -56,12 +57,20 @@ public class ApplicationEnvironmentConfig {
 		this.routeHostname = applicationEnvironmentConfig.getRouteHostname();
 		this.routeTargetPort = applicationEnvironmentConfig.getRouteTargetPort();
 		this.environmentVariables = new ArrayList<>(applicationEnvironmentConfig.getEnvironmentVariables());
-		this.configFileName = applicationEnvironmentConfig.getConfigFileName();
-		this.configFileContent = applicationEnvironmentConfig.getConfigFileContent();
+		this.configs = new ArrayList<>(applicationEnvironmentConfig.getConfigs());
+		this.secrets = new ArrayList<>(applicationEnvironmentConfig.getSecrets());
 	}
 
 	public ApplicationEnvironmentConfig(String routeHostname, Integer routeTargetPort) {
 		this.routeHostname = routeHostname;
 		this.routeTargetPort = routeTargetPort;
+	}
+
+	public boolean hasConfigs() {
+		return configs != null && configs.size() > 0;
+	}
+
+	public boolean hasSecrets() {
+		return secrets != null && secrets.size() > 0;
 	}
 }
