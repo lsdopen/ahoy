@@ -14,19 +14,9 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.helm.values;
+package za.co.lsd.ahoy.server.applications;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.util.Map;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class ApplicationSecretValues {
-	private String name;
-	private String type;
-	private Map<String, String> data;
+public enum SecretType {
+	Generic,
+	Tls
 }

@@ -90,6 +90,7 @@ export class ApplicationVolume {
 export class ApplicationSecret {
   id: number;
   name: string;
+  type: string;
   data: { [key: string]: string };
 }
 
@@ -98,6 +99,8 @@ export class ApplicationEnvironmentConfig {
   replicas: number;
   routeHostname: string;
   routeTargetPort: number;
+  tls: boolean;
+  tlsSecretName: string;
   environmentVariables: ApplicationEnvironmentVariable[];
   configs: ApplicationConfig[];
   secrets: ApplicationSecret[];

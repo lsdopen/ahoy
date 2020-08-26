@@ -168,6 +168,8 @@ public class ChartGeneratorTest {
 
 		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
 		environmentConfig.setReplicas(2);
+		environmentConfig.setTls(true);
+		environmentConfig.setTlsSecretName("my-tls-secret");
 		List<ApplicationConfig> appEnvConfigs = Collections.singletonList(new ApplicationConfig("application-dev.properties", "anothergreeting=hello"));
 		environmentConfig.setConfigs(appEnvConfigs);
 
@@ -177,7 +179,10 @@ public class ChartGeneratorTest {
 		);
 		applicationVersion.setVolumes(appVolumes);
 
-		List<ApplicationSecret> appSecrets = Collections.singletonList(new ApplicationSecret("my-secret", Collections.singletonMap("secret-key", "secret-value")));
+		List<ApplicationSecret> appSecrets = Arrays.asList(
+			new ApplicationSecret("my-secret", SecretType.Generic, Collections.singletonMap("secret-key", "secret-value")),
+			new ApplicationSecret("my-tls-secret", SecretType.Tls, Collections.singletonMap("cert", "my-cert"))
+		);
 		applicationVersion.setSecrets(appSecrets);
 
 		List<ApplicationEnvironmentVariable> environmentVariablesEnv = Arrays.asList(
@@ -186,7 +191,7 @@ public class ChartGeneratorTest {
 		);
 		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
 
-		List<ApplicationSecret> envSecrets = Collections.singletonList(new ApplicationSecret("my-env-secret", Collections.singletonMap("env-secret-key", "env-secret-value")));
+		List<ApplicationSecret> envSecrets = Collections.singletonList(new ApplicationSecret("my-env-secret", SecretType.Generic, Collections.singletonMap("env-secret-key", "env-secret-value")));
 		environmentConfig.setSecrets(envSecrets);
 
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.of(environmentConfig));
@@ -235,8 +240,9 @@ public class ChartGeneratorTest {
 		volumes.put("application-volume-2", new ApplicationVolumeValues("my-secret-volume", "/opt/secret-vol", "my-secret"));
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
-		secrets.put("my-secret", new ApplicationSecretValues("my-secret", Collections.singletonMap("secret-key", "secret-value")));
-		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", Collections.singletonMap("env-secret-key", "env-secret-value")));
+		secrets.put("my-secret", new ApplicationSecretValues("my-secret", "Opague", Collections.singletonMap("secret-key", "secret-value")));
+		secrets.put("my-tls-secret", new ApplicationSecretValues("my-tls-secret", "kubernetes.io/tls", Collections.singletonMap("cert", "my-cert")));
+		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", "Opague", Collections.singletonMap("env-secret-key", "env-secret-value")));
 
 		ApplicationValues expectedApplicationValues = ApplicationValues.builder()
 			.name("app1")
@@ -250,6 +256,8 @@ public class ChartGeneratorTest {
 			.replicas(2)
 			.routeHostname("myapp1-route")
 			.routeTargetPort(8080)
+			.tls(true)
+			.tlsSecretName("my-tls-secret")
 			.environmentVariables(expectedEnvironmentVariables)
 			.configPath("/opt/config")
 			.configs(configs)
@@ -290,6 +298,8 @@ public class ChartGeneratorTest {
 
 		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
 		environmentConfig.setReplicas(2);
+		environmentConfig.setTls(true);
+		environmentConfig.setTlsSecretName("my-tls-secret");
 		List<ApplicationConfig> appEnvConfigs = Collections.singletonList(new ApplicationConfig("application-dev.properties", "anothergreeting=hello"));
 		environmentConfig.setConfigs(appEnvConfigs);
 
@@ -299,7 +309,10 @@ public class ChartGeneratorTest {
 		);
 		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
 
-		List<ApplicationSecret> envSecrets = Collections.singletonList(new ApplicationSecret("my-env-secret", Collections.singletonMap("env-secret-key", "env-secret-value")));
+		List<ApplicationSecret> envSecrets = Arrays.asList(
+			new ApplicationSecret("my-env-secret", SecretType.Generic, Collections.singletonMap("env-secret-key", "env-secret-value")),
+			new ApplicationSecret("my-tls-secret", SecretType.Tls, Collections.singletonMap("cert", "my-cert"))
+		);
 		environmentConfig.setSecrets(envSecrets);
 
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.of(environmentConfig));
@@ -339,7 +352,8 @@ public class ChartGeneratorTest {
 		configs.put("application-config-c1fcd7e5", new ApplicationConfigValues("application-dev.properties", "anothergreeting=hello"));
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
-		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", Collections.singletonMap("env-secret-key", "env-secret-value")));
+		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", "Opague", Collections.singletonMap("env-secret-key", "env-secret-value")));
+		secrets.put("my-tls-secret", new ApplicationSecretValues("my-tls-secret", "kubernetes.io/tls", Collections.singletonMap("cert", "my-cert")));
 
 		ApplicationValues expectedApplicationValues = ApplicationValues.builder()
 			.name("app1")
@@ -349,6 +363,8 @@ public class ChartGeneratorTest {
 			.replicas(2)
 			.routeHostname("myapp1-route")
 			.routeTargetPort(8080)
+			.tls(true)
+			.tlsSecretName("my-tls-secret")
 			.environmentVariables(expectedEnvironmentVariables)
 			.configs(configs)
 			.volumes(Collections.emptyMap())
@@ -506,7 +522,7 @@ public class ChartGeneratorTest {
 		);
 		applicationVersion.setVolumes(appVolumes);
 
-		List<ApplicationSecret> appSecrets = Collections.singletonList(new ApplicationSecret("my-secret", Collections.singletonMap("secret-key", "secret-value")));
+		List<ApplicationSecret> appSecrets = Collections.singletonList(new ApplicationSecret("my-secret", SecretType.Generic, Collections.singletonMap("secret-key", "secret-value")));
 		applicationVersion.setSecrets(appSecrets);
 
 		List<ApplicationEnvironmentVariable> environmentVariablesEnv = Arrays.asList(
@@ -515,7 +531,7 @@ public class ChartGeneratorTest {
 		);
 		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
 
-		List<ApplicationSecret> envSecrets = Collections.singletonList(new ApplicationSecret("my-env-secret", Collections.singletonMap("env-secret-key", "env-secret-value")));
+		List<ApplicationSecret> envSecrets = Collections.singletonList(new ApplicationSecret("my-env-secret", SecretType.Generic, Collections.singletonMap("env-secret-key", "env-secret-value")));
 		environmentConfig.setSecrets(envSecrets);
 
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.of(environmentConfig));
@@ -564,8 +580,8 @@ public class ChartGeneratorTest {
 		volumes.put("application-volume-2", new ApplicationVolumeValues("my-secret-volume", "/opt/secret-vol", "my-secret"));
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
-		secrets.put("my-secret", new ApplicationSecretValues("my-secret", Collections.singletonMap("secret-key", "secret-value")));
-		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", Collections.singletonMap("env-secret-key", "env-secret-value")));
+		secrets.put("my-secret", new ApplicationSecretValues("my-secret", "Opague", Collections.singletonMap("secret-key", "secret-value")));
+		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", "Opague", Collections.singletonMap("env-secret-key", "env-secret-value")));
 
 		ApplicationValues expectedApplicationValues = ApplicationValues.builder()
 			.name("app1")
@@ -625,7 +641,7 @@ public class ChartGeneratorTest {
 		);
 		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
 
-		List<ApplicationSecret> envSecrets = Collections.singletonList(new ApplicationSecret("my-env-secret", Collections.singletonMap("env-secret-key", "env-secret-value")));
+		List<ApplicationSecret> envSecrets = Collections.singletonList(new ApplicationSecret("my-env-secret", SecretType.Generic, Collections.singletonMap("env-secret-key", "env-secret-value")));
 		environmentConfig.setSecrets(envSecrets);
 
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.of(environmentConfig));
@@ -665,7 +681,7 @@ public class ChartGeneratorTest {
 		configs.put("application-config-c1fcd7e5", new ApplicationConfigValues("application-dev.properties", "anothergreeting=hello"));
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
-		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", Collections.singletonMap("env-secret-key", "env-secret-value")));
+		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", "Opague", Collections.singletonMap("env-secret-key", "env-secret-value")));
 
 		ApplicationValues expectedApplicationValues = ApplicationValues.builder()
 			.name("app1")

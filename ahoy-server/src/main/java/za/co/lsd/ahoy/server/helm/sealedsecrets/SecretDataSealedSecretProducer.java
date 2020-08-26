@@ -49,7 +49,6 @@ public class SecretDataSealedSecretProducer {
 
 			Secret secret = new SecretBuilder()
 				.withNewMetadata().withName(applicationSecret.getName()).endMetadata()
-				.withType("Opague")
 				.withData(base64encodedData)
 				.build();
 			String secretInput = SerializationUtils.dumpAsYaml(secret);

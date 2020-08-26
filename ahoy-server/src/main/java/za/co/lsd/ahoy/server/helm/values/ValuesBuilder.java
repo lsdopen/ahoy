@@ -114,7 +114,7 @@ public class ValuesBuilder {
 		if (applicationVersion.getSecrets() != null) {
 			for (ApplicationSecret applicationSecret : applicationVersion.getSecrets()) {
 				Map<String, String> encryptedData = secretDataSealedSecretProducer.produce(applicationSecret);
-				secrets.put(applicationSecret.getName(), new ApplicationSecretValues(applicationSecret.getName(), encryptedData));
+				secrets.put(applicationSecret.getName(), new ApplicationSecretValues(applicationSecret.getName(), secretType(applicationSecret), encryptedData));
 			}
 		}
 
@@ -134,14 +134,16 @@ public class ValuesBuilder {
 			if (environmentConfig.getSecrets() != null) {
 				for (ApplicationSecret applicationSecret : environmentConfig.getSecrets()) {
 					Map<String, String> encryptedData = secretDataSealedSecretProducer.produce(applicationSecret);
-					secrets.put(applicationSecret.getName(), new ApplicationSecretValues(applicationSecret.getName(), encryptedData));
+					secrets.put(applicationSecret.getName(), new ApplicationSecretValues(applicationSecret.getName(), secretType(applicationSecret), encryptedData));
 				}
 			}
 
 			builder
 				.replicas(environmentConfig.getReplicas() != null ? environmentConfig.getReplicas() : 1)
 				.routeHostname(environmentConfig.getRouteHostname())
-				.routeTargetPort(environmentConfig.getRouteTargetPort());
+				.routeTargetPort(environmentConfig.getRouteTargetPort())
+				.tls(environmentConfig.isTls())
+				.tlsSecretName(environmentConfig.getTlsSecretName());
 
 		} else {
 			builder.replicas(1);
@@ -160,5 +162,16 @@ public class ValuesBuilder {
 		return "application-config-" + Hashing.crc32()
 			.hashString(config.getName(), StandardCharsets.UTF_8)
 			.toString();
+	}
+
+	private String secretType(ApplicationSecret applicationSecret) {
+		switch (applicationSecret.getType()) {
+			case Generic:
+				return "Opague";
+			case Tls:
+				return "kubernetes.io/tls";
+			default:
+				throw new IllegalStateException("Unhandled secret type");
+		}
 	}
 }

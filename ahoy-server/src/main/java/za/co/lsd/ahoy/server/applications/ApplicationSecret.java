@@ -34,6 +34,9 @@ public class ApplicationSecret {
 	private Long id;
 	@NotNull
 	private String name;
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private SecretType type;
 
 	@ElementCollection
 	@Column(columnDefinition = "TEXT")
@@ -50,8 +53,9 @@ public class ApplicationSecret {
 	@ToString.Exclude
 	private ApplicationEnvironmentConfig applicationEnvironmentConfig;
 
-	public ApplicationSecret(String name, Map<String, String> data) {
+	public ApplicationSecret(String name, SecretType type, Map<String, String> data) {
 		this.name = name;
+		this.type = type;
 		this.data = data;
 	}
 }

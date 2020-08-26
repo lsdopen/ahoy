@@ -50,6 +50,19 @@
                   </mat-option>
                 </mat-select>
               </mat-form-field>
+
+              <mat-checkbox [(ngModel)]="config.tls" name="environmentConfigTls">Tls</mat-checkbox>
+
+              <mat-form-field *ngIf="config.tls" style="margin-top: 10px">
+                <mat-select [(ngModel)]="config.tlsSecretName"
+                            name="environmentConfigTlsSecretName" placeholder="Select Tls secret">
+                  <mat-option>--</mat-option>
+                  <mat-option *ngFor="let secret of tlsSecrets()" [value]="secret.name">
+                    {{secret.name}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
             </div>
           </mat-expansion-panel>
 
@@ -126,9 +139,33 @@
                       <mat-hint>should start with and use lower case letters and numbers</mat-hint>
                     </mat-form-field>
 
-                    <app-application-secret-data fxFill
-                                                 [secretData]="config.secrets[secretIndex].data">
+                    <mat-form-field style="margin-top: 10px">
+                      <mat-select [(ngModel)]="secret.type"
+                                  name="secretType{{secretIndex}}" required placeholder="Type">
+                        <mat-option value="Generic">Generic</mat-option>
+                        <mat-option value="Tls">Tls</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <app-application-secret-data *ngIf="secret.type === 'Generic'" fxFill
+                                                 [secretData]="secret.data">
                     </app-application-secret-data>
+
+                    <div *ngIf="secret.type === 'Tls'" fxLayout="column" fxFill>
+                      <mat-form-field>
+                        <textarea matInput [(ngModel)]="secret.data['tls.crt']" placeholder="Certificate"
+                                  name="secretTlsCertificate{{secretIndex}}"
+                                  type="text"
+                                  matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="30"></textarea>
+                      </mat-form-field>
+
+                      <mat-form-field>
+                        <textarea matInput [(ngModel)]="secret.data['tls.key']" placeholder="Private key"
+                                  name="secretTlsPrivateKey{{secretIndex}}"
+                                  type="text"
+                                  matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="30"></textarea>
+                      </mat-form-field>
+                    </div>
 
                   </div>
                 </mat-tab>

@@ -37,6 +37,8 @@ public class ApplicationValues {
 	public Integer replicas;
 	public String routeHostname;
 	public Integer routeTargetPort;
+	public boolean tls;
+	public String tlsSecretName;
 	public Map<String, EnvironmentVariableValues> environmentVariables;
 	public String healthEndpointPath;
 	public Integer healthEndpointPort;

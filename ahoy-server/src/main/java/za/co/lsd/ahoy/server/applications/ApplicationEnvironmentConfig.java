@@ -38,6 +38,8 @@ public class ApplicationEnvironmentConfig {
 
 	private String routeHostname;
 	private Integer routeTargetPort;
+	private boolean tls;
+	private String tlsSecretName;
 
 	@OneToMany(mappedBy = "applicationEnvironmentConfig", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("applicationEnvironmentConfigReference")

@@ -157,4 +157,13 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
     }
     return false;
   }
+
+  tlsSecrets(): ApplicationSecret[] {
+    if (this.applicationVersion.secrets) {
+      return this.applicationVersion.secrets
+        .concat(this.config.secrets)
+        .filter(secret => secret.type === 'Tls');
+    }
+    return [];
+  }
 }
