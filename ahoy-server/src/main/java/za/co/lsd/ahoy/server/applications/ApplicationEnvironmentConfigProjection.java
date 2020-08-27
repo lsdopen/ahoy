@@ -34,6 +34,8 @@ public interface ApplicationEnvironmentConfigProjection {
 
 	List<ApplicationConfig> getConfigs();
 
+	List<ApplicationVolume> getVolumes();
+
 	List<ApplicationSecret> getSecrets();
 
 	EnvironmentRelease getEnvironmentRelease();

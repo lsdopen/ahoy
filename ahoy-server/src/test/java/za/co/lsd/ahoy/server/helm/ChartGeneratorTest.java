@@ -191,6 +191,12 @@ public class ChartGeneratorTest {
 		);
 		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
 
+		List<ApplicationVolume> envVolumes = Arrays.asList(
+			new ApplicationVolume("my-env-volume", "/opt/env-vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
+			new ApplicationVolume("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret")
+		);
+		environmentConfig.setVolumes(envVolumes);
+
 		List<ApplicationSecret> envSecrets = Collections.singletonList(new ApplicationSecret("my-env-secret", SecretType.Generic, Collections.singletonMap("env-secret-key", "env-secret-value")));
 		environmentConfig.setSecrets(envSecrets);
 
@@ -236,8 +242,10 @@ public class ChartGeneratorTest {
 		configs.put("application-config-c1fcd7e5", new ApplicationConfigValues("application-dev.properties", "anothergreeting=hello"));
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
-		volumes.put("application-volume-1", new ApplicationVolumeValues("my-volume", "/opt/vol", "standard", "ReadWriteOnce", "2Gi"));
-		volumes.put("application-volume-2", new ApplicationVolumeValues("my-secret-volume", "/opt/secret-vol", "my-secret"));
+		volumes.put("my-volume", new ApplicationVolumeValues("my-volume", "/opt/vol", "standard", "ReadWriteOnce", "2Gi"));
+		volumes.put("my-secret-volume", new ApplicationVolumeValues("my-secret-volume", "/opt/secret-vol", "my-secret"));
+		volumes.put("my-env-volume", new ApplicationVolumeValues("my-env-volume", "/opt/env-vol", "standard", "ReadWriteOnce", "2Gi"));
+		volumes.put("my-env-secret-volume", new ApplicationVolumeValues("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret"));
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
 		secrets.put("my-secret", new ApplicationSecretValues("my-secret", "Opague", Collections.singletonMap("secret-key", "secret-value")));
@@ -309,6 +317,12 @@ public class ChartGeneratorTest {
 		);
 		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
 
+		List<ApplicationVolume> envVolumes = Arrays.asList(
+			new ApplicationVolume("my-env-volume", "/opt/env-vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
+			new ApplicationVolume("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret")
+		);
+		environmentConfig.setVolumes(envVolumes);
+
 		List<ApplicationSecret> envSecrets = Arrays.asList(
 			new ApplicationSecret("my-env-secret", SecretType.Generic, Collections.singletonMap("env-secret-key", "env-secret-value")),
 			new ApplicationSecret("my-tls-secret", SecretType.Tls, Collections.singletonMap("cert", "my-cert"))
@@ -351,6 +365,10 @@ public class ChartGeneratorTest {
 		Map<String, ApplicationConfigValues> configs = new LinkedHashMap<>();
 		configs.put("application-config-c1fcd7e5", new ApplicationConfigValues("application-dev.properties", "anothergreeting=hello"));
 
+		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
+		volumes.put("my-env-volume", new ApplicationVolumeValues("my-env-volume", "/opt/env-vol", "standard", "ReadWriteOnce", "2Gi"));
+		volumes.put("my-env-secret-volume", new ApplicationVolumeValues("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret"));
+
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
 		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", "Opague", Collections.singletonMap("env-secret-key", "env-secret-value")));
 		secrets.put("my-tls-secret", new ApplicationSecretValues("my-tls-secret", "kubernetes.io/tls", Collections.singletonMap("cert", "my-cert")));
@@ -367,7 +385,7 @@ public class ChartGeneratorTest {
 			.tlsSecretName("my-tls-secret")
 			.environmentVariables(expectedEnvironmentVariables)
 			.configs(configs)
-			.volumes(Collections.emptyMap())
+			.volumes(volumes)
 			.secrets(secrets)
 			.build();
 		Map<String, ApplicationValues> expectedApps = new LinkedHashMap<>();
@@ -531,6 +549,12 @@ public class ChartGeneratorTest {
 		);
 		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
 
+		List<ApplicationVolume> envVolumes = Arrays.asList(
+			new ApplicationVolume("my-env-volume", "/opt/env-vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
+			new ApplicationVolume("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret")
+		);
+		environmentConfig.setVolumes(envVolumes);
+
 		List<ApplicationSecret> envSecrets = Collections.singletonList(new ApplicationSecret("my-env-secret", SecretType.Generic, Collections.singletonMap("env-secret-key", "env-secret-value")));
 		environmentConfig.setSecrets(envSecrets);
 
@@ -576,8 +600,10 @@ public class ChartGeneratorTest {
 		configs.put("application-config-c1fcd7e5", new ApplicationConfigValues("application-dev.properties", "anothergreeting=hello"));
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
-		volumes.put("application-volume-1", new ApplicationVolumeValues("my-volume", "/opt/vol", "standard", "ReadWriteOnce", "2Gi"));
-		volumes.put("application-volume-2", new ApplicationVolumeValues("my-secret-volume", "/opt/secret-vol", "my-secret"));
+		volumes.put("my-volume", new ApplicationVolumeValues("my-volume", "/opt/vol", "standard", "ReadWriteOnce", "2Gi"));
+		volumes.put("my-secret-volume", new ApplicationVolumeValues("my-secret-volume", "/opt/secret-vol", "my-secret"));
+		volumes.put("my-env-volume", new ApplicationVolumeValues("my-env-volume", "/opt/env-vol", "standard", "ReadWriteOnce", "2Gi"));
+		volumes.put("my-env-secret-volume", new ApplicationVolumeValues("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret"));
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
 		secrets.put("my-secret", new ApplicationSecretValues("my-secret", "Opague", Collections.singletonMap("secret-key", "secret-value")));
@@ -641,6 +667,12 @@ public class ChartGeneratorTest {
 		);
 		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
 
+		List<ApplicationVolume> envVolumes = Arrays.asList(
+			new ApplicationVolume("my-env-volume", "/opt/env-vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
+			new ApplicationVolume("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret")
+		);
+		environmentConfig.setVolumes(envVolumes);
+
 		List<ApplicationSecret> envSecrets = Collections.singletonList(new ApplicationSecret("my-env-secret", SecretType.Generic, Collections.singletonMap("env-secret-key", "env-secret-value")));
 		environmentConfig.setSecrets(envSecrets);
 
@@ -680,6 +712,10 @@ public class ChartGeneratorTest {
 		Map<String, ApplicationConfigValues> configs = new LinkedHashMap<>();
 		configs.put("application-config-c1fcd7e5", new ApplicationConfigValues("application-dev.properties", "anothergreeting=hello"));
 
+		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
+		volumes.put("my-env-volume", new ApplicationVolumeValues("my-env-volume", "/opt/env-vol", "standard", "ReadWriteOnce", "2Gi"));
+		volumes.put("my-env-secret-volume", new ApplicationVolumeValues("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret"));
+
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
 		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", "Opague", Collections.singletonMap("env-secret-key", "env-secret-value")));
 
@@ -693,7 +729,7 @@ public class ChartGeneratorTest {
 			.routeTargetPort(8080)
 			.environmentVariables(expectedEnvironmentVariables)
 			.configs(configs)
-			.volumes(Collections.emptyMap())
+			.volumes(volumes)
 			.secrets(secrets)
 			.build();
 		Map<String, ApplicationValues> expectedApps = new LinkedHashMap<>();

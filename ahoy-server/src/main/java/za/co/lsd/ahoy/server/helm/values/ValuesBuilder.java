@@ -104,9 +104,8 @@ public class ValuesBuilder {
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
 		if (applicationVersion.getVolumes() != null) {
-			int index = 1;
 			for (ApplicationVolume applicationVolume : applicationVersion.getVolumes()) {
-				volumes.put("application-volume-" + index++, new ApplicationVolumeValues(applicationVolume));
+				volumes.put(applicationVolume.getName(), new ApplicationVolumeValues(applicationVolume));
 			}
 		}
 
@@ -119,15 +118,21 @@ public class ValuesBuilder {
 		}
 
 		if (environmentConfig != null) {
+			if (environmentConfig.getEnvironmentVariables() != null) {
+				for (ApplicationEnvironmentVariable environmentVariable : environmentConfig.getEnvironmentVariables()) {
+					environmentVariables.put(environmentVariable.getKey(), new EnvironmentVariableValues(environmentVariable));
+				}
+			}
+
 			if (environmentConfig.getConfigs() != null) {
 				for (ApplicationConfig applicationConfig : environmentConfig.getConfigs()) {
 					configs.put(configName(applicationConfig), new ApplicationConfigValues(applicationConfig));
 				}
 			}
 
-			if (environmentConfig.getEnvironmentVariables() != null) {
-				for (ApplicationEnvironmentVariable environmentVariable : environmentConfig.getEnvironmentVariables()) {
-					environmentVariables.put(environmentVariable.getKey(), new EnvironmentVariableValues(environmentVariable));
+			if (environmentConfig.getVolumes() != null) {
+				for (ApplicationVolume applicationVolume : environmentConfig.getVolumes()) {
+					volumes.put(applicationVolume.getName(), new ApplicationVolumeValues(applicationVolume));
 				}
 			}
 

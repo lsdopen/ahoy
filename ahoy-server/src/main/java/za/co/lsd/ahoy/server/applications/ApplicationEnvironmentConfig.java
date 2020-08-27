@@ -51,6 +51,10 @@ public class ApplicationEnvironmentConfig {
 
 	@OneToMany(mappedBy = "applicationEnvironmentConfig", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("applicationEnvironmentConfigReference")
+	private List<ApplicationVolume> volumes;
+
+	@OneToMany(mappedBy = "applicationEnvironmentConfig", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference("applicationEnvironmentConfigReference")
 	private List<ApplicationSecret> secrets;
 
 	public ApplicationEnvironmentConfig(ApplicationDeploymentId id, ApplicationEnvironmentConfig applicationEnvironmentConfig) {

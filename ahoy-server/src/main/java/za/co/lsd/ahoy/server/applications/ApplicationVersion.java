@@ -63,7 +63,7 @@ public class ApplicationVersion {
 	private List<ApplicationConfig> configs;
 
 	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonManagedReference
+	@JsonManagedReference("applicationVersionReference")
 	private List<ApplicationVolume> volumes;
 
 	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)

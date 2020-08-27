@@ -1,0 +1,86 @@
+<!--
+  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~
+  ~    Licensed under the Apache License, Version 2.0 (the "License");
+  ~    you may not use this file except in compliance with the License.
+  ~    You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~    Unless required by applicable law or agreed to in writing, software
+  ~    distributed under the License is distributed on an "AS IS" BASIS,
+  ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~    See the License for the specific language governing permissions and
+  ~    limitations under the License.
+  -->
+
+<div fxFlex fxLayout="column" fxLayoutAlign="start start" class="form-area">
+
+  <mat-form-field style="margin-top: 10px">
+    <input matInput [(ngModel)]="volume.name" placeholder="Name"
+           name="volumeName{{volumeIndex}}"
+           required
+           pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$">
+    <mat-hint>should start with and use lower case letters and numbers</mat-hint>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput [(ngModel)]="volume.mountPath"
+           placeholder="Mount path"
+           name="volumeMountPath{{volumeIndex}}" required>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-select [(ngModel)]="volume.type"
+                name="volumeType{{volumeIndex}}" required placeholder="Type">
+      <mat-option value="PersistentVolume">Persistent Volume</mat-option>
+      <mat-option value="Secret">Secret</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div *ngIf="volume.type === 'PersistentVolume'" fxLayout="column" class="form-area">
+    <mat-form-field>
+      <input matInput [(ngModel)]="volume.storageClassName"
+             placeholder="Storage class name"
+             name="volumeStorageClassName{{volumeIndex}}">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-select [(ngModel)]="volume.accessMode"
+                  name="volumeAccessMode{{volumeIndex}}" required placeholder="Access Mode">
+        <mat-option value="ReadWriteOnce">ReadWriteOnce</mat-option>
+        <mat-option value="ReadWriteMany">ReadWriteMany</mat-option>
+        <mat-option value="ReadOnlyMany">ReadOnlyMany</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div fxLayout="row" fxLayoutGap="10px">
+      <mat-form-field>
+        <input matInput [(ngModel)]="volume.size"
+               placeholder="Storage size"
+               name="volumeStorageSize{{volumeIndex}}" required>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-select [(ngModel)]="volume.sizeStorageUnit"
+                    name="volumeStorageSizeUnit{{volumeIndex}}" required placeholder="Unit">
+          <mat-option value="Mi">Mi</mat-option>
+          <mat-option value="Gi">Gi</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div *ngIf="volume.type === 'Secret'" fxLayout="column" class="form-area">
+    <mat-form-field>
+      <mat-select [(ngModel)]="volume.secretName"
+                  name="volumeSecretName{{volumeIndex}}" required placeholder="Secret">
+        <mat-option>--</mat-option>
+        <mat-option *ngFor="let secret of secrets" [value]="secret.name">
+          {{secret.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+</div>

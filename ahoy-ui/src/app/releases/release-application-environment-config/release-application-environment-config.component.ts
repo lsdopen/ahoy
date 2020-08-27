@@ -15,7 +15,7 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {Application, ApplicationConfig, ApplicationEnvironmentConfig, ApplicationEnvironmentConfigId, ApplicationSecret, ApplicationVersion} from '../../applications/application';
+import {Application, ApplicationConfig, ApplicationEnvironmentConfig, ApplicationEnvironmentConfigId, ApplicationSecret, ApplicationVersion, ApplicationVolume} from '../../applications/application';
 import {LoggerService} from '../../util/logger.service';
 import {ActivatedRoute} from '@angular/router';
 import {ApplicationService} from '../../applications/application.service';
@@ -42,6 +42,8 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   environmentVariablesCategory = false;
   configFileCategory = false;
   selectedConfigIndex: number;
+  volumesCategory = false;
+  selectedVolumeIndex: number;
   secretsCategory = false;
   selectedSecretIndex: number;
 
@@ -105,6 +107,11 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
       this.selectedConfigIndex = 0;
     }
 
+    if (this.config.volumes.length > 0) {
+      this.volumesCategory = true;
+      this.selectedVolumeIndex = 0;
+    }
+
     if (this.config.secrets.length > 0) {
       this.secretsCategory = true;
       this.selectedSecretIndex = 0;
@@ -134,6 +141,16 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   deleteConfig() {
     this.config.configs.splice(this.selectedConfigIndex, 1);
     this.selectedConfigIndex = this.selectedConfigIndex - 1;
+  }
+
+  addVolume() {
+    this.config.volumes.push(new ApplicationVolume());
+    this.selectedVolumeIndex = this.applicationVersion.volumes.length - 1;
+  }
+
+  deleteVolume() {
+    this.config.volumes.splice(this.selectedVolumeIndex, 1);
+    this.selectedVolumeIndex = this.selectedVolumeIndex - 1;
   }
 
   addSecret() {

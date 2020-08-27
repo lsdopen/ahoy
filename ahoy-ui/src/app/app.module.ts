@@ -93,6 +93,7 @@ import {ArgoSettingsComponent} from './settings/argo-settings/argo-settings.comp
 import {DockerSettingsComponent} from './settings/docker-settings/docker-settings.component';
 import {OAuthModule} from "angular-oauth2-oidc";
 import {ApplicationSecretDataComponent} from "./applications/application-secret-data/application-secret-data.component";
+import {ApplicationVolumeDetailComponent} from './applications/application-volume-detail/application-volume-detail.component';
 
 @NgModule({
   declarations: [
@@ -142,7 +143,8 @@ import {ApplicationSecretDataComponent} from "./applications/application-secret-
     GitSettingsComponent,
     ArgoSettingsComponent,
     DockerSettingsComponent,
-    ApplicationSecretDataComponent
+    ApplicationSecretDataComponent,
+    ApplicationVolumeDetailComponent
   ],
   imports: [
     BrowserModule,

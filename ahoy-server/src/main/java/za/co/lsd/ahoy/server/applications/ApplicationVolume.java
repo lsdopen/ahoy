@@ -52,9 +52,14 @@ public class ApplicationVolume {
 	private String secretName;
 
 	@ManyToOne
-	@JsonBackReference
+	@JsonBackReference("applicationVersionReference")
 	@ToString.Exclude
 	private ApplicationVersion applicationVersion;
+
+	@ManyToOne
+	@JsonBackReference("applicationEnvironmentConfigReference")
+	@ToString.Exclude
+	private ApplicationEnvironmentConfig applicationEnvironmentConfig;
 
 	public ApplicationVolume(String name, String mountPath, String storageClassName, VolumeAccessMode accessMode, Long size, StorageUnit sizeStorageUnit) {
 		this.name = name;

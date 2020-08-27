@@ -103,6 +103,7 @@ export class ApplicationEnvironmentConfig {
   tlsSecretName: string;
   environmentVariables: ApplicationEnvironmentVariable[];
   configs: ApplicationConfig[];
+  volumes: ApplicationVolume[];
   secrets: ApplicationSecret[];
 }
 
