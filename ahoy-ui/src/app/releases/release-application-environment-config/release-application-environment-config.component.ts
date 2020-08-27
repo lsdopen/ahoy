@@ -34,7 +34,7 @@ import {flatMap} from 'rxjs/operators';
 })
 export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   private exampleRouteHost: string;
-  config: ApplicationEnvironmentConfig;
+  environmentConfig: ApplicationEnvironmentConfig;
   environmentRelease: EnvironmentRelease;
   releaseVersion: ReleaseVersion;
   applicationVersion: ApplicationVersion;
@@ -82,7 +82,7 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
           return this.applicationService.getEnvironmentConfig(id);
         }))
       .subscribe((config) => {
-        this.config = config;
+        this.environmentConfig = config;
 
         const releaseName = (this.environmentRelease.release as Release).name;
         const appName = (this.applicationVersion.application as Application).name;
@@ -94,32 +94,32 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   }
 
   private setCategoriesExpanded() {
-    if (this.config.routeHostname) {
+    if (this.environmentConfig.routeHostname) {
       this.routeCategory = true;
     }
 
-    if (this.config.environmentVariables && Object.keys(this.config.environmentVariables).length > 0) {
+    if (this.environmentConfig.environmentVariables && Object.keys(this.environmentConfig.environmentVariables).length > 0) {
       this.environmentVariablesCategory = true;
     }
 
-    if (this.config.configs.length > 0) {
+    if (this.environmentConfig.configs.length > 0) {
       this.configFileCategory = true;
       this.selectedConfigIndex = 0;
     }
 
-    if (this.config.volumes.length > 0) {
+    if (this.environmentConfig.volumes.length > 0) {
       this.volumesCategory = true;
       this.selectedVolumeIndex = 0;
     }
 
-    if (this.config.secrets.length > 0) {
+    if (this.environmentConfig.secrets.length > 0) {
       this.secretsCategory = true;
       this.selectedSecretIndex = 0;
     }
   }
 
   save() {
-    this.applicationService.saveEnvironmentConfig(this.config)
+    this.applicationService.saveEnvironmentConfig(this.environmentConfig)
       .subscribe(() => this.location.back());
   }
 
@@ -128,49 +128,51 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   }
 
   routeExpand() {
-    if (!this.config.routeHostname) {
-      this.config.routeHostname = this.exampleRouteHost;
+    if (!this.environmentConfig.routeHostname) {
+      this.environmentConfig.routeHostname = this.exampleRouteHost;
     }
   }
 
   addConfig() {
-    this.config.configs.push(new ApplicationConfig());
-    this.selectedConfigIndex = this.config.configs.length - 1;
+    this.environmentConfig.configs.push(new ApplicationConfig());
+    this.selectedConfigIndex = this.environmentConfig.configs.length - 1;
   }
 
   deleteConfig() {
-    this.config.configs.splice(this.selectedConfigIndex, 1);
+    this.environmentConfig.configs.splice(this.selectedConfigIndex, 1);
     this.selectedConfigIndex = this.selectedConfigIndex - 1;
   }
 
   addVolume() {
-    this.config.volumes.push(new ApplicationVolume());
+    this.environmentConfig.volumes.push(new ApplicationVolume());
     this.selectedVolumeIndex = this.applicationVersion.volumes.length - 1;
   }
 
   deleteVolume() {
-    this.config.volumes.splice(this.selectedVolumeIndex, 1);
+    this.environmentConfig.volumes.splice(this.selectedVolumeIndex, 1);
     this.selectedVolumeIndex = this.selectedVolumeIndex - 1;
   }
 
   addSecret() {
     let applicationSecret = new ApplicationSecret();
     applicationSecret.data = {};
-    this.config.secrets.push(applicationSecret);
-    this.selectedSecretIndex = this.config.secrets.length - 1;
+    this.environmentConfig.secrets.push(applicationSecret);
+    this.selectedSecretIndex = this.environmentConfig.secrets.length - 1;
   }
 
   deleteSecret() {
-    this.config.secrets.splice(this.selectedSecretIndex, 1);
+    this.environmentConfig.secrets.splice(this.selectedSecretIndex, 1);
     this.selectedSecretIndex = this.selectedSecretIndex - 1;
   }
 
   secretInUse(): boolean {
-    let secret = this.config.secrets[this.selectedSecretIndex];
+    let secret = this.environmentConfig.secrets[this.selectedSecretIndex];
     if (secret && secret.name) {
-      let inUseInEnvironmentVariables = this.config.environmentVariables
+      let inUseInVolumes = this.environmentConfig.volumes
+        .filter(volume => volume.type === 'Secret' && volume.secretName === secret.name).length > 0;
+      let inUseInEnvironmentVariables = this.environmentConfig.environmentVariables
         .filter(envVar => envVar.type === 'Secret' && envVar.secretName === secret.name).length > 0;
-      return inUseInEnvironmentVariables;
+      return inUseInVolumes || inUseInEnvironmentVariables;
     }
     return false;
   }
@@ -178,7 +180,7 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   tlsSecrets(): ApplicationSecret[] {
     if (this.applicationVersion.secrets) {
       return this.applicationVersion.secrets
-        .concat(this.config.secrets)
+        .concat(this.environmentConfig.secrets)
         .filter(secret => secret.type === 'Tls');
     }
     return [];

@@ -140,12 +140,12 @@
                            label="{{config.name ? config.name : '<new>'}}">
                     <div fxFlex fxLayout="column" fxLayoutAlign="start start" class="form-area">
                       <mat-form-field style="margin-top: 10px">
-                        <input matInput [(ngModel)]="applicationVersion.configs[configIndex].name" placeholder="Name"
+                        <input matInput [(ngModel)]="config.name" placeholder="Name"
                                name="applicationConfigName{{configIndex}}" required>
                       </mat-form-field>
 
                       <mat-form-field fxFill>
-                        <textarea matInput [(ngModel)]="applicationVersion.configs[configIndex].config" placeholder="Config"
+                        <textarea matInput [(ngModel)]="config.config" placeholder="Config"
                                   name="applicationConfig{{configIndex}}"
                                   type="text"
                                   matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="20" required></textarea>

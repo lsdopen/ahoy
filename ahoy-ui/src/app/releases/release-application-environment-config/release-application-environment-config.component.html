@@ -14,7 +14,7 @@
   ~    limitations under the License.
   -->
 
-<ng-container *ngIf="config">
+<ng-container *ngIf="environmentConfig">
   <form #environmentConfigForm="ngForm">
     <app-content [title]="title" [buttonBar]="buttonBar">
       <app-detail>
@@ -22,7 +22,7 @@
         <div fxLayout="column" fxLayoutGap="10px" class="form-area">
 
           <mat-form-field>
-            <input matInput type="number" [min]="0" [max]="100" [(ngModel)]="config.replicas" placeholder="Replicas" name="environmentConfigReplicas"
+            <input matInput type="number" [min]="0" [max]="100" [(ngModel)]="environmentConfig.replicas" placeholder="Replicas" name="environmentConfigReplicas"
                    required>
           </mat-form-field>
 
@@ -33,7 +33,7 @@
 
             <div fxLayout="column" class="form-area">
               <mat-form-field>
-                <input matInput [(ngModel)]="config.routeHostname" placeholder="Hostname" name="environmentConfigRouteHostname"
+                <input matInput [(ngModel)]="environmentConfig.routeHostname" placeholder="Hostname" name="environmentConfigRouteHostname"
                        pattern="(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])"
                        required="{{routeCategory}}">
                 <mat-error *ngIf="environmentConfigForm.form.controls.environmentConfigRouteHostname?.hasError('pattern')">
@@ -42,7 +42,7 @@
               </mat-form-field>
 
               <mat-form-field>
-                <mat-select [(ngModel)]="config.routeTargetPort" placeholder="Target Port" name="environmentConfigRouteTargetPort"
+                <mat-select [(ngModel)]="environmentConfig.routeTargetPort" placeholder="Target Port" name="environmentConfigRouteTargetPort"
                             required="{{routeCategory}}">
                   <mat-option>--</mat-option>
                   <mat-option *ngFor="let port of applicationVersion.servicePorts" [value]="port">
@@ -51,10 +51,10 @@
                 </mat-select>
               </mat-form-field>
 
-              <mat-checkbox [(ngModel)]="config.tls" name="environmentConfigTls">Tls</mat-checkbox>
+              <mat-checkbox [(ngModel)]="environmentConfig.tls" name="environmentConfigTls">Tls</mat-checkbox>
 
-              <mat-form-field *ngIf="config.tls" style="margin-top: 10px">
-                <mat-select [(ngModel)]="config.tlsSecretName"
+              <mat-form-field *ngIf="environmentConfig.tls" style="margin-top: 10px">
+                <mat-select [(ngModel)]="environmentConfig.tlsSecretName"
                             name="environmentConfigTlsSecretName" placeholder="Select Tls secret">
                   <mat-option>--</mat-option>
                   <mat-option *ngFor="let secret of tlsSecrets()" [value]="secret.name">
@@ -72,7 +72,7 @@
             </mat-expansion-panel-header>
 
             <app-application-env-variables
-              [environmentVariables]="config.environmentVariables" [secrets]="config.secrets">
+              [environmentVariables]="environmentConfig.environmentVariables" [secrets]="environmentConfig.secrets">
             </app-application-env-variables>
           </mat-expansion-panel>
 
@@ -89,16 +89,16 @@
 
               <div fxFlex fxLayout="row">
                 <mat-tab-group fxFlex="grow" [(selectedIndex)]="selectedConfigIndex">
-                  <mat-tab *ngFor="let envConfig of config.configs; let configIndex = index"
-                           label="{{envConfig.name ? envConfig.name : '<new>'}}">
+                  <mat-tab *ngFor="let config of environmentConfig.configs; let configIndex = index"
+                           label="{{config.name ? config.name : '<new>'}}">
                     <div fxFlex fxLayout="column" fxLayoutAlign="start start" class="form-area">
                       <mat-form-field style="margin-top: 10px">
-                        <input matInput [(ngModel)]="config.configs[configIndex].name" placeholder="Name"
+                        <input matInput [(ngModel)]="config.name" placeholder="Name"
                                name="applicationConfigName{{configIndex}}" required>
                       </mat-form-field>
 
                       <mat-form-field fxFill>
-                        <textarea matInput [(ngModel)]="config.configs[configIndex].config" placeholder="Config"
+                        <textarea matInput [(ngModel)]="config.config" placeholder="Config"
                                   name="applicationConfig{{configIndex}}"
                                   type="text"
                                   matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="20" required></textarea>
@@ -128,10 +128,10 @@
 
               <div fxFlex fxLayout="row">
                 <mat-tab-group fxFlex="grow" [(selectedIndex)]="selectedVolumeIndex">
-                  <mat-tab *ngFor="let volume of config.volumes; let volumeIndex = index"
+                  <mat-tab *ngFor="let volume of environmentConfig.volumes; let volumeIndex = index"
                            label="{{volume.name ? volume.name : '<new>'}}">
 
-                    <app-application-volume-detail [volume]="volume" [volumeIndex]="volumeIndex" [secrets]="config.secrets">
+                    <app-application-volume-detail [volume]="volume" [volumeIndex]="volumeIndex" [secrets]="environmentConfig.secrets">
                     </app-application-volume-detail>
 
                   </mat-tab>
@@ -157,11 +157,11 @@
 
             <div fxFlex fxLayout="row">
               <mat-tab-group fxFlex="grow" [(selectedIndex)]="selectedSecretIndex">
-                <mat-tab *ngFor="let secret of config.secrets; let secretIndex = index"
+                <mat-tab *ngFor="let secret of environmentConfig.secrets; let secretIndex = index"
                          label="{{secret.name ? secret.name : '<new>'}}">
                   <div fxFlex fxLayout="column" fxLayoutAlign="start start" class="form-area">
                     <mat-form-field style="margin-top: 10px">
-                      <input matInput [(ngModel)]="config.secrets[secretIndex].name" placeholder="Name"
+                      <input matInput [(ngModel)]="secret.name" placeholder="Name"
                              name="secretName{{secretIndex}}"
                              required
                              [readonly]="secretInUse()"
