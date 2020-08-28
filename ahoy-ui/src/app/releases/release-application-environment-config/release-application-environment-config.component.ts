@@ -172,16 +172,14 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
         .filter(volume => volume.type === 'Secret' && volume.secretName === secret.name).length > 0;
       let inUseInEnvironmentVariables = this.environmentConfig.environmentVariables
         .filter(envVar => envVar.type === 'Secret' && envVar.secretName === secret.name).length > 0;
-      return inUseInVolumes || inUseInEnvironmentVariables;
+      return inUseInVolumes || inUseInEnvironmentVariables || this.environmentConfig.tlsSecretName === secret.name;
     }
     return false;
   }
 
   tlsSecrets(): ApplicationSecret[] {
-    if (this.applicationVersion.secrets) {
-      return this.applicationVersion.secrets
-        .concat(this.environmentConfig.secrets)
-        .filter(secret => secret.type === 'Tls');
+    if (this.environmentConfig.secrets) {
+      return this.environmentConfig.secrets.filter(secret => secret.type === 'Tls');
     }
     return [];
   }

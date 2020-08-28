@@ -55,7 +55,8 @@
 
               <mat-form-field *ngIf="environmentConfig.tls" style="margin-top: 10px">
                 <mat-select [(ngModel)]="environmentConfig.tlsSecretName"
-                            name="environmentConfigTlsSecretName" placeholder="Select Tls secret">
+                            name="environmentConfigTlsSecretName" placeholder="Select Tls secret"
+                            required>
                   <mat-option>--</mat-option>
                   <mat-option *ngFor="let secret of tlsSecrets()" [value]="secret.name">
                     {{secret.name}}

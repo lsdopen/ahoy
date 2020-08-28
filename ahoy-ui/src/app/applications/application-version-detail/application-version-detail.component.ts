@@ -226,6 +226,7 @@ export class ApplicationVersionDetailComponent implements OnInit {
 
   addSecret() {
     let applicationSecret = new ApplicationSecret();
+    applicationSecret.type = 'Generic';
     applicationSecret.data = {};
     this.applicationVersion.secrets.push(applicationSecret);
     this.selectedSecretIndex = this.applicationVersion.secrets.length - 1;
