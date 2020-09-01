@@ -18,7 +18,6 @@ package za.co.lsd.ahoy.server.helm;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
@@ -37,16 +36,12 @@ import java.util.Objects;
 @Slf4j
 public class ChartGenerator {
 	private final ValuesBuilder valuesBuilder;
-	private ObjectProvider<TemplateWriter> templateWriterFactory;
+	private final TemplateWriter templateWriter;
 	private ObjectFactory<Yaml> yamlObjectFactory;
 
-	public ChartGenerator(ValuesBuilder valuesBuilder) {
+	public ChartGenerator(ValuesBuilder valuesBuilder, TemplateWriter templateWriter) {
 		this.valuesBuilder = valuesBuilder;
-	}
-
-	@Autowired
-	public void setTemplateWriterFactory(ObjectProvider<TemplateWriter> templateWriterFactory) {
-		this.templateWriterFactory = templateWriterFactory;
+		this.templateWriter = templateWriter;
 	}
 
 	@Autowired
@@ -85,7 +80,6 @@ public class ChartGenerator {
 
 	private void writeTemplates(EnvironmentRelease environmentRelease, ReleaseVersion releaseVersion, Path templatesPath) throws IOException {
 		log.debug("Writing templates for {}, {} to {}", environmentRelease, releaseVersion, templatesPath);
-		TemplateWriter templateWriter = templateWriterFactory.getObject(environmentRelease.getEnvironment().getCluster().getType());
 		templateWriter.writeTemplates(environmentRelease, releaseVersion, templatesPath);
 	}
 

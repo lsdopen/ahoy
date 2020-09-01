@@ -25,28 +25,12 @@ import org.yaml.snakeyaml.introspector.Property;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
-import za.co.lsd.ahoy.server.cluster.ClusterType;
 import za.co.lsd.ahoy.server.helm.values.ApplicationConfigValues;
 import za.co.lsd.ahoy.server.helm.values.ApplicationValues;
 import za.co.lsd.ahoy.server.helm.values.Values;
 
 @Configuration
 public class HelmConfiguration {
-
-	@Bean
-	@Scope("prototype")
-	public TemplateWriter templateWriter(ClusterType clusterType) {
-		switch (clusterType) {
-			case OPENSHIFT:
-				return new OpenShiftTemplateWriter();
-			case KUBERNETES:
-				return new KubernetesTemplateWriter();
-			case NOOP:
-				return new NoopTemplateWriter();
-			default:
-				throw new IllegalArgumentException("Failed to create template writer. Cluster type unknown: " + clusterType);
-		}
-	}
 
 	@Bean
 	@Scope("prototype")
