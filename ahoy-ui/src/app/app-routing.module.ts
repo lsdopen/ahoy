@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import {DockerSettingsComponent} from './settings/docker-settings/docker-setting
 import {AuthGuard} from "./util/auth.guard";
 
 const routes: Routes = [
-  {path: '', redirectTo: '/dashboard', pathMatch: 'full', canActivate: [AuthGuard]},
+  {path: '', redirectTo: '/dashboard', pathMatch: 'full'},
   {path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard, SettingsGuard]},
   {path: 'releases', component: ReleasesComponent, canActivate: [AuthGuard, SettingsGuard]},
   {path: 'release/:environmentId/:releaseId/version/:releaseVersionId', component: ReleaseManageComponent, canActivate: [AuthGuard]},
@@ -65,7 +65,8 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
     useHash: true,
-    initialNavigation: false
+    initialNavigation: 'disabled',
+    relativeLinkResolution: 'legacy'
   })],
   exports: [RouterModule]
 })
