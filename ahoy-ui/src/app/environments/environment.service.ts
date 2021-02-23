@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import {LoggerService} from '../util/logger.service';
 import {RestClientService} from '../util/rest-client.service';
 import {EMPTY, Observable, of} from 'rxjs';
 import {Environment} from './environment';
-import {catchError, flatMap, map, tap} from 'rxjs/operators';
+import {catchError, map, mergeMap, tap} from 'rxjs/operators';
 import {EnvironmentRelease} from '../environment-release/environment-release';
 import {Notification} from '../notifications/notification';
 import {NotificationsService} from '../notifications/notifications.service';
@@ -132,7 +132,7 @@ export class EnvironmentService {
     if (this.lastEnvironmentId === 0) {
       this.log.debug('no last used environment found, finding first environment');
       return this.getAll().pipe(
-        flatMap(environments => {
+        mergeMap(environments => {
           this.lastEnvironmentId = environments.length > 0 ? environments[0].id : 0;
           return of(this.lastEnvironmentId);
         })

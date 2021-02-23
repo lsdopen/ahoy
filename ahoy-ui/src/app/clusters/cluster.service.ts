@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 import {Injectable} from '@angular/core';
 import {EMPTY, Observable, of} from 'rxjs';
-import {catchError, flatMap, map, tap} from 'rxjs/operators';
+import {catchError, map, mergeMap, tap} from 'rxjs/operators';
 import {RestClientService} from '../util/rest-client.service';
 import {LoggerService} from '../util/logger.service';
 import {Cluster} from './cluster';
@@ -111,7 +111,7 @@ export class ClusterService {
     if (this.lastClusterId === 0) {
       this.log.debug('no last used cluster found, finding first cluster...');
       return this.getAll().pipe(
-        flatMap((clusters) => {
+        mergeMap((clusters) => {
           this.lastClusterId = clusters.length > 0 ? clusters[0].id : 0;
           return of(this.lastClusterId);
         })

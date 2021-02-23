@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 import {Injectable, isDevMode} from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {Observable, of, throwError} from 'rxjs';
-import {catchError, flatMap, tap} from 'rxjs/operators';
+import {catchError, mergeMap, tap} from 'rxjs/operators';
 import {LoggerService} from './logger.service';
 import {NotificationsService} from '../notifications/notifications.service';
 
@@ -77,7 +77,7 @@ export class RestClientService {
   exists(path: string, progress = false): Observable<boolean> {
     this.startProgress(progress);
     return this.http.get(this.appsUrl + path, this.createOptions()).pipe(
-      flatMap(() => {
+      mergeMap(() => {
           this.stopProgress(progress);
           return of(true);
         }

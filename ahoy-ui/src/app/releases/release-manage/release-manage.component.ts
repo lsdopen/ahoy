@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Location} from '@angular/common';
 import {LoggerService} from '../../util/logger.service';
 import {EnvironmentService} from '../../environments/environment.service';
-import {filter, flatMap} from 'rxjs/operators';
+import {filter, mergeMap} from 'rxjs/operators';
 import {Observable, of, Subscription} from 'rxjs';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {PromoteDialogComponent} from '../promote-dialog/promote-dialog.component';
@@ -40,9 +40,9 @@ import {ReleaseService} from '../../release/release.service';
   styleUrls: ['./release-manage.component.scss']
 })
 export class ReleaseManageComponent implements OnInit, OnDestroy {
-  private environmentReleases: EnvironmentRelease[];
-  private releaseChanged = new EventEmitter<{ environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion }>();
   private environmentReleaseChangedSubscription: Subscription;
+  environmentReleases: EnvironmentRelease[];
+  releaseChanged = new EventEmitter<{ environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion }>();
   environmentRelease: EnvironmentRelease;
   releaseVersion: ReleaseVersion;
 
@@ -75,7 +75,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
 
   private getEnvironmentRelease(environmentId: number, releaseId: number, releaseVersionId: number): Observable<EnvironmentRelease> {
     return this.environmentReleaseService.get(environmentId, releaseId).pipe(
-      flatMap(environmentRelease => {
+      mergeMap(environmentRelease => {
         this.environmentRelease = environmentRelease;
 
         this.releaseVersion = (this.environmentRelease.release as Release).releaseVersions
@@ -83,10 +83,10 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
 
         return of(environmentRelease);
       }),
-      flatMap(environmentRelease => {
+      mergeMap(environmentRelease => {
           return this.environmentReleaseService.getReleasesByRelease((environmentRelease.release as Release).id);
         }
-      ), flatMap(environmentReleases => {
+      ), mergeMap(environmentReleases => {
         this.environmentReleases = environmentReleases;
         return of(this.environmentRelease);
       })
@@ -160,7 +160,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(PromoteDialogComponent, dialogConfig);
     dialogRef.afterClosed().pipe(
       filter((result) => result !== undefined), // cancelled
-      flatMap((destEnvironment) => {
+      mergeMap((destEnvironment) => {
         return this.releaseService.promote(this.environmentRelease.id, destEnvironment.id);
       })
     ).subscribe((newEnvironmentRelease: EnvironmentRelease) => this.reload(newEnvironmentRelease.id.environmentId, this.releaseVersion.id));
@@ -177,7 +177,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(UpgradeDialogComponent, dialogConfig);
     dialogRef.afterClosed().pipe(
       filter((result) => result !== undefined), // cancelled
-      flatMap((version) => {
+      mergeMap((version) => {
         return this.releaseService.upgrade(this.releaseVersion.id, version);
       })
     ).subscribe((newReleaseVersion: ReleaseVersion) => this.reload(this.environmentRelease.id.environmentId, newReleaseVersion.id));
@@ -198,7 +198,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(CopyEnvironmentConfigDialogComponent, dialogConfig);
     dialogRef.afterClosed().pipe(
       filter((result) => result !== undefined), // cancelled
-      flatMap((selectedReleaseVersion) => {
+      mergeMap((selectedReleaseVersion) => {
         return this.releaseService.copyEnvConfig(this.environmentRelease.id, selectedReleaseVersion.id, this.releaseVersion.id);
       })
     ).subscribe(() => this.reload(this.environmentRelease.id.environmentId, this.releaseVersion.id));
@@ -206,7 +206,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
 
   releaseVersionChanged() {
     this.router.navigate(
-      ['/release', this.environmentRelease.id.environmentId, this.environmentRelease.id.releaseId, 'version', this.releaseVersion.id]);
+      ['/release', this.environmentRelease.id.environmentId, this.environmentRelease.id.releaseId, 'version', this.releaseVersion.id]).then();
     this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
   }
 
@@ -232,7 +232,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     }
 
     if (r2 === null) {
-      return r1 === null;
+      return false;
     }
 
     return r1.version === r2.version;

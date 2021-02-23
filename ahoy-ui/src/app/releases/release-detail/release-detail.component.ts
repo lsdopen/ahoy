@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Location} from '@angular/common';
 import {Environment} from '../../environments/environment';
 import {EnvironmentService} from '../../environments/environment.service';
-import {flatMap} from 'rxjs/operators';
+import {mergeMap} from 'rxjs/operators';
 import {LoggerService} from '../../util/logger.service';
 import {ApplicationService} from '../../applications/application.service';
 import {EnvironmentRelease, EnvironmentReleaseId} from '../../environment-release/environment-release';
@@ -91,12 +91,12 @@ export class ReleaseDetailComponent implements OnInit {
     if (!this.editMode) {
       this.releasesService.save(this.release)
         .pipe(
-          flatMap(release => {
+          mergeMap(release => {
             this.release = release;
             this.releaseVersion.release = this.releasesService.link(release.id);
             return this.releasesService.saveVersion(this.releaseVersion);
           }),
-          flatMap(releaseVersion => {
+          mergeMap(releaseVersion => {
             this.environmentRelease.environment = this.environmentService.link(this.environment.id);
             this.environmentRelease.release = this.releasesService.link(this.release.id);
 

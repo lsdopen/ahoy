@@ -25,7 +25,7 @@ import {Environment} from '../../environments/environment';
 import {Release, ReleaseVersion} from '../release';
 import {EnvironmentReleaseService} from '../../environment-release/environment-release.service';
 import {ReleasesService} from '../releases.service';
-import {flatMap} from 'rxjs/operators';
+import {mergeMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-release-application-environment-config',
@@ -69,15 +69,15 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
 
     this.environmentReleaseService.get(environmentId, releaseId)
       .pipe(
-        flatMap((environmentRelease) => {
+        mergeMap((environmentRelease) => {
           this.environmentRelease = environmentRelease;
           return this.releasesService.getVersion(releaseVersionId);
         }),
-        flatMap((releaseVersion: ReleaseVersion) => {
+        mergeMap((releaseVersion: ReleaseVersion) => {
           this.releaseVersion = releaseVersion;
           return this.applicationService.getVersion(applicationVersionId);
         }),
-        flatMap((applicationVersion: ApplicationVersion) => {
+        mergeMap((applicationVersion: ApplicationVersion) => {
           this.applicationVersion = applicationVersion;
           return this.applicationService.getEnvironmentConfig(id);
         }))

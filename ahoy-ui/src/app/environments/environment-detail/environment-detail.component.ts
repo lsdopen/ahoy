@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import {EnvironmentService} from '../environment.service';
 import {ClusterService} from '../../clusters/cluster.service';
 import {Cluster} from '../../clusters/cluster';
 import {EnvironmentReleaseId} from '../../environment-release/environment-release';
-import {flatMap} from 'rxjs/operators';
+import {mergeMap} from 'rxjs/operators';
 import {of} from 'rxjs';
 import {EnvironmentReleaseService} from '../../environment-release/environment-release.service';
 import {ReleaseService} from '../../release/release.service';
@@ -84,14 +84,14 @@ export class EnvironmentDetailComponent implements OnInit {
     if (!this.editMode) {
       this.environment.cluster = this.cluster;
       this.environmentService.create(this.environment).pipe(
-        flatMap((environment: Environment) => {
+        mergeMap((environment: Environment) => {
           if (this.sourceEnvironment) {
             // we're duplicating a source environment
             return this.environmentService.duplicate(this.sourceEnvironment, environment);
           }
           return of(environment);
         }),
-        flatMap((environment: Environment) => {
+        mergeMap((environment: Environment) => {
           if (this.environmentReleaseId) {
             // we're promoting to this new environment
             return this.releaseService.promote(this.environmentReleaseId, environment.id);

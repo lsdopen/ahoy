@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
 import {Observable, of} from 'rxjs';
-import {flatMap} from 'rxjs/operators';
+import {mergeMap} from 'rxjs/operators';
 import {GitSettingsService} from './git-settings/git-settings.service';
 import {ArgoSettingsService} from './argo-settings/argo-settings.service';
 
@@ -37,7 +37,7 @@ export class SettingsGuard implements CanActivate {
     if (!this.settingsConfigured) {
       return this.gitSettingsService.exists()
         .pipe(
-          flatMap((exists: boolean) => {
+          mergeMap((exists: boolean) => {
             if (!exists) {
               this.router.navigate(['/settings/git'], {queryParams: {setup: 'true'}});
             } else {
@@ -45,7 +45,7 @@ export class SettingsGuard implements CanActivate {
             }
             return of(exists);
           }),
-          flatMap((exists: boolean) => {
+          mergeMap((exists: boolean) => {
             this.settingsConfigured = exists;
             if (!exists) {
               this.router.navigate(['/settings/argo'], {queryParams: {setup: 'true'}});

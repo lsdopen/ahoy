@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import {LoggerService} from '../util/logger.service';
 import {EnvironmentRelease, EnvironmentReleaseId} from '../environment-release/environment-release';
 import {EnvironmentReleaseService} from '../environment-release/environment-release.service';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
-import {filter, flatMap} from 'rxjs/operators';
+import {filter, mergeMap} from 'rxjs/operators';
 import {AddReleaseDialogComponent} from './add-release-dialog/add-release-dialog.component';
 import {ReleasesService} from './releases.service';
 import {Release} from './release';
@@ -87,7 +87,7 @@ export class ReleasesComponent implements OnInit {
     const dialogRef = this.dialog.open(AddReleaseDialogComponent, dialogConfig);
     dialogRef.afterClosed().pipe(
       filter((result) => result !== undefined), // cancelled
-      flatMap((release: Release) => {
+      mergeMap((release: Release) => {
         const environmentRelease = new EnvironmentRelease();
         environmentRelease.id = new EnvironmentReleaseId();
 
@@ -119,7 +119,7 @@ export class ReleasesComponent implements OnInit {
     }
 
     if (e2 === null) {
-      return e1 === null;
+      return false;
     }
 
     return e1.id === e2.id;
