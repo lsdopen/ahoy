@@ -34,7 +34,7 @@ import {SettingsGuard} from './settings/settings.guard';
 import {GitSettingsComponent} from './settings/git-settings/git-settings.component';
 import {ArgoSettingsComponent} from './settings/argo-settings/argo-settings.component';
 import {DockerSettingsComponent} from './settings/docker-settings/docker-settings.component';
-import {AuthGuard} from "./util/auth.guard";
+import {AuthGuard} from './util/auth.guard';
 
 const routes: Routes = [
   {path: '', redirectTo: '/dashboard', pathMatch: 'full'},

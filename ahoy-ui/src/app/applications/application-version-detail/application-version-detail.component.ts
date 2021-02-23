@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ApplicationService} from '../application.service';
-import {LoggerService} from '../../util/logger.service';
 import {Application, ApplicationConfig, ApplicationSecret, ApplicationVersion, ApplicationVolume} from '../application';
 import {Location} from '@angular/common';
 import {ReleasesService} from '../../releases/releases.service';
@@ -52,8 +51,7 @@ export class ApplicationVersionDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private applicationService: ApplicationService,
     private releasesService: ReleasesService,
-    private location: Location,
-    private log: LoggerService) {
+    private location: Location) {
   }
 
   ngOnInit() {
@@ -225,7 +223,7 @@ export class ApplicationVersionDetailComponent implements OnInit {
   }
 
   addSecret() {
-    let applicationSecret = new ApplicationSecret();
+    const applicationSecret = new ApplicationSecret();
     applicationSecret.type = 'Generic';
     applicationSecret.data = {};
     this.applicationVersion.secrets.push(applicationSecret);
@@ -238,11 +236,11 @@ export class ApplicationVersionDetailComponent implements OnInit {
   }
 
   secretInUse(): boolean {
-    let secret = this.applicationVersion.secrets[this.selectedSecretIndex];
+    const secret = this.applicationVersion.secrets[this.selectedSecretIndex];
     if (secret && secret.name) {
-      let inUseInVolumes = this.applicationVersion.volumes
+      const inUseInVolumes = this.applicationVersion.volumes
         .filter(volume => volume.type === 'Secret' && volume.secretName === secret.name).length > 0;
-      let inUseInEnvironmentVariables = this.applicationVersion.environmentVariables
+      const inUseInEnvironmentVariables = this.applicationVersion.environmentVariables
         .filter(envVar => envVar.type === 'Secret' && envVar.secretName === secret.name).length > 0;
       return inUseInVolumes || inUseInEnvironmentVariables;
     }

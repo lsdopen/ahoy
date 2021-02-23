@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,13 +15,13 @@
  */
 
 import {Injectable} from '@angular/core';
-import {Router} from "@angular/router";
-import {AuthConfig, NullValidationHandler, OAuthService} from "angular-oauth2-oidc";
-import {LoggerService} from "./logger.service";
-import {Observable} from "rxjs";
-import {tap} from "rxjs/operators";
-import {AuthInfo} from "./auth";
-import {RestClientService} from "./rest-client.service";
+import {Router} from '@angular/router';
+import {AuthConfig, NullValidationHandler, OAuthService} from 'angular-oauth2-oidc';
+import {LoggerService} from './logger.service';
+import {Observable} from 'rxjs';
+import {tap} from 'rxjs/operators';
+import {AuthInfo} from './auth';
+import {RestClientService} from './rest-client.service';
 
 @Injectable({
   providedIn: 'root'
@@ -49,10 +49,10 @@ export class AuthService {
       this.authConfig.issuer = authInfo.issuer;
       this.oAuthService.configure(this.authConfig);
       this.oAuthService.tokenValidationHandler = new NullValidationHandler();
-      this.oAuthService.loadDiscoveryDocument().then(token => {
+      this.oAuthService.loadDiscoveryDocument().then(() => {
         this.oAuthService.tryLogin().then(_ => {
-          this.router.navigate(['/']);
-        })
+          this.router.navigate(['/']).then();
+        });
       });
     });
   }

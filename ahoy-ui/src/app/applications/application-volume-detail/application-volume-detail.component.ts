@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  */
 
 import {Component, Input, OnInit} from '@angular/core';
-import {ApplicationSecret, ApplicationVolume} from "../application";
-import {ControlContainer, NgForm} from "@angular/forms";
+import {ApplicationSecret, ApplicationVolume} from '../application';
+import {ControlContainer, NgForm} from '@angular/forms';
 
 @Component({
   selector: 'app-application-volume-detail',

@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree} from '@angular/router';
 import {Observable} from 'rxjs';
-import {AuthService} from "./auth.service";
-import {LoggerService} from "./logger.service";
+import {AuthService} from './auth.service';
+import {LoggerService} from './logger.service';
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +31,7 @@ export class AuthGuard implements CanActivate {
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     const authenticated = this.authService.isAuthenticated();
-    this.log.debug('user authenticated: ', authenticated)
+    this.log.debug('user authenticated: ', authenticated);
 
     if (!authenticated) {
       this.log.debug('user not authenticated, starting login flow');

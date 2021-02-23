@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -91,8 +91,8 @@ import {VerifyValidatorDirective} from './components/confirm-dialog/verify-valid
 import {GitSettingsComponent} from './settings/git-settings/git-settings.component';
 import {ArgoSettingsComponent} from './settings/argo-settings/argo-settings.component';
 import {DockerSettingsComponent} from './settings/docker-settings/docker-settings.component';
-import {OAuthModule} from "angular-oauth2-oidc";
-import {ApplicationSecretDataComponent} from "./applications/application-secret-data/application-secret-data.component";
+import {OAuthModule} from 'angular-oauth2-oidc';
+import {ApplicationSecretDataComponent} from './applications/application-secret-data/application-secret-data.component';
 import {ApplicationVolumeDetailComponent} from './applications/application-volume-detail/application-volume-detail.component';
 
 @NgModule({

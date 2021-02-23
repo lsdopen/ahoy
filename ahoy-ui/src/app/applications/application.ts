@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ export class Application {
   id: number;
   name: string;
   applicationVersions: ApplicationVersion[];
-  latestApplicationVersion: ApplicationVersion;
 }
 
 export class ApplicationVersion {
@@ -39,7 +38,6 @@ export class ApplicationVersion {
   volumes: ApplicationVolume[];
   secrets: ApplicationSecret[];
   configPath: string;
-  environmentConfig: ApplicationEnvironmentConfig;
   status: ApplicationReleaseStatus;
 }
 
@@ -52,7 +50,7 @@ export class ApplicationEnvironmentVariable {
   secretKey: string;
 
   static newValueType(key: string, value: string): ApplicationEnvironmentVariable {
-    let environmentVariable = new ApplicationEnvironmentVariable();
+    const environmentVariable = new ApplicationEnvironmentVariable();
     environmentVariable.type = 'Value';
     environmentVariable.key = key;
     environmentVariable.value = value;
@@ -60,7 +58,7 @@ export class ApplicationEnvironmentVariable {
   }
 
   static newSecretType(key: string, secretName: string, secretKey: string): ApplicationEnvironmentVariable {
-    let environmentVariable = new ApplicationEnvironmentVariable();
+    const environmentVariable = new ApplicationEnvironmentVariable();
     environmentVariable.type = 'Secret';
     environmentVariable.key = key;
     environmentVariable.secretName = secretName;
@@ -80,10 +78,10 @@ export class ApplicationVolume {
   name: string;
   mountPath: string;
   type: string;
-  storageClassName = "standard";
-  accessMode = "ReadWriteOnce";
+  storageClassName = 'standard';
+  accessMode = 'ReadWriteOnce';
   size: number;
-  sizeStorageUnit = "Gi";
+  sizeStorageUnit = 'Gi';
   secretName: string;
 }
 

@@ -17,7 +17,7 @@
 import {TestBed, waitForAsync} from '@angular/core/testing';
 import {AppComponent} from './app.component';
 import {AppModule} from './app.module';
-import {AuthService} from "./util/auth.service";
+import {AuthService} from './util/auth.service';
 
 describe('AppComponent', () => {
   beforeEach(waitForAsync(() => {

@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -154,7 +154,7 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   }
 
   addSecret() {
-    let applicationSecret = new ApplicationSecret();
+    const applicationSecret = new ApplicationSecret();
     applicationSecret.data = {};
     this.environmentConfig.secrets.push(applicationSecret);
     this.selectedSecretIndex = this.environmentConfig.secrets.length - 1;
@@ -166,11 +166,11 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   }
 
   secretInUse(): boolean {
-    let secret = this.environmentConfig.secrets[this.selectedSecretIndex];
+    const secret = this.environmentConfig.secrets[this.selectedSecretIndex];
     if (secret && secret.name) {
-      let inUseInVolumes = this.environmentConfig.volumes
+      const inUseInVolumes = this.environmentConfig.volumes
         .filter(volume => volume.type === 'Secret' && volume.secretName === secret.name).length > 0;
-      let inUseInEnvironmentVariables = this.environmentConfig.environmentVariables
+      const inUseInEnvironmentVariables = this.environmentConfig.environmentVariables
         .filter(envVar => envVar.type === 'Secret' && envVar.secretName === secret.name).length > 0;
       return inUseInVolumes || inUseInEnvironmentVariables || this.environmentConfig.tlsSecretName === secret.name;
     }

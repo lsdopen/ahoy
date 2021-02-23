@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  */
 
 import {Component, Input, OnInit} from '@angular/core';
-import {ApplicationEnvironmentVariable, ApplicationSecret} from "../application";
-import {MatTableDataSource} from "@angular/material/table";
+import {ApplicationEnvironmentVariable, ApplicationSecret} from '../application';
+import {MatTableDataSource} from '@angular/material/table';
 
 @Component({
   selector: 'app-application-env-variables',
@@ -28,7 +28,7 @@ export class ApplicationEnvVariablesComponent implements OnInit {
   @Input() secrets: ApplicationSecret[];
   data = new MatTableDataSource<ApplicationEnvironmentVariable>();
   displayedColumns = ['key', 'value', 'remove'];
-  type: string = 'Value';
+  type = 'Value';
   key: string;
   value: string;
   secret: ApplicationSecret;
@@ -43,12 +43,12 @@ export class ApplicationEnvVariablesComponent implements OnInit {
 
   addEnvironmentVariable() {
     if (this.key) {
-      let existingEnvVar = this.environmentVariables.find(envVar => envVar.key === this.key);
+      const existingEnvVar = this.environmentVariables.find(envVar => envVar.key === this.key);
       if (this.type === 'Value' && this.value) {
         if (existingEnvVar) {
           existingEnvVar.value = this.value;
         } else {
-          this.environmentVariables.push(ApplicationEnvironmentVariable.newValueType(this.key, this.value))
+          this.environmentVariables.push(ApplicationEnvironmentVariable.newValueType(this.key, this.value));
         }
         this.key = null;
         this.value = null;
@@ -58,7 +58,7 @@ export class ApplicationEnvVariablesComponent implements OnInit {
           existingEnvVar.secretName = this.secret.name;
           existingEnvVar.secretKey = this.secretKey;
         } else {
-          this.environmentVariables.push(ApplicationEnvironmentVariable.newSecretType(this.key, this.secret.name, this.secretKey))
+          this.environmentVariables.push(ApplicationEnvironmentVariable.newSecretType(this.key, this.secret.name, this.secretKey));
         }
         this.key = null;
         this.secret = null;
@@ -69,7 +69,7 @@ export class ApplicationEnvVariablesComponent implements OnInit {
   }
 
   removeEnvironmentVariable(environmentVariable: ApplicationEnvironmentVariable) {
-    let index = this.environmentVariables.indexOf(environmentVariable);
+    const index = this.environmentVariables.indexOf(environmentVariable);
     this.environmentVariables.splice(index, 1);
     this.refresh();
   }

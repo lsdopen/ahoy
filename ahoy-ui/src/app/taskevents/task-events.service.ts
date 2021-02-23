@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import * as Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
 import {LoggerService} from '../util/logger.service';
 import {TaskEvent} from './task-events';
-import {AuthService} from "../util/auth.service";
+import {AuthService} from '../util/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -47,7 +47,7 @@ export class TaskEventsService {
     this.stompClient = Stomp.over(ws);
     this.stompClient.debug = null;
     const that = this;
-    this.stompClient.connect({'X-Authorization': 'Bearer ' + this.authService.accessToken()}, frame => {
+    this.stompClient.connect({'X-Authorization': 'Bearer ' + this.authService.accessToken()}, (frame) => {
       this.log.debug('Websocket connection established:', ws);
       that.stompClient.subscribe('/events', (message) => that.receivedAppMessage(message));
       that.stompClient.subscribe('/user/events', (message) => that.receivedUserMessage(message));
