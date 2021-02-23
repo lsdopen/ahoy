@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package za.co.lsd.ahoy.server;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import za.co.lsd.ahoy.server.applications.*;
 import za.co.lsd.ahoy.server.argocd.ArgoSettings;
 import za.co.lsd.ahoy.server.cluster.Cluster;
@@ -35,7 +36,7 @@ import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 public class RestConfiguration implements RepositoryRestConfigurer {
 
 	@Override
-	public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
+	public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
 		config.exposeIdsFor(
 			Cluster.class,
 			Environment.class,
