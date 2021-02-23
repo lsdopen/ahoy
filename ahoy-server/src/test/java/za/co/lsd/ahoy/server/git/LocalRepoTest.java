@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,33 +21,31 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import za.co.lsd.ahoy.server.AhoyServerApplication;
 import za.co.lsd.ahoy.server.settings.SettingsProvider;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AhoyServerApplication.class)
 @ActiveProfiles(profiles = "test")
 @Slf4j
@@ -57,13 +55,13 @@ public class LocalRepoTest {
 	@MockBean
 	private SettingsProvider settingsProvider;
 	private Git testRemoteRepo;
-	@Rule
-	public TemporaryFolder temporaryFolder = new TemporaryFolder(Paths.get("./target").toFile());
+	@TempDir
+	Path temporaryFolder;
 	private Path testRepoPath;
 
-	@Before
+	@BeforeEach
 	public void init() throws IOException, GitAPIException {
-		testRepoPath = temporaryFolder.newFolder("repo").toPath();
+		testRepoPath = temporaryFolder.resolve("repo");
 		Path testRemoteRepoPath = testRepoPath.resolve("remote.git");
 		Files.createDirectories(testRemoteRepoPath);
 		testRemoteRepo = Git.init()
@@ -76,7 +74,7 @@ public class LocalRepoTest {
 		localRepo.init();
 	}
 
-	@After
+	@AfterEach
 	public void cleanup() throws IOException {
 		testRemoteRepo = null;
 		localRepo.delete();
@@ -94,14 +92,14 @@ public class LocalRepoTest {
 		localRepo.push();
 
 		// then
-		assertTrue("We should have a commit", commitHash.isPresent());
+		assertTrue(commitHash.isPresent(), "We should have a commit");
 		Iterable<RevCommit> revCommits = testRemoteRepo.log().call();
 		List<RevCommit> commits = StreamSupport.stream(revCommits.spliterator(), false).collect(Collectors.toList());
-		assertEquals("Incorrect amount of commits", 1, commits.size());
-		assertEquals("Remote repo should contain the commit", commitHash.get(), commits.get(0).getName());
+		assertEquals(1, commits.size(), "Incorrect amount of commits");
+		assertEquals(commitHash.get(), commits.get(0).getName(), "Remote repo should contain the commit");
 
 		LocalRepo.WorkingTree resultWorkingTree = localRepo.requestWorkingTree();
-		assertTrue("test.txt should exist", Files.exists(resultWorkingTree.getPath().resolve("test.txt")));
+		assertTrue(Files.exists(resultWorkingTree.getPath().resolve("test.txt")), "test.txt should exist");
 		resultWorkingTree.delete();
 	}
 
@@ -115,7 +113,7 @@ public class LocalRepoTest {
 		workingTree.delete();
 
 		// then
-		assertFalse("Commit should not have occurred", commitHash.isPresent());
+		assertFalse(commitHash.isPresent(), "Commit should not have occurred");
 	}
 
 	@Test
@@ -137,7 +135,7 @@ public class LocalRepoTest {
 
 		// then
 		LocalRepo.WorkingTree resultWorkingTree = localRepo.requestWorkingTree();
-		assertFalse("test2 should no longer exist", Files.exists(resultWorkingTree.getPath().resolve("test2.txt")));
+		assertFalse(Files.exists(resultWorkingTree.getPath().resolve("test2.txt")), "test2 should no longer exist");
 		resultWorkingTree.delete();
 	}
 
@@ -166,6 +164,6 @@ public class LocalRepoTest {
 		workingTree.delete();
 
 		// then
-		assertEquals("We should have a new remote path", newRemoteCommit.getId(), ref.getObjectId());
+		assertEquals(newRemoteCommit.getId(), ref.getObjectId(), "We should have a new remote path");
 	}
 }

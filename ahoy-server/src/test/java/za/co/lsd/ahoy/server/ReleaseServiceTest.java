@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 package za.co.lsd.ahoy.server;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import za.co.lsd.ahoy.server.applications.Application;
 import za.co.lsd.ahoy.server.applications.ApplicationReleaseStatusRepository;
 import za.co.lsd.ahoy.server.applications.ApplicationVersion;
@@ -42,10 +42,10 @@ import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AhoyServerApplication.class)
 @ActiveProfiles(profiles = "test")
 public class ReleaseServiceTest {
@@ -85,9 +85,9 @@ public class ReleaseServiceTest {
 		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease, releaseVersion, deployDetails).get();
 
 		// then
-		assertEquals("Release version should now be the current release version", releaseVersion, deployedEnvironmentRelease.getCurrentReleaseVersion());
-		assertEquals("Argo CD name should be set", "test-cluster-dev-release1", deployedEnvironmentRelease.getArgoCdName());
-		assertEquals("Argo CD uid should be set", "test-uid", deployedEnvironmentRelease.getArgoCdUid());
+		assertEquals(releaseVersion, deployedEnvironmentRelease.getCurrentReleaseVersion(), "Release version should now be the current release version");
+		assertEquals("test-cluster-dev-release1", deployedEnvironmentRelease.getArgoCdName(), "Argo CD name should be set");
+		assertEquals("test-uid", deployedEnvironmentRelease.getArgoCdUid(), "Argo CD uid should be set");
 
 		verify(applicationReleaseStatusRepository, never()).deleteAll(any());
 		verify(environmentReleaseRepository, times(1)).save(same(deployedEnvironmentRelease));
@@ -123,13 +123,13 @@ public class ReleaseServiceTest {
 		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease, upgradedReleaseVersion, deployDetails).get();
 
 		// then
-		assertEquals("Release version should now be the current release version", upgradedReleaseVersion, deployedEnvironmentRelease.getCurrentReleaseVersion());
-		assertEquals("Argo CD name should be set", "test-cluster-dev-release1", deployedEnvironmentRelease.getArgoCdName());
-		assertEquals("Argo CD uid should be set", "test-uid", deployedEnvironmentRelease.getArgoCdUid());
+		assertEquals(upgradedReleaseVersion, deployedEnvironmentRelease.getCurrentReleaseVersion(), "Release version should now be the current release version");
+		assertEquals("test-cluster-dev-release1", deployedEnvironmentRelease.getArgoCdName(), "Argo CD name should be set");
+		assertEquals("test-uid", deployedEnvironmentRelease.getArgoCdUid(), "Argo CD uid should be set");
 
-		assertEquals("Applications ready incorrect", 0, (int) deployedEnvironmentRelease.getApplicationsReady());
-		assertEquals("Status incorrect", HealthStatus.StatusCode.Progressing, deployedEnvironmentRelease.getStatus());
-		assertEquals("Previous release version incorrect", releaseVersion, deployedEnvironmentRelease.getPreviousReleaseVersion());
+		assertEquals(0, (int) deployedEnvironmentRelease.getApplicationsReady(), "Applications ready incorrect");
+		assertEquals(HealthStatus.StatusCode.Progressing, deployedEnvironmentRelease.getStatus(), "Status incorrect");
+		assertEquals(releaseVersion, deployedEnvironmentRelease.getPreviousReleaseVersion(), "Previous release version incorrect");
 
 		verify(applicationReleaseStatusRepository, times(1)).deleteAll(any());
 		verify(environmentReleaseRepository, times(1)).save(same(deployedEnvironmentRelease));
@@ -163,9 +163,9 @@ public class ReleaseServiceTest {
 		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease, releaseVersion, deployDetails).get();
 
 		// then
-		assertEquals("Release version should now be the current release version", releaseVersion, deployedEnvironmentRelease.getCurrentReleaseVersion());
-		assertEquals("Argo CD name should be set", "test-cluster-dev-release1", deployedEnvironmentRelease.getArgoCdName());
-		assertEquals("Argo CD uid should be set", "test-uid", deployedEnvironmentRelease.getArgoCdUid());
+		assertEquals(releaseVersion, deployedEnvironmentRelease.getCurrentReleaseVersion(), "Release version should now be the current release version");
+		assertEquals("test-cluster-dev-release1", deployedEnvironmentRelease.getArgoCdName(), "Argo CD name should be set");
+		assertEquals("test-uid", deployedEnvironmentRelease.getArgoCdUid(), "Argo CD uid should be set");
 
 		verify(applicationReleaseStatusRepository, never()).deleteAll(any());
 		verify(environmentReleaseRepository, times(1)).save(same(deployedEnvironmentRelease));
@@ -190,13 +190,13 @@ public class ReleaseServiceTest {
 		EnvironmentRelease undeployedEnvironmentRelease = releaseService.undeploy(environmentRelease).get();
 
 		// then
-		assertNull("Release version should be null", undeployedEnvironmentRelease.getCurrentReleaseVersion());
-		assertNull("Argo CD name should be null", undeployedEnvironmentRelease.getArgoCdName());
-		assertNull("Argo CD uid should be null", undeployedEnvironmentRelease.getArgoCdUid());
+		assertNull(undeployedEnvironmentRelease.getCurrentReleaseVersion(), "Release version should be null");
+		assertNull(undeployedEnvironmentRelease.getArgoCdName(), "Argo CD name should be null");
+		assertNull(undeployedEnvironmentRelease.getArgoCdUid(), "Argo CD uid should be null");
 
-		assertNull("Applications ready should be null", undeployedEnvironmentRelease.getApplicationsReady());
-		assertNull("Status should be null", undeployedEnvironmentRelease.getStatus());
-		assertNull("Previous release version should be null", undeployedEnvironmentRelease.getPreviousReleaseVersion());
+		assertNull(undeployedEnvironmentRelease.getApplicationsReady(), "Applications ready should be null");
+		assertNull(undeployedEnvironmentRelease.getStatus(), "Status should be null");
+		assertNull(undeployedEnvironmentRelease.getPreviousReleaseVersion(), "Previous release version should be null");
 
 		verify(applicationReleaseStatusRepository, times(1)).deleteAll(any());
 		verify(environmentReleaseRepository, times(1)).save(same(undeployedEnvironmentRelease));

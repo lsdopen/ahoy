@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,16 +16,15 @@
 
 package za.co.lsd.ahoy.server.helm;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.yaml.snakeyaml.Yaml;
 import za.co.lsd.ahoy.server.AhoyServerApplication;
 import za.co.lsd.ahoy.server.applications.*;
@@ -43,14 +42,12 @@ import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AhoyServerApplication.class)
 @ActiveProfiles(profiles = "test")
 public class ChartGeneratorTest {
@@ -64,13 +61,13 @@ public class ChartGeneratorTest {
 	private SecretDataSealedSecretProducer secretDataSealedSecretProducer;
 	@Autowired
 	private Yaml yaml;
-	@Rule
-	public TemporaryFolder temporaryFolder = new TemporaryFolder(Paths.get("./target").toFile());
+	@TempDir
+	Path temporaryFolder;
 	private Path repoPath;
 
-	@Before
+	@BeforeEach
 	public void setupRepoPath() throws IOException {
-		repoPath = temporaryFolder.newFolder("repo").toPath();
+		repoPath = temporaryFolder.resolve("repo");
 
 		when(dockerConfigSealedSecretProducer.produce(any())).thenReturn("encrypted-docker-config");
 		when(secretDataSealedSecretProducer.produce(any(ApplicationSecret.class))).thenAnswer(invocationOnMock -> {
@@ -100,19 +97,19 @@ public class ChartGeneratorTest {
 		chartGenerator.generate(environmentRelease, releaseVersion, repoPath);
 
 		// then
-		assertEquals("Incorrect amount of chart files", 2, Files.list(basePath).filter(Files::isRegularFile).count());
-		assertTrue("We should have a chart yaml", Files.exists(basePath.resolve("Chart.yaml")));
+		assertEquals(2, Files.list(basePath).filter(Files::isRegularFile).count(), "Incorrect amount of chart files");
+		assertTrue(Files.exists(basePath.resolve("Chart.yaml")), "We should have a chart yaml");
 		Path valuesPath = basePath.resolve("values.yaml");
-		assertTrue("We should have a values yaml", Files.exists(valuesPath));
-		assertEquals("Incorrect amount of template files", 8, Files.list(templatesPath).filter(Files::isRegularFile).count());
-		assertTrue("We should have a configmap template", Files.exists(templatesPath.resolve("configmap.yaml")));
-		assertTrue("We should have a pvc template", Files.exists(templatesPath.resolve("pvc.yaml")));
-		assertTrue("We should have a deployment template", Files.exists(templatesPath.resolve("deployment.yaml")));
-		assertTrue("We should have a deployment-app1 template", Files.exists(templatesPath.resolve("deployment-app1.yaml")));
-		assertTrue("We should have a ingress template", Files.exists(templatesPath.resolve("ingress.yaml")));
-		assertTrue("We should have a service template", Files.exists(templatesPath.resolve("service.yaml")));
-		assertTrue("We should have a secret-dockerconfig template", Files.exists(templatesPath.resolve("secret-dockerconfig.yaml")));
-		assertTrue("We should have a secret-generic template", Files.exists(templatesPath.resolve("secret-generic.yaml")));
+		assertTrue(Files.exists(valuesPath), "We should have a values yaml");
+		assertEquals(8, Files.list(templatesPath).filter(Files::isRegularFile).count(), "Incorrect amount of template files");
+		assertTrue(Files.exists(templatesPath.resolve("configmap.yaml")), "We should have a configmap template");
+		assertTrue(Files.exists(templatesPath.resolve("pvc.yaml")), "We should have a pvc template");
+		assertTrue(Files.exists(templatesPath.resolve("deployment.yaml")), "We should have a deployment template");
+		assertTrue(Files.exists(templatesPath.resolve("deployment-app1.yaml")), "We should have a deployment-app1 template");
+		assertTrue(Files.exists(templatesPath.resolve("ingress.yaml")), "We should have a ingress template");
+		assertTrue(Files.exists(templatesPath.resolve("service.yaml")), "We should have a service template");
+		assertTrue(Files.exists(templatesPath.resolve("secret-dockerconfig.yaml")), "We should have a secret-dockerconfig template");
+		assertTrue(Files.exists(templatesPath.resolve("secret-generic.yaml")), "We should have a secret-generic template");
 
 		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
 
@@ -136,7 +133,7 @@ public class ChartGeneratorTest {
 			.applications(expectedApps)
 			.build();
 
-		assertEquals("Values incorrect", expectedValues, actualValues);
+		assertEquals(expectedValues, actualValues, "Values incorrect");
 	}
 
 	@Test
@@ -209,25 +206,25 @@ public class ChartGeneratorTest {
 		chartGenerator.generate(environmentRelease, releaseVersion, repoPath);
 
 		// then
-		assertEquals("Incorrect amount of chart files", 2, Files.list(basePath).filter(Files::isRegularFile).count());
-		assertTrue("We should have a chart yaml", Files.exists(basePath.resolve("Chart.yaml")));
+		assertEquals(2, Files.list(basePath).filter(Files::isRegularFile).count(), "Incorrect amount of chart files");
+		assertTrue(Files.exists(basePath.resolve("Chart.yaml")), "We should have a chart yaml");
 		Path valuesPath = basePath.resolve("values.yaml");
-		assertTrue("We should have a values yaml", Files.exists(valuesPath));
-		assertEquals("Incorrect amount of template files", 14, Files.list(templatesPath).filter(Files::isRegularFile).count());
-		assertTrue("We should have a configmap template", Files.exists(templatesPath.resolve("configmap.yaml")));
-		assertTrue("We should have a configmap-app1 template", Files.exists(templatesPath.resolve("configmap-app1.yaml")));
-		assertTrue("We should have a pvc template", Files.exists(templatesPath.resolve("pvc.yaml")));
-		assertTrue("We should have a pvc-app1 template", Files.exists(templatesPath.resolve("pvc-app1.yaml")));
-		assertTrue("We should have a deployment template", Files.exists(templatesPath.resolve("deployment.yaml")));
-		assertTrue("We should have a deployment-app1 template", Files.exists(templatesPath.resolve("deployment-app1.yaml")));
-		assertTrue("We should have a ingress template", Files.exists(templatesPath.resolve("ingress.yaml")));
-		assertTrue("We should have a ingress-app1 template", Files.exists(templatesPath.resolve("ingress-app1.yaml")));
-		assertTrue("We should have a service template", Files.exists(templatesPath.resolve("service.yaml")));
-		assertTrue("We should have a service-app1 template", Files.exists(templatesPath.resolve("service-app1.yaml")));
-		assertTrue("We should have a secret-dockerconfig template", Files.exists(templatesPath.resolve("secret-dockerconfig.yaml")));
-		assertTrue("We should have a secret-dockerconfig-app1 template", Files.exists(templatesPath.resolve("secret-dockerconfig-app1.yaml")));
-		assertTrue("We should have a secret-generic template", Files.exists(templatesPath.resolve("secret-generic.yaml")));
-		assertTrue("We should have a secret-generic-app1 template", Files.exists(templatesPath.resolve("secret-generic-app1.yaml")));
+		assertTrue(Files.exists(valuesPath), "We should have a values yaml");
+		assertEquals(14, Files.list(templatesPath).filter(Files::isRegularFile).count(), "Incorrect amount of template files");
+		assertTrue(Files.exists(templatesPath.resolve("configmap.yaml")), "We should have a configmap template");
+		assertTrue(Files.exists(templatesPath.resolve("configmap-app1.yaml")), "We should have a configmap-app1 template");
+		assertTrue(Files.exists(templatesPath.resolve("pvc.yaml")), "We should have a pvc template");
+		assertTrue(Files.exists(templatesPath.resolve("pvc-app1.yaml")), "We should have a pvc-app1 template");
+		assertTrue(Files.exists(templatesPath.resolve("deployment.yaml")), "We should have a deployment template");
+		assertTrue(Files.exists(templatesPath.resolve("deployment-app1.yaml")), "We should have a deployment-app1 template");
+		assertTrue(Files.exists(templatesPath.resolve("ingress.yaml")), "We should have a ingress template");
+		assertTrue(Files.exists(templatesPath.resolve("ingress-app1.yaml")), "We should have a ingress-app1 template");
+		assertTrue(Files.exists(templatesPath.resolve("service.yaml")), "We should have a service template");
+		assertTrue(Files.exists(templatesPath.resolve("service-app1.yaml")), "We should have a service-app1 template");
+		assertTrue(Files.exists(templatesPath.resolve("secret-dockerconfig.yaml")), "We should have a secret-dockerconfig template");
+		assertTrue(Files.exists(templatesPath.resolve("secret-dockerconfig-app1.yaml")), "We should have a secret-dockerconfig-app1 template");
+		assertTrue(Files.exists(templatesPath.resolve("secret-generic.yaml")), "We should have a secret-generic template");
+		assertTrue(Files.exists(templatesPath.resolve("secret-generic-app1.yaml")), "We should have a secret-generic-app1 template");
 
 		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
 
@@ -283,7 +280,7 @@ public class ChartGeneratorTest {
 			.applications(expectedApps)
 			.build();
 
-		assertEquals("Values incorrect", expectedValues, actualValues);
+		assertEquals(expectedValues, actualValues, "Values incorrect");
 	}
 
 	@Test
@@ -338,23 +335,23 @@ public class ChartGeneratorTest {
 		chartGenerator.generate(environmentRelease, releaseVersion, repoPath);
 
 		// then
-		assertEquals("Incorrect amount of chart files", 2, Files.list(basePath).filter(Files::isRegularFile).count());
-		assertTrue("We should have a chart yaml", Files.exists(basePath.resolve("Chart.yaml")));
+		assertEquals(2, Files.list(basePath).filter(Files::isRegularFile).count(), "Incorrect amount of chart files");
+		assertTrue(Files.exists(basePath.resolve("Chart.yaml")), "We should have a chart yaml");
 		Path valuesPath = basePath.resolve("values.yaml");
-		assertTrue("We should have a values yaml", Files.exists(valuesPath));
-		assertEquals("Incorrect amount of template files", 12, Files.list(templatesPath).filter(Files::isRegularFile).count());
-		assertTrue("We should have a configmap template", Files.exists(templatesPath.resolve("configmap.yaml")));
-		assertTrue("We should have a configmap-app1 template", Files.exists(templatesPath.resolve("configmap-app1.yaml")));
-		assertTrue("We should have a pvc template", Files.exists(templatesPath.resolve("pvc.yaml")));
-		assertTrue("We should have a deployment template", Files.exists(templatesPath.resolve("deployment.yaml")));
-		assertTrue("We should have a deployment-app1 template", Files.exists(templatesPath.resolve("deployment-app1.yaml")));
-		assertTrue("We should have a ingress template", Files.exists(templatesPath.resolve("ingress.yaml")));
-		assertTrue("We should have a ingress-app1 template", Files.exists(templatesPath.resolve("ingress-app1.yaml")));
-		assertTrue("We should have a service template", Files.exists(templatesPath.resolve("service.yaml")));
-		assertTrue("We should have a service-app1 template", Files.exists(templatesPath.resolve("service-app1.yaml")));
-		assertTrue("We should have a secret-dockerconfig template", Files.exists(templatesPath.resolve("secret-dockerconfig.yaml")));
-		assertTrue("We should have a secret-generic template", Files.exists(templatesPath.resolve("secret-generic.yaml")));
-		assertTrue("We should have a secret-generic-app1 template", Files.exists(templatesPath.resolve("secret-generic-app1.yaml")));
+		assertTrue(Files.exists(valuesPath), "We should have a values yaml");
+		assertEquals(12, Files.list(templatesPath).filter(Files::isRegularFile).count(), "Incorrect amount of template files");
+		assertTrue(Files.exists(templatesPath.resolve("configmap.yaml")), "We should have a configmap template");
+		assertTrue(Files.exists(templatesPath.resolve("configmap-app1.yaml")), "We should have a configmap-app1 template");
+		assertTrue(Files.exists(templatesPath.resolve("pvc.yaml")), "We should have a pvc template");
+		assertTrue(Files.exists(templatesPath.resolve("deployment.yaml")), "We should have a deployment template");
+		assertTrue(Files.exists(templatesPath.resolve("deployment-app1.yaml")), "We should have a deployment-app1 template");
+		assertTrue(Files.exists(templatesPath.resolve("ingress.yaml")), "We should have a ingress template");
+		assertTrue(Files.exists(templatesPath.resolve("ingress-app1.yaml")), "We should have a ingress-app1 template");
+		assertTrue(Files.exists(templatesPath.resolve("service.yaml")), "We should have a service template");
+		assertTrue(Files.exists(templatesPath.resolve("service-app1.yaml")), "We should have a service-app1 template");
+		assertTrue(Files.exists(templatesPath.resolve("secret-dockerconfig.yaml")), "We should have a secret-dockerconfig template");
+		assertTrue(Files.exists(templatesPath.resolve("secret-generic.yaml")), "We should have a secret-generic template");
+		assertTrue(Files.exists(templatesPath.resolve("secret-generic-app1.yaml")), "We should have a secret-generic-app1 template");
 
 		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
 
@@ -399,7 +396,7 @@ public class ChartGeneratorTest {
 			.applications(expectedApps)
 			.build();
 
-		assertEquals("Values incorrect", expectedValues, actualValues);
+		assertEquals(expectedValues, actualValues, "Values incorrect");
 	}
 
 	@Test
@@ -426,19 +423,19 @@ public class ChartGeneratorTest {
 		chartGenerator.generate(environmentRelease, releaseVersion, repoPath);
 
 		// then
-		assertFalse("Extra template file should no longer exist", Files.exists(extraTemplatePath));
+		assertFalse(Files.exists(extraTemplatePath), "Extra template file should no longer exist");
 
-		assertEquals("Incorrect amount of chart files", 2, Files.list(basePath).filter(Files::isRegularFile).count());
-		assertTrue("We should have a chart yaml", Files.exists(basePath.resolve("Chart.yaml")));
-		assertTrue("We should have a values yaml", Files.exists(basePath.resolve("values.yaml")));
-		assertEquals("Incorrect amount of template files", 8, Files.list(templatesPath).filter(Files::isRegularFile).count());
-		assertTrue("We should have a configmap template", Files.exists(templatesPath.resolve("configmap.yaml")));
-		assertTrue("We should have a pvc template", Files.exists(templatesPath.resolve("pvc.yaml")));
-		assertTrue("We should have a deployment template", Files.exists(templatesPath.resolve("deployment.yaml")));
-		assertTrue("We should have a deployment-app1 template", Files.exists(templatesPath.resolve("deployment-app1.yaml")));
-		assertTrue("We should have a ingress template", Files.exists(templatesPath.resolve("ingress.yaml")));
-		assertTrue("We should have a service template", Files.exists(templatesPath.resolve("service.yaml")));
-		assertTrue("We should have a secret-dockerconfig template", Files.exists(templatesPath.resolve("secret-dockerconfig.yaml")));
-		assertTrue("We should have a secret-generic template", Files.exists(templatesPath.resolve("secret-generic.yaml")));
+		assertEquals(2, Files.list(basePath).filter(Files::isRegularFile).count(), "Incorrect amount of chart files");
+		assertTrue(Files.exists(basePath.resolve("Chart.yaml")), "We should have a chart yaml");
+		assertTrue(Files.exists(basePath.resolve("values.yaml")), "We should have a values yaml");
+		assertEquals(8, Files.list(templatesPath).filter(Files::isRegularFile).count(), "Incorrect amount of template files");
+		assertTrue(Files.exists(templatesPath.resolve("configmap.yaml")), "We should have a configmap template");
+		assertTrue(Files.exists(templatesPath.resolve("pvc.yaml")), "We should have a pvc template");
+		assertTrue(Files.exists(templatesPath.resolve("deployment.yaml")), "We should have a deployment template");
+		assertTrue(Files.exists(templatesPath.resolve("deployment-app1.yaml")), "We should have a deployment-app1 template");
+		assertTrue(Files.exists(templatesPath.resolve("ingress.yaml")), "We should have a ingress template");
+		assertTrue(Files.exists(templatesPath.resolve("service.yaml")), "We should have a service template");
+		assertTrue(Files.exists(templatesPath.resolve("secret-dockerconfig.yaml")), "We should have a secret-dockerconfig template");
+		assertTrue(Files.exists(templatesPath.resolve("secret-generic.yaml")), "We should have a secret-generic template");
 	}
 }
