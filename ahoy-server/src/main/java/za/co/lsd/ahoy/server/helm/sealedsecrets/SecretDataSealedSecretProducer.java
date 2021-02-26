@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import io.fabric8.kubernetes.api.model.SecretBuilder;
 import io.fabric8.kubernetes.client.internal.SerializationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import za.co.lsd.ahoy.server.AhoyServerProperties;
 import za.co.lsd.ahoy.server.applications.ApplicationSecret;
 
 import java.io.IOException;
@@ -37,6 +38,11 @@ import static za.co.lsd.ahoy.server.util.ProcessUtil.*;
 @Component
 @Slf4j
 public class SecretDataSealedSecretProducer {
+	private final AhoyServerProperties serverProperties;
+
+	public SecretDataSealedSecretProducer(AhoyServerProperties serverProperties) {
+		this.serverProperties = serverProperties;
+	}
 
 	public Map<String, String> produce(ApplicationSecret applicationSecret) throws IOException {
 		try {
@@ -53,7 +59,9 @@ public class SecretDataSealedSecretProducer {
 				.build();
 			String secretInput = SerializationUtils.dumpAsYaml(secret);
 
-			ProcessBuilder processBuilder = new ProcessBuilder("kubeseal", "-o", "json", "--scope", "cluster-wide");
+			ProcessBuilder processBuilder = new ProcessBuilder("kubeseal", "-o", "json", "--scope", "cluster-wide",
+				"--controller-name=" + serverProperties.getReleaseName() + "-sealed-secrets",
+				"--controller-namespace=" + serverProperties.getReleaseNamespace());
 			Process sealedSecretProcess = processBuilder.start();
 			inputTo(secretInput, sealedSecretProcess);
 

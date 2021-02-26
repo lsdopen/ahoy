@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,18 +20,23 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import za.co.lsd.ahoy.server.AhoyServerProperties;
 import za.co.lsd.ahoy.server.docker.DockerRegistry;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static za.co.lsd.ahoy.server.util.ProcessUtil.errorFrom;
-import static za.co.lsd.ahoy.server.util.ProcessUtil.outputFrom;
+import static za.co.lsd.ahoy.server.util.ProcessUtil.*;
 
 @Component
 @Slf4j
 public class DockerConfigSealedSecretProducer {
+	private final AhoyServerProperties serverProperties;
+
+	public DockerConfigSealedSecretProducer(AhoyServerProperties serverProperties) {
+		this.serverProperties = serverProperties;
+	}
 
 	public String produce(DockerRegistry dockerRegistry) throws IOException {
 		try {
@@ -43,7 +48,9 @@ public class DockerConfigSealedSecretProducer {
 					"--docker-username=" + dockerRegistry.getUsername(),
 					"--docker-password=" + dockerRegistry.getPassword(),
 					"--dry-run", "-o", "json"),
-				new ProcessBuilder("kubeseal", "-o", "json", "--scope", "cluster-wide")
+				new ProcessBuilder("kubeseal", "-o", "json", "--scope", "cluster-wide",
+					"--controller-name=" + serverProperties.getReleaseName() + "-sealed-secrets",
+					"--controller-namespace=" + serverProperties.getReleaseNamespace())
 			));
 
 			Process sealedSecretProcess = processes.get(processes.size() - 1);

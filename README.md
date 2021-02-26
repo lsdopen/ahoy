@@ -6,15 +6,7 @@
 
 Ahoy relies on Helm version 3.
 
-TL;DR installation of Helm
-
-```shell script
-wget https://get.helm.sh/helm-v3.2.1-linux-amd64.tar.gz
-tar zxvf helm-v3.2.1-linux-amd64.tar.gz
-sudo mv linux-amd64/helm /usr/local/bin/
-sudo chmod 0755 /usr/local/bin/helm
-rm helm-v3.2.1-linux-amd64.tar.gz linux-amd64/ -rf
-```
+[TL;DR installation of Helm](https://helm.sh/docs/intro/install/)
 
 ### Installation on Kubernetes
 
@@ -24,18 +16,13 @@ helm repo add lsdopen https://lsdopen.github.io/charts
 helm repo update
 ```
 
-Create Ahoy namespace
-```
-kubectl create namespace ahoy
-```
-
 Customise the Ahoy installation by editing the values in values-k8s.yaml.
 
 Example value files available at: https://github.com/lsdopen/charts/tree/master/charts/ahoy
 
 We are now ready to install Ahoy
 ```
-helm install ahoy --namespace ahoy --values values-k8s.yaml --devel lsdopen/ahoy
+helm install ahoy --namespace ahoy --create-namespace --values values-k8s.yaml --devel lsdopen/ahoy
 ```
 
 Note for GKE installation: you need to create a TLS secret and supply the secret name in the values file.
@@ -125,32 +112,6 @@ github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXY
 
 ### ArgoCD
 
-[Install ArgoCD](https://argoproj.github.io/argo-cd/getting_started)
-
-NB: Remember to update password for ArgoCD, there is no need to add the current cluster as ArgoCD and Ahoy 
-setup the current cluster automatically for you.
-
-Add Ahoy user to argocd:
-
-`kubectl edit cm -n argocd argocd-cm`
-
-Add:
-```yaml
-data:
-  accounts.ahoy: apiKey,login
-```
-
-Add role for ahoy user:
-
-`kubectl edit cm -n argocd argocd-rbac-cm`
-
-Add:
-```yaml
-data:
-  policy.csv: |
-    g, ahoy, role:admin
-```
-
 Generate token for ahoy account:
 `argocd account generate-token --account ahoy`
 
@@ -163,10 +124,6 @@ Enter the token generated above.
 Add any private docker registries where your application images may reside.
 
 ### Sealed Secrets
-
-[Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets) is required for Ahoy to commit secrets to git:
-
-[Install Sealed Secrets CRD and controller](https://github.com/bitnami-labs/sealed-secrets/releases)
 
 If you require Ahoy to manage more than one cluster, export the keys to be used on subsequent clusters:
 
@@ -213,8 +170,6 @@ Import the keys:
 
 [Install Sealed Secrets CRD and controller](https://github.com/bitnami-labs/sealed-secrets/releases)
 
-## Notes
-
 ### Kubernetes
 
 Ahoy requires a service account to manage the Kubernetes cluster, to create this service account and get a token for the service account, follow these instructions:
@@ -234,6 +189,8 @@ oc create serviceaccount ahoy -n ahoy
 oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:ahoy:ahoy
 oc serviceaccounts get-token -n ahoy ahoy
 ```
+
+## Notes
 
 ### Minikube
 
