@@ -48,6 +48,7 @@ export class AuthService {
       this.authConfig.clientId = authInfo.clientId;
       this.authConfig.issuer = authInfo.issuer;
       this.oAuthService.configure(this.authConfig);
+      this.oAuthService.setupAutomaticSilentRefresh();
       this.oAuthService.tokenValidationHandler = new NullValidationHandler();
       this.oAuthService.loadDiscoveryDocument().then(() => {
         this.oAuthService.tryLogin().then(_ => {
