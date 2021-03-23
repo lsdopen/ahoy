@@ -58,15 +58,15 @@ public class LocalRepoTest {
 	@TempDir
 	Path temporaryFolder;
 	private Path testRepoPath;
+	private Path testRemoteRepoPath;
 
 	@BeforeEach
 	public void init() throws IOException, GitAPIException {
 		testRepoPath = temporaryFolder.resolve("repo");
-		Path testRemoteRepoPath = testRepoPath.resolve("remote.git");
+		testRemoteRepoPath = testRepoPath.resolve("remote.git");
 		Files.createDirectories(testRemoteRepoPath);
 		testRemoteRepo = Git.init()
 			.setDirectory(testRemoteRepoPath.toFile())
-			.setBare(true)
 			.call();
 
 		when(settingsProvider.getGitSettings()).thenReturn(new GitSettings(testRemoteRepoPath.toUri().toString()));
@@ -102,6 +102,39 @@ public class LocalRepoTest {
 		assertTrue(Files.exists(resultWorkingTree.getPath().resolve("test.txt")), "test.txt should exist");
 		resultWorkingTree.delete();
 	}
+
+	@Test
+	public void workingTreePushDifferentBranch() throws Exception {
+		// given
+		GitSettings gitSettings = new GitSettings(testRemoteRepoPath.toUri().toString());
+		gitSettings.setBranch("main");
+		when(settingsProvider.getGitSettings()).thenReturn(gitSettings);
+
+		Files.writeString(testRemoteRepoPath.resolve("README.md"), "This is a test repo");
+		testRemoteRepo.add().addFilepattern(".").call();
+		testRemoteRepo.commit().setMessage("Added README").call();
+		testRemoteRepo.branchCreate().setName("main").call();
+		testRemoteRepo.checkout().setName("main").call();
+
+		// when
+		LocalRepo.WorkingTree workingTree = localRepo.requestWorkingTree();
+		Files.writeString(workingTree.getPath().resolve("test.txt"), "test");
+		Optional<String> commitHash = workingTree.push("This is a test");
+		workingTree.delete();
+		localRepo.push();
+
+		// then
+		assertTrue(commitHash.isPresent(), "We should have a commit");
+		Iterable<RevCommit> revCommits = testRemoteRepo.log().call();
+		List<RevCommit> commits = StreamSupport.stream(revCommits.spliterator(), false).collect(Collectors.toList());
+		assertEquals(2, commits.size(), "Incorrect amount of commits");
+		assertEquals(commitHash.get(), commits.get(0).getName(), "Remote repo should contain the commit");
+
+		LocalRepo.WorkingTree resultWorkingTree = localRepo.requestWorkingTree();
+		assertTrue(Files.exists(resultWorkingTree.getPath().resolve("test.txt")), "test.txt should exist");
+		resultWorkingTree.delete();
+	}
+
 
 	@Test
 	public void workingTreePushClean() throws Exception {

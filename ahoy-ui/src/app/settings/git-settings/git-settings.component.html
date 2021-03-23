@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -23,6 +23,11 @@
           <mat-form-field>
             <input matInput [(ngModel)]="gitSettings.remoteRepoUri" placeholder="URI"
                    name="gitRemoteRepoUri"
+                   required>
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput [(ngModel)]="gitSettings.branch" placeholder="Branch"
+                   name="gitBranch"
                    required>
           </mat-form-field>
 

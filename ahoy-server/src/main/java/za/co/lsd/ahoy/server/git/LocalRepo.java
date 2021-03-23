@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -89,9 +89,11 @@ public class LocalRepo {
 
 	public WorkingTree requestWorkingTree() {
 		try {
+			GitSettings gitSettings = settingsProvider.getGitSettings();
+
 			log.info("Requesting new working tree");
 			fetch();
-			WorkingTree workingTree = new WorkingTree();
+			WorkingTree workingTree = new WorkingTree(gitSettings);
 			log.info("Working tree created: {}, head ref: {}", workingTree.getPath(), workingTree.headRef());
 			return workingTree;
 		} catch (Exception e) {
@@ -122,6 +124,7 @@ public class LocalRepo {
 
 			log.info("Pushing local repo to remote: {}", gitSettings.getRemoteRepoUri());
 			Iterable<PushResult> pushResults = configureCredentials(gitSettings, localRepo.push()
+				.add(gitSettings.getBranch())
 				.setRemote(gitSettings.getRemoteRepoUri()))
 				.call();
 			pushResults.forEach(pushResult -> log.info("Result: {}", pushResult.getRemoteUpdates()));
@@ -206,13 +209,14 @@ public class LocalRepo {
 		private final Git workingTree;
 		private boolean valid = true;
 
-		public WorkingTree() {
+		public WorkingTree(GitSettings gitSettings) {
 			try {
 				workingTreePath = Files.createTempDirectory(repoPath, "working");
 
 				workingTree = Git.cloneRepository()
 					.setURI(localRepoPath.toUri().toString())
 					.setDirectory(workingTreePath.toFile())
+					.setBranch(gitSettings.getBranch())
 					.call();
 			} catch (Exception e) {
 				throw new LocalRepoException("Failed to create working tree", e);
