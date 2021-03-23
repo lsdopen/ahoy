@@ -204,10 +204,9 @@ public class LocalRepo {
 		});
 	}
 
-	public class WorkingTree {
+	public class WorkingTree implements AutoCloseable {
 		private final Path workingTreePath;
 		private final Git workingTree;
-		private boolean valid = true;
 
 		public WorkingTree(GitSettings gitSettings) {
 			try {
@@ -224,14 +223,10 @@ public class LocalRepo {
 		}
 
 		public Path getPath() {
-			checkValid();
-
 			return workingTreePath;
 		}
 
 		public Optional<String> push(String message) {
-			checkValid();
-
 			try {
 				log.info("Pushing working tree with message: {}", message);
 
@@ -273,21 +268,16 @@ public class LocalRepo {
 			}
 		}
 
-		public void delete() {
+		@Override
+		public void close() throws Exception {
 			try {
-				if (valid) {
+				if (Files.exists(workingTreePath)) {
 					log.info("Deleting working tree: {}", workingTreePath);
 					FileSystemUtils.deleteRecursively(workingTreePath);
-					valid = false;
 				}
 			} catch (Exception e) {
 				throw new LocalRepoException("Failed to delete working tree", e);
 			}
-		}
-
-		private void checkValid() {
-			if (!valid)
-				throw new LocalRepoException("Working tree is invalid, it was probably deleted...");
 		}
 	}
 }

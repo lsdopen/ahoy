@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -57,12 +57,12 @@ public class ReleaseManager {
 		Objects.requireNonNull(releaseVersion, "releaseVersion is required");
 
 		try {
-			LocalRepo.WorkingTree workingTree = localRepo.requestWorkingTree();
+			Optional<String> commit;
+			try (LocalRepo.WorkingTree workingTree = localRepo.requestWorkingTree()) {
+				chartGenerator.generate(environmentRelease, releaseVersion, workingTree.getPath());
+				commit = workingTree.push(deployDetails.getCommitMessage());
+			}
 
-			chartGenerator.generate(environmentRelease, releaseVersion, workingTree.getPath());
-
-			Optional<String> commit = workingTree.push(deployDetails.getCommitMessage());
-			workingTree.delete();
 			if (commit.isPresent()) {
 				localRepo.push();
 			}

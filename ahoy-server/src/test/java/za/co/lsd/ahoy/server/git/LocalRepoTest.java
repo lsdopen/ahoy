@@ -85,10 +85,11 @@ public class LocalRepoTest {
 		// given
 
 		// when
-		LocalRepo.WorkingTree workingTree = localRepo.requestWorkingTree();
-		Files.writeString(workingTree.getPath().resolve("test.txt"), "test");
-		Optional<String> commitHash = workingTree.push("This is a test");
-		workingTree.delete();
+		Optional<String> commitHash;
+		try (LocalRepo.WorkingTree workingTree = localRepo.requestWorkingTree()) {
+			Files.writeString(workingTree.getPath().resolve("test.txt"), "test");
+			commitHash = workingTree.push("This is a test");
+		}
 		localRepo.push();
 
 		// then
@@ -98,9 +99,9 @@ public class LocalRepoTest {
 		assertEquals(1, commits.size(), "Incorrect amount of commits");
 		assertEquals(commitHash.get(), commits.get(0).getName(), "Remote repo should contain the commit");
 
-		LocalRepo.WorkingTree resultWorkingTree = localRepo.requestWorkingTree();
-		assertTrue(Files.exists(resultWorkingTree.getPath().resolve("test.txt")), "test.txt should exist");
-		resultWorkingTree.delete();
+		try (LocalRepo.WorkingTree resultWorkingTree = localRepo.requestWorkingTree()) {
+			assertTrue(Files.exists(resultWorkingTree.getPath().resolve("test.txt")), "test.txt should exist");
+		}
 	}
 
 	@Test
@@ -117,10 +118,11 @@ public class LocalRepoTest {
 		testRemoteRepo.checkout().setName("main").call();
 
 		// when
-		LocalRepo.WorkingTree workingTree = localRepo.requestWorkingTree();
-		Files.writeString(workingTree.getPath().resolve("test.txt"), "test");
-		Optional<String> commitHash = workingTree.push("This is a test");
-		workingTree.delete();
+		Optional<String> commitHash;
+		try (LocalRepo.WorkingTree workingTree = localRepo.requestWorkingTree()) {
+			Files.writeString(workingTree.getPath().resolve("test.txt"), "test");
+			commitHash = workingTree.push("This is a test");
+		}
 		localRepo.push();
 
 		// then
@@ -130,9 +132,9 @@ public class LocalRepoTest {
 		assertEquals(2, commits.size(), "Incorrect amount of commits");
 		assertEquals(commitHash.get(), commits.get(0).getName(), "Remote repo should contain the commit");
 
-		LocalRepo.WorkingTree resultWorkingTree = localRepo.requestWorkingTree();
-		assertTrue(Files.exists(resultWorkingTree.getPath().resolve("test.txt")), "test.txt should exist");
-		resultWorkingTree.delete();
+		try (LocalRepo.WorkingTree resultWorkingTree = localRepo.requestWorkingTree()) {
+			assertTrue(Files.exists(resultWorkingTree.getPath().resolve("test.txt")), "test.txt should exist");
+		}
 	}
 
 
@@ -141,9 +143,10 @@ public class LocalRepoTest {
 		// given
 
 		// when
-		LocalRepo.WorkingTree workingTree = localRepo.requestWorkingTree();
-		Optional<String> commitHash = workingTree.push("This is a test");
-		workingTree.delete();
+		Optional<String> commitHash;
+		try (LocalRepo.WorkingTree workingTree = localRepo.requestWorkingTree()) {
+			commitHash = workingTree.push("This is a test");
+		}
 
 		// then
 		assertFalse(commitHash.isPresent(), "Commit should not have occurred");
@@ -152,32 +155,32 @@ public class LocalRepoTest {
 	@Test
 	public void workingTreePushDeletedFiles() throws Exception {
 		// given
-		LocalRepo.WorkingTree workingTree = localRepo.requestWorkingTree();
-		Path test1 = workingTree.getPath().resolve("test1.txt");
-		Path test2 = workingTree.getPath().resolve("test2.txt");
-		Files.writeString(test1, "test");
-		Files.writeString(test2, "test");
-		workingTree.push("This is a test");
-		localRepo.push();
+		try (LocalRepo.WorkingTree workingTree = localRepo.requestWorkingTree()) {
+			Path test1 = workingTree.getPath().resolve("test1.txt");
+			Path test2 = workingTree.getPath().resolve("test2.txt");
+			Files.writeString(test1, "test");
+			Files.writeString(test2, "test");
+			workingTree.push("This is a test");
+			localRepo.push();
 
-		// when
-		Files.deleteIfExists(test2);
-		workingTree.push("Deleted file push");
-		workingTree.delete();
+			// when
+			Files.deleteIfExists(test2);
+			workingTree.push("Deleted file push");
+		}
 		localRepo.push();
 
 		// then
-		LocalRepo.WorkingTree resultWorkingTree = localRepo.requestWorkingTree();
-		assertFalse(Files.exists(resultWorkingTree.getPath().resolve("test2.txt")), "test2 should no longer exist");
-		resultWorkingTree.delete();
+		try (LocalRepo.WorkingTree resultWorkingTree = localRepo.requestWorkingTree()) {
+			assertFalse(Files.exists(resultWorkingTree.getPath().resolve("test2.txt")), "test2 should no longer exist");
+		}
 	}
 
 	@Test
 	public void remoteRepoChanged() throws Exception {
 		// given
 		// an initial working tree
-		LocalRepo.WorkingTree initialWorkingTree = localRepo.requestWorkingTree();
-		initialWorkingTree.delete();
+		try (LocalRepo.WorkingTree initialWorkingTree = localRepo.requestWorkingTree()) {
+		}
 
 		// a new remote repo
 		Path newExpectedRemotePath = testRepoPath.resolve("new-remote.git");
@@ -192,9 +195,10 @@ public class LocalRepoTest {
 		when(settingsProvider.getGitSettings()).thenReturn(new GitSettings(newExpectedRemotePath.toUri().toString())); // change remote
 
 		// when
-		LocalRepo.WorkingTree workingTree = localRepo.requestWorkingTree();
-		Ref ref = workingTree.headRef();
-		workingTree.delete();
+		Ref ref;
+		try (LocalRepo.WorkingTree workingTree = localRepo.requestWorkingTree()) {
+			ref = workingTree.headRef();
+		}
 
 		// then
 		assertEquals(newRemoteCommit.getId(), ref.getObjectId(), "We should have a new remote path");

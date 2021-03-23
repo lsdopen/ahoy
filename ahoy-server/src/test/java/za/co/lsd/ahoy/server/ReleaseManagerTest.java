@@ -90,7 +90,7 @@ public class ReleaseManagerTest {
 		// then
 		verify(chartGenerator, times(1)).generate(same(environmentRelease), same(releaseVersion), same(testPath));
 		verify(workingTree, times(1)).push(anyString());
-		verify(workingTree, times(1)).delete();
+		verify(workingTree, times(1)).close();
 		verify(localRepo, times(1)).push();
 
 		ArgumentCaptor<ArgoApplication> applicationCaptor = ArgumentCaptor.forClass(ArgoApplication.class);
@@ -148,7 +148,7 @@ public class ReleaseManagerTest {
 		// then
 		verify(chartGenerator, times(1)).generate(same(environmentRelease), same(releaseVersion), same(testPath));
 		verify(workingTree, times(1)).push(anyString());
-		verify(workingTree, times(1)).delete();
+		verify(workingTree, times(1)).close();
 		verify(localRepo, times(1)).push();
 
 		ArgumentCaptor<ArgoApplication> applicationCaptor = ArgumentCaptor.forClass(ArgoApplication.class);
