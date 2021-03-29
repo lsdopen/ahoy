@@ -37,6 +37,12 @@
 		<module>ahoy-server</module>
 	</modules>
 
+	<properties>
+		<sonar.projectKey>lsdopen_ahoy</sonar.projectKey>
+		<sonar.organization>lsdopen</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+	</properties>
+
 	<build>
 		<plugins>
 			<plugin>
