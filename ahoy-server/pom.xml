@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -29,6 +29,9 @@
 	<properties>
 		<maven.compiler.release>11</maven.compiler.release>
 		<ahoy-ui-dist-dir>${project.parent.basedir}/ahoy-ui/dist/ahoy-ui/</ahoy-ui-dist-dir>
+		<sonar.projectKey>lsdopen_ahoy</sonar.projectKey>
+		<sonar.organization>lsdopen</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 
 	<dependencies>
