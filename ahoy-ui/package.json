@@ -7,7 +7,7 @@
     "build": "ng build",
     "build-prod": "ng build --prod",
     "test": "ng test",
-    "test-headless": "ng test --watch=false --browsers=ChromeHeadless",
+    "test-headless": "ng test --watch=false --browsers=ChromeHeadless --code-coverage",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
@@ -49,6 +49,7 @@
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.4",
     "karma-junit-reporter": "^2.0.1",
+    "karma-sonarqube-unit-reporter": "^0.0.23",
     "protractor": "~7.0.0",
     "ts-node": "^9.1.1",
     "tslint": "~6.1.0",
