@@ -37,11 +37,20 @@ jobs:
         with:
           java-version: 11
 
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
       - name: Build with Maven
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: mvn -B -s .m2/settings.xml deploy -Pdocker
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B -s .m2/settings.xml deploy -Pdocker org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
 
       - name: Publish Test Report
         uses: scacap/action-surefire-report@v1
