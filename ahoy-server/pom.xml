@@ -168,7 +168,7 @@
 				<plugins>
 					<plugin>
 						<groupId>org.springframework.boot</groupId>
-						<artifactId>spring-boot-starter-parent</artifactId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
 					</plugin>
 
 					<!-- Gather the "dist" directory from ahoy-ui project -->
