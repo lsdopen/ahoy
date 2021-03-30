@@ -145,26 +145,6 @@
 					<target>11</target>
 				</configuration>
 			</plugin>
-
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.2</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>report</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 
 		<extensions>
@@ -179,6 +159,7 @@
 	<profiles>
 		<profile>
 			<id>docker</id>
+
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
@@ -187,11 +168,12 @@
 				<plugins>
 					<plugin>
 						<groupId>org.springframework.boot</groupId>
-						<artifactId>spring-boot-maven-plugin</artifactId>
+						<artifactId>spring-boot-starter-parent</artifactId>
 					</plugin>
 
 					<!-- Gather the "dist" directory from ahoy-ui project -->
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-resources-plugin</artifactId>
 						<executions>
 							<execution>

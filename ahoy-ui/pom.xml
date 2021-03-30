@@ -36,7 +36,7 @@
     <sonar.exclusions>**/node_modules/**</sonar.exclusions>
     <sonar.tests>src</sonar.tests>
     <sonar.test.inclusions>**/*.spec.ts</sonar.test.inclusions>
-    <sonar.javascript.lcov.reportPaths>coverage/lcov.info</sonar.javascript.lcov.reportPaths>
+    <sonar.javascript.lcov.reportPaths>coverage/**/lcov.info</sonar.javascript.lcov.reportPaths>
     <sonar.testExecutionReportPaths>reports/ut_report.xml</sonar.testExecutionReportPaths>
   </properties>
 
