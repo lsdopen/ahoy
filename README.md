@@ -1,6 +1,8 @@
 # Ahoy
 
 ![CI](https://github.com/lsdopen/ahoy/workflows/CI/badge.svg)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=lsdopen_ahoy&metric=coverage)](https://sonarcloud.io/dashboard?id=lsdopen_ahoy)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=lsdopen_ahoy&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=lsdopen_ahoy)
 
 ## Installation on Kubernetes
 
