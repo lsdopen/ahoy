@@ -37,6 +37,10 @@ public class NoOpClusterManager implements ClusterManager {
 		sleep(2000);
 	}
 
+	@Override
+	public void testConnection() {
+	}
+
 	private void sleep(long millis) {
 		try {
 			Thread.sleep(millis);

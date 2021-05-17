@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import za.co.lsd.ahoy.server.clustermanager.ClusterManager;
+import za.co.lsd.ahoy.server.clustermanager.ClusterManagerFactory;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.environments.EnvironmentService;
 
@@ -28,10 +30,12 @@ import za.co.lsd.ahoy.server.environments.EnvironmentService;
 public class ClusterService {
 	private final ClusterRepository clusterRepository;
 	private final EnvironmentService environmentService;
+	private final ClusterManagerFactory clusterManagerFactory;
 
-	public ClusterService(ClusterRepository clusterRepository, EnvironmentService environmentService) {
+	public ClusterService(ClusterRepository clusterRepository, EnvironmentService environmentService, ClusterManagerFactory clusterManagerFactory) {
 		this.clusterRepository = clusterRepository;
 		this.environmentService = environmentService;
+		this.clusterManagerFactory = clusterManagerFactory;
 	}
 
 	@Transactional
@@ -48,5 +52,10 @@ public class ClusterService {
 		}
 
 		return cluster;
+	}
+
+	public void testConnection(Cluster cluster) {
+		ClusterManager clusterManager = clusterManagerFactory.newManager(cluster);
+		clusterManager.testConnection();
 	}
 }

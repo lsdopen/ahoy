@@ -30,9 +30,12 @@ import java.util.Objects;
 @Scope("prototype")
 @Slf4j
 public class OpenShiftClusterManager implements ClusterManager {
+	private final Cluster cluster;
 	private final Config config;
 
 	public OpenShiftClusterManager(Cluster cluster) {
+		this.cluster = cluster;
+
 		config = new ConfigBuilder()
 			.withMasterUrl(cluster.getMasterUrl())
 			.withOauthToken(cluster.getToken())
@@ -83,6 +86,21 @@ public class OpenShiftClusterManager implements ClusterManager {
 		} catch (Throwable e) {
 			log.error("Failed to delete namespace: " + name, e);
 			throw new ClusterManagerException("Failed to delete namespace", e);
+		}
+	}
+
+	@Override
+	public void testConnection() {
+		log.debug("Testing connection to cluster: {}", cluster);
+
+		try (DefaultOpenShiftClient openShiftClient = new DefaultOpenShiftClient(config)) {
+
+			openShiftClient.projects().list();
+			log.debug("Connection to cluster successful: {}", cluster.getName());
+
+		} catch (Throwable e) {
+			log.error("Failed to connect to cluster: " + cluster.getName(), e);
+			throw new ClusterManagerException("Failed to connect to cluster", e);
 		}
 	}
 }

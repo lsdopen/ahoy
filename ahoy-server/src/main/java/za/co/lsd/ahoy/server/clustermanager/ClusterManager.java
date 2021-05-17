@@ -21,4 +21,6 @@ public interface ClusterManager {
 	void createNamespace(String name);
 
 	void deleteNamespace(String name);
+
+	void testConnection();
 }

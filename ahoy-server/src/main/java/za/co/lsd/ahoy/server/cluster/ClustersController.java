@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,9 +21,7 @@ import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @RepositoryRestController
 @RequestMapping("/clusters")
@@ -39,6 +37,12 @@ public class ClustersController {
 	public ResponseEntity<?> destroy(@PathVariable Long clusterId) {
 		Cluster cluster = clusterService.destroy(clusterId);
 
+		return new ResponseEntity<>(cluster, new HttpHeaders(), HttpStatus.OK);
+	}
+
+	@PostMapping("/test")
+	public ResponseEntity<?> destroy(@RequestBody Cluster cluster) {
+		clusterService.testConnection(cluster);
 		return new ResponseEntity<>(cluster, new HttpHeaders(), HttpStatus.OK);
 	}
 }

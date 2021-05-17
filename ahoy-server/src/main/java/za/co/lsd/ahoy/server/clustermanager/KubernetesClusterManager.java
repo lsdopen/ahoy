@@ -32,9 +32,12 @@ import java.util.Objects;
 @Scope("prototype")
 @Slf4j
 public class KubernetesClusterManager implements ClusterManager {
+	private final Cluster cluster;
 	private final Config config;
 
 	public KubernetesClusterManager(Cluster cluster) {
+		this.cluster = Objects.requireNonNull(cluster, "cluster is required");
+
 		config = new ConfigBuilder()
 			.withMasterUrl(cluster.getMasterUrl())
 			.withOauthToken(cluster.getToken())
@@ -85,6 +88,21 @@ public class KubernetesClusterManager implements ClusterManager {
 		} catch (Throwable e) {
 			log.error("Failed to delete namespace: " + name, e);
 			throw new ClusterManagerException("Failed to delete namespace", e);
+		}
+	}
+
+	@Override
+	public void testConnection() {
+		log.debug("Testing connection to cluster: {}", cluster);
+
+		try (DefaultKubernetesClient kubernetesClient = new DefaultKubernetesClient(config)) {
+
+			kubernetesClient.namespaces().list();
+			log.debug("Connection to cluster successful: {}", cluster.getName());
+
+		} catch (Throwable e) {
+			log.error("Failed to connect to cluster: " + cluster.getName(), e);
+			throw new ClusterManagerException("Failed to connect to cluster", e);
 		}
 	}
 }

@@ -107,6 +107,22 @@ export class ClusterService {
     );
   }
 
+  testConnection(cluster: Cluster): Observable<Cluster> {
+    const url = `/data/clusters/test`;
+    return this.restClient.post<Cluster>(url, cluster, true).pipe(
+      tap((returnedCluster) => {
+        this.log.debug('tested connection to cluster', returnedCluster);
+        const text = `Successfully connected to cluster '${cluster.name}'`;
+        this.notificationsService.notification(new Notification(text));
+      }),
+      catchError(() => {
+        const text = `Failed to connect to cluster ${cluster.name}`;
+        this.notificationsService.notification(new Notification(text, true));
+        return EMPTY;
+      })
+    );
+  }
+
   getLastUsedId(): Observable<number> {
     if (this.lastClusterId === 0) {
       this.log.debug('no last used cluster found, finding first cluster...');

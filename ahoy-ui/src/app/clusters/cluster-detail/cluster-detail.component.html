@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -61,6 +61,7 @@
   <ng-template #buttonBar>
     <app-button-bar>
       <button mat-button (click)="save()" [disabled]="clusterForm.invalid">Save</button>
+      <button mat-button (click)="test()" [disabled]="clusterForm.invalid">Test</button>
       <button mat-button (click)="cancel()">Cancel</button>
     </app-button-bar>
   </ng-template>
