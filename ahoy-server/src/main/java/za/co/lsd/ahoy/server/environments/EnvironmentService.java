@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import za.co.lsd.ahoy.server.ReleaseService;
-import za.co.lsd.ahoy.server.clustermanager.ClusterManager;
-import za.co.lsd.ahoy.server.clustermanager.ClusterManagerFactory;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
@@ -37,24 +35,18 @@ public class EnvironmentService {
 	private final EnvironmentRepository environmentRepository;
 	private final EnvironmentReleaseRepository environmentReleaseRepository;
 	private final ReleaseService releaseService;
-	private final ClusterManagerFactory clusterManagerFactory;
 
-	public EnvironmentService(EnvironmentRepository environmentRepository, EnvironmentReleaseRepository environmentReleaseRepository, ReleaseService releaseService, ClusterManagerFactory clusterManagerFactory) {
+	public EnvironmentService(EnvironmentRepository environmentRepository, EnvironmentReleaseRepository environmentReleaseRepository, ReleaseService releaseService) {
 		this.environmentRepository = environmentRepository;
 		this.environmentReleaseRepository = environmentReleaseRepository;
 		this.releaseService = releaseService;
-		this.clusterManagerFactory = clusterManagerFactory;
 	}
 
 	@Transactional
 	public Environment create(Environment environment) {
 		log.info("Creating environment: {}", environment);
 
-		Environment savedEnvironment = environmentRepository.save(environment);
-
-		ClusterManager clusterManager = clusterManagerFactory.newManager(savedEnvironment.getCluster());
-		clusterManager.createEnvironment(savedEnvironment);
-		return savedEnvironment;
+		return environmentRepository.save(environment);
 	}
 
 	@Transactional
@@ -70,9 +62,6 @@ public class EnvironmentService {
 		log.info("Destroying environment: {}", environment);
 
 		undeployReleasesFrom(environment);
-
-		ClusterManager clusterManager = clusterManagerFactory.newManager(environment.getCluster());
-		clusterManager.deleteEnvironment(environment);
 
 		environmentRepository.delete(environment);
 		return environment;

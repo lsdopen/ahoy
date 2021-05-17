@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -23,10 +23,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import za.co.lsd.ahoy.server.cluster.Cluster;
-import za.co.lsd.ahoy.server.environments.Environment;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Objects;
 
 @Component
 @Scope("prototype")
@@ -43,40 +43,48 @@ public class KubernetesClusterManager implements ClusterManager {
 	}
 
 	@Override
-	public void createEnvironment(Environment environment) {
-		log.debug("Creating namespace for environment {}", environment);
+	public void createNamespace(String name) {
+		Objects.requireNonNull(name, "name is required");
+
+		log.debug("Creating namespace: {}", name);
 
 		try (DefaultKubernetesClient kubernetesClient = new DefaultKubernetesClient(config)) {
 
-			kubernetesClient.namespaces().createOrReplaceWithNew()
-				.withNewMetadata()
-				.withName(environment.getName())
-				.endMetadata()
-				.done();
+			if (kubernetesClient.namespaces().withName(name).get() == null) {
+				kubernetesClient.namespaces().createNew()
+					.withNewMetadata()
+					.withName(name)
+					.endMetadata()
+					.done();
+				log.debug("Namespace created: {}", name);
 
-			log.debug("Namespace created for environment {}", environment);
+			} else {
+				log.debug("Namespace already exists: {}", name);
+			}
 
 		} catch (Throwable e) {
-			log.error("Failed to create environment " + environment, e);
-			throw new ClusterManagerException("Failed to create environment", e);
+			log.error("Failed to create namespace: " + name, e);
+			throw new ClusterManagerException("Failed to create namespace", e);
 		}
 	}
 
 	@Override
-	public void deleteEnvironment(Environment environment) {
-		log.debug("Deleting namespace for environment {}", environment);
+	public void deleteNamespace(String name) {
+		Objects.requireNonNull(name, "name is required");
+
+		log.debug("Deleting namespace: {}", name);
 
 		try (DefaultKubernetesClient kubernetesClient = new DefaultKubernetesClient(config)) {
 
 			if (kubernetesClient.namespaces()
-				.withName(environment.getName())
+				.withName(name)
 				.delete()) {
-				log.debug("Namespace deleted for environment {}", environment);
+				log.debug("Namespace deleted: {}", name);
 			}
 
 		} catch (Throwable e) {
-			log.error("Failed to delete environment " + environment, e);
-			throw new ClusterManagerException("Failed to delete environment", e);
+			log.error("Failed to delete namespace: " + name, e);
+			throw new ClusterManagerException("Failed to delete namespace", e);
 		}
 	}
 }

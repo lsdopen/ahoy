@@ -23,6 +23,8 @@ import za.co.lsd.ahoy.server.argocd.ArgoClient;
 import za.co.lsd.ahoy.server.argocd.model.ArgoApplication;
 import za.co.lsd.ahoy.server.argocd.model.ArgoMetadata;
 import za.co.lsd.ahoy.server.argocd.model.ArgoSyncPolicy;
+import za.co.lsd.ahoy.server.clustermanager.ClusterManager;
+import za.co.lsd.ahoy.server.clustermanager.ClusterManagerFactory;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.git.GitSettings;
@@ -43,13 +45,15 @@ public class ReleaseManager {
 	private final ArgoClient argoClient;
 	private final SettingsProvider settingsProvider;
 	private final ApplicationNameResolver applicationNameResolver;
+	private final ClusterManagerFactory clusterManagerFactory;
 
-	public ReleaseManager(LocalRepo localRepo, ChartGenerator chartGenerator, ArgoClient argoClient, SettingsProvider settingsProvider, ApplicationNameResolver applicationNameResolver) {
+	public ReleaseManager(LocalRepo localRepo, ChartGenerator chartGenerator, ArgoClient argoClient, SettingsProvider settingsProvider, ApplicationNameResolver applicationNameResolver, ClusterManagerFactory clusterManagerFactory) {
 		this.localRepo = localRepo;
 		this.chartGenerator = chartGenerator;
 		this.argoClient = argoClient;
 		this.settingsProvider = settingsProvider;
 		this.applicationNameResolver = applicationNameResolver;
+		this.clusterManagerFactory = clusterManagerFactory;
 	}
 
 	public ArgoApplication deploy(EnvironmentRelease environmentRelease, ReleaseVersion releaseVersion, DeployDetails deployDetails) throws ReleaseManagerException {
@@ -66,6 +70,10 @@ public class ReleaseManager {
 			if (commit.isPresent()) {
 				localRepo.push();
 			}
+
+			Environment environment = environmentRelease.getEnvironment();
+			ClusterManager clusterManager = clusterManagerFactory.newManager(environment.getCluster());
+			clusterManager.createNamespace(environmentRelease.getNamespace());
 
 			argoClient.upsertRepository();
 			argoClient.createRepositoryCertificates();
@@ -117,7 +125,7 @@ public class ReleaseManager {
 						.build())
 					.build())
 				.destination(ArgoApplication.Destination.builder()
-					.namespace(environment.getName())
+					.namespace(environmentRelease.getNamespace())
 					.server(environment.getCluster().getMasterUrl())
 					.build())
 				.syncPolicy(ArgoSyncPolicy.builder()

@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package za.co.lsd.ahoy.server.clustermanager;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import za.co.lsd.ahoy.server.cluster.Cluster;
-import za.co.lsd.ahoy.server.environments.Environment;
 
 @Component
 @Scope("prototype")
@@ -29,12 +28,12 @@ public class NoOpClusterManager implements ClusterManager {
 	}
 
 	@Override
-	public void createEnvironment(Environment environment) {
+	public void createNamespace(String name) {
 		sleep(3000);
 	}
 
 	@Override
-	public void deleteEnvironment(Environment environment) {
+	public void deleteNamespace(String name) {
 		sleep(2000);
 	}
 

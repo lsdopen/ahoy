@@ -30,6 +30,7 @@ import za.co.lsd.ahoy.server.argocd.ArgoClient;
 import za.co.lsd.ahoy.server.argocd.model.ArgoApplication;
 import za.co.lsd.ahoy.server.cluster.Cluster;
 import za.co.lsd.ahoy.server.cluster.ClusterType;
+import za.co.lsd.ahoy.server.clustermanager.KubernetesClusterManager;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.git.GitSettings;
@@ -59,6 +60,8 @@ public class ReleaseManagerTest {
 	private ArgoClient argoClient;
 	@MockBean
 	private SettingsProvider settingsProvider;
+	@MockBean
+	private KubernetesClusterManager kubernetesClusterManager;
 	@Autowired
 	private ReleaseManager releaseManager;
 
@@ -111,7 +114,7 @@ public class ReleaseManagerTest {
 		assertEquals("values.yaml", argoApplication.getSpec().getSource().getHelm().getValueFiles().get(0));
 
 		// destination
-		assertEquals("dev", argoApplication.getSpec().getDestination().getNamespace());
+		assertEquals("release1-dev", argoApplication.getSpec().getDestination().getNamespace());
 		assertEquals("https://kubernetes.default.svc", argoApplication.getSpec().getDestination().getServer());
 
 		// automated
@@ -169,7 +172,7 @@ public class ReleaseManagerTest {
 		assertEquals("values.yaml", argoApplication.getSpec().getSource().getHelm().getValueFiles().get(0));
 
 		// destination
-		assertEquals("dev", argoApplication.getSpec().getDestination().getNamespace());
+		assertEquals("release1-dev", argoApplication.getSpec().getDestination().getNamespace());
 		assertEquals("https://kubernetes.default.svc", argoApplication.getSpec().getDestination().getServer());
 
 		// automated
