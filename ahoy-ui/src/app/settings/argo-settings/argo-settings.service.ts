@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,9 +17,11 @@
 import {Injectable} from '@angular/core';
 import {LoggerService} from '../../util/logger.service';
 import {RestClientService} from '../../util/rest-client.service';
-import {Observable} from 'rxjs';
-import {tap} from 'rxjs/operators';
+import {EMPTY, Observable} from 'rxjs';
+import {catchError, tap} from 'rxjs/operators';
 import {ArgoSettings} from './argo-settings';
+import {Notification} from '../../notifications/notification';
+import {NotificationsService} from '../../notifications/notifications.service';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +30,8 @@ export class ArgoSettingsService {
 
   constructor(
     private log: LoggerService,
-    private restClient: RestClientService) {
+    private restClient: RestClientService,
+    private notificationsService: NotificationsService) {
   }
 
   get(): Observable<ArgoSettings> {
@@ -56,6 +59,22 @@ export class ArgoSettingsService {
 
     return this.restClient.post<ArgoSettings>('/data/argoSettings', argoSettings, true).pipe(
       tap((savedSettings) => this.log.debug('saved argo settings', savedSettings))
+    );
+  }
+
+  testConnection(argoSettings: ArgoSettings): Observable<ArgoSettings> {
+    const url = `/data/argoSettings/test`;
+    return this.restClient.post<ArgoSettings>(url, argoSettings, true).pipe(
+      tap((returnedCluster) => {
+        this.log.debug('tested connection to argocd', returnedCluster);
+        const text = `Successfully connected to argocd '${argoSettings.argoServer}'`;
+        this.notificationsService.notification(new Notification(text));
+      }),
+      catchError(() => {
+        const text = `Failed to connect to argocd ${argoSettings.argoServer}`;
+        this.notificationsService.notification(new Notification(text, true));
+        return EMPTY;
+      })
     );
   }
 }
