@@ -14,35 +14,31 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.cluster;
+package za.co.lsd.ahoy.server.git;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @RepositoryRestController
-@RequestMapping("/clusters")
+@RequestMapping("/gitSettings")
 @Slf4j
-public class ClustersController {
-	private final ClusterService clusterService;
+public class GitSettingsController {
+	private final GitSettingsService gitSettingsService;
 
-	public ClustersController(ClusterService clusterService) {
-		this.clusterService = clusterService;
-	}
-
-	@DeleteMapping("/destroy/{clusterId}")
-	public ResponseEntity<?> destroy(@PathVariable Long clusterId) {
-		Cluster cluster = clusterService.destroy(clusterId);
-
-		return new ResponseEntity<>(cluster, new HttpHeaders(), HttpStatus.OK);
+	public GitSettingsController(GitSettingsService gitSettingsService) {
+		this.gitSettingsService = gitSettingsService;
 	}
 
 	@PostMapping("/test")
-	public ResponseEntity<?> test(@RequestBody Cluster cluster) {
-		clusterService.testConnection(cluster);
-		return new ResponseEntity<>(cluster, new HttpHeaders(), HttpStatus.OK);
+	public ResponseEntity<?> test(@RequestBody GitSettings gitSettings) {
+		gitSettingsService.testConnection(gitSettings);
+		return new ResponseEntity<>(gitSettings, new HttpHeaders(), HttpStatus.OK);
 	}
+
 }

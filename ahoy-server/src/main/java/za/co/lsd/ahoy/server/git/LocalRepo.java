@@ -134,6 +134,21 @@ public class LocalRepo {
 		}
 	}
 
+	public void testConnection(GitSettings testGitSettings) {
+		try {
+			log.info("Testing connection to git repo remote: {}", testGitSettings.getRemoteRepoUri());
+			FetchResult fetchResult = configureCredentials(testGitSettings, localRepo.fetch()
+				.setRemote(testGitSettings.getRemoteRepoUri())
+				.setForceUpdate(true)
+				.setRefSpecs("refs/heads/*:refs/heads/*"))
+				.call();
+			resultThrowForFailures(fetchResult);
+			log.debug("Connection fetch result: {}", fetchResult.getTrackingRefUpdates());
+		} catch (Exception e) {
+			throw new LocalRepoException("Failed to connect to remote repo", e);
+		}
+	}
+
 	public void delete() {
 		try {
 			if (localRepo != null) {

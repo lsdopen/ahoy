@@ -203,4 +203,19 @@ public class LocalRepoTest {
 		// then
 		assertEquals(newRemoteCommit.getId(), ref.getObjectId(), "We should have a new remote path");
 	}
+
+	@Test
+	public void connection() {
+		// when
+		localRepo.testConnection(settingsProvider.getGitSettings());
+	}
+
+	@Test
+	public void connectionFailed() {
+		// given
+		GitSettings gitSettings = new GitSettings(testRemoteRepoPath.toUri() + "XX");
+
+		// when & then expect Exception
+		assertThrows(LocalRepoException.class, () -> localRepo.testConnection(gitSettings));
+	}
 }

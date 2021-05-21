@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,10 +17,11 @@
 import {Injectable} from '@angular/core';
 import {LoggerService} from '../../util/logger.service';
 import {RestClientService} from '../../util/rest-client.service';
-import {Observable} from 'rxjs';
-import {DockerSettings} from '../docker-settings/docker-settings';
+import {EMPTY, Observable} from 'rxjs';
 import {GitSettings} from './git-settings';
-import {tap} from 'rxjs/operators';
+import {catchError, tap} from 'rxjs/operators';
+import {Notification} from '../../notifications/notification';
+import {NotificationsService} from '../../notifications/notifications.service';
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +38,8 @@ export class GitSettingsService {
 
   constructor(
     private log: LoggerService,
-    private restClient: RestClientService) {
+    private restClient: RestClientService,
+    private notificationsService: NotificationsService) {
   }
 
   get(): Observable<GitSettings> {
@@ -62,11 +64,27 @@ export class GitSettingsService {
     );
   }
 
-  save(gitSettings: GitSettings): Observable<DockerSettings> {
+  save(gitSettings: GitSettings): Observable<GitSettings> {
     this.log.debug('saving git settings: ', gitSettings);
 
-    return this.restClient.post<DockerSettings>('/data/gitSettings', gitSettings, true).pipe(
+    return this.restClient.post<GitSettings>('/data/gitSettings', gitSettings, true).pipe(
       tap((savedSettings) => this.log.debug('saved git settings', savedSettings))
+    );
+  }
+
+  testConnection(gitSettings: GitSettings): Observable<GitSettings> {
+    const url = `/data/gitSettings/test`;
+    return this.restClient.post<GitSettings>(url, gitSettings, true).pipe(
+      tap((returnedCluster) => {
+        this.log.debug('tested connection to git repo', returnedCluster);
+        const text = `Successfully connected to git repo '${gitSettings.remoteRepoUri}'`;
+        this.notificationsService.notification(new Notification(text));
+      }),
+      catchError(() => {
+        const text = `Failed to connect to git repo ${gitSettings.remoteRepoUri}`;
+        this.notificationsService.notification(new Notification(text, true));
+        return EMPTY;
+      })
     );
   }
 }

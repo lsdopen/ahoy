@@ -82,6 +82,7 @@
   <ng-template #buttonBar>
     <app-button-bar>
       <button mat-raised-button color="accent" (click)="save()" [disabled]="settingsForm.invalid">Save</button>
+      <button mat-raised-button (click)="test()" [disabled]="settingsForm.invalid">Test</button>
     </app-button-bar>
   </ng-template>
 
