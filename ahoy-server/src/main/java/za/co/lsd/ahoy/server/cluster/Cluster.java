@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -72,5 +72,16 @@ public class Cluster {
 		this.name = name;
 		this.masterUrl = masterUrl;
 		this.type = type;
+	}
+
+	public Cluster(ClusterDTO dto) {
+		this.id = dto.getId();
+		this.name = dto.getName();
+		this.masterUrl = dto.getMasterUrl();
+		this.token = dto.getToken();
+		this.caCertData = dto.getCaCertData();
+		this.host = dto.getHost();
+		this.inCluster = dto.isInCluster();
+		this.type = dto.getType();
 	}
 }

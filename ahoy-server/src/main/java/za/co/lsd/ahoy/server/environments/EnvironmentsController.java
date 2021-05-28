@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -34,9 +34,9 @@ public class EnvironmentsController {
 	}
 
 	@PostMapping("/create")
-	public ResponseEntity<?> create(@RequestBody Environment environment) {
+	public ResponseEntity<?> create(@RequestBody EnvironmentDTO environmentDTO) {
 
-		Environment newEnvironment = environmentService.create(environment);
+		Environment newEnvironment = environmentService.create(new Environment(environmentDTO));
 
 		return new ResponseEntity<>(newEnvironment, new HttpHeaders(), HttpStatus.OK);
 	}

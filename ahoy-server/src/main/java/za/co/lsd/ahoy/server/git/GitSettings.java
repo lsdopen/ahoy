@@ -52,6 +52,17 @@ public class GitSettings {
 		this.remoteRepoUri = remoteRepoUri;
 	}
 
+	public GitSettings(GitSettingsDTO dto) {
+		this.id = dto.getId();
+		this.remoteRepoUri = dto.getRemoteRepoUri();
+		this.branch = dto.getBranch();
+		this.credentials = dto.getCredentials();
+		this.httpsUsername = dto.getHttpsUsername();
+		this.httpsPassword = dto.getHttpsPassword();
+		this.privateKey = dto.getPrivateKey();
+		this.sshKnownHosts = dto.getSshKnownHosts();
+	}
+
 	public enum Credentials {
 		NONE,
 		HTTPS,

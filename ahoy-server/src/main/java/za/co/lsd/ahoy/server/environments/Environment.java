@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package za.co.lsd.ahoy.server.environments;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import za.co.lsd.ahoy.server.cluster.Cluster;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 
@@ -42,6 +43,7 @@ public class Environment {
 
 	@OneToMany(mappedBy = "environment", cascade = CascadeType.REMOVE)
 	@JsonIgnore
+	@ToString.Exclude
 	private List<EnvironmentRelease> environmentReleases;
 
 	public Environment(@NotNull String name, Cluster cluster) {
@@ -55,11 +57,9 @@ public class Environment {
 		this.cluster = cluster;
 	}
 
-	@Override
-	public String toString() {
-		return "Environment{" + "id=" + id +
-			", name='" + name + '\'' +
-			", cluster='" + cluster + '\'' +
-			'}';
+	public Environment(EnvironmentDTO dto) {
+		this.id = dto.getId();
+		this.name = dto.getName();
+		this.cluster = new Cluster(dto.getCluster());
 	}
 }

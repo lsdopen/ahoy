@@ -14,39 +14,16 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.argocd;
+package za.co.lsd.ahoy.server.environments;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-import org.hibernate.annotations.Type;
-import org.springframework.util.StringUtils;
+import za.co.lsd.ahoy.server.cluster.ClusterDTO;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-
-@Entity
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class ArgoSettings {
-	@Id
+public class EnvironmentDTO {
 	private Long id;
-	private String argoServer;
-	@Lob
-	@Type(type = "org.hibernate.type.TextType")
-	@ToString.Exclude
-	private String argoToken;
-
-	public ArgoSettings(ArgoSettingsDTO dto) {
-		this.id = dto.getId();
-		this.argoServer = dto.getArgoServer();
-		this.argoToken = dto.getArgoToken();
-	}
-
-	public boolean configured() {
-		return !StringUtils.isEmpty(argoServer);
-	}
+	private String name;
+	private ClusterDTO cluster;
 }

@@ -41,8 +41,8 @@ public class ClustersController {
 	}
 
 	@PostMapping("/test")
-	public ResponseEntity<?> test(@RequestBody Cluster cluster) {
-		clusterService.testConnection(cluster);
-		return new ResponseEntity<>(cluster, new HttpHeaders(), HttpStatus.OK);
+	public ResponseEntity<?> test(@RequestBody ClusterDTO clusterDTO) {
+		clusterService.testConnection(new Cluster(clusterDTO));
+		return new ResponseEntity<>(new HttpHeaders(), HttpStatus.OK);
 	}
 }

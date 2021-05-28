@@ -36,8 +36,8 @@ public class ArgoSettingsController {
 	}
 
 	@PostMapping("/test")
-	public ResponseEntity<?> test(@RequestBody ArgoSettings argoSettings) {
-		argoSettingsService.testConnection(argoSettings);
-		return new ResponseEntity<>(argoSettings, new HttpHeaders(), HttpStatus.OK);
+	public ResponseEntity<?> test(@RequestBody ArgoSettingsDTO argoSettingsDTO) {
+		argoSettingsService.testConnection(new ArgoSettings(argoSettingsDTO));
+		return new ResponseEntity<>(new HttpHeaders(), HttpStatus.OK);
 	}
 }

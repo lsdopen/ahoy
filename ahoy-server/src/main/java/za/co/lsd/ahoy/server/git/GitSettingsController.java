@@ -36,9 +36,9 @@ public class GitSettingsController {
 	}
 
 	@PostMapping("/test")
-	public ResponseEntity<?> test(@RequestBody GitSettings gitSettings) {
-		gitSettingsService.testConnection(gitSettings);
-		return new ResponseEntity<>(gitSettings, new HttpHeaders(), HttpStatus.OK);
+	public ResponseEntity<?> test(@RequestBody GitSettingsDTO gitSettingsDTO) {
+		gitSettingsService.testConnection(new GitSettings(gitSettingsDTO));
+		return new ResponseEntity<>(new HttpHeaders(), HttpStatus.OK);
 	}
 
 }
