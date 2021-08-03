@@ -27,7 +27,7 @@
 
 	<groupId>za.co.lsd.ahoy</groupId>
 	<artifactId>ahoy</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>0.1.0</version>
 	<name>ahoy</name>
 	<description>AHOY - release management</description>
 	<packaging>pom</packaging>
