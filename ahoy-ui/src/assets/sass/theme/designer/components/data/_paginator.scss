@@ -1,0 +1,98 @@
+/*!
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+.p-paginator {
+    background: $paginatorBg;
+    color: $paginatorTextColor;
+    border: $paginatorBorder;
+    border-width: $paginatorBorderWidth;
+    padding: $paginatorPadding;
+    border-radius: $borderRadius;
+
+    .p-paginator-first,
+    .p-paginator-prev,
+    .p-paginator-next,
+    .p-paginator-last {
+        background-color: $paginatorElementBg;
+        border: $paginatorElementBorder;
+        color: $paginatorElementIconColor;
+        min-width: $paginatorElementWidth;
+        height: $paginatorElementHeight;
+        margin: $paginatorElementMargin;
+        transition: $listItemTransition;
+        border-radius: $paginatorElementBorderRadius;
+
+        &:not(.p-disabled):not(.p-highlight):hover {
+            background: $paginatorElementHoverBg;
+            border-color: $paginatorElementHoverBorderColor;
+            color: $paginatorElementIconHoverColor;
+        }
+    }
+
+    .p-paginator-first {
+        border-top-left-radius: $borderRadius;
+        border-bottom-left-radius: $borderRadius;
+    }
+
+    .p-paginator-last {
+        border-top-right-radius: $borderRadius;
+        border-bottom-right-radius: $borderRadius;
+    }
+
+    .p-dropdown {
+        margin-left: $inlineSpacing;
+        height: $paginatorElementHeight;
+
+        .p-dropdown-label {
+            padding-right: 0;
+        }
+    }
+
+    .p-paginator-current {
+        background-color: $paginatorElementBg;
+        border: $paginatorElementBorder;
+        color: $paginatorElementIconColor;
+        min-width: $paginatorElementWidth;
+        height: $paginatorElementHeight;
+        margin: $paginatorElementMargin;
+        padding: 0 $inlineSpacing;
+    }
+
+    .p-paginator-pages {
+        .p-paginator-page {
+            background-color: $paginatorElementBg;
+            border: $paginatorElementBorder;
+            color: $paginatorElementIconColor;
+            min-width: $paginatorElementWidth;
+            height: $paginatorElementHeight;
+            margin: $paginatorElementMargin;
+            transition: $listItemTransition;
+            border-radius: $paginatorElementBorderRadius;
+
+            &.p-highlight {
+                background: $highlightBg;
+                border-color: $highlightBg;
+                color: $highlightTextColor;
+            }
+
+            &:not(.p-highlight):hover {
+                background: $paginatorElementHoverBg;
+                border-color: $paginatorElementHoverBorderColor;
+                color: $paginatorElementIconHoverColor;
+            }
+        }
+    }
+}

@@ -1,0 +1,182 @@
+/*!
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+@mixin icon-override($icon) {
+	&:before {
+		content: $icon;
+	}
+}
+
+@mixin focused() {
+	outline: $focusOutline;
+    outline-offset: $focusOutlineOffset;
+    box-shadow: $focusShadow;
+}
+
+@mixin focused-input() {
+	@include focused();
+	border-color: $inputFocusBorderColor;
+}
+
+@mixin focused-listitem() {
+	outline: $focusOutline;
+    outline-offset: $focusOutlineOffset;
+    box-shadow: $inputListItemFocusShadow;
+}
+
+@mixin invalid-input() {
+	border-color: $inputErrorBorderColor;
+}
+
+@mixin menuitem-link {
+	padding: $menuitemPadding;
+	color: $menuitemTextColor;
+    border-radius: $menuitemBorderRadius;
+    transition: $listItemTransition;
+    user-select: none;
+
+	.p-menuitem-text {
+        color: $menuitemTextColor;
+	}
+
+	.p-menuitem-icon {
+		color: $menuitemIconColor;
+		margin-right: $inlineSpacing;
+    }
+
+    .p-submenu-icon {
+        color: $menuitemIconColor;
+    }
+
+	&:not(.p-disabled):hover {
+		background: $menuitemHoverBg;
+
+		.p-menuitem-text {
+			color: $menuitemTextHoverColor;
+		}
+
+		.p-menuitem-icon {
+			color: $menuitemIconHoverColor;
+        }
+
+        .p-submenu-icon {
+            color: $menuitemIconHoverColor;
+        }
+	}
+
+	&:focus {
+		@include focused-listitem();
+	}
+}
+
+@mixin horizontal-rootmenuitem-link {
+	padding: $horizontalMenuRootMenuitemPadding;
+	color: $horizontalMenuRootMenuitemTextColor;
+    border-radius: $horizontalMenuRootMenuitemBorderRadius;
+    transition: $listItemTransition;
+    user-select: none;
+
+	.p-menuitem-text {
+        color: $horizontalMenuRootMenuitemTextColor;
+	}
+
+	.p-menuitem-icon {
+		color: $horizontalMenuRootMenuitemIconColor;
+		margin-right: $inlineSpacing;
+    }
+
+    .p-submenu-icon {
+        color: $horizontalMenuRootMenuitemIconColor;
+        margin-left: $inlineSpacing;
+    }
+
+	&:not(.p-disabled):hover {
+		background: $horizontalMenuRootMenuitemHoverBg;
+
+		.p-menuitem-text {
+			color: $horizontalMenuRootMenuitemTextHoverColor;
+		}
+
+		.p-menuitem-icon {
+			color: $horizontalMenuRootMenuitemIconHoverColor;
+        }
+
+        .p-submenu-icon {
+            color: $horizontalMenuRootMenuitemIconHoverColor;
+        }
+	}
+
+	&:focus {
+		@include focused-listitem();
+	}
+}
+
+@mixin placeholder {
+	::-webkit-input-placeholder {
+		@content
+	}
+	:-moz-placeholder {
+		@content
+	}
+	::-moz-placeholder {
+		@content
+	}
+	:-ms-input-placeholder {
+		@content
+	}
+}
+
+@mixin scaledPadding($val, $scale) {
+    padding: nth($val, 1) * $scale nth($val, 2) * $scale;
+}
+
+@mixin scaledFontSize($val, $scale) {
+    font-size: $val * $scale;
+}
+
+@mixin nested-submenu-indents($val, $index, $length) {
+    ul {
+        li {
+            a {
+                padding-left: $val * ($index + 1);
+            }
+
+            @if $index < $length {
+                @include nested-submenu-indents($val, $index + 2, $length);
+            }
+        }
+    }
+}
+
+@mixin action-icon() {
+    width: $actionIconWidth;
+    height: $actionIconHeight;
+    color: $actionIconColor;
+    border: $actionIconBorder;
+    background: $actionIconBg;
+    border-radius: $actionIconBorderRadius;
+    transition: $actionIconTransition;
+
+    &:enabled:hover {
+        color: $actionIconHoverColor;
+        border-color: $actionIconHoverBorderColor;
+        background: $actionIconHoverBg;
+    }
+
+    &:focus {
+        @include focused();
+    }
+}

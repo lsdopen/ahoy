@@ -1,0 +1,80 @@
+/*!
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+.p-inline-message {
+    padding: $inlineMessagePadding;
+    margin: $inlineMessageMargin;
+    border-radius: $borderRadius;
+
+    &.p-inline-message-info {
+        background: $infoMessageBg;
+        border: $infoMessageBorder;
+        border-width: $inlineMessageBorderWidth;
+        color: $infoMessageTextColor;
+
+        .p-inline-message-icon {
+            color: $infoMessageIconColor;
+        }
+    }
+
+    &.p-inline-message-success {
+        background: $successMessageBg;
+        border: $successMessageBorder;
+        border-width: $inlineMessageBorderWidth;
+        color: $successMessageTextColor;
+
+        .p-inline-message-icon {
+            color: $successMessageIconColor;
+        }
+    }
+
+    &.p-inline-message-warn {
+        background: $warningMessageBg;
+        border: $warningMessageBorder;
+        border-width: $inlineMessageBorderWidth;
+        color: $warningMessageTextColor;
+
+        .p-inline-message-icon {
+            color: $warningMessageIconColor;
+        }
+    }
+
+    &.p-inline-message-error {
+        background: $errorMessageBg;
+        border: $errorMessageBorder;
+        border-width: $inlineMessageBorderWidth;
+        color: $errorMessageTextColor;
+
+        .p-inline-message-icon {
+            color: $errorMessageIconColor;
+        }
+    }
+
+    .p-inline-message-icon {
+        font-size: $inlineMessageIconFontSize;
+        margin-right: $inlineSpacing;
+    }
+
+    .p-inline-message-text {
+        font-size: $inlineMessageTextFontSize;
+    }
+
+    &.p-inline-message-icon-only {
+        .p-inline-message-icon {
+            margin-right: 0;
+        }
+    }
+}

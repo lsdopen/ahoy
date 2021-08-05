@@ -16,6 +16,7 @@
 
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
+import {AppMainComponent} from './app.main.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {ApplicationsComponent} from './applications/applications.component';
 import {ApplicationDetailComponent} from './applications/application-detail/application-detail.component';
@@ -37,27 +38,36 @@ import {DockerSettingsComponent} from './settings/docker-settings/docker-setting
 import {AuthGuard} from './util/auth.guard';
 
 const routes: Routes = [
-  {path: '', redirectTo: '/dashboard', pathMatch: 'full'},
-  {path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard, SettingsGuard]},
-  {path: 'releases', component: ReleasesComponent, canActivate: [AuthGuard, SettingsGuard]},
-  {path: 'release/:environmentId/:releaseId/version/:releaseVersionId', component: ReleaseManageComponent, canActivate: [AuthGuard]},
-  {path: 'release/edit/:environmentId/:releaseId', component: ReleaseDetailComponent, canActivate: [AuthGuard]},
-  {path: 'release/edit/:environmentId/:releaseId/version/:releaseVersionId', component: ReleaseDetailComponent, canActivate: [AuthGuard]},
-  {path: 'release/:environmentId/:releaseId/config/:relVersionId/:appVersionId', component: ReleaseApplicationEnvironmentConfigComponent, canActivate: [AuthGuard]},
-  {path: 'releasehistory/:releaseId', component: ReleaseHistoryComponent, canActivate: [AuthGuard]},
-  {path: 'environments', component: EnvironmentsComponent, canActivate: [AuthGuard, SettingsGuard]},
-  {path: 'environment/:id', component: EnvironmentDetailComponent, canActivate: [AuthGuard]},
-  {path: 'applications', component: ApplicationsComponent, canActivate: [AuthGuard, SettingsGuard]},
-  {path: 'application/:id', component: ApplicationDetailComponent, canActivate: [AuthGuard]},
-  {path: 'application/:appId/version/:versionId', component: ApplicationVersionDetailComponent, canActivate: [AuthGuard]},
-  {path: 'clusters', component: ClustersComponent, canActivate: [AuthGuard, SettingsGuard]},
-  {path: 'cluster/:id', component: ClusterDetailComponent, canActivate: [AuthGuard]},
   {
-    path: 'settings', component: SettingsComponent, canActivate: [AuthGuard], children: [
-      {path: '', redirectTo: '/settings/git', pathMatch: 'full'},
-      {path: 'git', component: GitSettingsComponent},
-      {path: 'argo', component: ArgoSettingsComponent},
-      {path: 'docker', component: DockerSettingsComponent}
+    path: '', component: AppMainComponent, canActivate: [AuthGuard, SettingsGuard],
+    children: [
+      {path: '', component: DashboardComponent},
+
+      {path: 'releases', component: ReleasesComponent},
+      {path: 'release/:environmentId/:releaseId/version/:releaseVersionId', component: ReleaseManageComponent},
+      {path: 'release/edit/:environmentId/:releaseId', component: ReleaseDetailComponent},
+      {path: 'release/edit/:environmentId/:releaseId/version/:releaseVersionId', component: ReleaseDetailComponent},
+      {path: 'release/:environmentId/:releaseId/config/:relVersionId/:appVersionId', component: ReleaseApplicationEnvironmentConfigComponent},
+      {path: 'releasehistory/:releaseId', component: ReleaseHistoryComponent},
+
+      {path: 'environments', component: EnvironmentsComponent},
+      {path: 'environment/:id', component: EnvironmentDetailComponent},
+
+      {path: 'applications', component: ApplicationsComponent},
+      {path: 'application/:id', component: ApplicationDetailComponent},
+      {path: 'application/:appId/version/:versionId', component: ApplicationVersionDetailComponent},
+
+      {path: 'clusters', component: ClustersComponent},
+      {path: 'cluster/:id', component: ClusterDetailComponent},
+
+      {
+        path: 'settings', component: SettingsComponent, canActivate: [AuthGuard], children: [
+          {path: '', redirectTo: '/settings/git', pathMatch: 'full'},
+          {path: 'git', component: GitSettingsComponent},
+          {path: 'argo', component: ArgoSettingsComponent},
+          {path: 'docker', component: DockerSettingsComponent}
+        ]
+      }
     ]
   }
 ];
@@ -66,7 +76,8 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes, {
     useHash: true,
     initialNavigation: 'disabled',
-    relativeLinkResolution: 'legacy'
+    relativeLinkResolution: 'legacy',
+    scrollPositionRestoration: 'enabled'
   })],
   exports: [RouterModule]
 })

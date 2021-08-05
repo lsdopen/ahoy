@@ -14,18 +14,40 @@
  *    limitations under the License.
  */
 
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthService} from './util/auth.service';
+import {PrimeNGConfig} from 'primeng/api';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'Ahoy';
 
-  constructor(private authService: AuthService) {
+  topbarTheme: string = 'bluegrey';
+
+  menuTheme: string = 'light';
+
+  layoutMode: string = 'light';
+
+  menuMode: string = 'static';
+
+  inlineMenuPosition: string = 'top';
+
+  inputStyle: string = 'filled';
+
+  ripple: boolean = true;
+
+  isRTL: boolean = false;
+
+  constructor(private primengConfig: PrimeNGConfig,
+              private authService: AuthService) {
+  }
+
+  ngOnInit() {
+    this.primengConfig.ripple = true;
   }
 
   login() {

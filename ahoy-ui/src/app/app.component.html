@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -13,45 +13,45 @@
   ~    See the License for the specific language governing permissions and
   ~    limitations under the License.
   -->
+<router-outlet></router-outlet>
+<!--<div class="app-container" fxFlex fxLayout="column">-->
 
-<div class="app-container" fxFlex fxLayout="column">
+<!--  <mat-toolbar class="app-toolbar mat-elevation-z6" color="primary">-->
+<!--    <span class="title" routerLink="/dashboard">{{title}}</span>-->
+<!--    <div fxFlex fxLayoutAlign="end center">-->
 
-  <mat-toolbar class="app-toolbar mat-elevation-z6" color="primary">
-    <span class="title" routerLink="/dashboard">{{title}}</span>
-    <div fxFlex fxLayoutAlign="end center">
+<!--      <span *ngIf="identityClaim()">{{ identityClaim().name }}</span>-->
 
-      <span *ngIf="identityClaim()">{{ identityClaim().name }}</span>
+<!--      <app-notifications></app-notifications>-->
 
-      <app-notifications></app-notifications>
+<!--      <button mat-icon-button [matMenuTriggerFor]="beforeMenu">-->
+<!--        <mat-icon>menu</mat-icon>-->
+<!--      </button>-->
 
-      <button mat-icon-button [matMenuTriggerFor]="beforeMenu">
-        <mat-icon>menu</mat-icon>
-      </button>
+<!--      <mat-menu #beforeMenu="matMenu" xPosition="before">-->
+<!--        <button mat-menu-item routerLink="/settings">Settings</button>-->
+<!--        <a mat-menu-item href="{{issuer()}}/account/?referrer=ahoy">Account</a>-->
+<!--        <mat-divider></mat-divider>-->
+<!--        <button mat-menu-item (click)="logout()">Logout</button>-->
+<!--      </mat-menu>-->
 
-      <mat-menu #beforeMenu="matMenu" xPosition="before">
-        <button mat-menu-item routerLink="/settings">Settings</button>
-        <a mat-menu-item href="{{issuer()}}/account/?referrer=ahoy">Account</a>
-        <mat-divider></mat-divider>
-        <button mat-menu-item (click)="logout()">Logout</button>
-      </mat-menu>
+<!--    </div>-->
+<!--  </mat-toolbar>-->
 
-    </div>
-  </mat-toolbar>
+<!--  <mat-sidenav-container fxFill>-->
+<!--    <mat-sidenav mode="side" opened>-->
+<!--      <mat-nav-list>-->
+<!--        <mat-list-item routerLink="/releases" [routerLinkActive]="['nav-active']">Releases</mat-list-item>-->
+<!--        <mat-list-item routerLink="/environments" [routerLinkActive]="['nav-active']">Environments</mat-list-item>-->
+<!--        <mat-list-item routerLink="/applications" [routerLinkActive]="['nav-active']">Applications</mat-list-item>-->
+<!--        <mat-list-item routerLink="/clusters" [routerLinkActive]="['nav-active']">Clusters</mat-list-item>-->
+<!--      </mat-nav-list>-->
+<!--    </mat-sidenav>-->
+<!--    <mat-sidenav-content>-->
+<!--      <div fxFlex fxLayout="column">-->
+<!--        <router-outlet></router-outlet>-->
+<!--      </div>-->
+<!--    </mat-sidenav-content>-->
+<!--  </mat-sidenav-container>-->
 
-  <mat-sidenav-container fxFill>
-    <mat-sidenav mode="side" opened>
-      <mat-nav-list>
-        <mat-list-item routerLink="/releases" [routerLinkActive]="['nav-active']">Releases</mat-list-item>
-        <mat-list-item routerLink="/environments" [routerLinkActive]="['nav-active']">Environments</mat-list-item>
-        <mat-list-item routerLink="/applications" [routerLinkActive]="['nav-active']">Applications</mat-list-item>
-        <mat-list-item routerLink="/clusters" [routerLinkActive]="['nav-active']">Clusters</mat-list-item>
-      </mat-nav-list>
-    </mat-sidenav>
-    <mat-sidenav-content>
-      <div fxFlex fxLayout="column">
-        <router-outlet></router-outlet>
-      </div>
-    </mat-sidenav-content>
-  </mat-sidenav-container>
-
-</div>
+<!--</div>-->

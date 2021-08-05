@@ -1,0 +1,132 @@
+/*!
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+.menu-wrapper {
+    height: calc(100% - 4rem);
+    width: 17rem;
+    position: fixed;
+    left: 0;
+    top: 4rem;
+    z-index: 997;
+    transform: none;
+
+    ul {
+        @include reset-list;
+    }
+
+    .layout-menu-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+
+        app-menu {
+            overflow-y: auto;
+        }
+
+        .layout-menu {
+            padding-bottom: 2rem;
+
+            li {
+                border-radius: 4px;
+
+                &.layout-root-menuitem {
+                    > a {
+                        display: none;
+                    }
+
+                    > div {
+                        padding-left: 1rem;
+                        margin-bottom: .5rem;
+                        margin-top: 1.5rem;
+
+                        > .layout-menuitem-text {
+                            font-size: .857rem;
+                            font-weight: 600;
+                            text-transform: uppercase;
+                        }
+                    }
+                }
+
+                > a {
+                    display: flex;
+                    align-items: center;
+                    padding: .75rem;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    user-select: none;
+                    transition: background-color $transitionDuration, color $transitionDuration;
+
+                    .layout-menuitem-text {
+                        margin-left: .75rem;
+                    }
+
+                    .p-badge {
+                        margin-left: auto;
+                        min-width: 1.143rem;
+                        height: 1.143rem;
+                        line-height: 1.143rem;
+                    }
+
+                    .layout-submenu-toggler {
+                        margin-left: auto;
+                    }
+
+                    &.rotated-icon {
+                        .layout-menuitem-icon {
+                            transform: rotate(90deg);
+                        }
+                    }
+
+                    .p-badge + .layout-submenu-toggler {
+                        margin-left: .5rem;
+                    }
+                }
+
+                &.active-menuitem {
+                    > a {
+                        .layout-submenu-toggler {
+                            transition: all $transitionDuration;
+                            transform: rotate(-180deg);
+                        }
+                    }
+                }
+
+                > ul {
+                    padding: 0 .5rem;
+
+                    li {
+                        ul {
+                            padding: 0 0 .25rem;
+                            overflow: hidden;
+                        }
+                    }
+
+                    > li {
+                        margin-top: .2rem;
+
+                        &.layout-root-menuitem {
+                            > a {
+                                display: flex;
+                            }
+                        }
+
+                        @include nested-submenu-indents(.875rem, 2, 5);
+                    }
+                }
+            }
+        }
+    }
+}

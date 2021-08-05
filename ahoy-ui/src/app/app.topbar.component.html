@@ -1,0 +1,199 @@
+<!--
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
+  ~
+  ~    Licensed under the Apache License, Version 2.0 (the "License");
+  ~    you may not use this file except in compliance with the License.
+  ~    You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~    Unless required by applicable law or agreed to in writing, software
+  ~    distributed under the License is distributed on an "AS IS" BASIS,
+  ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~    See the License for the specific language governing permissions and
+  ~    limitations under the License.
+  -->
+
+<div class="layout-topbar p-shadow-4">
+    <div class="layout-topbar-left">
+        <a class="layout-topbar-logo" routerLink="/">
+            <img id="app-logo" src="assets/layout/images/logo-light.svg" alt="ultima-layout" style="height: 2.25rem">
+        </a>
+
+        <a class="layout-menu-button p-shadow-6" (click)="appMain.onMenuButtonClick($event)" pRipple>
+            <i class="pi pi-chevron-right"></i>
+        </a>
+
+        <a class="layout-topbar-mobile-button" (click)="appMain.onTopbarMobileButtonClick($event)" pRipple>
+            <i class="pi pi-ellipsis-v fs-large"></i>
+        </a>
+    </div>
+
+    <div class="layout-topbar-right" [ngClass]="{'layout-topbar-mobile-active': appMain.mobileTopbarActive}">
+        <div class="layout-topbar-actions-left">
+            <p-megaMenu [model]="model" styleClass="layout-megamenu"></p-megaMenu>
+        </div>
+        <div class="layout-topbar-actions-right">
+            <ul class="layout-topbar-items">
+                <li class="layout-topbar-item layout-search-item">
+                    <a class="layout-topbar-action rounded-circle" (click)="appMain.onTopbarItemClick($event, 'search')" pRipple>
+                        <i class="pi pi-search fs-large"></i>
+                    </a>
+
+                    <div class="layout-search-panel p-inputgroup" [@topbarActionPanelAnimation]="'visible'" *ngIf="appMain.search" (@topbarActionPanelAnimation.done)="onSearchAnimationEnd($event)">
+                        <span class="p-inputgroup-addon"><i class="pi pi-search"></i></span>
+                        <input #searchInput type="text" pInputText placeholder="Search" (click)="appMain.searchClick = true;" (keydown)="appMain.onSearchKeydown($event)">
+                        <span class="p-inputgroup-addon">
+                            <button pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-text p-button-plain" (click)="appMain.searchClick = false;"></button>
+                        </span>
+                    </div>
+                </li>
+                <li class="layout-topbar-item notifications">
+                    <a class="layout-topbar-action rounded-circle" (click)="appMain.onTopbarItemClick($event, 'notifications')" pRipple>
+                        <span class="p-overlay-badge">
+                            <i class="pi pi-bell fs-large"></i>
+                            <span class="p-badge p-badge-warning p-badge-dot"></span>
+                        </span>
+                    </a>
+
+                    <ul class="layout-topbar-action-panel p-shadow-6" [@topbarActionPanelAnimation]="'visible'" *ngIf="appMain.activeTopbarItem === 'notifications'">
+                        <li class="p-mb-3">
+                            <span class="p-px-3 fs-small">You have <b>4</b> new notifications</span>
+                        </li>
+                        <li class="layout-topbar-action-item">
+                            <div class="p-d-flex p-flex-row p-ai-center">
+                                <img src="assets/demo/images/avatar/avatar-1.png"/>
+                                <div class="p-d-flex p-flex-column" [ngClass]="{'p-ml-3': !app.isRTL, 'p-mr-3': app.isRTL}" style="flex-grow: 1;">
+                                    <div class="p-d-flex p-ai-center p-jc-between p-mb-1">
+                                        <span class="fs-small p-text-bold">Jerome Bell</span>
+                                        <small>42 mins ago</small>
+                                    </div>
+                                    <span class="fs-small">How to write content about your photographs?</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="layout-topbar-action-item">
+                            <div class="p-d-flex p-flex-row p-ai-center">
+                                <img src="assets/demo/images/avatar/avatar-2.png"/>
+                                <div class="p-d-flex p-flex-column" [ngClass]="{'p-ml-3': !app.isRTL, 'p-mr-3': app.isRTL}" style="flex-grow: 1;">
+                                    <div class="p-d-flex p-ai-center p-jc-between p-mb-1">
+                                        <span class="fs-small p-text-bold">Cameron Williamson</span>
+                                        <small>48 mins ago</small>
+                                    </div>
+                                    <span class="fs-small">Start a blog to reach your creative peak.</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="layout-topbar-action-item">
+                            <div class="p-d-flex p-flex-row p-ai-center">
+                                <img src="assets/demo/images/avatar/avatar-3.png"/>
+                                <div class="p-d-flex p-flex-column" [ngClass]="{'p-ml-3': !app.isRTL, 'p-mr-3': app.isRTL}" style="flex-grow: 1;">
+                                    <div class="p-d-flex p-ai-center p-jc-between p-mb-1">
+                                        <span class="fs-small p-text-bold">Anna Miles</span>
+                                        <small>1 day ago</small>
+                                    </div>
+                                    <span class="fs-small">Caring is the new marketing</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="layout-topbar-action-item">
+                            <div class="p-d-flex p-flex-row p-ai-center">
+                                <img src="assets/demo/images/avatar/avatar-4.png"/>
+                                <div class="p-d-flex p-flex-column" [ngClass]="{'p-ml-3': !app.isRTL, 'p-mr-3': app.isRTL}" style="flex-grow: 1;">
+                                    <div class="p-d-flex p-ai-center p-jc-between p-mb-1">
+                                        <span class="fs-small p-text-bold">Arlene Mccoy</span>
+                                        <small>4 day ago</small>
+                                    </div>
+                                    <span class="fs-small">Starting your traveling blog with Vasco.</span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                <li class="layout-topbar-item app">
+                    <a class="layout-topbar-action rounded-circle" (click)="appMain.onTopbarItemClick($event, 'apps')" pRipple>
+                        <i class="pi pi-table fs-large"></i>
+                    </a>
+
+                    <div class="layout-topbar-action-panel p-shadow-6" [@topbarActionPanelAnimation]="'visible'" *ngIf="appMain.activeTopbarItem === 'apps'">
+                        <div class="p-grid p-nogutter">
+                            <div class="layout-topbar-action-item p-col-4">
+                                <a class="p-d-flex p-ai-center p-flex-column text-color" pRipple>
+                                    <i class="pi pi-image action indigo-bgcolor white-color"></i>
+                                    <span>Products</span>
+                                </a>
+                            </div>
+                            <div class="layout-topbar-action-item p-col-4">
+                                <a class="p-d-flex p-ai-center p-flex-column text-color" pRipple>
+                                    <i class="pi pi-file-pdf action orange-bgcolor white-color"></i>
+                                    <span>Reports</span>
+                                </a>
+                            </div>
+                            <div class="layout-topbar-action-item p-col-4">
+                                <a class="p-d-flex p-ai-center p-flex-column text-color" pRipple>
+                                    <i class="pi pi-dollar action teal-bgcolor white-color"></i>
+                                    <span>Balance</span>
+                                </a>
+                            </div>
+                            <div class="layout-topbar-action-item p-col-4">
+                                <a class="p-d-flex p-ai-center p-flex-column text-color" pRipple>
+                                    <i class="pi pi-cog action pink-bgcolor white-color"></i>
+                                    <span>Settings</span>
+                                </a>
+                            </div>
+                            <div class="layout-topbar-action-item p-col-4">
+                                <a class="p-d-flex p-ai-center p-flex-column text-color" pRipple>
+                                    <i class="pi pi-key action bluegrey-bgcolor white-color"></i>
+                                    <span>Credentials</span>
+                                </a>
+                            </div>
+                            <div class="layout-topbar-action-item p-col-4">
+                                <a class="p-d-flex p-ai-center p-jc-center p-flex-column text-color" pRipple>
+                                    <i class="pi pi-sitemap action cyan-bgcolor white-color"></i>
+                                    <span>Sitemap</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="layout-topbar-item">
+                    <a class="layout-topbar-action p-d-flex p-dir-row p-jc-center p-ai-center p-px-2 rounded-circle" (click)="appMain.onTopbarItemClick($event, 'profile')" pRipple>
+                        <img src="assets/demo/images/avatar/amyelsner.png" alt="avatar" style="width: 32px; height: 32px;">
+                    </a>
+
+                    <ul class="layout-topbar-action-panel p-shadow-6" [@topbarActionPanelAnimation]="'visible'" *ngIf="appMain.activeTopbarItem === 'profile'">
+                        <li class="layout-topbar-action-item">
+                            <a class="p-d-flex p-flex-row p-ai-center" pRipple routerLink="/settings">
+                                <i class="pi pi-cog" [ngClass]="{'p-mr-2': !app.isRTL, 'p-ml-2': app.isRTL}"></i>
+                                <span>Settings</span>
+                            </a>
+                        </li>
+                        <li class="layout-topbar-action-item">
+                            <a class="p-d-flex p-flex-row p-ai-center" pRipple>
+                                <i class="pi pi-file-o" [ngClass]="{'p-mr-2': !app.isRTL, 'p-ml-2': app.isRTL}"></i>
+                                <span>Terms of Usage</span>
+                            </a>
+                        </li>
+                        <li class="layout-topbar-action-item">
+                            <a class="p-d-flex p-flex-row p-ai-center" pRipple>
+                                <i class="pi pi-compass" [ngClass]="{'p-mr-2': !app.isRTL, 'p-ml-2': app.isRTL}"></i>
+                                <span>Support</span>
+                            </a>
+                        </li>
+                        <li class="layout-topbar-action-item">
+                            <a class="p-d-flex p-flex-row p-ai-center" pRipple>
+                                <i class="pi pi-power-off" [ngClass]="{'p-mr-2': !app.isRTL, 'p-ml-2': app.isRTL}"></i>
+                                <span>Logout</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="layout-topbar-item">
+                    <a class="layout-topbar-action rounded-circle" (click)="appMain.onRightMenuButtonClick($event)" pRipple>
+                        <i class="pi fs-large" [ngClass]="{'pi-arrow-left': !app.isRTL, 'pi-arrow-right': app.isRTL}"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

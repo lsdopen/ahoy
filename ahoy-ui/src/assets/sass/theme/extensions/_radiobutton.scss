@@ -1,0 +1,66 @@
+/*!
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+.p-radiobutton {
+    border-radius: 50%;
+    transition: box-shadow $transitionDuration;
+
+    .p-radiobutton-box {
+        &:not(.p-disabled):not(.p-highlight):hover {
+            border: $radiobuttonBorder;
+        }
+
+        &:not(.p-disabled).p-focus {
+            border: $radiobuttonBorder;
+        }
+
+        &.p-highlight {
+            &:not(.p-disabled).p-focus {
+                border-color: $radiobuttonActiveBorderColor;
+            }
+        }
+    }
+
+    &:not(.p-radiobutton-disabled):hover {
+        box-shadow: 0 0 1px 10px rgba($overlayColor, .04);
+    }
+
+    &:not(.p-radiobutton-disabled).p-radiobutton-focused {
+        box-shadow: 0 0 1px 10px rgba($overlayColor, .12);
+    }
+
+    &.p-radiobutton-checked {
+        &:not(.p-radiobutton-disabled):hover {
+            box-shadow: 0 0 1px 10px rgba($radiobuttonActiveBorderColor, .04);
+        }
+
+        &:not(.p-radiobutton-disabled).p-radiobutton-focused {
+            box-shadow: 0 0 1px 10px rgba($radiobuttonActiveBorderColor, .12);
+        }
+    }
+}
+
+.p-input-filled {
+    .p-radiobutton {
+        .p-radiobutton-box {
+            background-color: $inputBg;
+
+            &:not(.p-disabled):hover {
+                background-color: $inputBg;
+            }
+        }
+    }
+}

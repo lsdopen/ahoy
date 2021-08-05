@@ -1,0 +1,85 @@
+/*!
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+.p-inputgroup-addon {
+    background: $inputGroupBg;
+    color: $inputGroupTextColor;
+    border-top: $inputBorder;
+    border-left: $inputBorder;
+    border-bottom: $inputBorder;
+    padding: $inputPadding;
+    min-width: $inputGroupAddOnMinWidth;
+
+    &:last-child {
+        border-right: $inputBorder;
+    }
+}
+
+.p-inputgroup {
+    > .p-component,
+    > .p-float-label > .p-component {
+        border-radius: 0;
+        margin: 0;
+
+        + .p-inputgroup-addon {
+            border-left: 0 none;
+        }
+
+        &:focus {
+            z-index: 1;
+
+            ~ label {
+                z-index: 1;
+            }
+        }
+    }
+}
+
+.p-inputgroup-addon:first-child,
+.p-inputgroup button:first-child,
+.p-inputgroup input:first-child {
+    border-top-left-radius: $borderRadius;
+    border-bottom-left-radius: $borderRadius;
+}
+
+.p-inputgroup .p-float-label:first-child input {
+    border-top-left-radius: $borderRadius;
+    border-bottom-left-radius: $borderRadius;
+}
+
+.p-inputgroup-addon:last-child,
+.p-inputgroup button:last-child,
+.p-inputgroup input:last-child  {
+    border-top-right-radius: $borderRadius;
+    border-bottom-right-radius: $borderRadius;
+}
+
+.p-inputgroup .p-float-label:last-child input {
+    border-top-right-radius: $borderRadius;
+    border-bottom-right-radius: $borderRadius;
+}
+
+.p-fluid {
+    .p-inputgroup {
+        .p-button {
+            width: auto;
+
+            &.p-button-icon-only {
+                width: $buttonIconOnlyWidth;
+            }
+        }
+    }
+}

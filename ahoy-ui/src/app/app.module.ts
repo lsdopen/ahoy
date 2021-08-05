@@ -20,6 +20,14 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {FlexLayoutModule} from '@angular/flex-layout';
 
 import {AppComponent} from './app.component';
+import {AppMainComponent} from './app.main.component';
+import {AppTopBarComponent} from './app.topbar.component';
+import {AppMenuComponent} from './app.menu.component';
+import {AppMenuitemComponent} from './app.menuitem.component';
+import {AppInlineMenuComponent} from './app.inlinemenu.component';
+import {AppBreadcrumbComponent} from './app.breadcrumb.component';
+import {AppFooterComponent} from './app.footer.component';
+import {AppConfigComponent} from './app.config.component';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {MatCheckboxModule} from '@angular/material/checkbox';
@@ -94,10 +102,27 @@ import {DockerSettingsComponent} from './settings/docker-settings/docker-setting
 import {OAuthModule} from 'angular-oauth2-oidc';
 import {ApplicationSecretDataComponent} from './applications/application-secret-data/application-secret-data.component';
 import {ApplicationVolumeDetailComponent} from './applications/application-volume-detail/application-volume-detail.component';
+import {MegaMenuModule} from 'primeng/megamenu';
+import {SidebarModule} from 'primeng/sidebar';
+import {RadioButtonModule} from 'primeng/radiobutton';
+import {InputSwitchModule} from 'primeng/inputswitch';
+import {BreadcrumbModule} from 'primeng/breadcrumb';
+import {TooltipModule} from 'primeng/tooltip';
+import {MenuService} from './app.menu.service';
+import {AppBreadcrumbService} from './app.breadcrumb.service';
+import {ButtonModule} from 'primeng/button';
 
 @NgModule({
   declarations: [
     AppComponent,
+    AppMainComponent,
+    AppTopBarComponent,
+    AppMenuComponent,
+    AppMenuitemComponent,
+    AppInlineMenuComponent,
+    AppBreadcrumbComponent,
+    AppFooterComponent,
+    AppConfigComponent,
     DashboardComponent,
     ApplicationsComponent,
     ApplicationDetailComponent,
@@ -180,9 +205,19 @@ import {ApplicationVolumeDetailComponent} from './applications/application-volum
     MatTooltipModule,
     MatExpansionModule,
     MatCheckboxModule,
-    MatRadioModule
+    MatRadioModule,
+    MegaMenuModule,
+    SidebarModule,
+    RadioButtonModule,
+    InputSwitchModule,
+    BreadcrumbModule,
+    TooltipModule,
+    ButtonModule
   ],
-  providers: [{provide: ErrorHandler, useClass: ErrorService}],
+  providers: [
+    {provide: ErrorHandler, useClass: ErrorService},
+    MenuService, AppBreadcrumbService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
