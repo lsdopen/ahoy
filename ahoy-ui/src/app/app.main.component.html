@@ -27,13 +27,9 @@
 
     <app-topbar></app-topbar>
 
-<!--    <app-rightmenu></app-rightmenu>-->
-
     <div class="menu-wrapper" (click)="onMenuClick($event)">
         <div class="layout-menu-container">
-            <app-inline-menu *ngIf="app.inlineMenuPosition=='top' || app.inlineMenuPosition=='both'" key="top"></app-inline-menu>
             <app-menu></app-menu>
-            <app-inline-menu *ngIf="app.inlineMenuPosition=='bottom' || app.inlineMenuPosition=='both'" key="bottom"></app-inline-menu>
         </div>
     </div>
 
