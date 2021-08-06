@@ -14,32 +14,54 @@
  *    limitations under the License.
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {EnvironmentService} from '../environments/environment.service';
 import {Environment} from '../environments/environment';
 import {LoggerService} from '../util/logger.service';
 import {EnvironmentRelease, EnvironmentReleaseId} from '../environment-release/environment-release';
 import {EnvironmentReleaseService} from '../environment-release/environment-release.service';
-import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {filter, mergeMap} from 'rxjs/operators';
 import {AddReleaseDialogComponent} from './add-release-dialog/add-release-dialog.component';
 import {ReleasesService} from './releases.service';
 import {Release} from './release';
 import {TaskEvent} from '../taskevents/task-events';
 import {ReleaseService} from '../release/release.service';
-import {Confirmation} from '../components/confirm-dialog/confirm';
-import {DialogService} from '../components/dialog.service';
+import {ConfirmationService, MessageService} from 'primeng/api';
+import {DialogService, DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-releases',
   templateUrl: './releases.component.html',
-  styleUrls: ['./releases.component.scss']
+  styleUrls: ['./releases.component.scss'],
+  styles: [`
+    :host ::ng-deep .p-dialog .product-image {
+      width: 150px;
+      margin: 0 auto 2rem auto;
+      display: block;
+    }
+
+    @media screen and (max-width: 960px) {
+      :host ::ng-deep .p-datatable.p-datatable-releases .p-datatable-tbody > tr > td:last-child {
+        text-align: center;
+      }
+
+      :host ::ng-deep .p-datatable.p-datatable-releases .p-datatable-tbody > tr > td:nth-child(6) {
+        display: flex;
+      }
+    }
+
+  `],
+  providers: [MessageService, ConfirmationService, DialogService]
 })
-export class ReleasesComponent implements OnInit {
+export class ReleasesComponent implements OnInit, OnDestroy {
   environments: Environment[] = undefined;
   environmentReleases: EnvironmentRelease[] = undefined;
   selectedEnvironment: Environment;
+  selectedEnvironmentRelease: EnvironmentRelease;
+
+  cols: any[];
+  addReleaseDialogRef: DynamicDialogRef;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -48,11 +70,19 @@ export class ReleasesComponent implements OnInit {
               private releasesService: ReleasesService,
               private releaseService: ReleaseService,
               private log: LoggerService,
-              private dialog: MatDialog,
-              private dialogService: DialogService) {
+              private dialogService: DialogService,
+              private confirmationService: ConfirmationService,
+              private messageService: MessageService) {
   }
 
   ngOnInit() {
+    this.cols = [
+      {field: 'release', header: 'Release'},
+      {field: 'state', header: 'State'},
+      {field: 'applications', header: 'Applications'},
+      {field: 'version', header: 'Version'}
+    ];
+
     const environmentId = +this.route.snapshot.queryParamMap.get('environmentId');
 
     this.environmentService.getAll().subscribe((environments) => {
@@ -70,6 +100,12 @@ export class ReleasesComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    if (this.addReleaseDialogRef) {
+      this.addReleaseDialogRef.close();
+    }
+  }
+
   private getReleases(environmentId) {
     this.log.debug('getting environment releases for environmentId=', environmentId);
     this.environmentService.get(environmentId)
@@ -81,11 +117,12 @@ export class ReleasesComponent implements OnInit {
   }
 
   addRelease() {
-    const dialogConfig = new MatDialogConfig();
+    const dialogConfig = new DynamicDialogConfig();
+    dialogConfig.header = `Add release to ${this.selectedEnvironment.cluster.name}/${this.selectedEnvironment.name}`;
     dialogConfig.data = this.selectedEnvironment;
 
-    const dialogRef = this.dialog.open(AddReleaseDialogComponent, dialogConfig);
-    dialogRef.afterClosed().pipe(
+    this.addReleaseDialogRef = this.dialogService.open(AddReleaseDialogComponent, dialogConfig);
+    this.addReleaseDialogRef.onClose.pipe(
       filter((result) => result !== undefined), // cancelled
       mergeMap((release: Release) => {
         const environmentRelease = new EnvironmentRelease();
@@ -101,28 +138,23 @@ export class ReleasesComponent implements OnInit {
     });
   }
 
-  removeRelease(environmentRelease: EnvironmentRelease) {
-    const confirmation = new Confirmation(`Are you sure you want to remove ${(environmentRelease.release as Release).name} from ${(environmentRelease.environment as Environment).name}?`);
-    confirmation.verify = true;
-    confirmation.verifyText = (environmentRelease.release as Release).name;
-    this.dialogService.showConfirmDialog(confirmation).pipe(
-      filter((conf) => conf !== undefined)
-    ).subscribe(() => {
-      this.releaseService.remove(environmentRelease)
-        .subscribe(() => this.getReleases(this.selectedEnvironment.id));
+  removeRelease(event: Event, environmentRelease: EnvironmentRelease) {
+    this.confirmationService.confirm({
+      target: event.target,
+      message: `Are you sure you want to remove ${(environmentRelease.release as Release).name} from ${(environmentRelease.environment as Environment).name}?`,
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.releaseService.remove(environmentRelease)
+          .subscribe(() => {
+            this.messageService.add({
+              severity: 'info',
+              summary: 'Removed',
+              detail: `Removed ${(environmentRelease.release as Release).name} from ${(environmentRelease.environment as Environment).name}`
+            });
+            this.getReleases(this.selectedEnvironment.id);
+          });
+      }
     });
-  }
-
-  compareEnvironments(e1: Environment, e2: Environment): boolean {
-    if (e1 === null) {
-      return e2 === null;
-    }
-
-    if (e2 === null) {
-      return false;
-    }
-
-    return e1.id === e2.id;
   }
 
   environmentChanged() {

@@ -111,6 +111,15 @@ import {TooltipModule} from 'primeng/tooltip';
 import {MenuService} from './app.menu.service';
 import {AppBreadcrumbService} from './app.breadcrumb.service';
 import {ButtonModule} from 'primeng/button';
+import {ToolbarModule} from 'primeng/toolbar';
+import {ToastModule} from 'primeng/toast';
+import {TableModule} from 'primeng/table';
+import {InputTextModule} from 'primeng/inputtext';
+import {RippleModule} from 'primeng/ripple';
+import {DropdownModule} from 'primeng/dropdown';
+import {DialogModule} from 'primeng/dialog';
+import {DynamicDialogModule} from 'primeng/dynamicdialog';
+import {ConfirmPopupModule} from 'primeng/confirmpopup';
 
 @NgModule({
   declarations: [
@@ -212,7 +221,16 @@ import {ButtonModule} from 'primeng/button';
     InputSwitchModule,
     BreadcrumbModule,
     TooltipModule,
-    ButtonModule
+    ButtonModule,
+    ToolbarModule,
+    ToastModule,
+    TableModule,
+    InputTextModule,
+    RippleModule,
+    DropdownModule,
+    DialogModule,
+    DynamicDialogModule,
+    ConfirmPopupModule
   ],
   providers: [
     {provide: ErrorHandler, useClass: ErrorService},

@@ -61,7 +61,8 @@ const routes: Routes = [
       {path: 'cluster/:id', component: ClusterDetailComponent},
 
       {
-        path: 'settings', component: SettingsComponent, canActivate: [AuthGuard], children: [
+        path: 'settings', component: SettingsComponent, canActivate: [AuthGuard],
+        children: [
           {path: '', redirectTo: '/settings/git', pathMatch: 'full'},
           {path: 'git', component: GitSettingsComponent},
           {path: 'argo', component: ArgoSettingsComponent},

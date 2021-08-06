@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,68 +14,108 @@
   ~    limitations under the License.
   -->
 
-<app-content [title]="title" [buttonBar]="buttonBar">
-  <app-task-events-listener (taskEventEmitter)="taskEventOccurred($event)"></app-task-events-listener>
+<div class="p-grid">
+  <div class="p-col-12">
 
-  <div *ngIf="selectedEnvironment && environmentReleases && environmentReleases.length > 0" fxFlex>
+    <p-toast></p-toast>
+    <p-confirmPopup></p-confirmPopup>
+    <app-task-events-listener (taskEventEmitter)="taskEventOccurred($event)"></app-task-events-listener>
 
-    <table fxFlex fxGrow mat-table [dataSource]="environmentReleases" class="mat-elevation-z0">
-      <ng-container matColumnDef="release">
-        <td mat-cell *matCellDef="let er" routerLink="/release/{{er.id.environmentId}}/{{er.id.releaseId}}/version/{{er.currentReleaseVersion ? er.currentReleaseVersion.id : er.latestReleaseVersion.id}}">{{er.release.name}}</td>
-      </ng-container>
-      <ng-container matColumnDef="state">
-        <td mat-cell *matCellDef="let er">{{er.deployed ? 'Deployed' : ''}}</td>
-      </ng-container>
-      <ng-container matColumnDef="applicationsReady">
-        <td mat-cell *matCellDef="let er">
-          <app-environment-release-status [environmentRelease]="er"></app-environment-release-status>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="version">
-        <td mat-cell *matCellDef="let er">
-          <app-environment-release-versions [environmentRelease]="er"></app-environment-release-versions>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="remove">
-        <td mat-cell *matCellDef="let er">
-          <button mat-stroked-button (click)="removeRelease(er)">remove</button>
-        </td>
-      </ng-container>
-      <tr mat-row *matRowDef="let er; columns: ['release', 'state', 'applicationsReady', 'version', 'remove'];"></tr>
-    </table>
+    <div *ngIf="selectedEnvironment">
 
-  </div>
+      <div class="p-formgroup-inline">
+        <div class="p-field">
 
-  <div *ngIf="environments && environments.length === 0" fxFlex fxLayoutAlign="center center">
-    <div class="mat-subheading-2">
-      There are no environments setup, click <a routerLink="/environments">here</a> to manage environments..
+          <label for="environment-dropdown">Releases in</label>
+
+          <p-dropdown id="environment-dropdown"
+                      [options]="environments" [(ngModel)]="selectedEnvironment"
+                      placeholder="Environment" optionLabel="name"
+                      (onChange)="environmentChanged()">
+            <ng-template let-environment pTemplate="selectedItem">
+              <div>{{environment.cluster.name}}/{{environment.name}}</div>
+            </ng-template>
+            <ng-template let-environment pTemplate="item">
+              <div>{{environment.cluster.name}}/{{environment.name}}</div>
+            </ng-template>
+          </p-dropdown>
+
+        </div>
+      </div>
+
+      <div class="card">
+        <p-toolbar styleClass="p-mb-4">
+          <ng-template pTemplate="left">
+            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/release/edit/{{selectedEnvironment.id}}/new"></button>
+            <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain p-mb-2" (click)="addRelease()"></button>
+          </ng-template>
+        </p-toolbar>
+
+        <p-table #dt [value]="environmentReleases" [columns]="cols" dataKey="id" selectionMode="single"
+                 styleClass="p-datatable-releases p-datatable-striped p-datatable-sm"
+                 [scrollable]="true" scrollHeight="600px" [filterDelay]="0" [globalFilterFields]="['release.name']"
+                 *ngIf="selectedEnvironment && environmentReleases && environmentReleases.length > 0">
+          <ng-template pTemplate="caption">
+            <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
+              <h5 class="p-m-0">Releases</h5>
+              <span class="p-input-icon-left">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search..."/>
+                    </span>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="release">Release
+                <p-sortIcon field="release"></p-sortIcon>
+              </th>
+              <th pSortableColumn="state">State
+                <p-sortIcon field="state"></p-sortIcon>
+              </th>
+              <th pSortableColumn="applications">Applications
+                <p-sortIcon field="applicationsReady"></p-sortIcon>
+              </th>
+              <th pSortableColumn="version">Version
+                <p-sortIcon field="version"></p-sortIcon>
+              </th>
+              <th></th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-er>
+            <tr>
+              <td><span class="p-column-title">Release</span>
+                {{er.release.name}}
+              </td>
+              <td><span class="p-column-title">State</span>
+                <span [class]="'deployed-badge status-' + (er.deployed ? 'deployed' : 'undeployed')">{{er.deployed ? 'Deployed' : 'Undeployed'}}</span>
+              </td>
+              <td><span class="p-column-title">Applications</span>
+                <app-environment-release-status [environmentRelease]="er"></app-environment-release-status>
+              </td>
+              <td><span class="p-column-title">Version</span>
+                <app-environment-release-versions [environmentRelease]="er"></app-environment-release-versions>
+              </td>
+              <td>
+                <button pButton pRipple icon="pi pi-chevron-circle-right" class="p-button-rounded p-button-info p-mr-2"
+                        routerLink="/release/{{er.id.environmentId}}/{{er.id.releaseId}}/version/{{er.currentReleaseVersion ? er.currentReleaseVersion.id : er.latestReleaseVersion.id}}"></button>
+                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="removeRelease($event, er)"></button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+
+        <div class="p-field" *ngIf="selectedEnvironment && (environmentReleases && (environmentReleases.length === 0))">
+          There are no releases in this environment, create a <a routerLink="/release/edit/{{selectedEnvironment.id}}/new">new</a> release or <a [routerLink]="" (click)="addRelease()">add</a> a existing release..
+        </div>
+
+      </div>
     </div>
-  </div>
 
-  <div *ngIf="selectedEnvironment && (environmentReleases && (environmentReleases.length === 0))" fxFlex fxLayoutAlign="center center">
-    <div class="mat-subheading-2">
-      There are no releases in this environment, create a <a routerLink="/release/edit/{{selectedEnvironment.id}}/new">new</a> release or <a [routerLink]="" (click)="addRelease()">add</a> a existing release..
+    <div class="card" *ngIf="environments && environments.length === 0">
+      <div class="p-field">
+        There are no environments setup, click <a routerLink="/environments">here</a> to manage environments..
+      </div>
     </div>
+
   </div>
-
-</app-content>
-
-<ng-template #title>
-  <div *ngIf="selectedEnvironment" class="mat-title" fxFlex fxLayout="row" fxLayoutGap="10px">
-    <mat-label fxFlex="none">Releases in</mat-label>
-    <mat-select style="width: 150px" [(ngModel)]="selectedEnvironment" name="environment" required
-                (selectionChange)="environmentChanged()" [compareWith]="compareEnvironments">
-      <mat-option *ngFor="let environment of environments" [value]="environment">
-        {{environment.name}} - {{environment.cluster.name}}
-      </mat-option>
-    </mat-select>
-  </div>
-  <div *ngIf="!selectedEnvironment" class="mat-title">Releases</div>
-</ng-template>
-
-<ng-template #buttonBar>
-  <app-button-bar *ngIf="selectedEnvironment">
-    <button mat-button routerLink="/release/edit/{{selectedEnvironment.id}}/new">New</button>
-    <button mat-button (click)="addRelease()">Add</button>
-  </app-button-bar>
-</ng-template>
+</div>
