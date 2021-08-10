@@ -27,7 +27,7 @@ import {ReleasesService} from './releases.service';
 import {Release} from './release';
 import {TaskEvent} from '../taskevents/task-events';
 import {ReleaseService} from '../release/release.service';
-import {ConfirmationService, MessageService} from 'primeng/api';
+import {ConfirmationService} from 'primeng/api';
 import {DialogService, DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 
 @Component({
@@ -35,24 +35,12 @@ import {DialogService, DynamicDialogConfig, DynamicDialogRef} from 'primeng/dyna
   templateUrl: './releases.component.html',
   styleUrls: ['./releases.component.scss'],
   styles: [`
-    :host ::ng-deep .p-dialog .product-image {
-      width: 150px;
-      margin: 0 auto 2rem auto;
-      display: block;
-    }
-
     @media screen and (max-width: 960px) {
       :host ::ng-deep .p-datatable.p-datatable-releases .p-datatable-tbody > tr > td:last-child {
         text-align: center;
       }
-
-      :host ::ng-deep .p-datatable.p-datatable-releases .p-datatable-tbody > tr > td:nth-child(6) {
-        display: flex;
-      }
     }
-
-  `],
-  providers: [MessageService, ConfirmationService, DialogService]
+  `]
 })
 export class ReleasesComponent implements OnInit, OnDestroy {
   environments: Environment[] = undefined;
@@ -71,8 +59,7 @@ export class ReleasesComponent implements OnInit, OnDestroy {
               private releaseService: ReleaseService,
               private log: LoggerService,
               private dialogService: DialogService,
-              private confirmationService: ConfirmationService,
-              private messageService: MessageService) {
+              private confirmationService: ConfirmationService) {
   }
 
   ngOnInit() {
@@ -145,14 +132,7 @@ export class ReleasesComponent implements OnInit, OnDestroy {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.releaseService.remove(environmentRelease)
-          .subscribe(() => {
-            this.messageService.add({
-              severity: 'info',
-              summary: 'Removed',
-              detail: `Removed ${(environmentRelease.release as Release).name} from ${(environmentRelease.environment as Environment).name}`
-            });
-            this.getReleases(this.selectedEnvironment.id);
-          });
+          .subscribe(() => this.getReleases(this.selectedEnvironment.id));
       }
     });
   }

@@ -84,7 +84,6 @@ import {ReleaseApplicationEnvironmentConfigComponent} from './releases/release-a
 import {ApplicationEnvVariablesComponent} from './applications/application-env-variables/application-env-variables.component';
 import {CopyEnvironmentConfigDialogComponent} from './releases/copy-environment-config-dialog/copy-environment-config-dialog.component';
 import {ErrorService} from './util/error.service';
-import {SnackbarComponent} from './notifications/snackbar/snackbar.component';
 import {ReleaseHistoryComponent} from './release-history/release-history.component';
 import {DescriptionDialogComponent} from './components/description-dialog/description-dialog.component';
 import {EnvironmentReleaseVersionsComponent} from './environment-release/environment-release-versions/environment-release-versions.component';
@@ -118,8 +117,11 @@ import {InputTextModule} from 'primeng/inputtext';
 import {RippleModule} from 'primeng/ripple';
 import {DropdownModule} from 'primeng/dropdown';
 import {DialogModule} from 'primeng/dialog';
-import {DynamicDialogModule} from 'primeng/dynamicdialog';
+import {DialogService, DynamicDialogModule} from 'primeng/dynamicdialog';
 import {ConfirmPopupModule} from 'primeng/confirmpopup';
+import {ConfirmationService, MessageService} from 'primeng/api';
+import {ProgressBarModule} from 'primeng/progressbar';
+import {InputTextareaModule} from 'primeng/inputtextarea';
 
 @NgModule({
   declarations: [
@@ -165,7 +167,6 @@ import {ConfirmPopupModule} from 'primeng/confirmpopup';
     ReleaseApplicationEnvironmentConfigComponent,
     ApplicationEnvVariablesComponent,
     CopyEnvironmentConfigDialogComponent,
-    SnackbarComponent,
     ReleaseHistoryComponent,
     DescriptionDialogComponent,
     EnvironmentReleaseVersionsComponent,
@@ -230,11 +231,13 @@ import {ConfirmPopupModule} from 'primeng/confirmpopup';
     DropdownModule,
     DialogModule,
     DynamicDialogModule,
-    ConfirmPopupModule
+    ConfirmPopupModule,
+    ProgressBarModule,
+    InputTextareaModule
   ],
   providers: [
     {provide: ErrorHandler, useClass: ErrorService},
-    MenuService, AppBreadcrumbService
+    MenuService, AppBreadcrumbService, MessageService, ConfirmationService, DialogService
   ],
   bootstrap: [AppComponent]
 })

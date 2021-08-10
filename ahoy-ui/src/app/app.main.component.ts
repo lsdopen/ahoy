@@ -14,241 +14,263 @@
  *    limitations under the License.
  */
 
-import {AfterViewInit, Component, OnDestroy, OnInit, Renderer2} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import {MenuService} from './app.menu.service';
 import {PrimeNGConfig} from 'primeng/api';
 import {AppComponent} from './app.component';
+import {ProgressService} from './progress.service';
 
 @Component({
-    selector: 'app-main',
-    templateUrl: './app.main.component.html'
+  selector: 'app-main',
+  templateUrl: './app.main.component.html'
 })
 export class AppMainComponent implements AfterViewInit, OnInit, OnDestroy {
 
-    topbarMenuActive: boolean;
+  topbarMenuActive: boolean;
 
-    menuActive: boolean;
+  menuActive: boolean;
 
-    staticMenuDesktopInactive: boolean;
+  staticMenuDesktopInactive: boolean;
 
-    mobileMenuActive: boolean;
+  mobileMenuActive: boolean;
 
-    menuClick: boolean;
+  menuClick: boolean;
 
-    mobileTopbarActive: boolean;
+  mobileTopbarActive: boolean;
 
-    topbarRightClick: boolean;
+  topbarRightClick: boolean;
 
-    topbarItemClick: boolean;
+  topbarItemClick: boolean;
 
-    activeTopbarItem: string;
+  activeTopbarItem: string;
 
-    documentClickListener: () => void;
+  documentClickListener: () => void;
 
-    configActive: boolean;
+  configActive: boolean;
 
-    configClick: boolean;
+  configClick: boolean;
 
-    rightMenuActive: boolean;
+  rightMenuActive: boolean;
 
-    menuHoverActive = false;
+  menuHoverActive = false;
 
-    searchClick = false;
+  searchClick = false;
 
-    search = false;
+  search = false;
 
-    currentInlineMenuKey: string;
+  currentInlineMenuKey: string;
 
-    inlineMenuActive: any[] = [];
+  inlineMenuActive: any[] = [];
 
-    inlineMenuClick: boolean;
+  inlineMenuClick: boolean;
 
-    constructor(public renderer: Renderer2, private menuService: MenuService, private primengConfig: PrimeNGConfig,
-                public app: AppComponent) { }
+  public topBarMenuChanged = new EventEmitter<TopBarMenuClosedEvent>();
 
-    ngOnInit() {
-        this.menuActive = this.isStatic() && !this.isMobile();
-    }
+  constructor(public renderer: Renderer2,
+              private menuService: MenuService,
+              private primengConfig: PrimeNGConfig,
+              private progressService: ProgressService,
+              public app: AppComponent) {
+  }
 
-    ngAfterViewInit() {
-        // hides the horizontal submenus or top menu if outside is clicked
-        this.documentClickListener = this.renderer.listen('body', 'click', () => {
-            if (!this.topbarItemClick) {
-                this.activeTopbarItem = null;
-                this.topbarMenuActive = false;
-            }
+  ngOnInit() {
+    this.menuActive = this.isStatic() && !this.isMobile();
+  }
 
-            if (!this.menuClick && (this.isHorizontal() || this.isSlim())) {
-                this.menuService.reset();
-            }
-
-            if (this.configActive && !this.configClick) {
-                this.configActive = false;
-            }
-
-            if (!this.menuClick) {
-                if (this.mobileMenuActive) {
-                    this.mobileMenuActive = false;
-                }
-
-                if (this.isOverlay()) {
-                    this.menuActive = false;
-                }
-
-                this.menuHoverActive = false;
-                this.unblockBodyScroll();
-            }
-
-            if (!this.searchClick) {
-                this.search = false;
-            }
-
-            if (this.inlineMenuActive[this.currentInlineMenuKey] && !this.inlineMenuClick) {
-                this.inlineMenuActive[this.currentInlineMenuKey] = false;
-            }
-
-            this.inlineMenuClick = false;
-            this.searchClick = false;
-            this.configClick = false;
-            this.topbarItemClick = false;
-            this.topbarRightClick = false;
-            this.menuClick = false;
-        });
-    }
-
-    onMenuButtonClick(event) {
-        this.menuActive = !this.menuActive;
+  ngAfterViewInit() {
+    // hides the horizontal submenus or top menu if outside is clicked
+    this.documentClickListener = this.renderer.listen('body', 'click', () => {
+      if (!this.topbarItemClick) {
+        const topbarItem = this.activeTopbarItem;
+        this.activeTopbarItem = null;
         this.topbarMenuActive = false;
-        this.topbarRightClick = true;
-        this.menuClick = true;
+        if (topbarItem) {
+          this.topBarMenuChanged.emit(new TopBarMenuClosedEvent(topbarItem));
+        }
+      }
 
-        if (this.isDesktop()) {
-            this.staticMenuDesktopInactive = !this.staticMenuDesktopInactive;
-        } else {
-            this.mobileMenuActive = !this.mobileMenuActive;
-            if (this.mobileMenuActive) {
-                this.blockBodyScroll();
-            } else {
-                this.unblockBodyScroll();
-            }
+      if (!this.menuClick && (this.isHorizontal() || this.isSlim())) {
+        this.menuService.reset();
+      }
+
+      if (this.configActive && !this.configClick) {
+        this.configActive = false;
+      }
+
+      if (!this.menuClick) {
+        if (this.mobileMenuActive) {
+          this.mobileMenuActive = false;
         }
 
-        event.preventDefault();
-    }
-
-    onTopbarMobileButtonClick(event) {
-        this.mobileTopbarActive = !this.mobileTopbarActive;
-        event.preventDefault();
-    }
-
-    onRightMenuButtonClick(event) {
-        this.rightMenuActive = !this.rightMenuActive;
-        event.preventDefault();
-    }
-
-    onMenuClick($event) {
-        this.menuClick = true;
-
-        if (this.inlineMenuActive[this.currentInlineMenuKey] && !this.inlineMenuClick) {
-            this.inlineMenuActive[this.currentInlineMenuKey] = false;
-        }
-    }
-
-    onSearchKeydown(event) {
-        if (event.keyCode === 27) {
-            this.search = false;
-        }
-    }
-
-    onInlineMenuClick(event, key) {
-        if (key !== this.currentInlineMenuKey) {
-            this.inlineMenuActive[this.currentInlineMenuKey] = false;
+        if (this.isOverlay()) {
+          this.menuActive = false;
         }
 
-        this.inlineMenuActive[key] = !this.inlineMenuActive[key];
-        this.currentInlineMenuKey = key;
-        this.inlineMenuClick = true;
+        this.menuHoverActive = false;
+        this.unblockBodyScroll();
+      }
+
+      if (!this.searchClick) {
+        this.search = false;
+      }
+
+      if (this.inlineMenuActive[this.currentInlineMenuKey] && !this.inlineMenuClick) {
+        this.inlineMenuActive[this.currentInlineMenuKey] = false;
+      }
+
+      this.inlineMenuClick = false;
+      this.searchClick = false;
+      this.configClick = false;
+      this.topbarItemClick = false;
+      this.topbarRightClick = false;
+      this.menuClick = false;
+    });
+  }
+
+  onMenuButtonClick(event) {
+    this.menuActive = !this.menuActive;
+    this.topbarMenuActive = false;
+    this.topbarRightClick = true;
+    this.menuClick = true;
+
+    if (this.isDesktop()) {
+      this.staticMenuDesktopInactive = !this.staticMenuDesktopInactive;
+    } else {
+      this.mobileMenuActive = !this.mobileMenuActive;
+      if (this.mobileMenuActive) {
+        this.blockBodyScroll();
+      } else {
+        this.unblockBodyScroll();
+      }
     }
 
-    onTopbarItemClick(event, item) {
-        this.topbarItemClick = true;
+    event.preventDefault();
+  }
 
-        if (this.activeTopbarItem === item) {
-            this.activeTopbarItem = null;
-        }
-        else {
-            this.activeTopbarItem = item;
-        }
+  onTopbarMobileButtonClick(event) {
+    this.mobileTopbarActive = !this.mobileTopbarActive;
+    event.preventDefault();
+  }
 
-        if (item === 'search') {
-            this.search = !this.search;
-            this.searchClick = !this.searchClick;
-        }
+  onRightMenuButtonClick(event) {
+    this.rightMenuActive = !this.rightMenuActive;
+    event.preventDefault();
+  }
 
-        event.preventDefault();
+  onMenuClick($event) {
+    this.menuClick = true;
+
+    if (this.inlineMenuActive[this.currentInlineMenuKey] && !this.inlineMenuClick) {
+      this.inlineMenuActive[this.currentInlineMenuKey] = false;
+    }
+  }
+
+  onSearchKeydown(event) {
+    if (event.keyCode === 27) {
+      this.search = false;
+    }
+  }
+
+  onInlineMenuClick(event, key) {
+    if (key !== this.currentInlineMenuKey) {
+      this.inlineMenuActive[this.currentInlineMenuKey] = false;
     }
 
-    onTopbarSubItemClick(event) {
-        event.preventDefault();
+    this.inlineMenuActive[key] = !this.inlineMenuActive[key];
+    this.currentInlineMenuKey = key;
+    this.inlineMenuClick = true;
+  }
+
+  onTopbarItemClick(event, item) {
+    this.topbarItemClick = true;
+
+    if (this.activeTopbarItem === item) {
+      this.activeTopbarItem = null;
+    } else {
+      this.activeTopbarItem = item;
     }
 
-    onRTLChange(event) {
-        this.app.isRTL = event.checked;
+    if (item === 'search') {
+      this.search = !this.search;
+      this.searchClick = !this.searchClick;
     }
 
-    onRippleChange(event) {
-        this.app.ripple = event.checked;
-        this.primengConfig.ripple = event.checked;
-    }
+    event.preventDefault();
+  }
 
-    onConfigClick(event) {
-        this.configClick = true;
-    }
+  onTopbarSubItemClick(event) {
+    event.preventDefault();
+  }
 
-    isDesktop() {
-        return window.innerWidth > 991;
-    }
+  onRTLChange(event) {
+    this.app.isRTL = event.checked;
+  }
 
-    isMobile() {
-        return window.innerWidth <= 991;
-    }
+  onRippleChange(event) {
+    this.app.ripple = event.checked;
+    this.primengConfig.ripple = event.checked;
+  }
 
-    isOverlay() {
-        return this.app.menuMode === 'overlay';
-    }
+  onConfigClick(event) {
+    this.configClick = true;
+  }
 
-    isStatic() {
-        return this.app.menuMode === 'static';
-    }
+  isDesktop() {
+    return window.innerWidth > 991;
+  }
 
-    isHorizontal() {
-        return this.app.menuMode === 'horizontal';
-    }
+  isMobile() {
+    return window.innerWidth <= 991;
+  }
 
-    isSlim() {
-        return this.app.menuMode === 'slim';
-    }
+  isOverlay() {
+    return this.app.menuMode === 'overlay';
+  }
 
-    blockBodyScroll(): void {
-        if (document.body.classList) {
-            document.body.classList.add('blocked-scroll');
-        } else {
-            document.body.className += ' blocked-scroll';
-        }
-    }
+  isStatic() {
+    return this.app.menuMode === 'static';
+  }
 
-    unblockBodyScroll(): void {
-        if (document.body.classList) {
-            document.body.classList.remove('blocked-scroll');
-        } else {
-            document.body.className = document.body.className.replace(new RegExp('(^|\\b)' +
-                'blocked-scroll'.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
-        }
-    }
+  isHorizontal() {
+    return this.app.menuMode === 'horizontal';
+  }
 
-    ngOnDestroy() {
-        if (this.documentClickListener) {
-            this.documentClickListener();
-        }
+  isSlim() {
+    return this.app.menuMode === 'slim';
+  }
+
+  blockBodyScroll(): void {
+    if (document.body.classList) {
+      document.body.classList.add('blocked-scroll');
+    } else {
+      document.body.className += ' blocked-scroll';
     }
+  }
+
+  unblockBodyScroll(): void {
+    if (document.body.classList) {
+      document.body.classList.remove('blocked-scroll');
+    } else {
+      document.body.className = document.body.className.replace(new RegExp('(^|\\b)' +
+        'blocked-scroll'.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+    }
+  }
+
+  showProgress(): boolean {
+    return this.progressService.progress;
+  }
+
+  ngOnDestroy() {
+    if (this.documentClickListener) {
+      this.documentClickListener();
+    }
+  }
+}
+
+class TopBarMenuClosedEvent {
+  item: string;
+
+  constructor(item: string) {
+    this.item = item;
+  }
 }

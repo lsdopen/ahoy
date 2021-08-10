@@ -25,26 +25,27 @@
         'layout-rightmenu-active': rightMenuActive,
         'layout-rtl': app.isRTL}" [class]="'layout-menu-' + app.menuTheme + ' layout-topbar-' + app.topbarTheme">
 
-    <app-topbar></app-topbar>
+  <app-topbar></app-topbar>
 
-    <div class="menu-wrapper" (click)="onMenuClick($event)">
-        <div class="layout-menu-container">
-            <app-menu></app-menu>
-        </div>
+  <div class="menu-wrapper" (click)="onMenuClick($event)">
+    <div class="layout-menu-container">
+      <app-menu></app-menu>
+    </div>
+  </div>
+
+  <div class="layout-main">
+    <p-progressBar mode="indeterminate" *ngIf="showProgress()"></p-progressBar>
+    <app-breadcrumb></app-breadcrumb>
+
+    <div class="layout-content">
+      <router-outlet></router-outlet>
     </div>
 
-    <div class="layout-main">
-        <app-breadcrumb></app-breadcrumb>
+    <app-footer></app-footer>
+  </div>
 
-        <div class="layout-content">
-            <router-outlet></router-outlet>
-        </div>
+  <app-config></app-config>
 
-        <app-footer></app-footer>
-    </div>
-
-    <app-config></app-config>
-
-    <div *ngIf="mobileMenuActive" class="layout-mask modal-in"></div>
+  <div *ngIf="mobileMenuActive" class="layout-mask modal-in"></div>
 
 </div>

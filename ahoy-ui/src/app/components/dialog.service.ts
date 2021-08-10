@@ -21,13 +21,15 @@ import {Observable} from 'rxjs';
 import {Description} from './description-dialog/description';
 import {DescriptionDialogComponent} from './description-dialog/description-dialog.component';
 import {Confirmation} from './confirm-dialog/confirm';
+import {DialogService as PDialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DialogService {
 
-  constructor(private dialog: MatDialog) {
+  constructor(private dialog: MatDialog,
+              private pDialogService: PDialogService) {
   }
 
   public showConfirmDialog(confirmation: Confirmation): Observable<Confirmation> {
@@ -39,14 +41,10 @@ export class DialogService {
   }
 
   public showDescriptionDialog(description: Description): void {
-    const dialogConfig = new MatDialogConfig();
+    const dialogConfig = new DynamicDialogConfig();
+    dialogConfig.header = description.title;
     dialogConfig.data = description;
 
-    const dialogRef = this.dialog.open(DescriptionDialogComponent, dialogConfig);
-    dialogRef.keydownEvents().subscribe(event => {
-      if (event.key === 'Enter') {
-        dialogRef.close();
-      }
-    });
+    this.pDialogService.open(DescriptionDialogComponent, dialogConfig);
   }
 }

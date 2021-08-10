@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,19 +14,18 @@
  *    limitations under the License.
  */
 
-import {Component, Inject} from '@angular/core';
-import {Notification} from '../notification';
-import {MAT_SNACK_BAR_DATA} from '@angular/material/snack-bar';
+import {Injectable} from '@angular/core';
 
-@Component({
-  selector: 'app-snackbar',
-  templateUrl: './snackbar.component.html',
-  styleUrls: ['./snackbar.component.scss']
+@Injectable({
+  providedIn: 'root'
 })
-export class SnackbarComponent {
-  notification: Notification;
+export class ProgressService {
+  public progress = false;
 
-  constructor(@Inject(MAT_SNACK_BAR_DATA) public data: any) {
-    this.notification = data.notification;
+  constructor() {
+  }
+
+  public showProgress(progress: boolean) {
+    this.progress = progress;
   }
 }

@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,26 +14,29 @@
   ~    limitations under the License.
   -->
 
-<button mat-icon-button [matMenuTriggerFor]="beforeMenu" (menuClosed)="closedNotifications()" [disabled]="!(notifications.length > 0)">
-  <mat-icon *ngIf="viewed">notifications_none</mat-icon>
-  <mat-icon *ngIf="!viewed">notifications_active</mat-icon>
-</button>
+<p-toast></p-toast>
 
-<div style="height: 5px">
-  <mat-progress-bar mode="indeterminate" *ngIf="showProgress()"></mat-progress-bar>
-</div>
+<a class="layout-topbar-action rounded-circle" (click)="appMain.onTopbarItemClick($event, 'notifications')" pRipple>
+    <span class="p-overlay-badge">
+        <i class="pi pi-bell fs-large"></i>
+        <span class="p-badge p-badge-warning p-badge-dot" *ngIf="showBadge()"></span>
+    </span>
+</a>
 
-<mat-menu #beforeMenu="matMenu" xPosition="before">
-  <span mat-menu-item>{{unreadNotifications()}} unread notifications:</span>
-  <mat-divider></mat-divider>
-  <mat-list *ngFor="let notification of notifications?.reverse()" dense class="notification">
-    <mat-list-item>
-      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="5px" (click)="showDescription(notification)">
-        <mat-icon *ngIf="!notification.error" color="primary">info</mat-icon>
-        <mat-icon *ngIf="notification.error" color="warn">warning</mat-icon>
-        <span class="notification-item" [class.unread]="!notification.viewed">{{notification.text}}</span>
+<ul class="layout-topbar-action-panel p-shadow-6" [@topbarActionPanelAnimation]="'visible'" *ngIf="appMain.activeTopbarItem === 'notifications'">
+  <li class="p-mb-3">
+    <span class="p-px-3 fs-small">You have <b>{{unreadNotifications()}}</b> new notifications</span>
+  </li>
+  <li *ngFor="let notification of notifications?.reverse()" class="layout-topbar-action-item" (click)="showDescription(notification)">
+    <div class="p-d-flex p-flex-row p-ai-center">
+      <i class="pi pi-{{notification.error ? 'exclamation-triangle' : 'info-circle'}} fs-large"></i>
+      <div class="p-d-flex p-flex-column" [ngClass]="{'p-ml-3': !app.isRTL, 'p-mr-3': app.isRTL}" style="flex-grow: 1;">
+        <div class="p-d-flex p-ai-center p-jc-between p-mb-1">
+          <span class="fs-small p-text-bold">{{notification.error ? 'Warn' : 'Info'}}</span>
+          <small [class.unread]="!notification.viewed">{{notification.minutesAgo()}} mins ago</small>
+        </div>
+        <span class="fs-small">{{notification.text}}</span>
       </div>
-    </mat-list-item>
-  </mat-list>
-</mat-menu>
-
+    </div>
+  </li>
+</ul>
