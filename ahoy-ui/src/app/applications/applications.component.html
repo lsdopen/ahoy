@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -13,41 +13,65 @@
   ~    See the License for the specific language governing permissions and
   ~    limitations under the License.
   -->
+<div class="p-grid">
+  <div class="p-col-12">
 
-<app-content [title]="title" [buttonBar]="buttonBar">
+    <p-confirmPopup></p-confirmPopup>
 
-  <table *ngIf="applications && applications.length > 0" fxFlex fxGrow mat-table [dataSource]="applications" class="mat-elevation-z0">
-    <ng-container matColumnDef="application">
-      <td mat-cell *matCellDef="let application" routerLink="/application/{{application.id}}">{{application.name}}</td>
-    </ng-container>
-    <ng-container matColumnDef="version">
-      <td mat-cell *matCellDef="let application">
-        <span *ngIf="application.latestApplicationVersion">{{application.latestApplicationVersion.version}}</span>
-        <span *ngIf="!application.latestApplicationVersion">-</span>
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="delete">
-      <td mat-cell *matCellDef="let element">
-        <button mat-stroked-button (click)="delete(element)">delete</button>
-      </td>
-    </ng-container>
-    <tr mat-row *matRowDef="let application; columns: ['application', 'version', 'delete'];"></tr>
-  </table>
+    <div class="card">
+      <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/application/new"></button>
+        </ng-template>
+      </p-toolbar>
 
-  <div *ngIf="applications && applications.length === 0" fxFlex fxLayoutAlign="center center">
-    <div class="mat-subheading-2">
-      There are no applications setup, create a <a routerLink="/application/new">new</a> application..
+      <p-table #dt [value]="applications" dataKey="id" selectionMode="single"
+               styleClass="p-datatable-applications p-datatable-striped p-datatable-sm"
+               [scrollable]="true" scrollHeight="600px" [filterDelay]="0" [globalFilterFields]="['name']"
+               *ngIf="applications && applications.length > 0">
+        <ng-template pTemplate="caption">
+          <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
+            <h5 class="p-m-0">Applications</h5>
+            <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"/>
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="name">Application
+              <p-sortIcon field="name"></p-sortIcon>
+            </th>
+            <th pSortableColumn="latestApplicationVersion.version">Version
+              <p-sortIcon field="latestApplicationVersion.version"></p-sortIcon>
+            </th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-application>
+          <tr>
+            <td><span class="p-column-title">Application</span>
+              {{application.name}}
+            </td>
+            <td><span class="p-column-title">Version</span>
+              <span *ngIf="application.latestApplicationVersion">{{application.latestApplicationVersion.version}}</span>
+              <span *ngIf="!application.latestApplicationVersion">-</span>
+            </td>
+            <td>
+              <button pButton pRipple icon="pi pi-chevron-circle-right" class="p-button-rounded p-button-info p-mr-2"
+                      routerLink="/application/{{application.id}}"></button>
+              <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="delete($event, application)"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <div class="p-field" *ngIf="applications && applications.length === 0">
+        There are no applications setup, create a <a routerLink="/application/new">new</a> application..
+      </div>
+
     </div>
+
   </div>
-
-</app-content>
-
-<ng-template #title>
-  <div class="mat-title">Applications</div>
-</ng-template>
-
-<ng-template #buttonBar>
-  <app-button-bar>
-    <button mat-button routerLink="/application/new">New</button>
-  </app-button-bar>
-</ng-template>
+</div>

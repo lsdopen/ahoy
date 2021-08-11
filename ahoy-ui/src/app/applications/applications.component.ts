@@ -19,10 +19,8 @@ import {ApplicationService} from './application.service';
 import {Application} from './application';
 import {ActivatedRoute} from '@angular/router';
 import {LoggerService} from '../util/logger.service';
-import {Confirmation} from '../components/confirm-dialog/confirm';
-import {filter} from 'rxjs/operators';
-import {DialogService} from '../components/dialog.service';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
+import {ConfirmationService} from 'primeng/api';
 
 @Component({
   selector: 'app-applications',
@@ -36,7 +34,7 @@ export class ApplicationsComponent implements OnInit {
     private route: ActivatedRoute,
     private applicationService: ApplicationService,
     private log: LoggerService,
-    private dialogService: DialogService,
+    private confirmationService: ConfirmationService,
     private breadcrumbService: AppBreadcrumbService) {
 
     this.breadcrumbService.setItems([{label: 'applications'}]);
@@ -52,15 +50,15 @@ export class ApplicationsComponent implements OnInit {
       .subscribe(applications => this.applications = applications);
   }
 
-  delete(application: Application) {
-    const confirmation = new Confirmation(`Are you sure you want to delete ${application.name}?`);
-    confirmation.verify = true;
-    confirmation.verifyText = application.name;
-    this.dialogService.showConfirmDialog(confirmation).pipe(
-      filter((conf) => conf !== undefined)
-    ).subscribe(() => {
-      this.applicationService.delete(application)
-        .subscribe(() => this.getApplications());
+  delete(event: Event, application: Application) {
+    this.confirmationService.confirm({
+      target: event.target,
+      message: `Are you sure you want to delete ${application.name}?`,
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.applicationService.delete(application)
+          .subscribe(() => this.getApplications());
+      }
     });
   }
 }
