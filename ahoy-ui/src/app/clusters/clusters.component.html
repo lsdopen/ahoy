@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -20,17 +20,22 @@
 
     <table fxFlex fxGrow mat-table [dataSource]="clusters" class="mat-elevation-z0">
       <ng-container matColumnDef="cluster">
-        <td mat-cell *matCellDef="let cluster" routerLink="/cluster/{{cluster.id}}">{{cluster.name}}</td>
+        <td mat-cell *matCellDef="let cluster" routerLink="/environments" [queryParams]="{clusterId: cluster.id}">{{cluster.name}}</td>
       </ng-container>
       <ng-container matColumnDef="host">
         <td mat-cell *matCellDef="let cluster">{{cluster.host}}</td>
+      </ng-container>
+      <ng-container matColumnDef="edit">
+        <td mat-cell *matCellDef="let cluster">
+          <button mat-stroked-button routerLink="/cluster/{{cluster.id}}">edit</button>
+        </td>
       </ng-container>
       <ng-container matColumnDef="delete">
         <td mat-cell *matCellDef="let cluster" [matTooltip]="cluster.inCluster ? 'May not delete built-in cluster' : ''">
           <button mat-stroked-button [disabled]="cluster.inCluster" (click)="delete(cluster)">delete</button>
         </td>
       </ng-container>
-      <tr mat-row *matRowDef="let cluster; columns: ['cluster', 'host', 'delete'];"></tr>
+      <tr mat-row *matRowDef="let cluster; columns: ['cluster', 'host', 'edit', 'delete'];"></tr>
     </table>
 
   </div>

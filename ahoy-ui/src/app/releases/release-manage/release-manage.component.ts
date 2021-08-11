@@ -33,6 +33,7 @@ import {Environment} from '../../environments/environment';
 import {Confirmation} from '../../components/confirm-dialog/confirm';
 import {DialogService} from '../../components/dialog.service';
 import {ReleaseService} from '../../release/release.service';
+import {AppBreadcrumbService} from '../../app.breadcrumb.service';
 
 @Component({
   selector: 'app-release-manage',
@@ -55,7 +56,8 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     private log: LoggerService,
     private location: Location,
     private dialogService: DialogService,
-    private dialog: MatDialog) {
+    private dialog: MatDialog,
+    private breadcrumbService: AppBreadcrumbService) {
   }
 
   ngOnInit() {
@@ -81,6 +83,8 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
         this.releaseVersion = (this.environmentRelease.release as Release).releaseVersions
           .find(relVersion => relVersion.id === releaseVersionId);
 
+        this.setBreadcrumb();
+
         return of(environmentRelease);
       }),
       mergeMap(environmentRelease => {
@@ -91,6 +95,17 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
         return of(this.environmentRelease);
       })
     );
+  }
+
+  private setBreadcrumb() {
+    const env = (this.environmentRelease.environment as Environment);
+    const rel = (this.environmentRelease.release as Release);
+    this.breadcrumbService.setItems([
+      {label: env.cluster.name, routerLink: '/clusters'},
+      {label: env.name, routerLink: '/environments', queryParams: {clusterId: env.cluster.id}},
+      {label: rel.name},
+      {label: this.releaseVersion.version}
+    ]);
   }
 
   private subscribeToEnvironmentReleaseChanged() {

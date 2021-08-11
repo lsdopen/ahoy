@@ -22,25 +22,25 @@
 
     <div *ngIf="selectedEnvironment">
 
-      <div class="p-formgroup-inline">
-        <div class="p-field">
+      <!--      <div class="p-formgroup-inline">-->
+      <!--        <div class="p-field">-->
 
-          <label for="environment-dropdown">Releases in</label>
+      <!--          <label for="environment-dropdown">Releases in</label>-->
 
-          <p-dropdown id="environment-dropdown"
-                      [options]="environments" [(ngModel)]="selectedEnvironment"
-                      placeholder="Environment" optionLabel="name"
-                      (onChange)="environmentChanged()">
-            <ng-template let-environment pTemplate="selectedItem">
-              <div>{{environment.cluster.name}}/{{environment.name}}</div>
-            </ng-template>
-            <ng-template let-environment pTemplate="item">
-              <div>{{environment.cluster.name}}/{{environment.name}}</div>
-            </ng-template>
-          </p-dropdown>
+      <!--          <p-dropdown id="environment-dropdown"-->
+      <!--                      [options]="environments" [(ngModel)]="selectedEnvironment"-->
+      <!--                      placeholder="Environment" optionLabel="name"-->
+      <!--                      (onChange)="environmentChanged()">-->
+      <!--            <ng-template let-environment pTemplate="selectedItem">-->
+      <!--              <div>{{environment.cluster.name}}/{{environment.name}}</div>-->
+      <!--            </ng-template>-->
+      <!--            <ng-template let-environment pTemplate="item">-->
+      <!--              <div>{{environment.cluster.name}}/{{environment.name}}</div>-->
+      <!--            </ng-template>-->
+      <!--          </p-dropdown>-->
 
-        </div>
-      </div>
+      <!--        </div>-->
+      <!--      </div>-->
 
       <div class="card">
         <p-toolbar styleClass="p-mb-4">
@@ -50,7 +50,7 @@
           </ng-template>
         </p-toolbar>
 
-        <p-table #dt [value]="environmentReleases" [columns]="cols" dataKey="id" selectionMode="single"
+        <p-table #dt [value]="environmentReleases" dataKey="id" selectionMode="single"
                  styleClass="p-datatable-releases p-datatable-striped p-datatable-sm"
                  [scrollable]="true" scrollHeight="600px" [filterDelay]="0" [globalFilterFields]="['release.name']"
                  *ngIf="selectedEnvironment && environmentReleases && environmentReleases.length > 0">
@@ -65,17 +65,17 @@
           </ng-template>
           <ng-template pTemplate="header">
             <tr>
-              <th pSortableColumn="release">Release
-                <p-sortIcon field="release"></p-sortIcon>
+              <th pSortableColumn="release.name">Release
+                <p-sortIcon field="release.name"></p-sortIcon>
               </th>
-              <th pSortableColumn="state">State
-                <p-sortIcon field="state"></p-sortIcon>
+              <th pSortableColumn="deployed">State
+                <p-sortIcon field="deployed"></p-sortIcon>
               </th>
-              <th pSortableColumn="applications">Applications
-                <p-sortIcon field="applicationsReady"></p-sortIcon>
+              <th pSortableColumn="applicationsTotal">Applications
+                <p-sortIcon field="applicationsTotal"></p-sortIcon>
               </th>
-              <th pSortableColumn="version">Version
-                <p-sortIcon field="version"></p-sortIcon>
+              <th pSortableColumn="currentReleaseVersion">Version
+                <p-sortIcon field="currentReleaseVersion"></p-sortIcon>
               </th>
               <th></th>
             </tr>

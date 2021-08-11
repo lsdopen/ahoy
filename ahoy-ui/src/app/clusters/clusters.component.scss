@@ -1,5 +1,5 @@
 /*!
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,11 +20,15 @@
   flex-direction: column;
 }
 
+.mat-cell {
+  padding-right: 10px;
+}
+
 .mat-column-cluster {
   cursor: pointer;
 }
 
-.mat-column-delete {
+.mat-column-edit, .mat-column-delete {
   text-align: right;
   width: 10px;
 }

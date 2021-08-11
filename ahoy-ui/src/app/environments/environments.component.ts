@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import {LoggerService} from '../util/logger.service';
 import {ClusterService} from '../clusters/cluster.service';
 import {Confirmation} from '../components/confirm-dialog/confirm';
 import {filter} from 'rxjs/operators';
+import {AppBreadcrumbService} from '../app.breadcrumb.service';
 
 @Component({
   selector: 'app-environments',
@@ -41,7 +42,8 @@ export class EnvironmentsComponent implements OnInit {
     private environmentService: EnvironmentService,
     private clusterService: ClusterService,
     private dialogService: DialogService,
-    private log: LoggerService) {
+    private log: LoggerService,
+    private breadcrumbService: AppBreadcrumbService) {
   }
 
   ngOnInit() {
@@ -70,7 +72,14 @@ export class EnvironmentsComponent implements OnInit {
       .subscribe(cluster => {
         this.selectedCluster = cluster;
         this.environmentService.getAllEnvironmentsByCluster(clusterId)
-          .subscribe(envs => this.environments = envs);
+          .subscribe(envs => {
+            this.environments = envs;
+
+            this.breadcrumbService.setItems([
+              {label: this.selectedCluster.name, routerLink: '/clusters'},
+              {label: 'environments'}
+            ]);
+          });
       });
   }
 

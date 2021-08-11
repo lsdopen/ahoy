@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import {LoggerService} from '../util/logger.service';
 import {Confirmation} from '../components/confirm-dialog/confirm';
 import {filter} from 'rxjs/operators';
 import {DialogService} from '../components/dialog.service';
+import {AppBreadcrumbService} from '../app.breadcrumb.service';
 
 @Component({
   selector: 'app-clusters',
@@ -34,7 +35,10 @@ export class ClustersComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private clusterService: ClusterService,
               private log: LoggerService,
-              private dialogService: DialogService) {
+              private dialogService: DialogService,
+              private breadcrumbService: AppBreadcrumbService) {
+
+    this.breadcrumbService.setItems([{label: 'clusters'}]);
   }
 
   ngOnInit() {

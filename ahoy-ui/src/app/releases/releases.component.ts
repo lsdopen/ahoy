@@ -29,6 +29,7 @@ import {TaskEvent} from '../taskevents/task-events';
 import {ReleaseService} from '../release/release.service';
 import {ConfirmationService} from 'primeng/api';
 import {DialogService, DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
+import {AppBreadcrumbService} from '../app.breadcrumb.service';
 
 @Component({
   selector: 'app-releases',
@@ -46,9 +47,7 @@ export class ReleasesComponent implements OnInit, OnDestroy {
   environments: Environment[] = undefined;
   environmentReleases: EnvironmentRelease[] = undefined;
   selectedEnvironment: Environment;
-  selectedEnvironmentRelease: EnvironmentRelease;
 
-  cols: any[];
   addReleaseDialogRef: DynamicDialogRef;
 
   constructor(private route: ActivatedRoute,
@@ -59,17 +58,11 @@ export class ReleasesComponent implements OnInit, OnDestroy {
               private releaseService: ReleaseService,
               private log: LoggerService,
               private dialogService: DialogService,
-              private confirmationService: ConfirmationService) {
+              private confirmationService: ConfirmationService,
+              private breadcrumbService: AppBreadcrumbService) {
   }
 
   ngOnInit() {
-    this.cols = [
-      {field: 'release', header: 'Release'},
-      {field: 'state', header: 'State'},
-      {field: 'applications', header: 'Applications'},
-      {field: 'version', header: 'Version'}
-    ];
-
     const environmentId = +this.route.snapshot.queryParamMap.get('environmentId');
 
     this.environmentService.getAll().subscribe((environments) => {
@@ -99,8 +92,19 @@ export class ReleasesComponent implements OnInit, OnDestroy {
       .subscribe(env => {
         this.selectedEnvironment = env;
         this.environmentReleaseService.getReleasesByEnvironment(environmentId)
-          .subscribe(envReleases => this.environmentReleases = envReleases);
+          .subscribe(envReleases => {
+            this.environmentReleases = envReleases;
+            this.setBreadcrumb();
+          });
       });
+  }
+
+  private setBreadcrumb() {
+    this.breadcrumbService.setItems([
+      {label: this.selectedEnvironment.cluster.name, routerLink: '/clusters'},
+      {label: this.selectedEnvironment.name, routerLink: '/environments', queryParams: {clusterId: this.selectedEnvironment.cluster.id}},
+      {label: 'releases'}
+    ]);
   }
 
   addRelease() {
