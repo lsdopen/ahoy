@@ -15,12 +15,6 @@
  */
 
 :host ::ng-deep {
-  .p-paginator {
-    .p-paginator-current {
-      margin-left: auto;
-    }
-  }
-
   .table-header {
     display: flex;
     justify-content: space-between;
@@ -33,16 +27,8 @@
       font-size: 1.5rem;
     }
 
-    .p-paginator {
-      padding: 1rem;
-    }
-
     .p-datatable-thead > tr > th {
       text-align: left;
-    }
-
-    .p-dropdown-label:not(.p-placeholder) {
-      text-transform: uppercase;
     }
   }
 
@@ -89,6 +75,10 @@
         .p-datatable-tbody > tr {
           border-bottom: 1px solid var(--surface-d);
 
+          > td:last-child {
+            text-align: center;
+          }
+
           > td {
             text-align: left;
             display: block;
@@ -104,10 +94,6 @@
               display: inline-block;
               margin: -.4rem 1rem -.4rem -.4rem;
               font-weight: bold;
-            }
-
-            .p-progressbar {
-              margin-top: .5rem;
             }
           }
         }

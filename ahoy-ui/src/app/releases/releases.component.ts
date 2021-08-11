@@ -34,14 +34,7 @@ import {AppBreadcrumbService} from '../app.breadcrumb.service';
 @Component({
   selector: 'app-releases',
   templateUrl: './releases.component.html',
-  styleUrls: ['./releases.component.scss'],
-  styles: [`
-    @media screen and (max-width: 960px) {
-      :host ::ng-deep .p-datatable.p-datatable-releases .p-datatable-tbody > tr > td:last-child {
-        text-align: center;
-      }
-    }
-  `]
+  styleUrls: ['./releases.component.scss']
 })
 export class ReleasesComponent implements OnInit, OnDestroy {
   environments: Environment[] = undefined;

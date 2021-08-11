@@ -22,31 +22,24 @@
 
     <div *ngIf="selectedEnvironment">
 
-      <!--      <div class="p-formgroup-inline">-->
-      <!--        <div class="p-field">-->
-
-      <!--          <label for="environment-dropdown">Releases in</label>-->
-
-      <!--          <p-dropdown id="environment-dropdown"-->
-      <!--                      [options]="environments" [(ngModel)]="selectedEnvironment"-->
-      <!--                      placeholder="Environment" optionLabel="name"-->
-      <!--                      (onChange)="environmentChanged()">-->
-      <!--            <ng-template let-environment pTemplate="selectedItem">-->
-      <!--              <div>{{environment.cluster.name}}/{{environment.name}}</div>-->
-      <!--            </ng-template>-->
-      <!--            <ng-template let-environment pTemplate="item">-->
-      <!--              <div>{{environment.cluster.name}}/{{environment.name}}</div>-->
-      <!--            </ng-template>-->
-      <!--          </p-dropdown>-->
-
-      <!--        </div>-->
-      <!--      </div>-->
-
       <div class="card">
         <p-toolbar styleClass="p-mb-4">
           <ng-template pTemplate="left">
             <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/release/edit/{{selectedEnvironment.id}}/new"></button>
             <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain p-mb-2" (click)="addRelease()"></button>
+          </ng-template>
+
+          <ng-template pTemplate="right">
+            <p-dropdown [options]="environments" [(ngModel)]="selectedEnvironment"
+                        placeholder="Environment" optionLabel="name"
+                        (onChange)="environmentChanged()">
+              <ng-template let-environment pTemplate="selectedItem">
+                <div>{{environment.cluster.name}}/{{environment.name}}</div>
+              </ng-template>
+              <ng-template let-environment pTemplate="item">
+                <div>{{environment.cluster.name}}/{{environment.name}}</div>
+              </ng-template>
+            </p-dropdown>
           </ng-template>
         </p-toolbar>
 
@@ -59,7 +52,7 @@
               <h5 class="p-m-0">Releases</h5>
               <span class="p-input-icon-left">
                         <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search..."/>
+                        <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"/>
                     </span>
             </div>
           </ng-template>

@@ -18,13 +18,11 @@ import {Component, OnInit} from '@angular/core';
 import {Environment} from './environment';
 import {EnvironmentService} from './environment.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {DialogService} from '../components/dialog.service';
 import {Cluster} from '../clusters/cluster';
 import {LoggerService} from '../util/logger.service';
 import {ClusterService} from '../clusters/cluster.service';
-import {Confirmation} from '../components/confirm-dialog/confirm';
-import {filter} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
+import {ConfirmationService} from 'primeng/api';
 
 @Component({
   selector: 'app-environments',
@@ -41,8 +39,8 @@ export class EnvironmentsComponent implements OnInit {
     private router: Router,
     private environmentService: EnvironmentService,
     private clusterService: ClusterService,
-    private dialogService: DialogService,
     private log: LoggerService,
+    private confirmationService: ConfirmationService,
     private breadcrumbService: AppBreadcrumbService) {
   }
 
@@ -83,28 +81,16 @@ export class EnvironmentsComponent implements OnInit {
       });
   }
 
-  delete(environment: Environment) {
-    const confirmation = new Confirmation(`Are you sure you want to delete ${environment.name}?`);
-    confirmation.verify = true;
-    confirmation.verifyText = environment.name;
-    this.dialogService.showConfirmDialog(confirmation).pipe(
-      filter((conf) => conf !== undefined)
-    ).subscribe(() => {
-      this.environmentService.destroy(environment)
-        .subscribe(() => this.getEnvironments(this.selectedCluster.id));
+  delete(event: Event, environment: Environment) {
+    this.confirmationService.confirm({
+      target: event.target,
+      message: `Are you sure you want to delete ${environment.name}?`,
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.environmentService.destroy(environment)
+          .subscribe(() => this.getEnvironments(this.selectedCluster.id));
+      }
     });
-  }
-
-  compareClusters(c1: Cluster, c2: Cluster): boolean {
-    if (c1 === null) {
-      return c2 === null;
-    }
-
-    if (c2 === null) {
-      return c1 === null;
-    }
-
-    return c1.id === c2.id;
   }
 
   clusterChanged() {
