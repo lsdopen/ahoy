@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,31 +14,37 @@
   ~    limitations under the License.
   -->
 
-<ng-container *ngIf="cluster && environment && environmentsForValidation">
-  <form #environmentForm="ngForm">
-    <app-content [title]="title" [buttonBar]="buttonBar">
-      <app-detail>
-        <mat-form-field>
-          <input matInput [(ngModel)]="environment.name" placeholder="Name" name="environmentName" required
-                 [appEnvironmentNameUnique]="environmentsForValidation"
-                 [ignoreOwnId]="environment.id">
-          <mat-error *ngIf="environmentForm.form.controls.environmentName?.hasError('environmentNameNotUnique')">
-            <strong>environment already exists</strong>
-          </mat-error>
-        </mat-form-field>
-      </app-detail>
-    </app-content>
-  </form>
+<div class="p-grid">
+  <div class="p-col-12" *ngIf="cluster && environment && environmentsForValidation">
 
-  <ng-template #title>
-    <div *ngIf="!sourceEnvironment" class="mat-title">New environment in {{cluster.name}}</div>
-    <div *ngIf="sourceEnvironment" class="mat-title">Duplicate environment {{sourceEnvironment.name}} in {{cluster.name}}</div>
-  </ng-template>
+    <div class="card">
+      <div class="card-header">
+        <h5 *ngIf="!sourceEnvironment">{{editMode ? "Edit" : "New"}} environment</h5>
+        <h5 *ngIf="sourceEnvironment">Duplicate environment {{sourceEnvironment.name}}</h5>
+      </div>
 
-  <ng-template #buttonBar>
-    <app-button-bar>
-      <button mat-button (click)="save()" [disabled]="environmentForm.invalid">Save</button>
-      <button mat-button (click)="cancel()">Cancel</button>
-    </app-button-bar>
-  </ng-template>
-</ng-container>
+      <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+          <button pButton pRipple label="Save" icon="pi pi-save" class="p-button-success p-mr-2 p-mb-2" (click)="save()" [disabled]="environmentForm.invalid"></button>
+          <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-plain p-mb-2" (click)="cancel()"></button>
+        </ng-template>
+      </p-toolbar>
+
+      <form #environmentForm="ngForm">
+        <div class="p-fluid p-col-12 p-md-5">
+
+          <div class="p-field p-float-label">
+            <input pInputText id="environmentName" [(ngModel)]="environment.name" name="environmentName" required
+                   [appEnvironmentNameUnique]="environmentsForValidation"
+                   [ignoreOwnId]="environment.id">
+            <label for="environmentName">Name</label>
+            <small class="p-error" *ngIf="environmentForm.form.controls.environmentName?.hasError('environmentNameNotUnique')">
+              Environment already exists
+            </small>
+          </div>
+
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

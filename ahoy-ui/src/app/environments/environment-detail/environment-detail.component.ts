@@ -26,6 +26,7 @@ import {mergeMap} from 'rxjs/operators';
 import {of} from 'rxjs';
 import {EnvironmentReleaseService} from '../../environment-release/environment-release.service';
 import {ReleaseService} from '../../release/release.service';
+import {AppBreadcrumbService} from '../../app.breadcrumb.service';
 
 @Component({
   selector: 'app-environment-detail',
@@ -34,7 +35,7 @@ import {ReleaseService} from '../../release/release.service';
 })
 export class EnvironmentDetailComponent implements OnInit {
   private environmentReleaseId: EnvironmentReleaseId;
-  private editMode = false;
+  editMode = false;
   sourceEnvironment: Environment;
   cluster: Cluster;
   environment: Environment;
@@ -46,7 +47,8 @@ export class EnvironmentDetailComponent implements OnInit {
     private environmentReleaseService: EnvironmentReleaseService,
     private releaseService: ReleaseService,
     private clusterService: ClusterService,
-    private location: Location) {
+    private location: Location,
+    private breadcrumbService: AppBreadcrumbService) {
   }
 
   ngOnInit() {
@@ -54,30 +56,45 @@ export class EnvironmentDetailComponent implements OnInit {
     this.clusterService.get(clusterId)
       .subscribe(cluster => {
         this.cluster = cluster;
+
+        const id = this.route.snapshot.paramMap.get('id');
+        if (id === 'new') {
+          this.environment = new Environment();
+          const sourceEnvironmentId = +this.route.snapshot.queryParamMap.get('sourceEnvironmentId');
+          if (sourceEnvironmentId) {
+            this.environmentService.get(sourceEnvironmentId)
+              .subscribe((env) => {
+                this.sourceEnvironment = env;
+                this.setBreadcrumb();
+              });
+          }
+
+          const environmentId = +this.route.snapshot.queryParamMap.get('environmentId');
+          const releaseId = +this.route.snapshot.queryParamMap.get('releaseId');
+          if (environmentId && releaseId) {
+            this.environmentReleaseId = EnvironmentReleaseId.new(environmentId, releaseId);
+          }
+
+          this.setBreadcrumb();
+        } else {
+          this.editMode = true;
+          this.environmentService.get(+id)
+            .subscribe((env) => {
+              this.environment = env;
+              this.setBreadcrumb();
+            });
+        }
       });
+
     this.environmentService.getAllEnvironmentsByCluster(clusterId)
       .subscribe((environments) => this.environmentsForValidation = environments);
+  }
 
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id === 'new') {
-      this.environment = new Environment();
-      const sourceEnvironmentId = +this.route.snapshot.queryParamMap.get('sourceEnvironmentId');
-      if (sourceEnvironmentId) {
-        this.environmentService.get(sourceEnvironmentId)
-          .subscribe((env) => this.sourceEnvironment = env);
-      }
-
-      const environmentId = +this.route.snapshot.queryParamMap.get('environmentId');
-      const releaseId = +this.route.snapshot.queryParamMap.get('releaseId');
-      if (environmentId && releaseId) {
-        this.environmentReleaseId = EnvironmentReleaseId.new(environmentId, releaseId);
-      }
-
-    } else {
-      this.editMode = true;
-      this.environmentService.get(+id)
-        .subscribe((env) => this.environment = env);
-    }
+  private setBreadcrumb() {
+    this.breadcrumbService.setItems([
+      {label: this.cluster.name, routerLink: '/clusters'},
+      {label: (!this.sourceEnvironment ? (this.editMode ? 'edit' : 'new') : 'duplicate') + ' environment'}
+    ]);
   }
 
   save() {
