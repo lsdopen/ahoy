@@ -60,7 +60,7 @@
             </td>
             <td>
               <button pButton pRipple icon="pi pi-chevron-circle-right" class="p-button-rounded p-button-info p-mr-2"
-                      routerLink="/environments"></button>
+                      routerLink="/environments" [queryParams]="{clusterId: cluster.id}"></button>
               <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
                       routerLink="/cluster/{{cluster.id}}"></button>
               <span pTooltip="{{cluster.inCluster ? 'May not delete built-in cluster' : ''}}">

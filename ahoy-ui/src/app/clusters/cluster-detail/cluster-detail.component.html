@@ -14,55 +14,65 @@
   ~    limitations under the License.
   -->
 
-<ng-container *ngIf="cluster">
-  <form #clusterForm="ngForm">
-    <app-content [title]="title" [buttonBar]="buttonBar">
-      <app-detail>
-        <mat-form-field>
-          <mat-label>Type</mat-label>
-          <mat-select [(ngModel)]="cluster.type" name="clusterType" required>
-            <mat-option *ngFor="let type of types" [value]="type.value">
-              {{type.viewValue}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput [(ngModel)]="cluster.name" placeholder="Name" name="clusterName" required>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput [(ngModel)]="cluster.masterUrl" placeholder="Master URL" name="clusterMasterUrl" required>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput [(ngModel)]="cluster.host" placeholder="Host" name="clusterHost" required>
-        </mat-form-field>
-        <div fxLayout="column">
-          <mat-form-field>
-            <input matInput class="text-area-settings" [(ngModel)]="cluster.token" placeholder="Token"
-                   name="clusterToken"
+<div class="p-grid">
+  <div class="p-col-12" *ngIf="cluster">
+
+    <div class="card">
+      <div class="card-header">
+        <h5>{{editMode ? "Edit" : "New"}} cluster</h5>
+      </div>
+
+      <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+          <button pButton pRipple label="Save" icon="pi pi-save" class="p-button-success p-mr-2 p-mb-2" (click)="save()" [disabled]="clusterForm.invalid"></button>
+          <button pButton pRipple label="Test" icon="pi pi-question" class="p-button-info p-mr-2 p-mb-2" (click)="test()" [disabled]="clusterForm.invalid"></button>
+          <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-plain p-mb-2" (click)="cancel()"></button>
+        </ng-template>
+      </p-toolbar>
+
+      <form #clusterForm="ngForm">
+        <div class="p-fluid p-col-12 p-md-5">
+
+          <div class="p-field p-float-label">
+            <p-dropdown id="clusterType" [options]="types" [(ngModel)]="cluster.type" [autoDisplayFirst]="false" [showClear]="true"
+                        optionLabel="viewValue" optionValue="value" name="clusterType" required></p-dropdown>
+            <label for="clusterType">Type</label>
+          </div>
+
+          <div class="p-field p-float-label">
+            <input pInputText id="clusterName" [(ngModel)]="cluster.name" name="clusterName" required>
+            <label for="clusterName">Name</label>
+          </div>
+
+          <div class="p-field p-float-label">
+            <input pInputText id="clusterMasterUrl" [(ngModel)]="cluster.masterUrl" name="clusterMasterUrl" required>
+            <label for="clusterMasterUrl">Master URL</label>
+          </div>
+
+          <div class="p-field p-float-label">
+            <input pInputText id="clusterHost" [(ngModel)]="cluster.host" name="clusterHost" required>
+            <label for="clusterHost">Host</label>
+          </div>
+        </div>
+
+        <div class="p-fluid p-col-12">
+          <i class="pi {{hideToken ? 'pi-eye-slash':'pi-eye'}}" style="cursor: pointer; width: 10px" (click)="hideToken = !hideToken"></i>
+
+          <div class="p-field p-float-label">
+            <input pInputText id="clusterToken" [(ngModel)]="cluster.token" name="clusterToken"
                    [type]="hideToken ? 'password' : 'text'"
                    required/>
-            <mat-icon matSuffix style="cursor: pointer" (click)="hideToken = !hideToken">{{hideToken ? 'visibility_off' : 'visibility'}}</mat-icon>
-          </mat-form-field>
-          <mat-form-field>
-            <textarea matInput class="text-area-settings" [(ngModel)]="cluster.caCertData" placeholder="CA Certificate"
-                      name="caCertData"
-                      type="text"
-                      matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="20" required></textarea>
-          </mat-form-field>
+            <label for="clusterToken">Token</label>
+          </div>
+
+          <div class="p-field p-float-label">
+            <textarea rows="20" cols="60" pInputTextarea id="caCertData" [(ngModel)]="cluster.caCertData" name="caCertData" required></textarea>
+            <label for="caCertData">CA Certificate</label>
+          </div>
+
         </div>
-      </app-detail>
-    </app-content>
-  </form>
+      </form>
 
-  <ng-template #title>
-    <div class="mat-title">Cluster</div>
-  </ng-template>
-
-  <ng-template #buttonBar>
-    <app-button-bar>
-      <button mat-button (click)="save()" [disabled]="clusterForm.invalid">Save</button>
-      <button mat-button (click)="test()" [disabled]="clusterForm.invalid">Test</button>
-      <button mat-button (click)="cancel()">Cancel</button>
-    </app-button-bar>
-  </ng-template>
-</ng-container>
+    </div>
+  </div>
+</div>
