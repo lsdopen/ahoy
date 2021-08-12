@@ -26,6 +26,7 @@ import {LoggerService} from '../../util/logger.service';
 import {ApplicationService} from '../../applications/application.service';
 import {EnvironmentRelease, EnvironmentReleaseId} from '../../environment-release/environment-release';
 import {EnvironmentReleaseService} from '../../environment-release/environment-release.service';
+import {AppBreadcrumbService} from '../../app.breadcrumb.service';
 
 @Component({
   selector: 'app-release-detail',
@@ -48,7 +49,8 @@ export class ReleaseDetailComponent implements OnInit {
     private environmentService: EnvironmentService,
     private environmentReleaseService: EnvironmentReleaseService,
     private applicationService: ApplicationService,
-    private location: Location) {
+    private location: Location,
+    private breadcrumbService: AppBreadcrumbService) {
   }
 
   ngOnInit() {
@@ -65,6 +67,8 @@ export class ReleaseDetailComponent implements OnInit {
           this.environmentRelease = new EnvironmentRelease();
           this.environmentRelease.id = new EnvironmentReleaseId();
           this.releaseVersion = new ReleaseVersion();
+
+          this.setBreadcrumb();
         });
 
     } else {
@@ -84,7 +88,17 @@ export class ReleaseDetailComponent implements OnInit {
           .find(relVersion => relVersion.id === releaseVersionId);
         this.release = this.environmentRelease.release as Release;
         this.environment = this.environmentRelease.environment as Environment;
+
+        this.setBreadcrumb();
       });
+  }
+
+  private setBreadcrumb() {
+    this.breadcrumbService.setItems([
+      {label: this.environment.cluster.name, routerLink: '/clusters'},
+      {label: this.environment.name, routerLink: '/environments', queryParams: {clusterId: this.environment.cluster.id}},
+      {label: (this.editMode ? 'edit' : 'new') + ' release'}
+    ]);
   }
 
   save() {
