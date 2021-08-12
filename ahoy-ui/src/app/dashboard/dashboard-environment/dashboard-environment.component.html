@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,32 +14,37 @@
   ~    limitations under the License.
   -->
 
-<app-task-events-listener (taskEventEmitter)="taskEventOccurred($event)"></app-task-events-listener>
+<div class="p-col" *ngIf="environment && environmentReleases && environmentReleases.length > 0">
 
-<mat-card>
-  <mat-card-header>
-    <mat-card-title routerLink="/releases" [queryParams]="{environmentId: environment.id}">{{environment.name}}</mat-card-title>
-  </mat-card-header>
+  <app-task-events-listener (taskEventEmitter)="taskEventOccurred($event)"></app-task-events-listener>
 
-  <mat-card-content>
-    <table fxFlex fxGrow mat-table [dataSource]="environmentReleases" class="mat-elevation-z0">
-      <ng-container matColumnDef="environment">
-        <td mat-cell *matCellDef="let er">{{er.release.name}}</td>
-      </ng-container>
-      <ng-container matColumnDef="state">
-        <td mat-cell *matCellDef="let er">{{er.deployed ? 'Deployed' : ''}}</td>
-      </ng-container>
-      <ng-container matColumnDef="applicationsReady">
-        <td mat-cell *matCellDef="let er">
-          <app-environment-release-status [environmentRelease]="er"></app-environment-release-status>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="version">
-        <td mat-cell *matCellDef="let er">
-          <app-environment-release-versions [environmentRelease]="er"></app-environment-release-versions>
-        </td>
-      </ng-container>
-      <tr mat-row *matRowDef="let er; columns: ['environment', 'state', 'applicationsReady', 'version'];" routerLink="/release/{{er.id.environmentId}}/{{er.id.releaseId}}/version/{{er.currentReleaseVersion ? er.currentReleaseVersion.id : er.latestReleaseVersion.id}}"></tr>
-    </table>
-  </mat-card-content>
-</mat-card>
+  <div class="card">
+    <div class="card-header">
+      <p-chip styleClass="chip-environment" label="{{environment.name}}"
+              routerLink="/releases" [queryParams]="{environmentId: environment.id}"></p-chip>
+    </div>
+
+    <p-table #dt [value]="environmentReleases" dataKey="id" selectionMode="single"
+             styleClass="p-datatable-releases p-datatable-sm"
+             [scrollable]="false">
+
+      <ng-template pTemplate="body" let-er>
+        <tr routerLink="/release/{{er.id.environmentId}}/{{er.id.releaseId}}/version/{{er.currentReleaseVersion ? er.currentReleaseVersion.id : er.latestReleaseVersion.id}}">
+          <td><span class="p-column-title">Release</span>
+            {{er.release.name}}
+          </td>
+          <td><span class="p-column-title">State</span>
+            <span [class]="'deployed-badge status-' + (er.deployed ? 'deployed' : 'undeployed')">{{er.deployed ? 'Deployed' : 'Undeployed'}}</span>
+          </td>
+          <td><span class="p-column-title">Applications</span>
+            <app-environment-release-status [environmentRelease]="er"></app-environment-release-status>
+          </td>
+          <td><span class="p-column-title">Version</span>
+            <app-environment-release-versions [environmentRelease]="er"></app-environment-release-versions>
+          </td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+  </div>
+</div>

@@ -122,6 +122,7 @@ import {ConfirmPopupModule} from 'primeng/confirmpopup';
 import {ConfirmationService, MessageService} from 'primeng/api';
 import {ProgressBarModule} from 'primeng/progressbar';
 import {InputTextareaModule} from 'primeng/inputtextarea';
+import {ChipModule} from 'primeng/chip';
 
 @NgModule({
   declarations: [
@@ -233,7 +234,8 @@ import {InputTextareaModule} from 'primeng/inputtextarea';
     DynamicDialogModule,
     ConfirmPopupModule,
     ProgressBarModule,
-    InputTextareaModule
+    InputTextareaModule,
+    ChipModule
   ],
   providers: [
     {provide: ErrorHandler, useClass: ErrorService},
