@@ -59,7 +59,7 @@
               <span *ngIf="!application.latestApplicationVersion">-</span>
             </td>
             <td>
-              <button pButton pRipple icon="pi pi-chevron-circle-right" class="p-button-rounded p-button-info p-mr-2"
+              <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
                       routerLink="/application/{{application.id}}"></button>
               <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="delete($event, application)"></button>
             </td>

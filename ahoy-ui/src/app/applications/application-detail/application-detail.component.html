@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,56 +14,61 @@
   ~    limitations under the License.
   -->
 
-<ng-container *ngIf="application">
-  <form #applicationForm="ngForm">
-    <app-content [title]="title" [buttonBar]="buttonBar">
-      <app-detail>
-        <mat-form-field>
-          <input matInput [(ngModel)]="application.name" placeholder="Name" name="applicationName"
-                 required
-                 pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
-                 [appApplicationNameUnique]="applicationsForValidation"
-                 [ignoreOwnId]="application.id">
-          <mat-hint>should start with and use lower case letters and numbers</mat-hint>
-          <mat-error *ngIf="applicationForm.form.controls.applicationName?.hasError('pattern')">
-            <strong>invalid</strong>
-          </mat-error>
-          <mat-error *ngIf="applicationForm.form.controls.applicationName?.hasError('applicationNameNotUnique')">
-            <strong>application name already exists</strong>
-          </mat-error>
-        </mat-form-field>
+<div class="p-grid">
+  <div class="p-col-12" *ngIf="application">
 
-        <mat-form-field *ngIf="!editMode">
-          <input matInput [(ngModel)]="applicationVersion.version" placeholder="Version" name="applicationVersion"
-                 required>
-        </mat-form-field>
+    <div class="card p-mb-3">
+      <div class="card-header">
+        <h5>{{editMode ? "Edit" : "New"}} application</h5>
+      </div>
 
-        <app-docker-registries *ngIf="!editMode" [applicationVersion]="applicationVersion"></app-docker-registries>
+      <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+          <button pButton pRipple label="Save" icon="pi pi-save" class="p-button-success p-mr-2 p-mb-2" (click)="save()" [disabled]="applicationForm.invalid"></button>
+          <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-plain p-mb-2" (click)="cancel()"></button>
+        </ng-template>
+      </p-toolbar>
 
-        <mat-form-field *ngIf="!editMode">
-          <input matInput [(ngModel)]="applicationVersion.image" placeholder="Image" name="applicationImage" required>
-        </mat-form-field>
-      </app-detail>
+      <form #applicationForm="ngForm">
+        <div class="p-fluid p-col-12 p-md-5">
 
-      <ng-container *ngIf="editMode">
-        <mat-divider></mat-divider>
+          <div class="p-field p-float-label">
+            <input pInputText id="applicationName" [(ngModel)]="application.name" name="applicationName"
+                   required
+                   pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
+                   [appApplicationNameUnique]="applicationsForValidation"
+                   [ignoreOwnId]="application.id">
+            <label for="applicationName">Name</label>
+            <small class="p-error" *ngIf="applicationForm.form.controls.applicationName?.hasError('pattern')">
+              Name invalid: should start with and use lower case letters and numbers
+            </small>
+            <small class="p-error" *ngIf="applicationForm.form.controls.applicationName?.hasError('applicationNameNotUnique')">
+              Application already exists
+            </small>
+          </div>
 
-        <app-application-versions
-          [application]="application">
-        </app-application-versions>
-      </ng-container>
+          <div class="p-field p-float-label" *ngIf="!editMode">
+            <input pInputText id="applicationVersion" [(ngModel)]="applicationVersion.version" name="applicationVersion"
+                   required>
+            <label for="applicationVersion">Version</label>
+          </div>
 
-    </app-content>
-  </form>
+          <div class="p-field">
+            <app-docker-registries *ngIf="!editMode" [applicationVersion]="applicationVersion"></app-docker-registries>
+          </div>
 
-  <ng-template #title>
-    <div class="mat-title">Application</div>
-  </ng-template>
+          <div class="p-field p-float-label" *ngIf="!editMode">
+            <input pInputText id="applicationImage" [(ngModel)]="applicationVersion.image" name="applicationImage"
+                   required>
+            <label for="applicationImage">Image</label>
+          </div>
 
-  <ng-template #buttonBar>
-    <app-button-bar>
-      <button mat-button (click)="save()" [disabled]="applicationForm.invalid">Save</button>
-      <button mat-button (click)="cancel()">Cancel</button>
-    </app-button-bar>
-  </ng-template>
-</ng-container>
+        </div>
+      </form>
+    </div>
+
+    <app-application-versions *ngIf="editMode" [application]="application">
+    </app-application-versions>
+
+  </div>
+</div>
