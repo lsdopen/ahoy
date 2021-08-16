@@ -123,6 +123,7 @@ import {ConfirmationService, MessageService} from 'primeng/api';
 import {ProgressBarModule} from 'primeng/progressbar';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {ChipModule} from 'primeng/chip';
+import {AvatarModule} from 'primeng/avatar';
 
 @NgModule({
   declarations: [
@@ -235,7 +236,8 @@ import {ChipModule} from 'primeng/chip';
     ConfirmPopupModule,
     ProgressBarModule,
     InputTextareaModule,
-    ChipModule
+    ChipModule,
+    AvatarModule
   ],
   providers: [
     {provide: ErrorHandler, useClass: ErrorService},

@@ -39,8 +39,8 @@
         </li>
 
         <li class="layout-topbar-item">
-          <a class="layout-topbar-action p-d-flex p-dir-row p-jc-center p-ai-center p-px-2 rounded-circle" (click)="appMain.onTopbarItemClick($event, 'profile')" pRipple>
-            <img src="assets/demo/images/avatar/amyelsner.png" alt="avatar" style="width: 32px; height: 32px;">
+          <a class="layout-topbar-action p-d-flex p-dir-row p-jc-center p-ai-center p-px-0 rounded-circle" (click)="appMain.onTopbarItemClick($event, 'profile')" pRipple>
+            <p-avatar label="{{userInitials()}}" shape="circle"></p-avatar>
           </a>
 
           <ul class="layout-topbar-action-panel p-shadow-6" [@topbarActionPanelAnimation]="'visible'" *ngIf="appMain.activeTopbarItem === 'profile'">

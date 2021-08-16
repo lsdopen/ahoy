@@ -18,6 +18,7 @@ import {Component, ElementRef, ViewChild} from '@angular/core';
 import {animate, AnimationEvent, style, transition, trigger} from '@angular/animations';
 import {AppComponent} from './app.component';
 import {AppMainComponent} from './app.main.component';
+import {AuthService} from './util/auth.service';
 
 @Component({
   selector: 'app-topbar',
@@ -36,10 +37,9 @@ import {AppMainComponent} from './app.main.component';
 })
 export class AppTopBarComponent {
 
-  constructor(public appMain: AppMainComponent, public app: AppComponent) {
+  constructor(public appMain: AppMainComponent, public app: AppComponent,
+              private authService: AuthService) {
   }
-
-  activeItem: number;
 
   @ViewChild('searchInput') searchInputViewChild: ElementRef;
 
@@ -49,5 +49,9 @@ export class AppTopBarComponent {
         this.searchInputViewChild.nativeElement.focus();
         break;
     }
+  }
+
+  userInitials(): string {
+    return this.authService.userInitials();
   }
 }
