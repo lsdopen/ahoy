@@ -129,6 +129,8 @@ import {TabViewModule} from 'primeng/tabview';
 import {CheckboxModule} from 'primeng/checkbox';
 import {DividerModule} from 'primeng/divider';
 import {MessagesModule} from 'primeng/messages';
+import {TagModule} from 'primeng/tag';
+import {EnvironmentReleaseDeploymentStatusComponent} from './environment-release/environment-release-deployment-status/environment-release-deployment-status.component';
 
 @NgModule({
   declarations: [
@@ -186,7 +188,8 @@ import {MessagesModule} from 'primeng/messages';
     ArgoSettingsComponent,
     DockerSettingsComponent,
     ApplicationSecretDataComponent,
-    ApplicationVolumeDetailComponent
+    ApplicationVolumeDetailComponent,
+    EnvironmentReleaseDeploymentStatusComponent
   ],
   imports: [
     BrowserModule,
@@ -247,7 +250,8 @@ import {MessagesModule} from 'primeng/messages';
     TabViewModule,
     CheckboxModule,
     DividerModule,
-    MessagesModule
+    MessagesModule,
+    TagModule
   ],
   providers: [
     {provide: ErrorHandler, useClass: ErrorService},

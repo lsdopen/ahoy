@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -39,7 +39,9 @@
             <td mat-cell *matCellDef="let er">{{er.environment.cluster.name}}</td>
           </ng-container>
           <ng-container matColumnDef="state">
-            <td mat-cell *matCellDef="let er">{{er.deployed ? 'Deployed' : ''}}</td>
+            <td mat-cell *matCellDef="let er">
+              <app-environment-release-deployment-status [environmentRelease]="er"></app-environment-release-deployment-status>
+            </td>
           </ng-container>
           <ng-container matColumnDef="applicationsReady">
             <td mat-cell *matCellDef="let er">

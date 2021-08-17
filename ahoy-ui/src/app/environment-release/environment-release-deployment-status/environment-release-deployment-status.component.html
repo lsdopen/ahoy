@@ -15,11 +15,7 @@
   -->
 
 <div class="p-fluid" *ngIf="environmentRelease">
-  <p-tag *ngIf="environmentRelease.currentReleaseVersion" value="{{environmentRelease.currentReleaseVersion.version}}"
-         pTooltip="Current release version"
-         styleClass="p-mr-2" [rounded]="true"></p-tag>
-
-  <p-tag *ngIf="environmentRelease.latestReleaseVersion" value="{{environmentRelease.latestReleaseVersion.version}}"
-         pTooltip="Latest release version"
-         styleClass="p-mr-2" severity="info" [rounded]="true"></p-tag>
+  <span [class]="'deployed-badge status-' + (environmentRelease.deployed ? 'deployed' : 'undeployed')">
+    {{environmentRelease.deployed ? 'Deployed' : 'Not deployed'}}
+  </span>
 </div>

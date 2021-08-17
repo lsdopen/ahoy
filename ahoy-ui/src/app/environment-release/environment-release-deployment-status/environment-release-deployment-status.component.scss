@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-.status-badge {
+.deployed-badge {
   border-radius: 2px;
   padding: .25em .5rem;
   text-transform: uppercase;
@@ -22,18 +22,13 @@
   font-size: 12px;
   letter-spacing: .3px;
 
-  &.status-success {
+  &.status-deployed {
     background: #C8E6C9;
     color: #256029;
   }
 
-  &.status-warn {
+  &.status-undeployed {
     background: #FEEDAF;
     color: #8A5340;
-  }
-
-  &.status-error {
-    background: #FFCDD2;
-    color: #C63737;
   }
 }

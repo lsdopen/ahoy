@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,26 +14,21 @@
  *    limitations under the License.
  */
 
-.status-badge {
-  border-radius: 2px;
-  padding: .25em .5rem;
-  text-transform: uppercase;
-  font-weight: 700;
-  font-size: 12px;
-  letter-spacing: .3px;
+import {Component, Input, OnInit} from '@angular/core';
+import {EnvironmentRelease} from '../environment-release';
 
-  &.status-success {
-    background: #C8E6C9;
-    color: #256029;
+@Component({
+  selector: 'app-environment-release-deployment-status',
+  templateUrl: './environment-release-deployment-status.component.html',
+  styleUrls: ['./environment-release-deployment-status.component.scss']
+})
+export class EnvironmentReleaseDeploymentStatusComponent implements OnInit {
+  @Input() environmentRelease: EnvironmentRelease;
+
+  constructor() {
   }
 
-  &.status-warn {
-    background: #FEEDAF;
-    color: #8A5340;
+  ngOnInit(): void {
   }
 
-  &.status-error {
-    background: #FFCDD2;
-    color: #C63737;
-  }
 }

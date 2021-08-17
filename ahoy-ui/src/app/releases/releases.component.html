@@ -79,7 +79,7 @@
                 {{er.release.name}}
               </td>
               <td><span class="p-column-title">State</span>
-                <span [class]="'deployed-badge status-' + (er.deployed ? 'deployed' : 'undeployed')">{{er.deployed ? 'Deployed' : 'Undeployed'}}</span>
+                <app-environment-release-deployment-status [environmentRelease]="er"></app-environment-release-deployment-status>
               </td>
               <td><span class="p-column-title">Applications</span>
                 <app-environment-release-status [environmentRelease]="er"></app-environment-release-status>
