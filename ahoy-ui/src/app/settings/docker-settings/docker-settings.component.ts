@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import {DockerRegistry, DockerSettings} from './docker-settings';
 import {DockerSettingsService} from './docker-settings.service';
 import {Notification} from '../../notifications/notification';
 import {NotificationsService} from '../../notifications/notifications.service';
+import {AppBreadcrumbService} from '../../app.breadcrumb.service';
 
 @Component({
   selector: 'app-docker-settings',
@@ -31,7 +32,12 @@ export class DockerSettingsComponent implements OnInit {
   selectedIndex: number;
 
   constructor(private dockerSettingsService: DockerSettingsService,
-              private notificationsService: NotificationsService) {
+              private notificationsService: NotificationsService,
+              private breadcrumbService: AppBreadcrumbService) {
+    this.breadcrumbService.setItems([
+      {label: 'settings'},
+      {label: 'docker'}
+    ]);
   }
 
   ngOnInit(): void {
@@ -40,6 +46,8 @@ export class DockerSettingsComponent implements OnInit {
         this.dockerSettings = dockerSettings;
         if (!this.dockerSettings.dockerRegistries) {
           this.dockerSettings.dockerRegistries = [];
+        } else {
+          this.selectedIndex = 0;
         }
       });
   }
@@ -52,11 +60,12 @@ export class DockerSettingsComponent implements OnInit {
 
   addDockerRegistry() {
     this.dockerSettings.dockerRegistries.push(new DockerRegistry());
-    this.selectedIndex = this.dockerSettings.dockerRegistries.length - 1;
+    setTimeout(() => this.selectedIndex = this.dockerSettings.dockerRegistries.length - 1, 300);
   }
 
   deleteRegistry() {
-    this.dockerSettings.dockerRegistries.splice(this.selectedIndex, 1);
-    this.selectedIndex = this.selectedIndex - 1;
+    const indexToRemove = this.selectedIndex;
+    this.selectedIndex = 0;
+    this.dockerSettings.dockerRegistries.splice(indexToRemove, 1);
   }
 }

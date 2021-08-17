@@ -124,6 +124,11 @@ import {ProgressBarModule} from 'primeng/progressbar';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {ChipModule} from 'primeng/chip';
 import {AvatarModule} from 'primeng/avatar';
+import {MenuModule} from 'primeng/menu';
+import {TabViewModule} from 'primeng/tabview';
+import {CheckboxModule} from 'primeng/checkbox';
+import {DividerModule} from 'primeng/divider';
+import {MessagesModule} from 'primeng/messages';
 
 @NgModule({
   declarations: [
@@ -237,7 +242,12 @@ import {AvatarModule} from 'primeng/avatar';
     ProgressBarModule,
     InputTextareaModule,
     ChipModule,
-    AvatarModule
+    AvatarModule,
+    MenuModule,
+    TabViewModule,
+    CheckboxModule,
+    DividerModule,
+    MessagesModule
   ],
   providers: [
     {provide: ErrorHandler, useClass: ErrorService},

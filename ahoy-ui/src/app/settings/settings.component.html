@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,34 +14,23 @@
   ~    limitations under the License.
   -->
 
-<ng-container>
+<div class="p-grid">
+  <div class="p-col-12">
 
-  <app-content [title]="title" [buttonBar]="buttonBar">
-    <div fxFlex fxLayout="column">
-      <span *ngIf="setup" class="mat-subheading-1 setup-notice">Please note: in order to continue you need to set up the following:</span>
+    <div class="card">
+      <p-messages [value]="msgs"></p-messages>
 
-      <mat-drawer-container fxFlex>
-        <mat-drawer mode="side" opened class="settings-drawer">
-          <mat-nav-list>
-            <mat-list-item routerLink="/settings/git" [routerLinkActive]="['settings-active']">Git repository</mat-list-item>
-            <mat-list-item routerLink="/settings/argo" [routerLinkActive]="['settings-active']">Argo CD</mat-list-item>
-            <mat-list-item routerLink="/settings/docker" [routerLinkActive]="['settings-active']">Docker registries</mat-list-item>
-          </mat-nav-list>
-        </mat-drawer>
-        <mat-drawer-content>
+      <div class="p-grid">
+
+        <div class="p-col-3">
+          <p-menu [model]="items" [style]="{'width':'100%'}"></p-menu>
+        </div>
+
+        <div class="p-col-9">
           <router-outlet></router-outlet>
-        </mat-drawer-content>
-      </mat-drawer-container>
+        </div>
+      </div>
+
     </div>
-  </app-content>
-
-  <ng-template #title>
-    <div class="mat-title">Settings</div>
-  </ng-template>
-
-  <ng-template #buttonBar>
-    <app-button-bar>
-      <button mat-button routerLink="/dashboard">Done</button>
-    </app-button-bar>
-  </ng-template>
-</ng-container>
+  </div>
+</div>

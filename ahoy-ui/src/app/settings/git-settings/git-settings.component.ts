@@ -19,6 +19,7 @@ import {GitSettings} from './git-settings';
 import {GitSettingsService} from './git-settings.service';
 import {Notification} from '../../notifications/notification';
 import {NotificationsService} from '../../notifications/notifications.service';
+import {AppBreadcrumbService} from '../../app.breadcrumb.service';
 
 @Component({
   selector: 'app-git-settings',
@@ -30,7 +31,12 @@ export class GitSettingsComponent implements OnInit {
   hideGitPassword = true;
 
   constructor(private gitSettingsService: GitSettingsService,
-              private notificationsService: NotificationsService) {
+              private notificationsService: NotificationsService,
+              private breadcrumbService: AppBreadcrumbService) {
+    this.breadcrumbService.setItems([
+      {label: 'settings'},
+      {label: 'git'}
+    ]);
   }
 
   ngOnInit(): void {

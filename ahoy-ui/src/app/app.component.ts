@@ -26,21 +26,15 @@ import {PrimeNGConfig} from 'primeng/api';
 export class AppComponent implements OnInit {
   title = 'Ahoy';
 
-  topbarTheme: string = 'bluegrey';
-
-  menuTheme: string = 'light';
-
-  layoutMode: string = 'light';
-
-  menuMode: string = 'static';
-
-  inlineMenuPosition: string = 'top';
-
-  inputStyle: string = 'filled';
-
-  ripple: boolean = true;
-
-  isRTL: boolean = false;
+  // theme
+  topbarTheme = 'bluegrey';
+  menuTheme = 'light';
+  layoutMode = 'light';
+  menuMode = 'static';
+  inlineMenuPosition = 'top';
+  inputStyle = 'filled';
+  ripple = true;
+  isRTL = false;
 
   constructor(private primengConfig: PrimeNGConfig,
               private authService: AuthService) {
@@ -48,21 +42,5 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.primengConfig.ripple = true;
-  }
-
-  login() {
-    this.authService.login();
-  }
-
-  logout() {
-    this.authService.logout();
-  }
-
-  identityClaim() {
-    return this.authService.identityClaim();
-  }
-
-  issuer(): string {
-    return this.authService.issuer();
   }
 }

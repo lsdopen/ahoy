@@ -51,7 +51,19 @@ export class AppTopBarComponent {
     }
   }
 
+  identityClaim() {
+    return this.authService.identityClaim();
+  }
+
   userInitials(): string {
     return this.authService.userInitials();
+  }
+
+  issuer(): string {
+    return this.authService.issuer();
+  }
+
+  logout() {
+    this.authService.logout();
   }
 }
