@@ -167,7 +167,7 @@ export class AppConfigComponent implements OnInit {
 
     topbarTheme: string = 'bluegrey';
 
-    theme: string = 'orange';
+    theme: string = 'teal';
 
     matchingMenuTheme: boolean = false;
 
@@ -277,7 +277,7 @@ export class AppConfigComponent implements OnInit {
         }
         else {
             this.app.menuTheme = 'light';
-            this.app.topbarTheme = 'blue';
+            this.app.topbarTheme = 'bluegrey';
         }
 
         const layoutLink: HTMLLinkElement = document.getElementById('layout-css') as HTMLLinkElement;
