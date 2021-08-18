@@ -22,7 +22,7 @@
         <h5>{{editMode ? "Edit" : "New"}} cluster</h5>
       </div>
 
-      <p-toolbar styleClass="p-mb-4">
+      <p-toolbar>
         <ng-template pTemplate="left">
           <button pButton pRipple label="Save" icon="pi pi-save" class="p-button-success p-mr-2 p-mb-2" (click)="save()" [disabled]="clusterForm.invalid"></button>
           <button pButton pRipple label="Test" icon="pi pi-question" class="p-button-info p-mr-2 p-mb-2" (click)="test()" [disabled]="clusterForm.invalid"></button>
