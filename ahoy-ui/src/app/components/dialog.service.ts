@@ -15,7 +15,6 @@
  */
 
 import {Injectable} from '@angular/core';
-import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component';
 import {Observable} from 'rxjs';
 import {Description} from './description-dialog/description';
@@ -28,16 +27,16 @@ import {DialogService as PDialogService, DynamicDialogConfig} from 'primeng/dyna
 })
 export class DialogService {
 
-  constructor(private dialog: MatDialog,
-              private pDialogService: PDialogService) {
+  constructor(private pDialogService: PDialogService) {
   }
 
   public showConfirmDialog(confirmation: Confirmation): Observable<Confirmation> {
-    const dialogConfig = new MatDialogConfig();
+    const dialogConfig = new DynamicDialogConfig();
+    dialogConfig.header = confirmation.title;
     dialogConfig.data = confirmation;
 
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, dialogConfig);
-    return dialogRef.afterClosed();
+    const dialogRef = this.pDialogService.open(ConfirmDialogComponent, dialogConfig);
+    return dialogRef.onClose;
   }
 
   public showDescriptionDialog(description: Description): void {

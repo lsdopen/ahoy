@@ -34,6 +34,7 @@ import {Confirmation} from '../../components/confirm-dialog/confirm';
 import {DialogService} from '../../components/dialog.service';
 import {ReleaseService} from '../../release/release.service';
 import {AppBreadcrumbService} from '../../app.breadcrumb.service';
+import {MenuItem} from 'primeng/api';
 
 @Component({
   selector: 'app-release-manage',
@@ -45,7 +46,9 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   environmentReleases: EnvironmentRelease[];
   releaseChanged = new EventEmitter<{ environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion }>();
   environmentRelease: EnvironmentRelease;
+  selectedEnvironmentRelease: EnvironmentRelease;
   releaseVersion: ReleaseVersion;
+  menuItems: MenuItem[];
 
   constructor(
     private route: ActivatedRoute,
@@ -79,6 +82,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     return this.environmentReleaseService.get(environmentId, releaseId).pipe(
       mergeMap(environmentRelease => {
         this.environmentRelease = environmentRelease;
+        this.selectedEnvironmentRelease = environmentRelease;
 
         this.releaseVersion = (this.environmentRelease.release as Release).releaseVersions
           .find(relVersion => relVersion.id === releaseVersionId);
@@ -92,9 +96,28 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
         }
       ), mergeMap(environmentReleases => {
         this.environmentReleases = environmentReleases;
+        this.setupMenuItems();
+
         return of(this.environmentRelease);
       })
     );
+  }
+
+  private setupMenuItems() {
+    this.menuItems = [
+      {
+        label: 'Edit', icon: 'pi pi-fw pi-pencil', disabled: !this.canEdit(),
+        routerLink: `/release/edit/${this.environmentRelease.id.environmentId}/${this.environmentRelease.id.releaseId}/version/${this.releaseVersion.id}`
+      },
+      {
+        label: 'History', icon: 'pi pi-fw pi-list',
+        routerLink: `/releasehistory/${this.environmentRelease.id.releaseId}`
+      },
+      {
+        label: 'Copy environment config', icon: 'pi pi-fw pi-copy', disabled: !this.canCopyEnvConfig(),
+        command: () => this.copyEnvConfig()
+      }
+    ];
   }
 
   private setBreadcrumb() {
@@ -221,8 +244,15 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
 
   releaseVersionChanged() {
     this.router.navigate(
-      ['/release', this.environmentRelease.id.environmentId, this.environmentRelease.id.releaseId, 'version', this.releaseVersion.id]).then();
+      ['/release', this.environmentRelease.id.environmentId, this.environmentRelease.id.releaseId, 'version', this.releaseVersion.id])
+      .then(() => this.setBreadcrumb());
     this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
+  }
+
+  reloadCurrent() {
+    if (this.selectedEnvironmentRelease) {
+      this.reload(this.selectedEnvironmentRelease.id.environmentId, this.releaseVersion.id);
+    }
   }
 
   reload(environmentId: number, releaseVersionId: number) {
