@@ -89,8 +89,11 @@
               </td>
               <td>
                 <button pButton pRipple icon="pi pi-chevron-circle-right" class="p-button-rounded p-button-info p-mr-2"
-                        routerLink="/release/{{er.id.environmentId}}/{{er.id.releaseId}}/version/{{er.currentReleaseVersion ? er.currentReleaseVersion.id : er.latestReleaseVersion.id}}"></button>
-                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="removeRelease($event, er)"></button>
+                        routerLink="/release/{{er.id.environmentId}}/{{er.id.releaseId}}/version/{{er.currentReleaseVersion ? er.currentReleaseVersion.id : er.latestReleaseVersion.id}}"
+                        pTooltip="Manage release"></button>
+                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                        (click)="removeRelease($event, er)"
+                        pTooltip="Remove release from environment"></button>
               </td>
             </tr>
           </ng-template>

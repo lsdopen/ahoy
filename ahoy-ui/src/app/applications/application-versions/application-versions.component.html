@@ -24,7 +24,7 @@
       <div class="card">
         <p-toolbar>
           <ng-template pTemplate="left">
-            <button pButton pRipple label="New Version" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="version/new" [queryParams]="{applicationVersionId: lastVersionId()}"></button>
+            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="version/new" [queryParams]="{applicationVersionId: lastVersionId()}"></button>
           </ng-template>
         </p-toolbar>
 
@@ -60,9 +60,12 @@
                 {{element.image}}
               </td>
               <td>
-                <button pButton pRipple icon="pi pi-chevron-circle-right" class="p-button-rounded p-button-info p-mr-2"
-                        routerLink="version/{{element.id}}"></button>
-                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="removeApplicationVersion($event, element)"></button>
+                <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
+                        routerLink="version/{{element.id}}"
+                        pTooltip="Edit version"></button>
+                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                        (click)="removeApplicationVersion($event, element)"
+                        pTooltip="Delete version from application"></button>
               </td>
             </tr>
           </ng-template>

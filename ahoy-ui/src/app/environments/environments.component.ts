@@ -22,7 +22,9 @@ import {Cluster} from '../clusters/cluster';
 import {LoggerService} from '../util/logger.service';
 import {ClusterService} from '../clusters/cluster.service';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
-import {ConfirmationService} from 'primeng/api';
+import {DialogService} from '../components/dialog.service';
+import {filter} from 'rxjs/operators';
+import {Confirmation} from '../components/confirm-dialog/confirm';
 
 @Component({
   selector: 'app-environments',
@@ -40,7 +42,7 @@ export class EnvironmentsComponent implements OnInit {
     private environmentService: EnvironmentService,
     private clusterService: ClusterService,
     private log: LoggerService,
-    private confirmationService: ConfirmationService,
+    private dialogService: DialogService,
     private breadcrumbService: AppBreadcrumbService) {
   }
 
@@ -82,14 +84,14 @@ export class EnvironmentsComponent implements OnInit {
   }
 
   delete(event: Event, environment: Environment) {
-    this.confirmationService.confirm({
-      target: event.target,
-      message: `Are you sure you want to delete ${environment.name}?`,
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.environmentService.destroy(environment)
-          .subscribe(() => this.getEnvironments(this.selectedCluster.id));
-      }
+    const confirmation = new Confirmation(`Are you sure you want to delete ${environment.name}?`);
+    confirmation.verify = true;
+    confirmation.verifyText = environment.name;
+    this.dialogService.showConfirmDialog(confirmation).pipe(
+      filter((conf) => conf !== undefined)
+    ).subscribe(() => {
+      this.environmentService.destroy(environment)
+        .subscribe(() => this.getEnvironments(this.selectedCluster.id));
     });
   }
 

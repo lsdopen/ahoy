@@ -17,8 +17,6 @@
 <div class="p-grid">
   <div class="p-col-12">
 
-    <p-confirmPopup></p-confirmPopup>
-
     <div class="card">
       <p-toolbar>
         <ng-template pTemplate="left">
@@ -60,12 +58,15 @@
             </td>
             <td>
               <button pButton pRipple icon="pi pi-chevron-circle-right" class="p-button-rounded p-button-info p-mr-2"
-                      routerLink="/environments" [queryParams]="{clusterId: cluster.id}"></button>
+                      routerLink="/environments" [queryParams]="{clusterId: cluster.id}"
+                      pTooltip="Manage cluster"></button>
               <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
-                      routerLink="/cluster/{{cluster.id}}"></button>
+                      routerLink="/cluster/{{cluster.id}}"
+                      pTooltip="Edit cluster"></button>
               <span pTooltip="{{cluster.inCluster ? 'May not delete built-in cluster' : ''}}">
-                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="delete($event, cluster)"
-                        [disabled]="cluster.inCluster"></button>
+                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                        (click)="delete($event, cluster)" [disabled]="cluster.inCluster"
+                        pTooltip="Delete cluster"></button>
               </span>
             </td>
           </tr>

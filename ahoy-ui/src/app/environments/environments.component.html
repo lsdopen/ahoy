@@ -17,8 +17,6 @@
 <div class="p-grid">
   <div class="p-col-12">
 
-    <p-confirmPopup></p-confirmPopup>
-
     <div *ngIf="selectedCluster">
       <div class="card">
         <p-toolbar>
@@ -61,10 +59,14 @@
               </td>
               <td>
                 <button pButton pRipple icon="pi pi-chevron-circle-right" class="p-button-rounded p-button-info p-mr-2"
-                        routerLink="/releases" [queryParams]="{environmentId: environment.id}"></button>
+                        routerLink="/releases" [queryParams]="{environmentId: environment.id}"
+                        pTooltip="Manage environment"></button>
                 <button pButton pRipple icon="pi pi-copy" class="p-button-rounded p-button-plain p-mr-2"
-                        routerLink="/environment/new" [queryParams]="{clusterId: selectedCluster.id, sourceEnvironmentId: environment.id}"></button>
-                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="delete($event, environment)"></button>
+                        routerLink="/environment/new" [queryParams]="{clusterId: selectedCluster.id, sourceEnvironmentId: environment.id}"
+                        pTooltip="Duplicate environment to a new environment"></button>
+                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                        (click)="delete($event, environment)"
+                        pTooltip="Delete environment"></button>
               </td>
             </tr>
           </ng-template>

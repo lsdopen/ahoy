@@ -20,7 +20,9 @@ import {ActivatedRoute} from '@angular/router';
 import {ClusterService} from './cluster.service';
 import {LoggerService} from '../util/logger.service';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
-import {ConfirmationService} from 'primeng/api';
+import {Confirmation} from '../components/confirm-dialog/confirm';
+import {filter} from 'rxjs/operators';
+import {DialogService} from '../components/dialog.service';
 
 @Component({
   selector: 'app-clusters',
@@ -33,7 +35,7 @@ export class ClustersComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private clusterService: ClusterService,
               private log: LoggerService,
-              private confirmationService: ConfirmationService,
+              private dialogService: DialogService,
               private breadcrumbService: AppBreadcrumbService) {
 
     this.breadcrumbService.setItems([{label: 'clusters'}]);
@@ -50,14 +52,14 @@ export class ClustersComponent implements OnInit {
   }
 
   delete(event: Event, cluster: Cluster) {
-    this.confirmationService.confirm({
-      target: event.target,
-      message: `Are you sure you want to delete ${cluster.name}?`,
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.clusterService.destroy(cluster)
-          .subscribe(() => this.getAllClusters());
-      }
+    const confirmation = new Confirmation(`Are you sure you want to delete ${cluster.name}?`);
+    confirmation.verify = true;
+    confirmation.verifyText = cluster.name;
+    this.dialogService.showConfirmDialog(confirmation).pipe(
+      filter((conf) => conf !== undefined)
+    ).subscribe(() => {
+      this.clusterService.destroy(cluster)
+        .subscribe(() => this.getAllClusters());
     });
   }
 }
