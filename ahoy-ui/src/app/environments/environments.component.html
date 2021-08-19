@@ -73,9 +73,7 @@
         </p-table>
 
         <div class="p-field" *ngIf="environments && (environments.length === 0)">
-          <div class="mat-subheading-2">
-            There are no environments in this cluster, click <a routerLink="/environment/new" [queryParams]="{clusterId: selectedCluster.id}">here</a> to create an environment..
-          </div>
+          There are no environments in this cluster, click <a routerLink="/environment/new" [queryParams]="{clusterId: selectedCluster.id}">here</a> to create an environment..
         </div>
 
       </div>
