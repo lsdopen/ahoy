@@ -15,13 +15,9 @@
   -->
 
 <form #f="ngForm">
-  <p-toolbar>
-    <ng-template pTemplate="left">
-      <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2"
-              routerLink="/environment/new" [queryParams]="{clusterId: cluster.id, environmentId: environmentRelease.id.environmentId, releaseId: environmentRelease.id.releaseId}"
-              (click)="cancel()"></button>
-    </ng-template>
-  </p-toolbar>
+  <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2"
+          routerLink="/environment/new" [queryParams]="{clusterId: cluster.id, environmentId: environmentRelease.id.environmentId, releaseId: environmentRelease.id.releaseId}"
+          (click)="cancel()"></button>
 
   <div class="p-fluid">
     <p-dropdown id="environment" [options]="environments" [(ngModel)]="selected" placeholder="Environment" optionLabel="name" name="environment" required

@@ -15,18 +15,15 @@
   -->
 
 <form #f="ngForm">
-  <p-toolbar>
-    <ng-template pTemplate="left">
-      <button *ngIf="!applicationMode" pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2"
-              routerLink="/application/new" [queryParams]="{releaseVersionId: releaseVersion.id}"
-              (click)="cancel()"></button>
-      <button *ngIf="applicationMode" pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2"
-              routerLink="/application/{{selectedApplication.id}}/version/new" [queryParams]="{releaseVersionId: releaseVersion.id, applicationVersionId: currentApplicationVersion.id}"
-              (click)="cancel()"></button>
-    </ng-template>
-  </p-toolbar>
+  <button *ngIf="!applicationMode" pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2"
+          routerLink="/application/new" [queryParams]="{releaseVersionId: releaseVersion.id}"
+          (click)="cancel()"></button>
+  <button *ngIf="applicationMode" pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2"
+          routerLink="/application/{{selectedApplication.id}}/version/new" [queryParams]="{releaseVersionId: releaseVersion.id, applicationVersionId: currentApplicationVersion.id}"
+          (click)="cancel()"></button>
 
   <div class="p-fluid">
+
     <div class="p-field" *ngIf="!applicationMode">
       <p-dropdown id="application" [options]="applications" [(ngModel)]="selectedApplication" placeholder="Application" optionLabel="name" name="application" required
                   (onChange)="applicationChanged()"
