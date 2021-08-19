@@ -20,7 +20,7 @@ import {Application} from './application';
 import {ActivatedRoute} from '@angular/router';
 import {LoggerService} from '../util/logger.service';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
-import {DialogService} from '../components/dialog.service';
+import {DialogUtilService} from '../components/dialog-util.service';
 import {filter} from 'rxjs/operators';
 import {Confirmation} from '../components/confirm-dialog/confirm';
 
@@ -36,7 +36,7 @@ export class ApplicationsComponent implements OnInit {
     private route: ActivatedRoute,
     private applicationService: ApplicationService,
     private log: LoggerService,
-    private dialogService: DialogService,
+    private dialogUtilService: DialogUtilService,
     private breadcrumbService: AppBreadcrumbService) {
 
     this.breadcrumbService.setItems([{label: 'applications'}]);
@@ -56,7 +56,7 @@ export class ApplicationsComponent implements OnInit {
     const confirmation = new Confirmation(`Are you sure you want to delete ${application.name}?`);
     confirmation.verify = true;
     confirmation.verifyText = application.name;
-    this.dialogService.showConfirmDialog(confirmation).pipe(
+    this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
       this.applicationService.delete(application)

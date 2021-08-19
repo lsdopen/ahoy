@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  *    limitations under the License.
  */
 
-import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {Component, OnInit} from '@angular/core';
 import {EnvironmentRelease} from '../../environment-release/environment-release';
 import {Release, ReleaseVersion} from '../release';
+import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-upgrade-dialog',
@@ -30,7 +30,9 @@ export class UpgradeDialogComponent implements OnInit {
   releaseVersion: ReleaseVersion;
   version: string;
 
-  constructor(@Inject(MAT_DIALOG_DATA) data) {
+  constructor(public ref: DynamicDialogRef,
+              public config: DynamicDialogConfig) {
+    const data = config.data;
     this.environmentRelease = data.environmentRelease;
     this.release = this.environmentRelease.release as Release;
     this.releaseVersion = data.releaseVersion;
@@ -39,4 +41,7 @@ export class UpgradeDialogComponent implements OnInit {
   ngOnInit() {
   }
 
+  close(result: any) {
+    this.ref.close(result);
+  }
 }

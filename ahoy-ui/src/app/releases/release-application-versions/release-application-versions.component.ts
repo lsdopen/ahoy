@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 
 import {Component, EventEmitter, Input, OnInit} from '@angular/core';
-import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {MatTableDataSource} from '@angular/material/table';
 import {Application, ApplicationEnvironmentConfig, ApplicationVersion} from '../../applications/application';
 import {Release, ReleaseVersion} from '../release';
@@ -25,7 +24,9 @@ import {EnvironmentRelease} from '../../environment-release/environment-release'
 import {ReleasesService} from '../releases.service';
 import {ApplicationService} from '../../applications/application.service';
 import {Confirmation} from '../../components/confirm-dialog/confirm';
-import {DialogService} from '../../components/dialog.service';
+import {DialogUtilService} from '../../components/dialog-util.service';
+import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
+import {Environment} from '../../environments/environment';
 
 @Component({
   selector: 'app-release-application-versions',
@@ -42,8 +43,8 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
   constructor(
     private releasesService: ReleasesService,
     private applicationService: ApplicationService,
-    private dialog: MatDialog,
-    private dialogService: DialogService) {
+    private dialogService: DialogService,
+    private dialogUtilService: DialogUtilService) {
   }
 
   ngOnInit() {
@@ -98,11 +99,12 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
   }
 
   addApplication() {
-    const dialogConfig = new MatDialogConfig();
+    const dialogConfig = new DynamicDialogConfig();
+    dialogConfig.header = `Add application to ${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} in ${(this.environmentRelease.environment as Environment).name}:`;
     dialogConfig.data = {environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion};
 
-    const dialogRef = this.dialog.open(AddApplicationDialogComponent, dialogConfig);
-    dialogRef.afterClosed().pipe(
+    const dialogRef = this.dialogService.open(AddApplicationDialogComponent, dialogConfig);
+    dialogRef.onClose.pipe(
       filter((result) => result !== undefined) // cancelled
     ).subscribe((applicationVersion) => {
       this.releasesService.associateApplication(this.releaseVersion.id, applicationVersion.id)
@@ -115,7 +117,7 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
       `${(this.environmentRelease.release as Release).name}?`);
     confirmation.verify = true;
     confirmation.verifyText = (applicationVersion.application as Application).name;
-    this.dialogService.showConfirmDialog(confirmation).pipe(
+    this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
       this.releasesService.removeAssociatedApplication(this.releaseVersion.id, applicationVersion.id)
@@ -124,15 +126,16 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
   }
 
   upgradeApplication(currentAppVersion: ApplicationVersion) {
-    const dialogConfig = new MatDialogConfig();
+    const dialogConfig = new DynamicDialogConfig();
+    dialogConfig.header = `Upgrade ${(currentAppVersion.application as Application).name}:${currentAppVersion.version} version to:`;
     dialogConfig.data = {
       environmentRelease: this.environmentRelease,
       releaseVersion: this.releaseVersion,
       currentApplicationVersion: currentAppVersion
     };
 
-    const dialogRef = this.dialog.open(AddApplicationDialogComponent, dialogConfig);
-    dialogRef.afterClosed().pipe(
+    const dialogRef = this.dialogService.open(AddApplicationDialogComponent, dialogConfig);
+    dialogRef.onClose.pipe(
       filter((result) => result !== undefined) // cancelled
     ).subscribe((applicationVersion) => {
       this.releasesService.removeAssociatedApplication(this.releaseVersion.id, currentAppVersion.id)

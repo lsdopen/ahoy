@@ -22,7 +22,7 @@ import {LoggerService} from '../util/logger.service';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Confirmation} from '../components/confirm-dialog/confirm';
 import {filter} from 'rxjs/operators';
-import {DialogService} from '../components/dialog.service';
+import {DialogUtilService} from '../components/dialog-util.service';
 
 @Component({
   selector: 'app-clusters',
@@ -35,7 +35,7 @@ export class ClustersComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private clusterService: ClusterService,
               private log: LoggerService,
-              private dialogService: DialogService,
+              private dialogUtilService: DialogUtilService,
               private breadcrumbService: AppBreadcrumbService) {
 
     this.breadcrumbService.setItems([{label: 'clusters'}]);
@@ -55,7 +55,7 @@ export class ClustersComponent implements OnInit {
     const confirmation = new Confirmation(`Are you sure you want to delete ${cluster.name}?`);
     confirmation.verify = true;
     confirmation.verifyText = cluster.name;
-    this.dialogService.showConfirmDialog(confirmation).pipe(
+    this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
       this.clusterService.destroy(cluster)

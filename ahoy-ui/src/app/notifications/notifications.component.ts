@@ -21,7 +21,7 @@ import {Notification} from './notification';
 import {NotificationsService} from './notifications.service';
 import {Subscription} from 'rxjs';
 import {Description} from '../components/description-dialog/description';
-import {DialogService} from '../components/dialog.service';
+import {DialogUtilService} from '../components/dialog-util.service';
 import {MessageService} from 'primeng/api';
 import {AppMainComponent} from '../app.main.component';
 import {AppComponent} from '../app.component';
@@ -54,7 +54,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
               private log: LoggerService,
               private notificationsService: NotificationsService,
               private snackBar: MatSnackBar,
-              private dialogService: DialogService,
+              private dialogUtilService: DialogUtilService,
               private messageService: MessageService) {
     this.notifications = [];
   }
@@ -110,6 +110,6 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   }
 
   showDescription(notification: Notification) {
-    this.dialogService.showDescriptionDialog(new Description('Notification', notification.text));
+    this.dialogUtilService.showDescriptionDialog(new Description('Notification', notification.text));
   }
 }

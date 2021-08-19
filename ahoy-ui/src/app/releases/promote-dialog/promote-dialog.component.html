@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,27 +14,23 @@
   ~    limitations under the License.
   -->
 
-<h2 mat-dialog-title>Promote release {{release.name}}:{{releaseVersion.version}} to</h2>
-
 <form #f="ngForm">
-  <mat-dialog-content fxFlex fxLayout="column">
+  <p-toolbar>
+    <ng-template pTemplate="left">
+      <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2"
+              routerLink="/environment/new" [queryParams]="{clusterId: cluster.id, environmentId: environmentRelease.id.environmentId, releaseId: environmentRelease.id.releaseId}"
+              (click)="cancel()"></button>
+    </ng-template>
+  </p-toolbar>
 
-    <div fxFlex fxLayout="row" fxLayoutAlign="end">
-      <button mat-button [mat-dialog-close]="undefined" routerLink="/environment/new" [queryParams]="{clusterId: cluster.id, environmentId: environmentRelease.id.environmentId, releaseId: environmentRelease.id.releaseId}">New Environment</button>
-    </div>
-
-    <mat-form-field>
-      <mat-label>environment</mat-label>
-      <mat-select [(ngModel)]="selected" name="environment" required>
-        <mat-option *ngFor="let environment of environments" [value]="environment">
-          {{environment.name}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </mat-dialog-content>
+  <div class="p-fluid">
+    <p-dropdown id="environment" [options]="environments" [(ngModel)]="selected" placeholder="Environment" optionLabel="name" name="environment" required
+                appendTo="body">
+    </p-dropdown>
+  </div>
 </form>
 
-<mat-dialog-actions>
-  <button mat-button [mat-dialog-close]>Cancel</button>
-  <button mat-raised-button color="primary" [mat-dialog-close]="selected" [disabled]="f.invalid">Ok</button>
-</mat-dialog-actions>
+<div class="p-grid p-pt-3">
+  <button pButton pRipple type="button" icon="pi pi-times" (click)="close(undefined)" label="Cancel" class="p-button-text p-ml-auto p-mr-2"></button>
+  <button pButton pRipple type="button" icon="pi pi-check" (click)="close(selected)" label="Ok" class="p-button-text p-mr-2" [disabled]="f.invalid"></button>
+</div>

@@ -15,8 +15,9 @@
   -->
 
 <form #f="ngForm">
-  <div class="p-grid">
-    <p-dropdown id="environment-dropdown" class="p-col-12" [options]="releases" [(ngModel)]="selected" placeholder="Release" optionLabel="name" name="release" required>
+  <div class="p-fluid">
+    <p-dropdown id="release" [options]="releases" [(ngModel)]="selected" placeholder="Release" optionLabel="name" name="release" required
+                appendTo="body">
     </p-dropdown>
   </div>
 </form>

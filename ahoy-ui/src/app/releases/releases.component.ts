@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {EnvironmentService} from '../environments/environment.service';
 import {Environment} from '../environments/environment';
@@ -28,7 +28,7 @@ import {Release} from './release';
 import {TaskEvent} from '../taskevents/task-events';
 import {ReleaseService} from '../release/release.service';
 import {ConfirmationService} from 'primeng/api';
-import {DialogService, DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
+import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
 
 @Component({
@@ -36,12 +36,10 @@ import {AppBreadcrumbService} from '../app.breadcrumb.service';
   templateUrl: './releases.component.html',
   styleUrls: ['./releases.component.scss']
 })
-export class ReleasesComponent implements OnInit, OnDestroy {
+export class ReleasesComponent implements OnInit {
   environments: Environment[] = undefined;
   environmentReleases: EnvironmentRelease[] = undefined;
   selectedEnvironment: Environment;
-
-  addReleaseDialogRef: DynamicDialogRef;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -73,12 +71,6 @@ export class ReleasesComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    if (this.addReleaseDialogRef) {
-      this.addReleaseDialogRef.close();
-    }
-  }
-
   private getReleases(environmentId) {
     this.log.debug('getting environment releases for environmentId=', environmentId);
     this.environmentService.get(environmentId)
@@ -105,8 +97,8 @@ export class ReleasesComponent implements OnInit, OnDestroy {
     dialogConfig.header = `Add release to ${this.selectedEnvironment.cluster.name}/${this.selectedEnvironment.name}`;
     dialogConfig.data = this.selectedEnvironment;
 
-    this.addReleaseDialogRef = this.dialogService.open(AddReleaseDialogComponent, dialogConfig);
-    this.addReleaseDialogRef.onClose.pipe(
+    const dialogRef = this.dialogService.open(AddReleaseDialogComponent, dialogConfig);
+    dialogRef.onClose.pipe(
       filter((result) => result !== undefined), // cancelled
       mergeMap((release: Release) => {
         const environmentRelease = new EnvironmentRelease();

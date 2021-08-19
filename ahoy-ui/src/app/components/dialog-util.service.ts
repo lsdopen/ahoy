@@ -20,14 +20,14 @@ import {Observable} from 'rxjs';
 import {Description} from './description-dialog/description';
 import {DescriptionDialogComponent} from './description-dialog/description-dialog.component';
 import {Confirmation} from './confirm-dialog/confirm';
-import {DialogService as PDialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
+import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
 
 @Injectable({
   providedIn: 'root'
 })
-export class DialogService {
+export class DialogUtilService {
 
-  constructor(private pDialogService: PDialogService) {
+  constructor(private dialogService: DialogService) {
   }
 
   public showConfirmDialog(confirmation: Confirmation): Observable<Confirmation> {
@@ -35,7 +35,7 @@ export class DialogService {
     dialogConfig.header = confirmation.title;
     dialogConfig.data = confirmation;
 
-    const dialogRef = this.pDialogService.open(ConfirmDialogComponent, dialogConfig);
+    const dialogRef = this.dialogService.open(ConfirmDialogComponent, dialogConfig);
     return dialogRef.onClose;
   }
 
@@ -44,6 +44,6 @@ export class DialogService {
     dialogConfig.header = description.title;
     dialogConfig.data = description;
 
-    this.pDialogService.open(DescriptionDialogComponent, dialogConfig);
+    this.dialogService.open(DescriptionDialogComponent, dialogConfig);
   }
 }

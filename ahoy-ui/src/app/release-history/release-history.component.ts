@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import {ReleasesService} from '../releases/releases.service';
 import {Release} from '../releases/release';
 import {Location} from '@angular/common';
 import {Description} from '../components/description-dialog/description';
-import {DialogService} from '../components/dialog.service';
+import {DialogUtilService} from '../components/dialog-util.service';
 
 @Component({
   selector: 'app-release-history',
@@ -38,7 +38,7 @@ export class ReleaseHistoryComponent implements OnInit {
               private location: Location,
               private releasesService: ReleasesService,
               private releaseHistoryService: ReleaseHistoryService,
-              private dialogService: DialogService) {
+              private dialogUtilService: DialogUtilService) {
   }
 
   ngOnInit() {
@@ -57,6 +57,6 @@ export class ReleaseHistoryComponent implements OnInit {
   }
 
   showDescription(releaseHistory: ReleaseHistory) {
-    this.dialogService.showDescriptionDialog(new Description('Description', releaseHistory.description));
+    this.dialogUtilService.showDescriptionDialog(new Description('Description', releaseHistory.description));
   }
 }

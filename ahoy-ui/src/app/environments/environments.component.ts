@@ -22,7 +22,7 @@ import {Cluster} from '../clusters/cluster';
 import {LoggerService} from '../util/logger.service';
 import {ClusterService} from '../clusters/cluster.service';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
-import {DialogService} from '../components/dialog.service';
+import {DialogUtilService} from '../components/dialog-util.service';
 import {filter} from 'rxjs/operators';
 import {Confirmation} from '../components/confirm-dialog/confirm';
 
@@ -42,7 +42,7 @@ export class EnvironmentsComponent implements OnInit {
     private environmentService: EnvironmentService,
     private clusterService: ClusterService,
     private log: LoggerService,
-    private dialogService: DialogService,
+    private dialogUtilService: DialogUtilService,
     private breadcrumbService: AppBreadcrumbService) {
   }
 
@@ -87,7 +87,7 @@ export class EnvironmentsComponent implements OnInit {
     const confirmation = new Confirmation(`Are you sure you want to delete ${environment.name}?`);
     confirmation.verify = true;
     confirmation.verifyText = environment.name;
-    this.dialogService.showConfirmDialog(confirmation).pipe(
+    this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
       this.environmentService.destroy(environment)
