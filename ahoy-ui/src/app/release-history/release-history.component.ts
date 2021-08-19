@@ -23,6 +23,7 @@ import {Release} from '../releases/release';
 import {Location} from '@angular/common';
 import {Description} from '../components/description-dialog/description';
 import {DialogUtilService} from '../components/dialog-util.service';
+import {AppBreadcrumbService} from '../app.breadcrumb.service';
 
 @Component({
   selector: 'app-release-history',
@@ -30,15 +31,15 @@ import {DialogUtilService} from '../components/dialog-util.service';
   styleUrls: ['./release-history.component.scss']
 })
 export class ReleaseHistoryComponent implements OnInit {
-  private displayedColumns = ['version', 'action', 'status', 'environment', 'cluster', 'date', 'description'];
-  private releaseHistories: ReleaseHistory[];
+  releaseHistories: ReleaseHistory[];
   release: Release;
 
   constructor(private route: ActivatedRoute,
               private location: Location,
               private releasesService: ReleasesService,
               private releaseHistoryService: ReleaseHistoryService,
-              private dialogUtilService: DialogUtilService) {
+              private dialogUtilService: DialogUtilService,
+              private breadcrumbService: AppBreadcrumbService) {
   }
 
   ngOnInit() {
@@ -47,16 +48,25 @@ export class ReleaseHistoryComponent implements OnInit {
     this.releasesService.get(releaseId)
       .subscribe((release) => {
         this.release = release;
+        this.setBreadcrumb();
+
         this.releaseHistoryService.getAllByReleaseId(releaseId)
           .subscribe((releaseHistories) => this.releaseHistories = releaseHistories);
       });
+  }
+
+  private setBreadcrumb() {
+    this.breadcrumbService.setItems([
+      {label: this.release.name},
+      {label: 'history'}
+    ]);
   }
 
   done() {
     this.location.back();
   }
 
-  showDescription(releaseHistory: ReleaseHistory) {
+  showDescription(event: Event, releaseHistory: ReleaseHistory) {
     this.dialogUtilService.showDescriptionDialog(new Description('Description', releaseHistory.description));
   }
 }
