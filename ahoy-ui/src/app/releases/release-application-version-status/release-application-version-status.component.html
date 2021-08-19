@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,12 +14,4 @@
   ~    limitations under the License.
   -->
 
-<ng-container *ngIf="applicationVersion.status">
-  <div fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="start center">
-    <mat-icon *ngIf="applicationVersion.status.status === 'Healthy'" class="status-success">directions_run</mat-icon>
-    <mat-icon *ngIf="applicationVersion.status.status !== 'Healthy'" class="status-warn">highlight_off</mat-icon>
-    <span>
-      {{applicationVersion.status.status}}
-    </span>
-  </div>
-</ng-container>
+<span [class]="'status-badge ' + style()">{{status()}}</span>

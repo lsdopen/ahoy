@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 import {Component, Input, OnInit} from '@angular/core';
 import {ApplicationVersion} from '../../applications/application';
+import {EnvironmentRelease} from '../../environment-release/environment-release';
 
 @Component({
   selector: 'app-release-application-version-status',
@@ -23,11 +24,40 @@ import {ApplicationVersion} from '../../applications/application';
   styleUrls: ['./release-application-version-status.component.scss']
 })
 export class ReleaseApplicationVersionStatusComponent implements OnInit {
+  @Input() environmentRelease: EnvironmentRelease;
   @Input() applicationVersion: ApplicationVersion;
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
   }
 
+  status(): string {
+    if (!this.environmentRelease.deployed) {
+      return '';
+    }
+
+    if (!this.applicationVersion.status) {
+      return 'Missing';
+    }
+
+    return this.applicationVersion.status.status;
+  }
+
+  style(): string {
+    if (!this.environmentRelease.deployed) {
+      return '';
+    }
+
+    if (!this.applicationVersion.status) {
+      return 'status-error';
+    }
+
+    if (this.applicationVersion.status.status === 'Healthy') {
+      return 'status-success';
+    }
+
+    return 'status-warn';
+  }
 }
