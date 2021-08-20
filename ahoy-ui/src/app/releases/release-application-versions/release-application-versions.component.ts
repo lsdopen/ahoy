@@ -15,7 +15,6 @@
  */
 
 import {Component, EventEmitter, Input, OnInit} from '@angular/core';
-import {MatTableDataSource} from '@angular/material/table';
 import {Application, ApplicationEnvironmentConfig, ApplicationVersion} from '../../applications/application';
 import {Release, ReleaseVersion} from '../release';
 import {AddApplicationDialogComponent} from '../add-application-dialog/add-application-dialog.component';
@@ -37,7 +36,6 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
   @Input() environmentRelease: EnvironmentRelease;
   @Input() releaseVersion: ReleaseVersion;
   @Input() releaseChanged: EventEmitter<{ environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion }>;
-  private dataSource = new MatTableDataSource<ApplicationVersion>();
   existingConfigs: Map<number, ApplicationEnvironmentConfig>;
 
   constructor(
@@ -48,7 +46,6 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.dataSource.data = this.releaseVersion.applicationVersions;
     this.getConfigs();
     this.getStatuses();
 
@@ -65,7 +62,6 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
     this.releasesService.getVersion(this.releaseVersion.id)
       .subscribe(releaseVersion => {
         this.releaseVersion = releaseVersion;
-        this.dataSource.data = this.releaseVersion.applicationVersions;
         this.getConfigs();
         this.getStatuses();
       });

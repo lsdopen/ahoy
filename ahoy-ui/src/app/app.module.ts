@@ -130,6 +130,7 @@ import {DividerModule} from 'primeng/divider';
 import {MessagesModule} from 'primeng/messages';
 import {TagModule} from 'primeng/tag';
 import {EnvironmentReleaseDeploymentStatusComponent} from './environment-release/environment-release-deployment-status/environment-release-deployment-status.component';
+import {AccordionModule} from 'primeng/accordion';
 
 @NgModule({
   declarations: [
@@ -249,7 +250,8 @@ import {EnvironmentReleaseDeploymentStatusComponent} from './environment-release
     CheckboxModule,
     DividerModule,
     MessagesModule,
-    TagModule
+    TagModule,
+    AccordionModule
   ],
   providers: [
     {provide: ErrorHandler, useClass: ErrorService},
