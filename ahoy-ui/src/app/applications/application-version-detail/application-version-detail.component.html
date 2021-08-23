@@ -200,7 +200,7 @@
                     <p-tabPanel [header]="secret.name ? secret.name : '<new>'"
                                 *ngFor="let secret of applicationVersion.secrets; let secretIndex = index" [selected]="secretIndex == 0">
 
-                      <div class="p-fluid">
+                      <div class="p-fluid p-md-5">
                         <div class="p-field p-float-label">
                           <input pInputText id="secretName{{secretIndex}}" [(ngModel)]="secret.name" name="secretName{{secretIndex}}"
                                  required
@@ -210,10 +210,10 @@
                           <label for="secretName{{secretIndex}}">Name</label>
                           <small>Name should start with and use lower case letters and numbers</small>
                         </div>
-                      </div>
 
-                      <app-application-secret-data [secretData]="secret.data">
-                      </app-application-secret-data>
+                        <app-application-secret-data [secretData]="secret.data">
+                        </app-application-secret-data>
+                      </div>
 
                     </p-tabPanel>
                   </p-tabView>
