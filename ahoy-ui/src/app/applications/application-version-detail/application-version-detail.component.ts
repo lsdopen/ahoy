@@ -38,11 +38,8 @@ export class ApplicationVersionDetailComponent implements OnInit {
   healthChecksCategory = false;
   environmentVariablesCategory = false;
   configFilesCategory = false;
-  selectedConfigIndex: number;
   volumesCategory = false;
-  selectedVolumeIndex: number;
   secretsCategory = false;
-  selectedSecretIndex: number;
 
   constructor(
     private route: ActivatedRoute,
@@ -127,17 +124,14 @@ export class ApplicationVersionDetailComponent implements OnInit {
 
     if (this.applicationVersion.configPath) {
       this.configFilesCategory = true;
-      this.selectedConfigIndex = 0;
     }
 
     if (this.applicationVersion.volumes.length > 0) {
       this.volumesCategory = true;
-      this.selectedVolumeIndex = 0;
     }
 
     if (this.applicationVersion.secrets.length > 0) {
       this.secretsCategory = true;
-      this.selectedSecretIndex = 0;
     }
   }
 
@@ -161,17 +155,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
     this.location.back();
   }
 
-  addConfig() {
-    this.applicationVersion.configs.push(new ApplicationConfig());
-    setTimeout(() => this.selectedConfigIndex = this.applicationVersion.configs.length - 1, 300);
-  }
-
-  deleteConfig() {
-    const indexToRemove = this.selectedConfigIndex;
-    this.selectedConfigIndex = 0;
-    this.applicationVersion.configs.splice(indexToRemove, 1);
-  }
-
   private cloneConfigs(configs: ApplicationConfig[]): ApplicationConfig[] {
     return configs.map((applicationConfig) => {
       const appConfig = new ApplicationConfig();
@@ -192,17 +175,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
     this.applicationVersion.servicePorts.splice(portIndex, 1);
   }
 
-  addVolume() {
-    this.applicationVersion.volumes.push(new ApplicationVolume());
-    setTimeout(() => this.selectedVolumeIndex = this.applicationVersion.volumes.length - 1, 300);
-  }
-
-  deleteVolume() {
-    const indexToRemove = this.selectedVolumeIndex;
-    this.selectedVolumeIndex = 0;
-    this.applicationVersion.volumes.splice(indexToRemove, 1);
-  }
-
   private cloneVolumes(volumes: ApplicationVolume[]): ApplicationVolume[] {
     return volumes.map((applicationVolume) => {
       const appVolume = new ApplicationVolume();
@@ -214,32 +186,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
       appVolume.sizeStorageUnit = applicationVolume.sizeStorageUnit;
       return appVolume;
     });
-  }
-
-  addSecret() {
-    const applicationSecret = new ApplicationSecret();
-    applicationSecret.type = 'Generic';
-    applicationSecret.data = {};
-    this.applicationVersion.secrets.push(applicationSecret);
-    setTimeout(() => this.selectedSecretIndex = this.applicationVersion.secrets.length - 1, 300);
-  }
-
-  deleteSecret() {
-    const indexToRemove = this.selectedSecretIndex;
-    this.selectedSecretIndex = 0;
-    this.applicationVersion.secrets.splice(indexToRemove, 1);
-  }
-
-  secretInUse(): boolean {
-    const secret = this.applicationVersion.secrets[this.selectedSecretIndex];
-    if (secret && secret.name) {
-      const inUseInVolumes = this.applicationVersion.volumes
-        .filter(volume => volume.type === 'Secret' && volume.secretName === secret.name).length > 0;
-      const inUseInEnvironmentVariables = this.applicationVersion.environmentVariables
-        .filter(envVar => envVar.type === 'Secret' && envVar.secretName === secret.name).length > 0;
-      return inUseInVolumes || inUseInEnvironmentVariables;
-    }
-    return false;
   }
 
   private cloneSecrets(secrets: ApplicationSecret[]): ApplicationSecret[] {

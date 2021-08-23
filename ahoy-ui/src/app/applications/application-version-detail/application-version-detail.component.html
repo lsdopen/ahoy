@@ -125,100 +125,28 @@
 
             <p-accordionTab header="Configuration Files" [(selected)]="configFilesCategory">
 
-              <div class="p-fluid">
-                <div class="p-col-12 p-md-5">
-                  <div class="p-field p-float-label">
-                    <input pInputText id="applicationConfigPath" [(ngModel)]="applicationVersion.configPath" name="applicationConfigPath"
-                           required="{{applicationVersion.configs.length > 0}}">
-                    <label for="applicationConfigPath">Path</label>
-                  </div>
-
-                  <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-plain p-mr-2" (click)="addConfig()"></button>
-                  <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteConfig()"></button>
-                </div>
-
-                <div *ngIf="applicationVersion.configs && applicationVersion.configs.length > 0" class="p-col-12">
-                  <p-tabView orientation="left" [(activeIndex)]="selectedConfigIndex">
-                    <p-tabPanel [header]="config.name ? config.name : '<new>'"
-                                *ngFor="let config of applicationVersion.configs; let configIndex = index" [selected]="configIndex == 0">
-
-                      <div class="p-fluid p-col-12 p-md-5">
-                        <div class="p-field p-float-label">
-                          <input pInputText id="applicationConfigName{{configIndex}}" [(ngModel)]="config.name" name="applicationConfigName{{configIndex}}"
-                                 required>
-                          <label for="applicationConfigName{{configIndex}}">Name</label>
-                        </div>
-
-                        <div class="p-field p-float-label">
-                            <textarea rows="20" cols="60" pInputTextarea id="applicationConfig{{configIndex}}" [(ngModel)]="config.config" name="applicationConfig{{configIndex}}"
-                                      required></textarea>
-                          <label for="applicationConfig{{configIndex}}">Config</label>
-                        </div>
-                      </div>
-
-                    </p-tabPanel>
-                  </p-tabView>
-                </div>
-              </div>
+              <app-application-config-files
+                [applicationVersion]="applicationVersion" [configs]="applicationVersion.configs">
+              </app-application-config-files>
 
             </p-accordionTab>
 
             <p-accordionTab header="Volumes" [(selected)]="volumesCategory">
 
-              <div class="p-fluid">
-                <div class="p-col-12 p-md-5">
-                  <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-plain p-mr-2" (click)="addVolume()"></button>
-                  <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteVolume()"></button>
-                </div>
-
-                <div *ngIf="applicationVersion.volumes && applicationVersion.volumes.length > 0" class="p-col-12">
-                  <p-tabView orientation="left" [(activeIndex)]="selectedVolumeIndex">
-                    <p-tabPanel [header]="volume.name ? volume.name : '<new>'"
-                                *ngFor="let volume of applicationVersion.volumes; let volumeIndex = index" [selected]="volumeIndex == 0">
-
-                      <app-application-volume-detail [volume]="volume" [volumeIndex]="volumeIndex" [secrets]="applicationVersion.secrets">
-                      </app-application-volume-detail>
-
-                    </p-tabPanel>
-                  </p-tabView>
-                </div>
-              </div>
+              <app-application-volumes
+                [volumes]="applicationVersion.volumes" [secrets]="applicationVersion.secrets">
+              </app-application-volumes>
 
             </p-accordionTab>
 
             <p-accordionTab header="Secrets" [(selected)]="secretsCategory">
 
-              <div class="p-fluid">
-                <div class="p-col-12 p-md-5">
-                  <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-plain p-mr-2" (click)="addSecret()"></button>
-                  <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteSecret()"
-                          [disabled]="secretInUse()" [pTooltip]="secretInUse() ? 'Secret in use' : ''"></button>
-                </div>
-
-                <div *ngIf="applicationVersion.secrets && applicationVersion.secrets.length > 0" class="p-col-12">
-                  <p-tabView orientation="left" [(activeIndex)]="selectedSecretIndex">
-                    <p-tabPanel [header]="secret.name ? secret.name : '<new>'"
-                                *ngFor="let secret of applicationVersion.secrets; let secretIndex = index" [selected]="secretIndex == 0">
-
-                      <div class="p-fluid p-md-5">
-                        <div class="p-field p-float-label">
-                          <input pInputText id="secretName{{secretIndex}}" [(ngModel)]="secret.name" name="secretName{{secretIndex}}"
-                                 required
-                                 [readonly]="secretInUse()"
-                                 [pTooltip]="secretInUse() ? 'Secret in use' : ''"
-                                 pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$">
-                          <label for="secretName{{secretIndex}}">Name</label>
-                          <small>Name should start with and use lower case letters and numbers</small>
-                        </div>
-
-                        <app-application-secret-data [secretData]="secret.data">
-                        </app-application-secret-data>
-                      </div>
-
-                    </p-tabPanel>
-                  </p-tabView>
-                </div>
-              </div>
+              <app-application-secrets
+                [secrets]="applicationVersion.secrets"
+                [volumes]="applicationVersion.volumes"
+                [environmentVariables]="applicationVersion.environmentVariables"
+                [routeTlsSecretName]="undefined">
+              </app-application-secrets>
 
             </p-accordionTab>
           </p-accordion>

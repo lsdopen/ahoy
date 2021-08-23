@@ -131,6 +131,10 @@ import {MessagesModule} from 'primeng/messages';
 import {TagModule} from 'primeng/tag';
 import {EnvironmentReleaseDeploymentStatusComponent} from './environment-release/environment-release-deployment-status/environment-release-deployment-status.component';
 import {AccordionModule} from 'primeng/accordion';
+import {InputNumberModule} from 'primeng/inputnumber';
+import {ApplicationConfigFilesComponent} from './applications/application-config-files/application-config-files.component';
+import {ApplicationVolumesComponent} from './applications/application-volumes/application-volumes.component';
+import {ApplicationSecretsComponent} from './applications/application-secrets/application-secrets.component';
 
 @NgModule({
   declarations: [
@@ -189,7 +193,10 @@ import {AccordionModule} from 'primeng/accordion';
     DockerSettingsComponent,
     ApplicationSecretDataComponent,
     ApplicationVolumeDetailComponent,
-    EnvironmentReleaseDeploymentStatusComponent
+    EnvironmentReleaseDeploymentStatusComponent,
+    ApplicationConfigFilesComponent,
+    ApplicationVolumesComponent,
+    ApplicationSecretsComponent
   ],
   imports: [
     BrowserModule,
@@ -251,7 +258,8 @@ import {AccordionModule} from 'primeng/accordion';
     DividerModule,
     MessagesModule,
     TagModule,
-    AccordionModule
+    AccordionModule,
+    InputNumberModule
   ],
   providers: [
     {provide: ErrorHandler, useClass: ErrorService},
