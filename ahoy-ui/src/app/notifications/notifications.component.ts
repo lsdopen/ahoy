@@ -14,18 +14,17 @@
  *    limitations under the License.
  */
 
+import {animate, style, transition, trigger} from '@angular/animations';
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {LoggerService} from '../util/logger.service';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {Notification} from './notification';
-import {NotificationsService} from './notifications.service';
+import {MessageService} from 'primeng/api';
 import {Subscription} from 'rxjs';
+import {AppComponent} from '../app.component';
+import {AppMainComponent} from '../app.main.component';
 import {Description} from '../components/description-dialog/description';
 import {DialogUtilService} from '../components/dialog-util.service';
-import {MessageService} from 'primeng/api';
-import {AppMainComponent} from '../app.main.component';
-import {AppComponent} from '../app.component';
-import {animate, style, transition, trigger} from '@angular/animations';
+import {LoggerService} from '../util/logger.service';
+import {Notification} from './notification';
+import {NotificationsService} from './notifications.service';
 
 @Component({
   selector: 'app-notifications',
@@ -53,7 +52,6 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   constructor(public appMain: AppMainComponent, public app: AppComponent,
               private log: LoggerService,
               private notificationsService: NotificationsService,
-              private snackBar: MatSnackBar,
               private dialogUtilService: DialogUtilService,
               private messageService: MessageService) {
     this.notifications = [];
