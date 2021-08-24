@@ -19,60 +19,60 @@
 
     <p-confirmPopup></p-confirmPopup>
 
-    <div *ngIf="application">
+    <div class="card" *ngIf="application">
+      <div class="card-header">
+        <h5>Versions</h5>
+      </div>
 
-      <div class="card">
-        <p-toolbar>
-          <ng-template pTemplate="left">
-            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="version/new" [queryParams]="{applicationVersionId: lastVersionId()}"></button>
-          </ng-template>
-        </p-toolbar>
+      <p-toolbar>
+        <ng-template pTemplate="left">
+          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="version/new" [queryParams]="{applicationVersionId: lastVersionId()}"></button>
+        </ng-template>
+      </p-toolbar>
 
-        <p-table #dt [value]="application.applicationVersions" dataKey="id" selectionMode="single"
-                 styleClass="p-datatable-applicationVersions p-datatable-striped p-datatable-sm"
-                 [scrollable]="true" scrollHeight="600px" [filterDelay]="0" [globalFilterFields]="['version', 'image']">
-          <ng-template pTemplate="caption">
-            <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
-              <h5 class="p-m-0">Versions</h5>
-              <span class="p-input-icon-left">
+      <p-table #dt [value]="application.applicationVersions" dataKey="id" selectionMode="single"
+               styleClass="p-datatable-applicationVersions p-datatable-striped p-datatable-sm"
+               [scrollable]="true" scrollHeight="600px" [filterDelay]="0" [globalFilterFields]="['version', 'image']">
+        <ng-template pTemplate="caption">
+          <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
+              <span class="p-input-icon-left p-ml-auto">
                 <i class="pi pi-search"></i>
                 <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"/>
               </span>
-            </div>
-          </ng-template>
-          <ng-template pTemplate="header">
-            <tr>
-              <th pSortableColumn="version">Version
-                <p-sortIcon field="version"></p-sortIcon>
-              </th>
-              <th pSortableColumn="image">Image
-                <p-sortIcon field="image"></p-sortIcon>
-              </th>
-              <th></th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-element>
-            <tr>
-              <td><span class="p-column-title">Version</span>
-                {{element.version}}
-              </td>
-              <td><span class="p-column-title">Image</span>
-                {{element.image}}
-              </td>
-              <td>
-                <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
-                        routerLink="version/{{element.id}}"
-                        pTooltip="Edit version"></button>
-                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
-                        (click)="removeApplicationVersion($event, element)"
-                        pTooltip="Delete version from application"></button>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-
-      </div>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="version">Version
+              <p-sortIcon field="version"></p-sortIcon>
+            </th>
+            <th pSortableColumn="image">Image
+              <p-sortIcon field="image"></p-sortIcon>
+            </th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-element>
+          <tr>
+            <td><span class="p-column-title">Version</span>
+              {{element.version}}
+            </td>
+            <td><span class="p-column-title">Image</span>
+              {{element.image}}
+            </td>
+            <td>
+              <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
+                      routerLink="version/{{element.id}}"
+                      pTooltip="Edit version"></button>
+              <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                      (click)="removeApplicationVersion($event, element)"
+                      pTooltip="Delete version from application"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
 
     </div>
+
   </div>
 </div>

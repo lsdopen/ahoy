@@ -17,89 +17,87 @@
 <div class="p-grid">
   <div class="p-col-12">
 
-    <div *ngIf="release">
+    <div class="card" *ngIf="release">
+      <div class="card-header">
+        <h5>History for {{release.name}}</h5>
+      </div>
 
-      <div class="card">
-        <p-toolbar>
-          <ng-template pTemplate="left">
-          </ng-template>
-          <ng-template pTemplate="right">
-            <button pButton pRipple label="Done" class="p-button-plain p-ml-auto p-mb-2" (click)="done()"></button>
-          </ng-template>
-        </p-toolbar>
+      <p-toolbar>
+        <ng-template pTemplate="left">
+          <button pButton pRipple label="Done" class="p-button-plain p-ml-auto p-mb-2" (click)="done()"></button>
+        </ng-template>
+      </p-toolbar>
 
-        <p-table #dt [value]="releaseHistories" dataKey="id" selectionMode="single"
-                 styleClass="p-datatable-releaseHistories p-datatable-striped p-datatable-sm"
-                 [scrollable]="true" scrollHeight="600px" [filterDelay]="0" [globalFilterFields]="['releaseVersion.version', 'action', 'status', 'environmentRelease.environment.name', 'environmentRelease.environment.cluster.name']"
-                 *ngIf="release && (releaseHistories && releaseHistories.length > 0)">
-          <ng-template pTemplate="caption">
-            <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
-              <h5 class="p-m-0">History for {{release.name}}</h5>
-              <span class="p-input-icon-left">
+      <div class="p-field" *ngIf="releaseHistories && (releaseHistories.length === 0)">
+        There are no release history items, these will accumulate over time after managing releases..
+      </div>
+
+      <p-table #dt [value]="releaseHistories" dataKey="id" selectionMode="single"
+               styleClass="p-datatable-releaseHistories p-datatable-striped p-datatable-sm"
+               [scrollable]="true" scrollHeight="600px" [filterDelay]="0" [globalFilterFields]="['releaseVersion.version', 'action', 'status', 'environmentRelease.environment.name', 'environmentRelease.environment.cluster.name']"
+               *ngIf="releaseHistories && releaseHistories.length > 0">
+        <ng-template pTemplate="caption">
+          <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
+              <span class="p-input-icon-left p-ml-auto">
                 <i class="pi pi-search"></i>
                 <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"/>
               </span>
-            </div>
-          </ng-template>
-          <ng-template pTemplate="header">
-            <tr>
-              <th pSortableColumn="releaseVersion.version">Version
-                <p-sortIcon field="releaseVersion.version"></p-sortIcon>
-              </th>
-              <th pSortableColumn="action">Action
-                <p-sortIcon field="action"></p-sortIcon>
-              </th>
-              <th pSortableColumn="status">Status
-                <p-sortIcon field="status"></p-sortIcon>
-              </th>
-              <th pSortableColumn="environmentRelease.environment.name">Environment
-                <p-sortIcon field="environmentRelease.environment.name"></p-sortIcon>
-              </th>
-              <th pSortableColumn="environmentRelease.environment.cluster.name">Cluster
-                <p-sortIcon field="environmentRelease.environment.cluster.name"></p-sortIcon>
-              </th>
-              <th pSortableColumn="time">Date
-                <p-sortIcon field="time"></p-sortIcon>
-              </th>
-              <th></th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-rh>
-            <tr>
-              <td><span class="p-column-title">Version</span>
-                {{rh.releaseVersion.version}}
-              </td>
-              <td><span class="p-column-title">Action</span>
-                {{rh.action | titlecase}}
-              </td>
-              <td><span class="p-column-title">Status</span>
-                {{rh.status | titlecase}}
-              </td>
-              <td><span class="p-column-title">Environment</span>
-                {{rh.environmentRelease.environment.name}}
-              </td>
-              <td><span class="p-column-title">Cluster</span>
-                {{rh.environmentRelease.environment.cluster.name}}
-              </td>
-              <td><span class="p-column-title">Date</span>
-                {{rh.time | date:'short'}}
-              </td>
-              <td>
-                <button pButton pRipple icon="pi pi-chevron-circle-right" class="p-button-rounded p-button-info p-mr-2"
-                        routerLink="/release/{{rh.environmentRelease.id.environmentId}}/{{rh.environmentRelease.id.releaseId}}/version/{{rh.releaseVersion.id}}"
-                        pTooltip="Manage release"></button>
-                <button pButton pRipple icon="pi pi-info" class="p-button-rounded p-button-info"
-                        (click)="showDescription($event, rh)"></button>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="releaseVersion.version">Version
+              <p-sortIcon field="releaseVersion.version"></p-sortIcon>
+            </th>
+            <th pSortableColumn="action">Action
+              <p-sortIcon field="action"></p-sortIcon>
+            </th>
+            <th pSortableColumn="status">Status
+              <p-sortIcon field="status"></p-sortIcon>
+            </th>
+            <th pSortableColumn="environmentRelease.environment.name">Environment
+              <p-sortIcon field="environmentRelease.environment.name"></p-sortIcon>
+            </th>
+            <th pSortableColumn="environmentRelease.environment.cluster.name">Cluster
+              <p-sortIcon field="environmentRelease.environment.cluster.name"></p-sortIcon>
+            </th>
+            <th pSortableColumn="time">Date
+              <p-sortIcon field="time"></p-sortIcon>
+            </th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rh>
+          <tr>
+            <td><span class="p-column-title">Version</span>
+              {{rh.releaseVersion.version}}
+            </td>
+            <td><span class="p-column-title">Action</span>
+              {{rh.action | titlecase}}
+            </td>
+            <td><span class="p-column-title">Status</span>
+              {{rh.status | titlecase}}
+            </td>
+            <td><span class="p-column-title">Environment</span>
+              {{rh.environmentRelease.environment.name}}
+            </td>
+            <td><span class="p-column-title">Cluster</span>
+              {{rh.environmentRelease.environment.cluster.name}}
+            </td>
+            <td><span class="p-column-title">Date</span>
+              {{rh.time | date:'short'}}
+            </td>
+            <td>
+              <button pButton pRipple icon="pi pi-chevron-circle-right" class="p-button-rounded p-button-info p-mr-2"
+                      routerLink="/release/{{rh.environmentRelease.id.environmentId}}/{{rh.environmentRelease.id.releaseId}}/version/{{rh.releaseVersion.id}}"
+                      pTooltip="Manage release"></button>
+              <button pButton pRipple icon="pi pi-info" class="p-button-rounded p-button-info"
+                      (click)="showDescription($event, rh)"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
 
-        <div class="p-field" *ngIf="release && (releaseHistories && (releaseHistories.length === 0))">
-          There are no release history items, these will accumulate over time after managing releases..
-        </div>
-
-      </div>
     </div>
 
   </div>

@@ -17,6 +17,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ApplicationVersion} from '../../applications/application';
 import {EnvironmentRelease} from '../../environment-release/environment-release';
+import {ReleaseVersion} from '../release';
 
 @Component({
   selector: 'app-release-application-version-status',
@@ -25,6 +26,7 @@ import {EnvironmentRelease} from '../../environment-release/environment-release'
 })
 export class ReleaseApplicationVersionStatusComponent implements OnInit {
   @Input() environmentRelease: EnvironmentRelease;
+  @Input() releaseVersion: ReleaseVersion;
   @Input() applicationVersion: ApplicationVersion;
 
   constructor() {
@@ -38,6 +40,10 @@ export class ReleaseApplicationVersionStatusComponent implements OnInit {
       return '';
     }
 
+    if (this.environmentRelease.currentReleaseVersion.version !== this.releaseVersion.version) {
+      return '';
+    }
+
     if (!this.applicationVersion.status) {
       return 'Missing';
     }
@@ -47,6 +53,10 @@ export class ReleaseApplicationVersionStatusComponent implements OnInit {
 
   style(): string {
     if (!this.environmentRelease.deployed) {
+      return '';
+    }
+
+    if (this.environmentRelease.currentReleaseVersion.version !== this.releaseVersion.version) {
       return '';
     }
 

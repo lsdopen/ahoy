@@ -18,10 +18,12 @@
   <div class="p-col-12">
 
     <div class="card p-mb-4">
+      <div class="card-header">
+        <h5>Dashboard</h5>
+      </div>
 
-      <p-toolbar *ngIf="selectedCluster">
+      <p-toolbar>
         <ng-template pTemplate="left">
-          <h3>Dashboard</h3>
         </ng-template>
         <ng-template pTemplate="right">
           <p-dropdown [options]="clusters" [(ngModel)]="selectedCluster" placeholder="Cluster" optionLabel="name" (onChange)="clusterChanged()"></p-dropdown>

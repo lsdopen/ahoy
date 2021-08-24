@@ -16,20 +16,20 @@
 
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {EnvironmentService} from '../environments/environment.service';
-import {Environment} from '../environments/environment';
-import {LoggerService} from '../util/logger.service';
-import {EnvironmentRelease, EnvironmentReleaseId} from '../environment-release/environment-release';
-import {EnvironmentReleaseService} from '../environment-release/environment-release.service';
-import {filter, mergeMap} from 'rxjs/operators';
-import {AddReleaseDialogComponent} from './add-release-dialog/add-release-dialog.component';
-import {ReleasesService} from './releases.service';
-import {Release} from './release';
-import {TaskEvent} from '../taskevents/task-events';
-import {ReleaseService} from '../release/release.service';
 import {ConfirmationService} from 'primeng/api';
 import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
+import {filter, mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
+import {EnvironmentRelease, EnvironmentReleaseId} from '../environment-release/environment-release';
+import {EnvironmentReleaseService} from '../environment-release/environment-release.service';
+import {Environment} from '../environments/environment';
+import {EnvironmentService} from '../environments/environment.service';
+import {ReleaseService} from '../release/release.service';
+import {TaskEvent} from '../taskevents/task-events';
+import {LoggerService} from '../util/logger.service';
+import {AddReleaseDialogComponent} from './add-release-dialog/add-release-dialog.component';
+import {Release} from './release';
+import {ReleasesService} from './releases.service';
 
 @Component({
   selector: 'app-releases',
@@ -54,6 +54,8 @@ export class ReleasesComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.setBreadcrumb();
+
     const environmentId = +this.route.snapshot.queryParamMap.get('environmentId');
 
     this.environmentService.getAll().subscribe((environments) => {
@@ -85,11 +87,16 @@ export class ReleasesComponent implements OnInit {
   }
 
   private setBreadcrumb() {
-    this.breadcrumbService.setItems([
-      {label: this.selectedEnvironment.cluster.name, routerLink: '/clusters'},
-      {label: this.selectedEnvironment.name, routerLink: '/environments', queryParams: {clusterId: this.selectedEnvironment.cluster.id}},
-      {label: 'releases'}
-    ]);
+    if (this.selectedEnvironment) {
+      this.breadcrumbService.setItems([
+        {label: this.selectedEnvironment.cluster.name, routerLink: '/clusters'},
+        {label: this.selectedEnvironment.name, routerLink: '/environments', queryParams: {clusterId: this.selectedEnvironment.cluster.id}},
+        {label: 'releases'}
+      ]);
+
+    } else {
+      this.breadcrumbService.setItems([{label: 'releases'}]);
+    }
   }
 
   addRelease() {

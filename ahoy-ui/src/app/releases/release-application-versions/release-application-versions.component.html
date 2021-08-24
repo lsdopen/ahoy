@@ -17,86 +17,87 @@
 <div class="p-grid">
   <div class="p-col-12">
 
-    <div *ngIf="releaseVersion && existingConfigs">
+    <div class="card" *ngIf="releaseVersion && existingConfigs">
+      <div class="card-header">
+        <h5>Applications</h5>
+      </div>
 
-      <div class="card">
-        <p-toolbar>
-          <ng-template pTemplate="left">
-            <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain p-mr-2 p-mb-2" (click)="addApplication()"></button>
-          </ng-template>
-        </p-toolbar>
+      <p-toolbar>
+        <ng-template pTemplate="left">
+          <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain p-mr-2 p-mb-2" (click)="addApplication()"></button>
+        </ng-template>
+      </p-toolbar>
 
-        <p-table #dt [value]="releaseVersion.applicationVersions" dataKey="id" selectionMode="single"
-                 styleClass="p-datatable-applicationVersions p-datatable-striped p-datatable-sm"
-                 [scrollable]="true" scrollHeight="400px" [filterDelay]="0" [globalFilterFields]="['application.name', 'version', 'image']"
-                 *ngIf="releaseVersion.applicationVersions && releaseVersion.applicationVersions.length > 0">
-          <ng-template pTemplate="caption">
-            <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
-              <h5 class="p-m-0">Applications</h5>
-              <span class="p-input-icon-left">
+      <div class="p-field" *ngIf="releaseVersion.applicationVersions && (releaseVersion.applicationVersions.length === 0)">
+        There are no applications in this release, <a [routerLink]="" (click)="addApplication()">here</a> to add an application..
+      </div>
+
+      <p-table #dt [value]="releaseVersion.applicationVersions" dataKey="id" selectionMode="single"
+               styleClass="p-datatable-applicationVersions p-datatable-striped p-datatable-sm"
+               [scrollable]="true" scrollHeight="400px" [filterDelay]="0" [globalFilterFields]="['application.name', 'version', 'image']"
+               *ngIf="releaseVersion.applicationVersions && releaseVersion.applicationVersions.length > 0">
+        <ng-template pTemplate="caption">
+          <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
+            <span class="p-input-icon-left p-ml-auto">
                 <i class="pi pi-search"></i>
                 <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"/>
               </span>
-            </div>
-          </ng-template>
-          <ng-template pTemplate="header">
-            <tr>
-              <th pSortableColumn="application.name">Application
-                <p-sortIcon field="application.name"></p-sortIcon>
-              </th>
-              <th pSortableColumn="version">Version
-                <p-sortIcon field="version"></p-sortIcon>
-              </th>
-              <th pSortableColumn="image">Image
-                <p-sortIcon field="image"></p-sortIcon>
-              </th>
-              <th pSortableColumn="status.status">Status
-                <p-sortIcon field="status.status"></p-sortIcon>
-              </th>
-              <th></th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-av>
-            <tr>
-              <td><span class="p-column-title">Application</span>
-                {{av.application.name}}
-              </td>
-              <td><span class="p-column-title">Version</span>
-                {{av.version}}
-              </td>
-              <td><span class="p-column-title">Image</span>
-                {{av.image}}
-              </td>
-              <td><span class="p-column-title">Status</span>
-                <app-release-application-version-status [environmentRelease]="environmentRelease" [applicationVersion]="av"></app-release-application-version-status>
-              </td>
-              <td>
-                <a *ngIf="hasRoute(av)" pButton pRipple icon="pi pi-external-link" class="p-button-rounded p-button-info p-mr-2"
-                   href="{{getRoute(av)}}" target="_blank"
-                   pTooltip="Open route: {{getRoute(av)}}"></a>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="application.name">Application
+              <p-sortIcon field="application.name"></p-sortIcon>
+            </th>
+            <th pSortableColumn="version">Version
+              <p-sortIcon field="version"></p-sortIcon>
+            </th>
+            <th pSortableColumn="image">Image
+              <p-sortIcon field="image"></p-sortIcon>
+            </th>
+            <th pSortableColumn="status.status">Status
+              <p-sortIcon field="status.status"></p-sortIcon>
+            </th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-av>
+          <tr>
+            <td><span class="p-column-title">Application</span>
+              {{av.application.name}}
+            </td>
+            <td><span class="p-column-title">Version</span>
+              {{av.version}}
+            </td>
+            <td><span class="p-column-title">Image</span>
+              {{av.image}}
+            </td>
+            <td><span class="p-column-title">Status</span>
+              <app-release-application-version-status
+                [environmentRelease]="environmentRelease" [releaseVersion]="releaseVersion" [applicationVersion]="av">
+              </app-release-application-version-status>
+            </td>
+            <td>
+              <a *ngIf="hasRoute(av)" pButton pRipple icon="pi pi-external-link" class="p-button-rounded p-button-info p-mr-2"
+                 href="{{getRoute(av)}}" target="_blank"
+                 pTooltip="Open route: {{getRoute(av)}}"></a>
 
-                <button pButton pRipple icon="pi pi-upload" class="p-button-rounded p-button-info p-mr-2"
-                        (click)="upgradeApplication(av)"
-                        pTooltip="Upgrade version"></button>
-                <button pButton pRipple icon="pi pi-folder" class="p-button-rounded {{hasConfig(av.id) ? 'p-button-plain' : 'p-button-outlined'}} p-mr-2"
-                        routerLink="/release/{{environmentRelease.id.environmentId}}/{{environmentRelease.id.releaseId}}/config/{{releaseVersion.id}}/{{av.id}}"
-                        pTooltip="Edit environment config"></button>
-                <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
-                        routerLink="/application/{{av.application.id}}/version/{{av.id}}"
-                        pTooltip="Edit application version"></button>
-                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
-                        (click)="removeApplication(av)"
-                        pTooltip="Remove application from release"></button>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-
-        <div class="p-field" *ngIf="(releaseVersion.applicationVersions && (releaseVersion.applicationVersions.length === 0))">
-          There are no applications in this release, <a [routerLink]="" (click)="addApplication()">here</a> to add an application..
-        </div>
-
-      </div>
+              <button pButton pRipple icon="pi pi-upload" class="p-button-rounded p-button-info p-mr-2"
+                      (click)="upgradeApplication(av)"
+                      pTooltip="Upgrade version"></button>
+              <button pButton pRipple icon="pi pi-folder" class="p-button-rounded {{hasConfig(av.id) ? 'p-button-plain' : 'p-button-outlined'}} p-mr-2"
+                      routerLink="/release/{{environmentRelease.id.environmentId}}/{{environmentRelease.id.releaseId}}/config/{{releaseVersion.id}}/{{av.id}}"
+                      pTooltip="Edit environment config"></button>
+              <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
+                      routerLink="/application/{{av.application.id}}/version/{{av.id}}"
+                      pTooltip="Edit application version"></button>
+              <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                      (click)="removeApplication(av)"
+                      pTooltip="Remove application from release"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
 
     </div>
 

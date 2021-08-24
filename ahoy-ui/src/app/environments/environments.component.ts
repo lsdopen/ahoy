@@ -15,16 +15,16 @@
  */
 
 import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {filter} from 'rxjs/operators';
+import {AppBreadcrumbService} from '../app.breadcrumb.service';
+import {Cluster} from '../clusters/cluster';
+import {ClusterService} from '../clusters/cluster.service';
+import {Confirmation} from '../components/confirm-dialog/confirm';
+import {DialogUtilService} from '../components/dialog-util.service';
+import {LoggerService} from '../util/logger.service';
 import {Environment} from './environment';
 import {EnvironmentService} from './environment.service';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Cluster} from '../clusters/cluster';
-import {LoggerService} from '../util/logger.service';
-import {ClusterService} from '../clusters/cluster.service';
-import {AppBreadcrumbService} from '../app.breadcrumb.service';
-import {DialogUtilService} from '../components/dialog-util.service';
-import {filter} from 'rxjs/operators';
-import {Confirmation} from '../components/confirm-dialog/confirm';
 
 @Component({
   selector: 'app-environments',
@@ -47,6 +47,8 @@ export class EnvironmentsComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.setBreadcrumb();
+
     const clusterId = +this.route.snapshot.queryParamMap.get('clusterId');
 
     this.clusterService.getAll()
@@ -74,13 +76,21 @@ export class EnvironmentsComponent implements OnInit {
         this.environmentService.getAllEnvironmentsByCluster(clusterId)
           .subscribe(envs => {
             this.environments = envs;
-
-            this.breadcrumbService.setItems([
-              {label: this.selectedCluster.name, routerLink: '/clusters'},
-              {label: 'environments'}
-            ]);
+            this.setBreadcrumb();
           });
       });
+  }
+
+  private setBreadcrumb() {
+    if (this.selectedCluster) {
+      this.breadcrumbService.setItems([
+        {label: this.selectedCluster.name, routerLink: '/clusters'},
+        {label: 'environments'}
+      ]);
+
+    } else {
+      this.breadcrumbService.setItems([{label: 'environments'}]);
+    }
   }
 
   delete(event: Event, environment: Environment) {

@@ -18,6 +18,10 @@
   <div class="p-col-12">
 
     <div class="card">
+      <div class="card-header">
+        <h5>Clusters</h5>
+      </div>
+
       <p-toolbar>
         <ng-template pTemplate="left">
           <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/cluster/new"></button>
@@ -30,8 +34,7 @@
                *ngIf="clusters && clusters.length > 0">
         <ng-template pTemplate="caption">
           <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
-            <h5 class="p-m-0">Clusters</h5>
-            <span class="p-input-icon-left">
+            <span class="p-input-icon-left p-ml-auto">
               <i class="pi pi-search"></i>
               <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"/>
             </span>

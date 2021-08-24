@@ -38,7 +38,7 @@
     </div>
 
     <div *ngIf="secret" class="p-field p-float-label">
-      <p-dropdown [options]="secret.data | keyvalue" [(ngModel)]="secretKey" optionLabel="key"
+      <p-dropdown [options]="secret.data | keyvalue" [(ngModel)]="secretKey" optionLabel="key" optionValue="key"
                   [showClear]="true" name="environmentVariableSecretKey"
                   [autoDisplayFirst]="false"></p-dropdown>
       <label>Select secret key</label>
