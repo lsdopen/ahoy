@@ -34,8 +34,10 @@
   </div>
 
   <div class="layout-main">
-    <p-progressBar mode="indeterminate" *ngIf="showProgress()"></p-progressBar>
     <app-breadcrumb></app-breadcrumb>
+
+    <span style="height: 4px" *ngIf="!showProgress()"></span>
+    <p-progressBar mode="indeterminate" *ngIf="showProgress()"></p-progressBar>
 
     <div class="layout-content">
       <router-outlet></router-outlet>
