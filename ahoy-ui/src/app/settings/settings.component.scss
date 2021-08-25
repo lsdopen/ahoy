@@ -17,11 +17,10 @@
 ::ng-deep {
   .p-menu .p-menuitem-link.p-menuitem-link-active {
     background-color: var(--primary-lightest-color);
-  }
 
-  .p-menu .p-menuitem-link.p-menuitem-link-active {
-    .p-menuitem-text, .p-menuitem-icon {
-      color: var(--primary-menu-text-color);
+    .p-menuitem-text,
+    .p-menuitem-icon {
+      color: var(--primary-color);
     }
   }
 }
