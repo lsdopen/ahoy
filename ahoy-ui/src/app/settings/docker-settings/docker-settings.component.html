@@ -22,9 +22,9 @@
         <h5>Docker Registries</h5>
       </ng-template>
       <ng-template pTemplate="right">
-        <button pButton pRipple label="Save" icon="pi pi-save" class="p-button-success p-mr-2 p-mb-2" (click)="save()" [disabled]="settingsForm.invalid"></button>
+        <button pButton pRipple label="Save" icon="pi pi-save" class="p-button-success p-mr-2 p-mb-2" (click)="save()" [disabled]="settingsForm.invalid || (dockerSettings.dockerRegistries && dockerSettings.dockerRegistries.length === 0)"></button>
         <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain p-mr-2 p-mb-2" (click)="addDockerRegistry()"></button>
-        <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-warning p-mr-2 p-mb-2" (click)="deleteRegistry()"></button>
+        <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-warning p-mr-2 p-mb-2" (click)="deleteRegistry()" [disabled]="!(dockerSettings.dockerRegistries && dockerSettings.dockerRegistries.length > 0)"></button>
       </ng-template>
     </p-toolbar>
 
