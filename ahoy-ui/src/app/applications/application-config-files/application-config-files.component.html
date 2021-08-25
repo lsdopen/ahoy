@@ -18,7 +18,7 @@
   <div class="p-col-12 p-md-5">
     <div class="p-field p-float-label">
       <input pInputText id="applicationConfigPath" [(ngModel)]="applicationVersion.configPath" name="applicationConfigPath"
-             required="{{configs.length > 0}}"
+             [required]="configs.length > 0"
              [disabled]="!editPath">
       <label for="applicationConfigPath">Path</label>
       <small *ngIf="!editPath">Application configuration file path; required for environment configuration file</small>

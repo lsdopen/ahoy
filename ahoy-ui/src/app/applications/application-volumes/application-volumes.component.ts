@@ -14,9 +14,9 @@
  *    limitations under the License.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
-import {ApplicationSecret, ApplicationVolume} from '../application';
+import {AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {ControlContainer, NgForm} from '@angular/forms';
+import {ApplicationSecret, ApplicationVolume} from '../application';
 
 @Component({
   selector: 'app-application-volumes',
@@ -24,24 +24,33 @@ import {ControlContainer, NgForm} from '@angular/forms';
   styleUrls: ['./application-volumes.component.scss'],
   viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
 })
-export class ApplicationVolumesComponent implements OnInit {
+export class ApplicationVolumesComponent implements OnInit, AfterContentChecked {
   @Input() volumes: ApplicationVolume[];
   @Input() secrets: ApplicationSecret[];
   selectedVolumeIndex = 0;
 
-  constructor() { }
+  constructor(private cd: ChangeDetectorRef) {
+  }
 
   ngOnInit(): void {
   }
 
+  ngAfterContentChecked(): void {
+    this.cd.detectChanges();
+  }
+
   addVolume() {
     this.volumes.push(new ApplicationVolume());
-    setTimeout(() => this.selectedVolumeIndex = this.volumes.length - 1, 300);
+    setTimeout(() => this.selectedVolumeIndex = this.volumes.length - 1);
   }
 
   deleteVolume() {
-    const indexToRemove = this.selectedVolumeIndex;
-    this.selectedVolumeIndex = 0;
-    this.volumes.splice(indexToRemove, 1);
+    this.volumes.splice(this.selectedVolumeIndex, 1);
+    setTimeout(() => {
+      if (this.selectedVolumeIndex === this.volumes.length) {
+        // only move one tab back if its the last tab
+        this.selectedVolumeIndex = this.volumes.length - 1;
+      }
+    });
   }
 }

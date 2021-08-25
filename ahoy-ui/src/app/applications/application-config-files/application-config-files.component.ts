@@ -14,9 +14,9 @@
  *    limitations under the License.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
-import {ApplicationConfig, ApplicationVersion} from '../application';
+import {AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {ControlContainer, NgForm} from '@angular/forms';
+import {ApplicationConfig, ApplicationVersion} from '../application';
 
 @Component({
   selector: 'app-application-config-files',
@@ -24,26 +24,34 @@ import {ControlContainer, NgForm} from '@angular/forms';
   styleUrls: ['./application-config-files.component.scss'],
   viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
 })
-export class ApplicationConfigFilesComponent implements OnInit {
+export class ApplicationConfigFilesComponent implements OnInit, AfterContentChecked {
   @Input() applicationVersion: ApplicationVersion;
   @Input() configs: ApplicationConfig[];
   @Input() editPath = true;
   selectedConfigIndex = 0;
 
-  constructor() {
+  constructor(private cd: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
   }
 
+  ngAfterContentChecked(): void {
+    this.cd.detectChanges();
+  }
+
   addConfig() {
     this.configs.push(new ApplicationConfig());
-    setTimeout(() => this.selectedConfigIndex = this.configs.length - 1, 300);
+    setTimeout(() => this.selectedConfigIndex = this.configs.length - 1);
   }
 
   deleteConfig() {
-    const indexToRemove = this.selectedConfigIndex;
-    this.selectedConfigIndex = 0;
-    this.configs.splice(indexToRemove, 1);
+    this.configs.splice(this.selectedConfigIndex, 1);
+    setTimeout(() => {
+      if (this.selectedConfigIndex === this.configs.length) {
+        // only move one tab back if its the last tab
+        this.selectedConfigIndex = this.configs.length - 1;
+      }
+    });
   }
 }

@@ -14,9 +14,9 @@
  *    limitations under the License.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
-import {ApplicationEnvironmentVariable, ApplicationSecret, ApplicationVolume} from '../application';
+import {AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {ControlContainer, NgForm} from '@angular/forms';
+import {ApplicationEnvironmentVariable, ApplicationSecret, ApplicationVolume} from '../application';
 
 @Component({
   selector: 'app-application-secrets',
@@ -24,7 +24,7 @@ import {ControlContainer, NgForm} from '@angular/forms';
   styleUrls: ['./application-secrets.component.scss'],
   viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
 })
-export class ApplicationSecretsComponent implements OnInit {
+export class ApplicationSecretsComponent implements OnInit, AfterContentChecked {
   @Input() secrets: ApplicationSecret[];
   @Input() volumes: ApplicationVolume[];
   @Input() environmentVariables: ApplicationEnvironmentVariable[];
@@ -32,10 +32,14 @@ export class ApplicationSecretsComponent implements OnInit {
 
   selectedSecretIndex = 0;
 
-  constructor() {
+  constructor(private cd: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
+  }
+
+  ngAfterContentChecked(): void {
+    this.cd.detectChanges();
   }
 
   addSecret() {
@@ -43,13 +47,17 @@ export class ApplicationSecretsComponent implements OnInit {
     applicationSecret.type = 'Generic';
     applicationSecret.data = {};
     this.secrets.push(applicationSecret);
-    setTimeout(() => this.selectedSecretIndex = this.secrets.length - 1, 300);
+    setTimeout(() => this.selectedSecretIndex = this.secrets.length - 1);
   }
 
   deleteSecret() {
-    const indexToRemove = this.selectedSecretIndex;
-    this.selectedSecretIndex = 0;
-    this.secrets.splice(indexToRemove, 1);
+    this.secrets.splice(this.selectedSecretIndex, 1);
+    setTimeout(() => {
+      if (this.selectedSecretIndex === this.secrets.length) {
+        // only move one tab back if its the last tab
+        this.selectedSecretIndex = this.secrets.length - 1;
+      }
+    });
   }
 
   secretInUse(): boolean {

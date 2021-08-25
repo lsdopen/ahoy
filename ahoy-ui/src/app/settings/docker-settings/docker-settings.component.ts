@@ -14,30 +14,35 @@
  *    limitations under the License.
  */
 
-import {Component, OnInit} from '@angular/core';
-import {DockerRegistry, DockerSettings} from './docker-settings';
-import {DockerSettingsService} from './docker-settings.service';
+import {AfterContentChecked, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {AppBreadcrumbService} from '../../app.breadcrumb.service';
 import {Notification} from '../../notifications/notification';
 import {NotificationsService} from '../../notifications/notifications.service';
-import {AppBreadcrumbService} from '../../app.breadcrumb.service';
+import {DockerRegistry, DockerSettings} from './docker-settings';
+import {DockerSettingsService} from './docker-settings.service';
 
 @Component({
   selector: 'app-docker-settings',
   templateUrl: './docker-settings.component.html',
   styleUrls: ['./docker-settings.component.scss']
 })
-export class DockerSettingsComponent implements OnInit {
+export class DockerSettingsComponent implements OnInit, AfterContentChecked {
   dockerSettings: DockerSettings;
   hideDockerPassword = true;
   selectedIndex: number;
 
-  constructor(private dockerSettingsService: DockerSettingsService,
+  constructor(private cd: ChangeDetectorRef,
+              private dockerSettingsService: DockerSettingsService,
               private notificationsService: NotificationsService,
               private breadcrumbService: AppBreadcrumbService) {
     this.breadcrumbService.setItems([
       {label: 'settings'},
       {label: 'docker'}
     ]);
+  }
+
+  ngAfterContentChecked(): void {
+    this.cd.detectChanges();
   }
 
   ngOnInit(): void {
@@ -60,12 +65,16 @@ export class DockerSettingsComponent implements OnInit {
 
   addDockerRegistry() {
     this.dockerSettings.dockerRegistries.push(new DockerRegistry());
-    setTimeout(() => this.selectedIndex = this.dockerSettings.dockerRegistries.length - 1, 300);
+    setTimeout(() => this.selectedIndex = this.dockerSettings.dockerRegistries.length - 1);
   }
 
   deleteRegistry() {
-    const indexToRemove = this.selectedIndex;
-    this.selectedIndex = 0;
-    this.dockerSettings.dockerRegistries.splice(indexToRemove, 1);
+    this.dockerSettings.dockerRegistries.splice(this.selectedIndex, 1);
+    setTimeout(() => {
+      if (this.selectedIndex === this.dockerSettings.dockerRegistries.length) {
+        // only move one tab back if its the last tab
+        this.selectedIndex = this.dockerSettings.dockerRegistries.length - 1;
+      }
+    });
   }
 }
