@@ -1,6 +1,6 @@
 {
   "name": "ahoy-ui",
-  "version": "1.0.0",
+  "version": "0.2.0-SNAPSHOT",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
