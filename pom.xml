@@ -28,9 +28,27 @@
 	<groupId>za.co.lsd.ahoy</groupId>
 	<artifactId>ahoy</artifactId>
 	<version>0.2.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
 	<name>ahoy</name>
 	<description>AHOY - release management</description>
-	<packaging>pom</packaging>
+	<url>https://github.com/lsdopen/ahoy</url>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0</url>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<name>LSD OPEN</name>
+			<organization>LSD Information Technology (Pty) Ltd</organization>
+			<organizationUrl>https://lsdopen.io/</organizationUrl>
+		</developer>
+	</developers>
+	<scm>
+		<url>https://github.com/lsdopen/ahoy</url>
+	</scm>
 
 	<modules>
 		<module>ahoy-ui</module>
