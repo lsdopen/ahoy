@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -38,8 +38,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static za.co.lsd.ahoy.server.helm.HelmUtils.dump;
-import static za.co.lsd.ahoy.server.helm.HelmUtils.valuesName;
+import static za.co.lsd.ahoy.server.helm.HelmUtils.*;
 
 @Component
 @Slf4j
@@ -77,7 +76,7 @@ public class TemplateWriter {
 				addTemplate(application, "configmap", templatesPath, trackedTemplates);
 			}
 
-			if (applicationVersion.hasVolumes()) {
+			if (applicationVersion.hasVolumes() || (applicationEnvironmentConfig != null && applicationEnvironmentConfig.hasVolumes())) {
 				addTemplate(application, "pvc", templatesPath, trackedTemplates);
 			}
 
