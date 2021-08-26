@@ -36,6 +36,7 @@ import za.co.lsd.ahoy.server.settings.SettingsProvider;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
@@ -75,9 +76,14 @@ public class LocalRepoTest {
 	}
 
 	@AfterEach
-	public void cleanup() throws IOException {
+	public void cleanup() {
 		testRemoteRepo = null;
-		localRepo.delete();
+		try {
+			localRepo.delete();
+		} catch (LocalRepoException e) {
+			if (!(e.getCause() instanceof NoSuchFileException))
+				throw e;
+		}
 	}
 
 	@Test
