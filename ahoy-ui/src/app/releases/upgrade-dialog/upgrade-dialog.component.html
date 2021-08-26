@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,22 +14,23 @@
   ~    limitations under the License.
   -->
 
-<h2 mat-dialog-title>Upgrade release {{release.name}}:{{releaseVersion.version}} to version:</h2>
+<form #f="ngForm">
+  <div class="p-fluid p-mt-2">
 
-<form #releaseVersionForm="ngForm">
-  <mat-dialog-content fxFlex fxLayout="column">
-    <mat-form-field>
-      <input matInput [(ngModel)]="version" placeholder="Version" name="version"
-             required
-             [appReleaseVersionUnique]="release.releaseVersions">
-      <mat-error *ngIf="releaseVersionForm.form.controls.version?.hasError('releaseVersionNotUnique')">
-        <strong>release version already exists</strong>
-      </mat-error>
-    </mat-form-field>
-  </mat-dialog-content>
+    <div class="p-field p-float-label">
+      <input pInputText id="releaseName" [(ngModel)]="version" name="version"
+             [appReleaseVersionUnique]="release.releaseVersions"
+             required>
+      <label for="releaseName">Version</label>
+      <small class="p-error" *ngIf="f.form.controls.version?.hasError('releaseVersionNotUnique')">
+        Release version already exists
+      </small>
+    </div>
+
+  </div>
 </form>
 
-<mat-dialog-actions>
-  <button mat-button [mat-dialog-close]>Cancel</button>
-  <button mat-raised-button color="primary" [mat-dialog-close]="version" [disabled]="releaseVersionForm.invalid">Ok</button>
-</mat-dialog-actions>
+<div class="p-grid p-pt-3">
+  <button pButton pRipple type="button" icon="pi pi-times" (click)="close(undefined)" label="Cancel" class="p-button-text p-ml-auto p-mr-2"></button>
+  <button pButton pRipple type="button" icon="pi pi-check" (click)="close(version)" label="Ok" class="p-button-text p-mr-2" [disabled]="f.invalid"></button>
+</div>

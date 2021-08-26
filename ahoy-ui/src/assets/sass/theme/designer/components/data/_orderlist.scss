@@ -1,0 +1,113 @@
+/*!
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+.p-orderlist {
+    .p-orderlist-controls {
+        padding: $panelContentPadding;
+
+        .p-button {
+            margin-bottom: $inlineSpacing;
+        }
+    }
+
+    .p-orderlist-header {
+        background: $panelHeaderBg;
+        color: $panelHeaderTextColor;
+        border: $panelHeaderBorder;
+        padding: $panelHeaderPadding;
+        border-bottom: 0 none;
+        border-top-right-radius: $borderRadius;
+        border-top-left-radius: $borderRadius;
+
+        .p-orderlist-title {
+            font-weight: $panelHeaderFontWeight;
+        }
+    }
+
+    .p-orderlist-filter-container {
+        padding: $panelHeaderPadding;
+        background: $panelContentBg;
+        border: $panelHeaderBorder;
+        border-bottom: 0 none;
+
+        .p-orderlist-filter-input {
+            padding-right: nth($inputPadding, 2) + $primeIconFontSize;
+        }
+
+        .p-orderlist-filter-icon {
+            right: nth($inputPadding, 2);
+            color: $inputIconColor;
+        }
+    }
+
+    .p-orderlist-list {
+        border: $panelContentBorder;
+        background: $panelContentBg;
+        color: $panelContentTextColor;
+        padding: $inputListPadding;
+        border-bottom-right-radius: $borderRadius;
+        border-bottom-left-radius: $borderRadius;
+
+        .p-orderlist-item {
+            padding: $inputListItemPadding;
+            margin: $inputListItemMargin;
+            border: $inputListItemBorder;
+            color: $inputListItemTextColor;
+            background: $inputListItemBg;
+            transition: transform $transitionDuration, $listItemTransition;
+
+            &:not(.p-highlight):hover {
+                background: $inputListItemHoverBg;
+                color: $inputListItemTextHoverColor;
+            }
+
+            &:focus {
+                @include focused-listitem();
+            }
+
+            &.p-highlight {
+                color: $highlightTextColor;
+                background: $highlightBg;
+            }
+        }
+
+        .p-orderlist-droppoint {
+            &.p-orderlist-droppoint-highlight {
+                background-color: scale-color($highlightBg, $lightness: -20%);
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $orderListBreakpoint) {
+    .p-orderlist  {
+        flex-direction: column;
+
+        .p-orderlist-controls {
+            padding: $panelContentPadding;
+            flex-direction: row;
+
+            .p-button {
+                margin-right: $inlineSpacing;
+                margin-bottom: 0;
+
+                &:last-child {
+                    margin-right: 0;
+                }
+            }
+        }
+    }
+}

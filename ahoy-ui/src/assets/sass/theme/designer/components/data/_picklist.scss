@@ -1,0 +1,136 @@
+/*!
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+.p-picklist {
+    .p-picklist-buttons {
+        padding: $panelContentPadding;
+
+        .p-button {
+            margin-bottom: $inlineSpacing;
+        }
+    }
+
+    .p-picklist-header {
+        background: $panelHeaderBg;
+        color: $panelHeaderTextColor;
+        border: $panelHeaderBorder;
+        padding: $panelHeaderPadding;
+        border-bottom: 0 none;
+        border-top-right-radius: $borderRadius;
+        border-top-left-radius: $borderRadius;
+
+        .p-picklist-title {
+            font-weight: $panelHeaderFontWeight;
+        }
+    }
+
+    .p-picklist-filter-container {
+        padding: $panelHeaderPadding;
+        background: $panelContentBg;
+        border: $panelHeaderBorder;
+        border-bottom: 0 none;
+
+        .p-picklist-filter-input {
+            padding-right: nth($inputPadding, 2) + $primeIconFontSize;
+        }
+
+        .p-picklist-filter-icon {
+            right: nth($inputPadding, 2);
+            color: $inputIconColor;
+        }
+    }
+
+    .p-picklist-list {
+        border: $panelContentBorder;
+        background: $panelContentBg;
+        color: $panelContentTextColor;
+        padding: $inputListPadding;
+        border-bottom-right-radius: $borderRadius;
+        border-bottom-left-radius: $borderRadius;
+
+        .p-picklist-item {
+            padding: $inputListItemPadding;
+            margin: $inputListItemMargin;
+            border: $inputListItemBorder;
+            color: $inputListItemTextColor;
+            background: $inputListItemBg;
+            transition: transform $transitionDuration, $listItemTransition;
+
+            &:not(.p-highlight):hover {
+                background: $inputListItemHoverBg;
+                color: $inputListItemTextHoverColor;
+            }
+
+            &:focus {
+                @include focused-listitem();
+            }
+
+            &.p-highlight {
+                color: $highlightTextColor;
+                background: $highlightBg;
+            }
+        }
+
+        .p-picklist-droppoint {
+            &.p-picklist-droppoint-highlight {
+                background-color: scale-color($highlightBg, $lightness: -20%);
+            }
+        }
+
+        .p-picklist-empty-message {
+            padding: $inputListItemPadding;
+            color: $inputListItemTextColor;
+        }
+    }
+}
+
+@media screen and (max-width: $pickListBreakpoint) {
+    .p-picklist  {
+        flex-direction: column;
+
+        .p-picklist-buttons {
+            padding: $panelContentPadding;
+            flex-direction: row;
+
+            .p-button {
+                margin-right: $inlineSpacing;
+                margin-bottom: 0;
+
+                &:last-child {
+                    margin-right: 0;
+                }
+            }
+        }
+
+        .p-picklist-transfer-buttons {
+            .pi-angle-right {
+                @include icon_override('\e930');
+            }
+
+            .pi-angle-double-right {
+                @include icon_override('\e92c');
+            }
+
+            .pi-angle-left {
+                @include icon_override('\e933');
+            }
+
+            .pi-angle-double-left {
+                @include icon_override('\e92f');
+            }
+        }
+    }
+}

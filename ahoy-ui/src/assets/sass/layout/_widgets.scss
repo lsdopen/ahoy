@@ -1,0 +1,482 @@
+/*!
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+.overview-box {
+    .overview-status {
+        font-weight: 500;
+        border-radius: 2px;
+        color: $bodyBgColor;
+    }
+}
+
+.widget-list {
+    @include reset-list;
+
+    > li {
+        border-bottom: 1px solid $dividerColor;
+
+        &:last-child {
+            border-bottom: 0 none;
+        }
+
+        .person-item {
+            img {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+        }
+
+        .widget-list-item-radius,
+        .person-tag {
+            border-radius: 2px;
+            color: $bodyBgColor;
+            font-weight: 500;
+        }
+
+        .p-progressbar {
+            height: 6px;
+            border-radius: 10px;
+            background: $contentAltBgColor;
+        }
+
+        .p-progressbar-value {
+            background: $orange;
+        }
+    }
+}
+
+.widget-expenses {
+    .card-subheader {
+        font-size: .9rem;
+        color: $textSecondaryColor;
+        border-bottom: 1px solid $dividerColor;
+    }
+
+    .item {
+        padding: .5rem;
+        border-bottom: 1px solid $dividerColor;
+
+        &:last-child {
+            border: 0 none;
+        }
+
+        .type {
+            color: #0097A7;
+            font-size: 1.5rem;
+        }
+
+        .value {
+            font-weight: 500;
+        }
+
+        .subtext {
+            color: $textSecondaryColor;
+        }
+
+        .item-button {
+            a {
+                color: $textSecondaryColor;
+            }
+        }
+    }
+}
+
+.widget-traffic {
+    .left {
+        padding: 1rem;
+
+        .total {
+            .title {
+                color: $textSecondaryColor
+            }
+
+            .value {
+                font-size: 2rem;
+                font-weight: 500;
+            }
+        }
+
+        .info {
+            .title {
+                color: $textSecondaryColor;
+            }
+
+            .value {
+                font-weight: 500;
+            }
+
+            .percent {
+                font-size: .9rem;
+                font-weight: 500;
+                line-height: 1.5;
+
+                i {
+                    &.type-green {
+                        color: #0097A7;
+                    }
+                    &.type-orange {
+                        color: #EF6C00;
+                    }
+                    &.type-gray {
+                        color: #455A64;
+                    }
+                }
+            }
+
+        }
+    }
+}
+
+.widget-insights {
+    .card-subheader {
+        font-size: .9rem;
+        color: $textSecondaryColor;
+        border-bottom: 1px solid $dividerColor;
+    }
+}
+
+.widget-social {
+    .info {
+        text-align: right;
+
+        .value {
+            font-size: 2rem;
+        }
+
+        .subtext {
+            color: $textSecondaryColor;
+        }
+    }
+
+    .left, .right {
+        width: 50%;
+        text-align: center;
+        padding: 1rem;
+
+        .title {
+            font-weight: 500;
+        }
+
+        .value {
+            color: $textSecondaryColor;
+        }
+    }
+
+    .left {
+        border-right: 1px solid $dividerColor;
+    }
+
+    .p-progressbar {
+        height: 6px;
+        border-radius: 10px;
+        background: $contentAltBgColor;
+    }
+
+    .p-progressbar-value {
+        background: #FFB300;
+    }
+
+    .stats {
+        border-top: 1px solid $dividerColor;
+    }
+
+}
+
+.widget-overlay {
+    position: relative;
+
+    .overlay-header {
+        position: relative;
+        height: 20rem;
+        top:-3rem;
+        background-color: $contentBgColor;
+        border-radius: 4px;
+        box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+    }
+
+    .description {
+        line-height: 1.5;
+    }
+}
+
+.widget-topsearchs {
+    .item {
+        padding: 1rem;
+        border-bottom: 1px solid $dividerColor;
+
+        .value {
+            font-weight: 500;
+
+            &.type-green {
+                color: $cyan;
+            }
+
+            &.type-yellow {
+                color: #EF6C00;
+            }
+
+            &.type-pink {
+                color: $pink;
+            }
+        }
+
+        &:nth-child(even) {
+            background-color: $contentAltBgColor;
+        }
+
+        &:last-child {
+            border-bottom: 0 none;
+        }
+
+    }
+}
+
+.widget-timeline {
+    .p-timeline.p-timeline-vertical .p-timeline-event-opposite {
+        flex: 0;
+        padding: 0;
+    }
+
+    .p-timeline-event-separator {
+        .marker-icon {
+            color: white;
+        }
+
+        .custom-marker {
+            border-radius: 4px;
+        }
+    }
+}
+
+.widget-activity {
+    @include reset-list;
+
+    >li {
+        padding: 1rem 0;
+        border-bottom: 1px solid $dividerColor;
+
+        &:last-child {
+            border-bottom: 0 none;
+        }
+
+        &:nth-child(1) {
+            .p-progressbar-value {
+                background: $yellow;
+            }
+        }
+
+        &:nth-child(2) {
+            .p-progressbar-value {
+                background: $pink;
+            }
+        }
+
+        &:nth-child(3) {
+            .p-progressbar-value {
+                background: $cyan;
+            }
+        }
+
+        &:nth-child(4) {
+            .p-progressbar-value {
+                background: $cyan;
+            }
+        }
+
+        &:nth-child(5) {
+            .p-progressbar-value {
+                background: $cyan;
+            }
+        }
+
+        &:nth-child(6) {
+            .p-progressbar-value {
+                background: $pink;
+            }
+        }
+
+        .activity-item {
+            .activity-title {
+                font-weight: 500;
+            }
+
+            .activity-subtext {
+                font-size: .85rem;
+                color: $textSecondaryColor;
+            }
+            .p-progressbar {
+                height: 6px;
+                border-radius: 10px;
+                background: $contentAltBgColor;
+            }
+        }
+    }
+}
+
+.widget-bestsellers {
+    @include reset-list;
+
+    >li {
+        padding: 1rem 0;
+
+        &:last-child {
+            border-bottom: 0 none;
+        }
+
+        .bestseller-item {
+            background-color: $contentAltBgColor;
+            border-radius: 4px;
+            height: 3.5rem;
+            transition: box-shadow .2s;
+
+            img {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+            }
+
+            a {
+                color: $textSecondaryColor;
+            }
+
+            .item-button {
+                margin-left: auto;
+            }
+
+            &:hover {
+                cursor: pointer;
+                background-color: $hoverBgColor;
+                box-shadow: 0 2px 1px -1px rgba(0,0,0,.2),0 1px 1px 0 rgba(0,0,0,.14),0 1px 3px 0 rgba(0,0,0,.12);
+            }
+        }
+    }
+}
+
+.widget-map {
+    .map-container {
+        background-image: url("../../layout/images/widgets/map.jpg");
+        width: 100%;
+        min-height: 20rem;
+        background-size: cover;
+    }
+}
+
+.widget-chat {
+    ul {
+        @include reset-list;
+        padding: 1rem 1rem 0;
+        height: 420px;
+        overflow-y: auto;
+
+        li {
+            img {
+                width: 32px;
+            }
+
+            .message {
+                color: $bodyBgColor;
+            }
+
+            &.from {
+                .message {
+                    padding: 1rem;
+                    border-radius: 30px;
+                }
+            }
+
+            &.own {
+                text-align: right;
+
+                .message {
+                    padding: 1rem;
+                    border-radius: 30px;
+                }
+            }
+        }
+    }
+
+    .write-message {
+        border-radius: 30px;
+
+        .p-inputgroup-addon {
+            padding: 0;
+            overflow: hidden;
+
+            &:first-child {
+                border-top-left-radius: 30px;
+                border-bottom-left-radius: 30px;
+            }
+
+            &:last-child {
+                border-top-right-radius: 30px;
+                border-bottom-right-radius: 30px;
+            }
+
+            > .p-button {
+                height: calc(2.5rem + 2px);
+                border-radius: 0;
+            }
+        }
+
+        .emoji {
+            width: 90%;
+
+            .emoji-button {
+                border-radius: 50%;
+                width: 2.5rem;
+                height: 2.5rem;
+                min-width: 0;
+
+                .p-button-label {
+                    color: yellow !important;
+                    font-size: 1.5rem;
+                }
+            }
+        }
+
+        @media (min-width: $mobileBreakpoint - 1) {
+            .emoji {
+                width: 40%;
+                margin-left: -38%;
+            }
+        }
+    }
+}
+
+.widget-pricing {
+    width: 100%;
+
+    .card {
+        height: 100%;
+    }
+
+    .options {
+        padding: 1rem 2rem;
+
+        li {
+            display: flex;
+            align-items: center;
+        }
+
+        i, span {
+            padding: 1rem;
+        }
+
+        span {
+            font-size: 1.2rem;
+        }
+    }
+}

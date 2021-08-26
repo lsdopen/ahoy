@@ -1,0 +1,104 @@
+/*!
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+@media (max-width: $mobileBreakpoint) {
+    .layout-topbar {
+        height: auto;
+        display: flex;
+        flex-direction: column;
+
+        .layout-topbar-left {
+            height: 4rem;
+            width: 100%;
+            justify-content: flex-start;
+
+            .layout-topbar-mobile-button {
+                display: flex;
+            }
+        }
+
+        .layout-topbar-right {
+            display: none;
+            flex-direction: column-reverse;
+            padding: 0;
+            @include material-overlay-animation;
+
+            &.layout-topbar-mobile-active {
+                display: flex;
+            }
+
+            .layout-topbar-actions-left {
+                height: 4rem;
+                display: flex;
+                justify-content: space-between;
+
+                .layout-megamenu {
+                    .p-megamenu-panel {
+                        position: fixed;
+                        left: 1rem;
+                        right: 1rem;
+
+                        .p-megamenu-grid {
+                            flex-wrap: wrap;
+
+                            > [class*="p-megamenu-col-"] {
+                                flex: 1 1 auto;
+                                width: auto;
+                            }
+
+                            .p-megamenu-submenu {
+                                width: auto;
+                                min-width: 12.5rem;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .layout-topbar-actions-right {
+                height: 4rem;
+                width: 100%;
+
+                .layout-topbar-items {
+                    width: 100%;
+                    justify-content: space-between;
+
+                    .layout-topbar-item {
+                        .layout-topbar-action-panel {
+                            position: fixed;
+                            top: 8rem;
+                            left: 1em;
+                            right: 1em;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (min-width: $mobileBreakpoint + 1) {
+    .layout-menu-horizontal,
+    .layout-menu-slim {
+        .layout-topbar {
+            .layout-topbar-left {
+                .layout-menu-button {
+                    display: none;
+                }
+            }
+        }
+    }
+}

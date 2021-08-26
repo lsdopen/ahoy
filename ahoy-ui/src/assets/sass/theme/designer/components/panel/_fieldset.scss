@@ -1,0 +1,63 @@
+/*!
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+.p-fieldset {
+    border: $panelContentBorder;
+    background: $panelContentBg;
+    color: $panelContentTextColor;
+    border-radius: $borderRadius;
+
+    .p-fieldset-legend {
+        padding: $panelHeaderPadding;
+        border: $panelHeaderBorder;
+        color: $panelHeaderTextColor;
+        background: $panelHeaderBg;
+        font-weight: $panelHeaderFontWeight;
+        border-radius: $borderRadius;
+    }
+
+    &.p-fieldset-toggleable {
+        .p-fieldset-legend {
+            padding: 0;
+            transition: $actionIconTransition;
+
+            a {
+                padding: $panelHeaderPadding;
+                color: $panelHeaderTextColor;
+                border-radius: $borderRadius;
+                transition: $listItemTransition;
+
+                .p-fieldset-toggler {
+                    margin-right: $inlineSpacing;
+                }
+
+                &:focus {
+                    @include focused();
+                }
+            }
+
+            &:hover {
+                background: $panelHeaderHoverBg;
+                border-color: $panelHeaderHoverBorderColor;
+                color: $panelHeaderTextHoverColor;
+            }
+        }
+    }
+
+    .p-fieldset-content {
+        padding: $panelContentPadding;
+    }
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
+import {MenuItem, Message} from 'primeng/api';
 
 @Component({
   selector: 'app-settings',
@@ -23,16 +24,29 @@ import {ActivatedRoute} from '@angular/router';
   styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit {
-  setup: boolean;
+  items: MenuItem[];
+  msgs: Message[] = [];
 
   constructor(private route: ActivatedRoute) {
   }
 
   ngOnInit(): void {
+    this.items = [
+      {
+        label: 'Settings',
+        items: [
+          {label: 'Git', icon: 'pi pi-fw pi-github', routerLink: ['/settings/git']},
+          {label: 'Argo', icon: 'pi pi-fw pi-sitemap', routerLink: ['/settings/argo']},
+          {label: 'Docker', icon: 'pi pi-fw pi-th-large', routerLink: ['/settings/docker']}
+        ]
+      }
+    ];
+
     this.route.children.map(r => {
       const setup = Boolean(r.snapshot.queryParamMap.get('setup'));
       if (setup) {
-        this.setup = true;
+        this.msgs = [];
+        this.msgs.push({ severity: 'warn', summary: 'Please note', detail: 'In order to continue you need to set up the following:' });
       }
     });
   }

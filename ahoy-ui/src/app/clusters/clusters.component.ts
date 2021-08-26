@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,9 +19,10 @@ import {Cluster} from './cluster';
 import {ActivatedRoute} from '@angular/router';
 import {ClusterService} from './cluster.service';
 import {LoggerService} from '../util/logger.service';
+import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Confirmation} from '../components/confirm-dialog/confirm';
 import {filter} from 'rxjs/operators';
-import {DialogService} from '../components/dialog.service';
+import {DialogUtilService} from '../components/dialog-util.service';
 
 @Component({
   selector: 'app-clusters',
@@ -34,7 +35,10 @@ export class ClustersComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private clusterService: ClusterService,
               private log: LoggerService,
-              private dialogService: DialogService) {
+              private dialogUtilService: DialogUtilService,
+              private breadcrumbService: AppBreadcrumbService) {
+
+    this.breadcrumbService.setItems([{label: 'clusters'}]);
   }
 
   ngOnInit() {
@@ -47,11 +51,11 @@ export class ClustersComponent implements OnInit {
       .subscribe(clusters => this.clusters = clusters);
   }
 
-  delete(cluster: Cluster) {
+  delete(event: Event, cluster: Cluster) {
     const confirmation = new Confirmation(`Are you sure you want to delete ${cluster.name}?`);
     confirmation.verify = true;
     confirmation.verifyText = cluster.name;
-    this.dialogService.showConfirmDialog(confirmation).pipe(
+    this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
       this.clusterService.destroy(cluster)

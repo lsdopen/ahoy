@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,16 +14,13 @@
   ~    limitations under the License.
   -->
 
-<h1 mat-dialog-title>{{description.title}}</h1>
-
-<mat-dialog-content class="mat-body-1">
-  <div fxLayout="column">
-    <mat-form-field>
-      <textarea matInput matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="20" readonly>{{description.text}}</textarea>
-    </mat-form-field>
+<div class="p-grid">
+  <div class="p-col-12">
+    <textarea rows="10" cols="60" pInputTextarea readonly>{{description.text}}</textarea>
   </div>
-</mat-dialog-content>
+</div>
 
-<mat-dialog-actions>
-  <button mat-raised-button color="primary" [mat-dialog-close]>Ok</button>
-</mat-dialog-actions>
+<div class="p-grid p-pt-3">
+  <button pButton pRipple type="button" icon="pi pi-check" (click)="close(undefined)" label="Ok" class="p-button-text p-ml-auto p-mr-2" autofocus></button>
+</div>
+

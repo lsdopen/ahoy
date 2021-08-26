@@ -1,5 +1,5 @@
 /*!
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -13,19 +13,6 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-
-.notification.mat-list-base[dense] {
-  padding-top: 8px;
-  padding-bottom: 0;
-  cursor: pointer;
-}
-
-.notification-item {
-  width: 200px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
 
 .unread {
   font-weight: bold;

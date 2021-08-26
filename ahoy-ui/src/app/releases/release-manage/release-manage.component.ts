@@ -21,7 +21,6 @@ import {LoggerService} from '../../util/logger.service';
 import {EnvironmentService} from '../../environments/environment.service';
 import {filter, mergeMap} from 'rxjs/operators';
 import {Observable, of, Subscription} from 'rxjs';
-import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {PromoteDialogComponent} from '../promote-dialog/promote-dialog.component';
 import {UpgradeDialogComponent} from '../upgrade-dialog/upgrade-dialog.component';
 import {Release, ReleaseVersion} from '../release';
@@ -31,8 +30,11 @@ import {CopyEnvironmentConfigDialogComponent} from '../copy-environment-config-d
 import {TaskEvent} from '../../taskevents/task-events';
 import {Environment} from '../../environments/environment';
 import {Confirmation} from '../../components/confirm-dialog/confirm';
-import {DialogService} from '../../components/dialog.service';
+import {DialogUtilService} from '../../components/dialog-util.service';
 import {ReleaseService} from '../../release/release.service';
+import {AppBreadcrumbService} from '../../app.breadcrumb.service';
+import {MenuItem} from 'primeng/api';
+import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-release-manage',
@@ -44,7 +46,9 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   environmentReleases: EnvironmentRelease[];
   releaseChanged = new EventEmitter<{ environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion }>();
   environmentRelease: EnvironmentRelease;
+  selectedEnvironmentRelease: EnvironmentRelease;
   releaseVersion: ReleaseVersion;
+  menuItems: MenuItem[];
 
   constructor(
     private route: ActivatedRoute,
@@ -54,8 +58,9 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     private environmentReleaseService: EnvironmentReleaseService,
     private log: LoggerService,
     private location: Location,
+    private dialogUtilService: DialogUtilService,
     private dialogService: DialogService,
-    private dialog: MatDialog) {
+    private breadcrumbService: AppBreadcrumbService) {
   }
 
   ngOnInit() {
@@ -77,9 +82,12 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     return this.environmentReleaseService.get(environmentId, releaseId).pipe(
       mergeMap(environmentRelease => {
         this.environmentRelease = environmentRelease;
+        this.selectedEnvironmentRelease = environmentRelease;
 
         this.releaseVersion = (this.environmentRelease.release as Release).releaseVersions
           .find(relVersion => relVersion.id === releaseVersionId);
+
+        this.setBreadcrumb();
 
         return of(environmentRelease);
       }),
@@ -88,9 +96,39 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
         }
       ), mergeMap(environmentReleases => {
         this.environmentReleases = environmentReleases;
+        this.setupMenuItems();
+
         return of(this.environmentRelease);
       })
     );
+  }
+
+  private setupMenuItems() {
+    this.menuItems = [
+      {
+        label: 'Edit', icon: 'pi pi-fw pi-pencil', disabled: !this.canEdit(),
+        routerLink: `/release/edit/${this.environmentRelease.id.environmentId}/${this.environmentRelease.id.releaseId}/version/${this.releaseVersion.id}`
+      },
+      {
+        label: 'History', icon: 'pi pi-fw pi-list',
+        routerLink: `/releasehistory/${this.environmentRelease.id.releaseId}`
+      },
+      {
+        label: 'Copy environment config', icon: 'pi pi-fw pi-copy', disabled: !this.canCopyEnvConfig(),
+        command: () => this.copyEnvConfig()
+      }
+    ];
+  }
+
+  private setBreadcrumb() {
+    const env = (this.environmentRelease.environment as Environment);
+    const rel = (this.environmentRelease.release as Release);
+    this.breadcrumbService.setItems([
+      {label: env.cluster.name, routerLink: '/clusters'},
+      {label: env.name, routerLink: '/environments', queryParams: {clusterId: env.cluster.id}},
+      {label: rel.name},
+      {label: this.releaseVersion.version}
+    ]);
   }
 
   private subscribeToEnvironmentReleaseChanged() {
@@ -129,7 +167,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     confirmation.title = 'Deploy';
     confirmation.requiresInput = true;
     confirmation.input = commitMessage;
-    this.dialogService.showConfirmDialog(confirmation).pipe(
+    this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
       const deployDetails = new DeployDetails(conf.input);
@@ -142,7 +180,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
       `${(this.environmentRelease.environment as Environment).name}?`);
     confirmation.verify = true;
     confirmation.verifyText = (this.environmentRelease.release as Release).name;
-    this.dialogService.showConfirmDialog(confirmation).pipe(
+    this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
       this.releaseService.undeploy(this.environmentRelease).subscribe();
@@ -154,11 +192,12 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   }
 
   promote() {
-    const dialogConfig = new MatDialogConfig();
+    const dialogConfig = new DynamicDialogConfig();
+    dialogConfig.header = `Promote ${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} to:`;
     dialogConfig.data = {environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion};
 
-    const dialogRef = this.dialog.open(PromoteDialogComponent, dialogConfig);
-    dialogRef.afterClosed().pipe(
+    const dialogRef = this.dialogService.open(PromoteDialogComponent, dialogConfig);
+    dialogRef.onClose.pipe(
       filter((result) => result !== undefined), // cancelled
       mergeMap((destEnvironment) => {
         return this.releaseService.promote(this.environmentRelease.id, destEnvironment.id);
@@ -171,11 +210,12 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   }
 
   upgrade() {
-    const dialogConfig = new MatDialogConfig();
+    const dialogConfig = new DynamicDialogConfig();
+    dialogConfig.header = `Upgrade ${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} to version:`;
     dialogConfig.data = {environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion};
 
-    const dialogRef = this.dialog.open(UpgradeDialogComponent, dialogConfig);
-    dialogRef.afterClosed().pipe(
+    const dialogRef = this.dialogService.open(UpgradeDialogComponent, dialogConfig);
+    dialogRef.onClose.pipe(
       filter((result) => result !== undefined), // cancelled
       mergeMap((version) => {
         return this.releaseService.upgrade(this.releaseVersion.id, version);
@@ -192,11 +232,12 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   }
 
   copyEnvConfig() {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.data = [this.environmentRelease, this.releaseVersion];
+    const dialogConfig = new DynamicDialogConfig();
+    dialogConfig.header = `Copy environment config for version ${this.releaseVersion.version} from:`;
+    dialogConfig.data = {environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion};
 
-    const dialogRef = this.dialog.open(CopyEnvironmentConfigDialogComponent, dialogConfig);
-    dialogRef.afterClosed().pipe(
+    const dialogRef = this.dialogService.open(CopyEnvironmentConfigDialogComponent, dialogConfig);
+    dialogRef.onClose.pipe(
       filter((result) => result !== undefined), // cancelled
       mergeMap((selectedReleaseVersion) => {
         return this.releaseService.copyEnvConfig(this.environmentRelease.id, selectedReleaseVersion.id, this.releaseVersion.id);
@@ -206,8 +247,15 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
 
   releaseVersionChanged() {
     this.router.navigate(
-      ['/release', this.environmentRelease.id.environmentId, this.environmentRelease.id.releaseId, 'version', this.releaseVersion.id]).then();
+      ['/release', this.environmentRelease.id.environmentId, this.environmentRelease.id.releaseId, 'version', this.releaseVersion.id])
+      .then(() => this.setBreadcrumb());
     this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
+  }
+
+  reloadCurrent() {
+    if (this.selectedEnvironmentRelease) {
+      this.reload(this.selectedEnvironmentRelease.id.environmentId, this.releaseVersion.id);
+    }
   }
 
   reload(environmentId: number, releaseVersionId: number) {
@@ -253,7 +301,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     confirmation.title = 'Rollback';
     confirmation.requiresInput = true;
     confirmation.input = commitMessage;
-    this.dialogService.showConfirmDialog(confirmation).pipe(
+    this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
       const deployDetails = new DeployDetails(conf.input);

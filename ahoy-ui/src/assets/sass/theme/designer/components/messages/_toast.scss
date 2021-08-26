@@ -1,0 +1,111 @@
+/*!
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+.p-toast {
+    opacity: $toastOpacity;
+
+    .p-toast-message {
+        margin: $toastMargin;
+        box-shadow: $toastShadow;
+        border-radius: $borderRadius;
+
+        .p-toast-message-content {
+            padding: $toastPadding;
+            border-width: $toastBorderWidth;
+
+            .p-toast-message-text {
+                margin: $toastMessageTextMargin;
+            }
+
+            .p-toast-message-icon {
+                font-size: $toastIconFontSize;
+            }
+
+            .p-toast-summary {
+                font-weight: $toastTitleFontWeight;
+            }
+
+            .p-toast-detail {
+                margin: $toastDetailMargin;
+            }
+        }
+
+        .p-toast-icon-close {
+            width: $toastIconFontSize;
+            height: $toastIconFontSize;
+            border-radius: $actionIconBorderRadius;
+            background: transparent;
+            transition: $actionIconTransition;
+
+            &:hover {
+                background: rgba(255,255,255,.3);
+            }
+
+            &:focus {
+                @include focused();
+            }
+        }
+
+        &.p-toast-message-info {
+            background: $infoMessageBg;
+            border: $infoMessageBorder;
+            border-width: $messageBorderWidth;
+            color: $infoMessageTextColor;
+
+            .p-toast-message-icon,
+            .p-toast-icon-close {
+                color: $infoMessageIconColor;
+            }
+        }
+
+        &.p-toast-message-success {
+            background: $successMessageBg;
+            border: $successMessageBorder;
+            border-width: $messageBorderWidth;
+            color: $successMessageTextColor;
+
+            .p-toast-message-icon,
+            .p-toast-icon-close {
+                color: $successMessageIconColor;
+            }
+        }
+
+        &.p-toast-message-warn {
+            background: $warningMessageBg;
+            border: $warningMessageBorder;
+            border-width: $messageBorderWidth;
+            color: $warningMessageTextColor;
+
+            .p-toast-message-icon,
+            .p-toast-icon-close {
+                color: $warningMessageIconColor;
+            }
+        }
+
+        &.p-toast-message-error {
+            background: $errorMessageBg;
+            border: $errorMessageBorder;
+            border-width: $messageBorderWidth;
+            color: $errorMessageTextColor;
+
+            .p-toast-message-icon,
+            .p-toast-icon-close {
+                color: $errorMessageIconColor;
+            }
+        }
+
+    }
+}

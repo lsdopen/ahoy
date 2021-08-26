@@ -1,0 +1,326 @@
+/*!
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+/* Utils */
+.clearfix:after {
+    content: " ";
+    display: block;
+    clear: both;
+}
+
+*[hidden] {
+    display: none;
+}
+
+.p-lh {
+    line-height: 1.5;
+}
+
+.card {
+    background-color: $contentBgColor;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
+    border-radius: $borderRadius;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+
+        h1, h2, h3, h4, h5, h6 {
+            margin: 0;
+        }
+    }
+
+    .card-subtitle {
+        color: $textSecondaryColor;
+        font-weight: 600;
+        margin: -1rem 0 1rem 0;
+    }
+}
+
+.p-toast {
+    &.p-toast-top-right,
+    &.p-toast-top-left,
+    &.p-toast-top-center {
+        top: 85px;
+    }
+}
+
+body {
+    .p-overlay-badge {
+        position: relative;
+    }
+
+    .p-overlay-badge .p-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        transform: translate(50%,-50%);
+        transform-origin: 100% 0;
+        margin: 0;
+    }
+}
+
+.height-100 {
+    height: 100% !important;
+}
+
+.width-100 {
+    width: 100% !important;
+}
+
+.fs-xsmall {
+    font-size: .715rem !important;
+}
+
+.fs-small {
+    font-size: .858rem !important;
+}
+
+.fs-normal {
+    font-size: 1rem !important;
+}
+
+.fs-large {
+    font-size: 1.5rem !important;
+}
+
+.fs-xlarge {
+    font-size: 2rem !important;
+}
+
+.fs-xxlarge {
+    font-size: 3rem !important;
+}
+
+.fw-400 {
+    font-weight: 400 !important;
+}
+
+.fw-500 {
+    font-weight: 500 !important;
+}
+
+.fw-700 {
+    font-weight: 700 !important;
+}
+
+.rounded-small {
+    border-radius: 2px !important;
+}
+
+.rounded-normal {
+    border-radius: 4px !important;
+}
+
+.rounded-large {
+    border-radius: 6px !important;
+}
+
+.rounded-circle {
+    border-radius: 50% !important;
+}
+
+.rounded-none {
+    border-radius: 0 !important;
+}
+
+.divider-top {
+    border-top: 1px solid $dividerColor !important;
+}
+
+.divider-bottom {
+    border-bottom: 1px solid $dividerColor !important;
+}
+
+.divider-left {
+    border-left: 1px solid $dividerColor !important;
+}
+
+.divider-right {
+    border-right: 1px solid $dividerColor !important;
+}
+
+.muted-text {
+    color: $textSecondaryColor !important;
+}
+
+.text-color {
+    color: $textColor !important;
+}
+
+.solid-surface-text-color {
+    color: $solidSurfaceTextColor !important;
+}
+
+.white-color {
+    color: #ffffff !important;
+}
+
+.dark-color {
+    color: #212121 !important;
+}
+
+.pink-color {
+    color: $pink !important;
+}
+
+.indigo-color {
+    color: $indigo !important;
+}
+
+.yellow-color {
+    color: $yellow !important;
+}
+
+.orange-color {
+    color: $orange !important;
+}
+
+.teal-color {
+    color: $teal !important;
+}
+
+.cyan-color {
+    color: $cyan !important;
+}
+
+.bluegrey-color {
+    color: $bluegrey !important;
+}
+
+.purple-color {
+    color: $purple !important;
+}
+
+.deeppurple-color {
+    color: $deeppurple !important;
+}
+
+.blue-color {
+    color: $blue !important;
+}
+
+.lightblue-color {
+    color: $lightblue !important;
+}
+
+.green-color {
+    color: $green !important;
+}
+
+.lightgreen-color {
+    color: $lightgreen !important;
+}
+
+.lime-color {
+    color: $lime !important;
+}
+
+.deeporange-color {
+    color: $deeporange !important;
+}
+
+.brown-color {
+    color: $brown !important;
+}
+
+.content-bgcolor {
+    background-color: $contentBgColor !important;
+}
+
+.content-alt-bgcolor {
+    background-color: $contentAltBgColor !important;
+}
+
+.pink-bgcolor {
+    background-color: $pink !important;
+}
+
+.indigo-bgcolor {
+    background-color: $indigo !important;
+}
+
+.yellow-bgcolor {
+    background-color: $yellow !important;
+}
+
+.orange-bgcolor {
+    background-color: $orange !important;
+}
+
+.teal-bgcolor {
+    background-color: $teal !important;
+}
+
+.cyan-bgcolor {
+    background-color: $cyan !important;
+}
+
+.bluegrey-bgcolor {
+    background-color: $bluegrey !important;
+}
+
+.purple-bgcolor {
+    background-color: $purple !important;
+}
+
+.deeppurple-bgcolor {
+    background-color: $deeppurple !important;
+}
+
+.blue-bgcolor {
+    background-color: $blue !important;
+}
+
+.lightblue-bgcolor {
+    background-color: $lightblue !important;
+}
+
+.green-bgcolor {
+    background-color: $green !important;
+}
+
+.lightgreen-bgcolor {
+    background-color: $lightgreen !important;
+}
+
+.lime-bgcolor {
+    background-color: $lime !important;
+}
+
+.deeporange-bgcolor {
+    background-color: $deeporange !important;
+}
+
+.brown-bgcolor {
+    background-color: $brown !important;
+}
+
+.badge-dot {
+    width: .5rem;
+    min-width: .5rem;
+    height: .5rem;
+    border-radius: 50%;
+    padding: 0;
+}

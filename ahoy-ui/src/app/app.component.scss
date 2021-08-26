@@ -1,5 +1,5 @@
 /*!
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -13,30 +13,3 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-
-@import 'src/theme';
-
-.app-container {
-  position: absolute;
-  top: 50px;
-  bottom: 0;
-  left: 0;
-  right: 0
-}
-
-.app-toolbar {
-  position: fixed;
-  height: 50px;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 2
-}
-
-.title {
-  cursor: pointer;
-}
-
-.nav-active {
-  background: mat-color($app-background);
-}

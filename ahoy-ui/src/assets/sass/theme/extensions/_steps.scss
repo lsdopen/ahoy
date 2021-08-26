@@ -1,0 +1,77 @@
+/*!
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+.p-steps {
+    padding: 1rem 0;
+
+    .p-steps-item {
+        justify-content: flex-start;
+        flex-direction: row-reverse;
+        align-items: center;
+
+        &:before {
+            position: static;
+            left: auto;
+            top: auto;
+            margin-top: 0;
+        }
+
+        &:last-child {
+            flex-grow: 0;
+
+            &:before {
+                display: none;
+            }
+        }
+
+        .p-menuitem-link {
+            flex-direction: row;
+            flex: 1 1 auto;
+            overflow: visible;
+            padding: 0 $inlineSpacing;
+
+            .p-steps-number {
+                background-color: #9e9d9e;
+                color: #ffffff;
+                font-size: 0.857rem;
+                min-width: 1.714rem;
+                height: 1.714rem;
+                line-height: 1.714rem;
+            }
+
+            .p-steps-title {
+                margin: 0;
+                padding-left: $inlineSpacing;
+            }
+        }
+
+        &.p-highlight {
+            .p-steps-number {
+                background-color: $primaryColor;
+                color: $primaryTextColor;
+            }
+
+            .p-steps-title {
+                font-weight: 600;
+                color: $textColor;
+            }
+        }
+
+        &.p-disabled {
+            opacity: 1;
+        }
+    }
+}

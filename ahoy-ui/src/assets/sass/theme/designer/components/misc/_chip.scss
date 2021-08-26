@@ -1,0 +1,52 @@
+/*!
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+.p-chip {
+    background-color: $chipBg;
+    color: $chipTextColor;
+    border-radius: $chipBorderRadius;
+    padding: 0 nth($inputPadding, 2);
+
+    .p-chip-text {
+        line-height: 1.5;
+        margin-top: nth($inputPadding, 1) / 2;
+        margin-bottom: nth($inputPadding, 1) / 2;
+    }
+
+    .p-chip-icon {
+        margin-right: $inlineSpacing;
+    }
+
+    .pi-chip-remove-icon {
+        margin-left: $inlineSpacing;
+    }
+
+    img {
+        width: 1.5 + nth($inputPadding, 1);
+        height: 1.5 + nth($inputPadding, 1);
+        margin-left: -1 * nth($inputPadding, 2);
+        margin-right: $inlineSpacing;
+    }
+
+    .pi-chip-remove-icon {
+        border-radius: $borderRadius;
+        transition: $actionIconTransition;
+
+        &:focus {
+            @include focused();
+        }
+    }
+}

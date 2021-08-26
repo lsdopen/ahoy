@@ -1,0 +1,154 @@
+/*!
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+.p-column-filter-row {
+    .p-column-filter-menu-button,
+    .p-column-filter-clear-button {
+        margin-left: $inlineSpacing;
+    }
+}
+
+.p-column-filter-menu-button {
+    width: $actionIconWidth;
+    height: $actionIconHeight;
+    color: $actionIconColor;
+    border: $actionIconBorder;
+    background: $actionIconBg;
+    border-radius: $actionIconBorderRadius;
+    transition: $actionIconTransition;
+
+    &:hover {
+        color: $actionIconHoverColor;
+        border-color: $actionIconHoverBorderColor;
+        background: $actionIconHoverBg;
+    }
+
+    &.p-column-filter-menu-button-open,
+    &.p-column-filter-menu-button-open:hover {
+        background: $actionIconHoverBg;
+        color: $actionIconHoverColor;
+    }
+
+    &.p-column-filter-menu-button-active,
+    &.p-column-filter-menu-button-active:hover {
+        background: $highlightBg;
+        color: $highlightTextColor;
+    }
+
+    &:focus {
+        @include focused();
+    }
+
+}
+
+.p-column-filter-clear-button {
+    width: $actionIconWidth;
+    height: $actionIconHeight;
+    color: $actionIconColor;
+    border: $actionIconBorder;
+    background: $actionIconBg;
+    border-radius: $actionIconBorderRadius;
+    transition: $actionIconTransition;
+
+    &:hover {
+        color: $actionIconHoverColor;
+        border-color: $actionIconHoverBorderColor;
+        background: $actionIconHoverBg;
+    }
+
+    &:focus {
+        @include focused();
+    }
+}
+
+.p-column-filter-overlay {
+    background: $inputOverlayBg;
+    color: $inputListTextColor;
+    border: $inputOverlayBorder;
+    border-radius: $borderRadius;
+    box-shadow: $inputOverlayShadow;
+    min-width: $menuWidth;
+
+    .p-column-filter-row-items {
+        padding: $inputListPadding;
+
+        .p-column-filter-row-item {
+            margin: $inputListItemMargin;
+            padding: $inputListItemPadding;
+            border: $inputListItemBorder;
+            color: $inputListItemTextColor;
+            background: $inputListItemBg;
+            transition: $listItemTransition;
+            border-radius: $inputListItemBorderRadius;
+
+            &.p-highlight {
+                color: $highlightTextColor;
+                background: $highlightBg;
+            }
+
+            &:not(.p-highlight):not(.p-disabled):hover {
+                color: $inputListItemTextHoverColor;
+                background: $inputListItemHoverBg;
+            }
+
+            &:focus {
+                @include focused-listitem();
+            }
+        }
+
+        .p-column-filter-separator {
+            border-top: $divider;
+            margin: $menuSeparatorMargin;
+        }
+    }
+}
+
+.p-column-filter-overlay-menu {
+    .p-column-filter-operator {
+        padding: $inputListHeaderPadding;
+        border-bottom: $inputListHeaderBorder;
+        color: $inputListHeaderTextColor;
+        background: $inputOverlayHeaderBg;
+        margin: $inputListHeaderMargin;
+        border-top-right-radius: $borderRadius;
+        border-top-left-radius: $borderRadius;
+    }
+
+    .p-column-filter-constraint {
+        padding: $panelContentPadding;
+        border-bottom: $divider;
+
+        .p-column-filter-matchmode-dropdown {
+            margin-bottom: $inlineSpacing;
+        }
+
+        .p-column-filter-remove-button {
+            margin-top: $inlineSpacing;
+        }
+
+        &:last-child {
+            border-bottom: 0 none;
+        }
+    }
+
+    .p-column-filter-add-rule {
+        padding: $panelFooterPadding;
+    }
+
+    .p-column-filter-buttonbar {
+        padding: $panelContentPadding;
+    }
+}

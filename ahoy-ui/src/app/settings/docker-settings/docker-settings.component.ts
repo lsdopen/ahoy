@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,24 +14,35 @@
  *    limitations under the License.
  */
 
-import {Component, OnInit} from '@angular/core';
-import {DockerRegistry, DockerSettings} from './docker-settings';
-import {DockerSettingsService} from './docker-settings.service';
+import {AfterContentChecked, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {AppBreadcrumbService} from '../../app.breadcrumb.service';
 import {Notification} from '../../notifications/notification';
 import {NotificationsService} from '../../notifications/notifications.service';
+import {DockerRegistry, DockerSettings} from './docker-settings';
+import {DockerSettingsService} from './docker-settings.service';
 
 @Component({
   selector: 'app-docker-settings',
   templateUrl: './docker-settings.component.html',
   styleUrls: ['./docker-settings.component.scss']
 })
-export class DockerSettingsComponent implements OnInit {
+export class DockerSettingsComponent implements OnInit, AfterContentChecked {
   dockerSettings: DockerSettings;
   hideDockerPassword = true;
   selectedIndex: number;
 
-  constructor(private dockerSettingsService: DockerSettingsService,
-              private notificationsService: NotificationsService) {
+  constructor(private cd: ChangeDetectorRef,
+              private dockerSettingsService: DockerSettingsService,
+              private notificationsService: NotificationsService,
+              private breadcrumbService: AppBreadcrumbService) {
+    this.breadcrumbService.setItems([
+      {label: 'settings'},
+      {label: 'docker'}
+    ]);
+  }
+
+  ngAfterContentChecked(): void {
+    this.cd.detectChanges();
   }
 
   ngOnInit(): void {
@@ -40,6 +51,8 @@ export class DockerSettingsComponent implements OnInit {
         this.dockerSettings = dockerSettings;
         if (!this.dockerSettings.dockerRegistries) {
           this.dockerSettings.dockerRegistries = [];
+        } else {
+          this.selectedIndex = 0;
         }
       });
   }
@@ -52,11 +65,16 @@ export class DockerSettingsComponent implements OnInit {
 
   addDockerRegistry() {
     this.dockerSettings.dockerRegistries.push(new DockerRegistry());
-    this.selectedIndex = this.dockerSettings.dockerRegistries.length - 1;
+    setTimeout(() => this.selectedIndex = this.dockerSettings.dockerRegistries.length - 1);
   }
 
   deleteRegistry() {
     this.dockerSettings.dockerRegistries.splice(this.selectedIndex, 1);
-    this.selectedIndex = this.selectedIndex - 1;
+    setTimeout(() => {
+      if (this.selectedIndex === this.dockerSettings.dockerRegistries.length) {
+        // only move one tab back if its the last tab
+        this.selectedIndex = this.dockerSettings.dockerRegistries.length - 1;
+      }
+    });
   }
 }

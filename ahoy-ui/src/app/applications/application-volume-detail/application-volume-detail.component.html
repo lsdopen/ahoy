@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,73 +14,66 @@
   ~    limitations under the License.
   -->
 
-<div fxFlex fxLayout="column" fxLayoutAlign="start start" class="form-area">
+<div class="p-fluid">
+  <div class="p-col-12 p-md-5">
 
-  <mat-form-field style="margin-top: 10px">
-    <input matInput [(ngModel)]="volume.name" placeholder="Name"
-           name="volumeName{{volumeIndex}}"
-           required
-           pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$">
-    <mat-hint>should start with and use lower case letters and numbers</mat-hint>
-  </mat-form-field>
-
-  <mat-form-field>
-    <input matInput [(ngModel)]="volume.mountPath"
-           placeholder="Mount path"
-           name="volumeMountPath{{volumeIndex}}" required>
-  </mat-form-field>
-
-  <mat-form-field>
-    <mat-select [(ngModel)]="volume.type"
-                name="volumeType{{volumeIndex}}" required placeholder="Type">
-      <mat-option value="PersistentVolume">Persistent Volume</mat-option>
-      <mat-option value="Secret">Secret</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <div *ngIf="volume.type === 'PersistentVolume'" fxLayout="column" class="form-area">
-    <mat-form-field>
-      <input matInput [(ngModel)]="volume.storageClassName"
-             placeholder="Storage class name"
-             name="volumeStorageClassName{{volumeIndex}}">
-    </mat-form-field>
-
-    <mat-form-field>
-      <mat-select [(ngModel)]="volume.accessMode"
-                  name="volumeAccessMode{{volumeIndex}}" required placeholder="Access Mode">
-        <mat-option value="ReadWriteOnce">ReadWriteOnce</mat-option>
-        <mat-option value="ReadWriteMany">ReadWriteMany</mat-option>
-        <mat-option value="ReadOnlyMany">ReadOnlyMany</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <div fxLayout="row" fxLayoutGap="10px">
-      <mat-form-field>
-        <input matInput [(ngModel)]="volume.size"
-               placeholder="Storage size"
-               name="volumeStorageSize{{volumeIndex}}" required>
-      </mat-form-field>
-
-      <mat-form-field>
-        <mat-select [(ngModel)]="volume.sizeStorageUnit"
-                    name="volumeStorageSizeUnit{{volumeIndex}}" required placeholder="Unit">
-          <mat-option value="Mi">Mi</mat-option>
-          <mat-option value="Gi">Gi</mat-option>
-        </mat-select>
-      </mat-form-field>
+    <div class="p-field p-float-label">
+      <input pInputText id="volumeName{{volumeIndex}}" [(ngModel)]="volume.name" name="volumeName{{volumeIndex}}"
+             required
+             pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$">
+      <label for="volumeName{{volumeIndex}}">Name</label>
+      <small>Name should start with and use lower case letters and numbers</small>
     </div>
-  </div>
 
-  <div *ngIf="volume.type === 'Secret'" fxLayout="column" class="form-area">
-    <mat-form-field>
-      <mat-select [(ngModel)]="volume.secretName"
-                  name="volumeSecretName{{volumeIndex}}" required placeholder="Secret">
-        <mat-option>--</mat-option>
-        <mat-option *ngFor="let secret of secrets" [value]="secret.name">
-          {{secret.name}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
+    <div class="p-field p-float-label">
+      <input pInputText id="volumeMountPath{{volumeIndex}}" [(ngModel)]="volume.mountPath" name="volumeMountPath{{volumeIndex}}"
+             required>
+      <label for="volumeMountPath{{volumeIndex}}">Mount path</label>
+    </div>
 
+    <div class="p-field p-float-label">
+      <p-dropdown [options]="[{label: 'Persistent Volume', value: 'PersistentVolume'}, {label: 'Secret', value: 'Secret'}]"
+                  optionLabel="label" optionValue="value" [(ngModel)]="volume.type"
+                  name="volumeType{{volumeIndex}}" required [autoDisplayFirst]="false"></p-dropdown>
+      <label>Type</label>
+    </div>
+
+    <div *ngIf="volume.type === 'PersistentVolume'">
+
+      <div class="p-field p-float-label">
+        <input pInputText id="volumeStorageClassName{{volumeIndex}}" [(ngModel)]="volume.storageClassName" name="volumeStorageClassName{{volumeIndex}}" required>
+        <label for="volumeStorageClassName{{volumeIndex}}">Storage class name</label>
+      </div>
+
+      <div class="p-field p-float-label">
+        <p-dropdown [options]="['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany']" [(ngModel)]="volume.accessMode" name="volumeAccessMode{{volumeIndex}}" required></p-dropdown>
+        <label>Access Mode</label>
+      </div>
+
+      <div class="p-formgroup-inline">
+        <div class="p-field p-float-label">
+          <input pInputText id="volumeStorageSize{{volumeIndex}}" [(ngModel)]="volume.size" name="volumeStorageSize{{volumeIndex}}" required>
+          <label for="volumeStorageSize{{volumeIndex}}">Storage size</label>
+        </div>
+
+        <div class="p-field p-float-label">
+          <p-dropdown [options]="['Mi', 'Gi']" [(ngModel)]="volume.sizeStorageUnit" name="volumeStorageSizeUnit{{volumeIndex}}" required></p-dropdown>
+          <label>Unit</label>
+        </div>
+      </div>
+
+    </div>
+
+    <div *ngIf="volume.type === 'Secret'">
+
+      <div class="p-field p-float-label">
+        <p-dropdown [options]="secrets" [(ngModel)]="volume.secretName" optionLabel="name"
+                    [showClear]="true" name="volumeSecretName{{volumeIndex}}"
+                    [autoDisplayFirst]="false"></p-dropdown>
+        <label>Secret</label>
+      </div>
+
+    </div>
+
+  </div>
 </div>

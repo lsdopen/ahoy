@@ -14,76 +14,80 @@
   ~    limitations under the License.
   -->
 
-<ng-container *ngIf="gitSettings">
-  <form #settingsForm="ngForm">
-    <app-content [title]="title" [buttonBar]="buttonBar">
-      <app-detail>
+<div class="p-grid">
+  <div class="p-col-12" *ngIf="gitSettings">
 
-        <div fxLayout="column" class="form-area">
-          <mat-form-field>
-            <input matInput [(ngModel)]="gitSettings.remoteRepoUri" placeholder="URI"
-                   name="gitRemoteRepoUri"
-                   required>
-          </mat-form-field>
-          <mat-form-field>
-            <input matInput [(ngModel)]="gitSettings.branch" placeholder="Branch"
-                   name="gitBranch"
-                   required>
-          </mat-form-field>
+    <p-toolbar>
+      <ng-template pTemplate="left">
+        <h5>Git Repository</h5>
+      </ng-template>
+      <ng-template pTemplate="right">
+        <button pButton pRipple label="Save" icon="pi pi-save" class="p-button-success p-mr-2 p-mb-2" (click)="save()" [disabled]="settingsForm.invalid"></button>
+        <button pButton pRipple label="Test" icon="pi pi-question" class="p-button-info p-mr-2 p-mb-2" (click)="test()" [disabled]="settingsForm.invalid"></button>
+      </ng-template>
+    </p-toolbar>
 
-          <mat-radio-group [(ngModel)]="gitSettings.credentials" name="gitCredentials">
-            <mat-radio-button value="NONE">None</mat-radio-button>
-            <mat-radio-button value="HTTPS">HTTPS</mat-radio-button>
-            <mat-radio-button value="SSH">SSH</mat-radio-button>
-          </mat-radio-group>
+    <form #settingsForm="ngForm">
+      <div class="p-fluid p-col-12 p-md-5">
+
+        <div class="p-field p-float-label">
+          <input pInputText id="gitRemoteRepoUri" [(ngModel)]="gitSettings.remoteRepoUri" name="gitRemoteRepoUri" required>
+          <label for="gitRemoteRepoUri">URI</label>
         </div>
 
-        <div *ngIf="gitSettings.credentials === 'HTTPS'" fxLayout="column" class="form-area">
-          <mat-form-field>
-            <input matInput [(ngModel)]="gitSettings.httpsUsername" placeholder="Username"
-                   name="gitRemoteRepoHttpsUsername"
-                   required>
-          </mat-form-field>
+        <div class="p-field p-float-label">
+          <input pInputText id="gitBranch" [(ngModel)]="gitSettings.branch" name="gitBranch" required>
+          <label for="gitBranch">Branch</label>
+        </div>
 
-          <mat-form-field>
-            <input matInput [(ngModel)]="gitSettings.httpsPassword" placeholder="Password"
+        <div class="p-d-inline-flex">
+          <div class="p-field-radiobutton p-mr-3">
+            <p-radioButton name="gitCredentialsNone" value="NONE" [(ngModel)]="gitSettings.credentials" id="gitCredentialsNone"></p-radioButton>
+            <label for="gitCredentialsNone">None</label>
+          </div>
+          <div class="p-field-radiobutton p-mr-3">
+            <p-radioButton name="gitCredentialsHttps" value="HTTPS" [(ngModel)]="gitSettings.credentials" id="gitCredentialsHttps"></p-radioButton>
+            <label for="gitCredentialsHttps">HTTPS</label>
+          </div>
+          <div class="p-field-radiobutton">
+            <p-radioButton name="gitCredentialsSsh" value="SSH" [(ngModel)]="gitSettings.credentials" id="gitCredentialsSsh"></p-radioButton>
+            <label for="gitCredentialsSsh">SSH</label>
+          </div>
+        </div>
+
+        <div *ngIf="gitSettings.credentials === 'HTTPS'">
+          <div class="p-field p-float-label">
+            <input pInputText id="gitRemoteRepoHttpsUsername" [(ngModel)]="gitSettings.httpsUsername" name="gitRemoteRepoHttpsUsername" required>
+            <label for="gitRemoteRepoHttpsUsername">Username</label>
+          </div>
+
+          <i class="pi {{hideGitPassword ? 'pi-eye-slash':'pi-eye'}}" style="cursor: pointer; width: 10px" (click)="hideGitPassword = !hideGitPassword"></i>
+          <div class="p-field p-float-label">
+            <input pInputText id="gitRemoteRepoHttpsPassword" [(ngModel)]="gitSettings.httpsPassword" name="gitRemoteRepoHttpsPassword"
                    [type]="hideGitPassword ? 'password' : 'text'"
-                   name="gitRemoteRepoHttpsPassword"
                    required>
-            <mat-icon matSuffix style="cursor: pointer" (click)="hideGitPassword = !hideGitPassword">{{hideGitPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-          </mat-form-field>
+            <label for="gitRemoteRepoHttpsPassword">Password</label>
+          </div>
         </div>
 
-        <div *ngIf="gitSettings.credentials === 'SSH'" fxLayout="column">
-          <mat-form-field>
-            <textarea matInput class="text-area-settings" [(ngModel)]="gitSettings.privateKey" placeholder="Private Key"
-                      name="gitRemoteRepoSshPrivateKey"
-                      type="text"
-                      required
-                      matTextareaAutosize matAutosizeMinRows="25"></textarea>
-          </mat-form-field>
+      </div>
 
-          <mat-form-field>
-            <textarea matInput class="text-area-settings" [(ngModel)]="gitSettings.sshKnownHosts" placeholder="SSH Known Hosts"
-                      name="gitRemoteRepoSshKnownHosts"
-                      type="text"
-                      required
-                      matTextareaAutosize matAutosizeMinRows="10"></textarea>
-          </mat-form-field>
+      <div *ngIf="gitSettings.credentials === 'SSH'">
+        <div class="p-fluid p-col-12">
+          <div class="p-field p-float-label">
+            <textarea rows="20" cols="60" pInputTextarea id="gitRemoteRepoSshPrivateKey" [(ngModel)]="gitSettings.privateKey" name="gitRemoteRepoSshPrivateKey" required></textarea>
+            <label for="gitRemoteRepoSshPrivateKey">Private Key</label>
+          </div>
+
+          <div class="p-field p-float-label">
+            <textarea rows="10" cols="60" pInputTextarea id="gitRemoteRepoSshKnownHosts" [(ngModel)]="gitSettings.sshKnownHosts" name="gitRemoteRepoSshKnownHosts" required></textarea>
+            <label for="gitRemoteRepoSshKnownHosts">SSH Known Hosts</label>
+          </div>
         </div>
-      </app-detail>
-    </app-content>
-  </form>
 
-  <ng-template #title>
-    <div class="mat-title">Git repo</div>
-  </ng-template>
+      </div>
 
-  <ng-template #buttonBar>
-    <app-button-bar>
-      <button mat-raised-button color="accent" (click)="save()" [disabled]="settingsForm.invalid">Save</button>
-      <button mat-raised-button (click)="test()" [disabled]="settingsForm.invalid">Test</button>
-    </app-button-bar>
-  </ng-template>
+    </form>
 
-</ng-container>
+  </div>
+</div>

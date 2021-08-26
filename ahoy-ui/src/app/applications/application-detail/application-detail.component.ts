@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import {ActivatedRoute} from '@angular/router';
 import {ApplicationService} from '../application.service';
 import {Location} from '@angular/common';
 import {ReleasesService} from '../../releases/releases.service';
+import {AppBreadcrumbService} from '../../app.breadcrumb.service';
 
 @Component({
   selector: 'app-application-detail',
@@ -37,7 +38,8 @@ export class ApplicationDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private applicationService: ApplicationService,
     private releasesService: ReleasesService,
-    private location: Location) {
+    private location: Location,
+    private breadcrumbService: AppBreadcrumbService) {
   }
 
   ngOnInit() {
@@ -46,17 +48,27 @@ export class ApplicationDetailComponent implements OnInit {
       this.application = new Application();
       this.applicationVersion = new ApplicationVersion();
       this.applicationVersion.servicePorts = [];
+      this.setBreadcrumb();
 
     } else {
       this.editMode = true;
       this.applicationService.get(+id)
-        .subscribe(app => this.application = app);
+        .subscribe(app => {
+          this.application = app;
+          this.setBreadcrumb();
+        });
     }
 
     this.releaseVersionId = +this.route.snapshot.queryParamMap.get('releaseVersionId');
 
     this.applicationService.getAll()
       .subscribe(applications => this.applicationsForValidation = applications);
+  }
+
+  private setBreadcrumb() {
+    this.breadcrumbService.setItems([
+      {label: (this.editMode ? 'edit' : 'new') + ' application'}
+    ]);
   }
 
   save() {

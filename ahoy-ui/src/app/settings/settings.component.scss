@@ -1,5 +1,5 @@
 /*!
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,22 +14,13 @@
  *    limitations under the License.
  */
 
-@import 'src/theme';
+::ng-deep {
+  .p-menu .p-menuitem-link.p-menuitem-link-active {
+    background-color: var(--primary-lightest-color);
 
-:host {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-}
-
-.setup-notice {
-  color: mat-color($app-accent, text);
-}
-
-.settings-drawer {
-  background: transparent;
-}
-
-.settings-active {
-  background: mat-color($app-background);
+    .p-menuitem-text,
+    .p-menuitem-icon {
+      color: var(--primary-color);
+    }
+  }
 }

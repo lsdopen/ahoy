@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,66 +14,61 @@
   ~    limitations under the License.
   -->
 
-<ng-container *ngIf="dockerSettings">
-  <form #settingsForm="ngForm">
-    <app-content [title]="title" [buttonBar]="buttonBar">
-      <app-detail>
+<div class="p-grid">
+  <div class="p-col-12" *ngIf="dockerSettings">
 
-        <div fxLayout="column" class="form-area">
+    <p-toolbar>
+      <ng-template pTemplate="left">
+        <h5>Docker Registries</h5>
+      </ng-template>
+      <ng-template pTemplate="right">
+        <button pButton pRipple label="Save" icon="pi pi-save" class="p-button-success p-mr-2 p-mb-2" (click)="save()" [disabled]="settingsForm.invalid || (dockerSettings.dockerRegistries && dockerSettings.dockerRegistries.length === 0)"></button>
+        <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain p-mr-2 p-mb-2" (click)="addDockerRegistry()"></button>
+        <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-warning p-mr-2 p-mb-2" (click)="deleteRegistry()" [disabled]="!(dockerSettings.dockerRegistries && dockerSettings.dockerRegistries.length > 0)"></button>
+      </ng-template>
+    </p-toolbar>
 
-          <div fxFlex fxLayout="row">
-            <mat-tab-group fxFlex="grow" [(selectedIndex)]="selectedIndex">
-              <mat-tab *ngFor="let dockerRegsitry of dockerSettings.dockerRegistries; let registryIndex = index"
-                       label="{{dockerRegsitry.name ? dockerRegsitry.name : '<new>'}}">
-                <div fxFlex fxLayout="column" fxLayoutAlign="start start">
-                  <mat-form-field style="width: 30%; margin-top: 10px">
-                    <input matInput [(ngModel)]="dockerSettings.dockerRegistries[registryIndex].name" placeholder="Name"
-                           name="dockerRegistryName{{registryIndex}}" required>
-                  </mat-form-field>
-                  <mat-form-field style="width: 30%; margin-top: 10px">
-                    <input matInput [(ngModel)]="dockerSettings.dockerRegistries[registryIndex].server" placeholder="Server"
-                           name="dockerServerName{{registryIndex}}" required>
-                  </mat-form-field>
+    <form #settingsForm="ngForm">
+      <div *ngIf="dockerSettings.dockerRegistries && dockerSettings.dockerRegistries.length > 0">
 
-                  <mat-checkbox [(ngModel)]="dockerSettings.dockerRegistries[registryIndex].secure" name="dockerServerSecure{{registryIndex}}">Secure</mat-checkbox>
+        <p-tabView orientation="left" [(activeIndex)]="selectedIndex">
+          <p-tabPanel [header]="dockerRegistry.name ? dockerRegistry.name : '<new>'"
+                      *ngFor="let dockerRegistry of dockerSettings.dockerRegistries; let i = index" [selected]="i == 0">
 
-                  <mat-form-field *ngIf="dockerSettings.dockerRegistries[registryIndex].secure" style="width: 30%; margin-top: 10px">
-                    <input matInput [(ngModel)]="dockerSettings.dockerRegistries[registryIndex].username" placeholder="Username"
-                           name="dockerUsername{{registryIndex}}" required>
-                  </mat-form-field>
-                  <mat-form-field *ngIf="dockerSettings.dockerRegistries[registryIndex].secure" style="width: 30%; margin-top: 10px">
-                    <input matInput [(ngModel)]="dockerSettings.dockerRegistries[registryIndex].password" placeholder="Password"
-                           [type]="hideDockerPassword ? 'password' : 'text'"
-                           name="dockerPassword{{registryIndex}}" required>
-                    <mat-icon matSuffix style="cursor: pointer" (click)="hideDockerPassword = !hideDockerPassword">{{hideDockerPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-                  </mat-form-field>
-                </div>
-              </mat-tab>
-            </mat-tab-group>
+            <div class="p-fluid p-col-12 p-md-5">
+              <div class="p-field p-float-label">
+                <input pInputText id="dockerRegistryName{{i}}" [(ngModel)]="dockerSettings.dockerRegistries[i].name" name="dockerRegistryName{{i}}" required>
+                <label for="dockerRegistryName{{i}}">Name</label>
+              </div>
+              <div class="p-field p-float-label">
+                <input pInputText id="dockerServerName{{i}}" [(ngModel)]="dockerSettings.dockerRegistries[i].server" name="dockerServerName{{i}}" required>
+                <label for="dockerServerName{{i}}">Server</label>
+              </div>
 
-            <div fxFlex fxLayout="column">
-              <button mat-icon-button (click)="addDockerRegistry()">
-                <mat-icon>add_circle</mat-icon>
-              </button>
-              <button mat-icon-button (click)="deleteRegistry()">
-                <mat-icon>remove_circle</mat-icon>
-              </button>
+              <div class="p-field-checkbox">
+                <p-checkbox name="dockerServerSecure{{i}}" [(ngModel)]="dockerSettings.dockerRegistries[i].secure" id="dockerServerSecure{{i}}" binary="true"></p-checkbox>
+                <label for="dockerServerSecure{{i}}">Secure</label>
+              </div>
+
+              <div class="p-field p-float-label" *ngIf="dockerSettings.dockerRegistries[i].secure">
+                <input pInputText id="dockerUsername{{i}}" [(ngModel)]="dockerSettings.dockerRegistries[i].username" name="dockerUsername{{i}}" required>
+                <label for="dockerUsername{{i}}">Username</label>
+              </div>
+              <i class="pi {{hideDockerPassword ? 'pi-eye-slash':'pi-eye'}}" *ngIf="dockerSettings.dockerRegistries[i].secure" style="cursor: pointer; width: 10px" (click)="hideDockerPassword = !hideDockerPassword"></i>
+              <div class="p-field p-float-label" *ngIf="dockerSettings.dockerRegistries[i].secure">
+                <input pInputText id="dockerPassword{{i}}" [(ngModel)]="dockerSettings.dockerRegistries[i].password" name="dockerPassword{{i}}"
+                       [type]="hideDockerPassword ? 'password' : 'text'"
+                       required>
+                <label for="dockerPassword{{i}}">Password</label>
+              </div>
+
             </div>
-          </div>
-        </div>
 
-      </app-detail>
-    </app-content>
-  </form>
+          </p-tabPanel>
+        </p-tabView>
 
-  <ng-template #title>
-    <div class="mat-title">Docker registries</div>
-  </ng-template>
+      </div>
+    </form>
 
-  <ng-template #buttonBar>
-    <app-button-bar>
-      <button mat-raised-button color="accent" (click)="save()" [disabled]="settingsForm.invalid">Save</button>
-    </app-button-bar>
-  </ng-template>
-
-</ng-container>
+  </div>
+</div>

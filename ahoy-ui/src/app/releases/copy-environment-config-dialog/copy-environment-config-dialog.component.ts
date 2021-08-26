@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  *    limitations under the License.
  */
 
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {EnvironmentRelease} from '../../environment-release/environment-release';
-import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {Release, ReleaseVersion} from '../release';
+import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-copy-environment-config-dialog',
@@ -28,15 +28,21 @@ export class CopyEnvironmentConfigDialogComponent implements OnInit {
   private environmentRelease: EnvironmentRelease;
   destReleaseVersion: ReleaseVersion;
   releaseVersions: ReleaseVersion[];
-  selectedReleaseVersion: ReleaseVersion;
+  selected: ReleaseVersion;
 
-  constructor(@Inject(MAT_DIALOG_DATA) data) {
-    this.environmentRelease = data[0];
-    this.destReleaseVersion = data[1];
+  constructor(public ref: DynamicDialogRef,
+              public config: DynamicDialogConfig) {
+    const data = config.data;
+    this.environmentRelease = data.environmentRelease;
+    this.destReleaseVersion = data.releaseVersion;
   }
 
   ngOnInit() {
     this.releaseVersions = (this.environmentRelease.release as Release).releaseVersions
       .filter(rel => rel.id !== this.destReleaseVersion.id);
+  }
+
+  close(result: any) {
+    this.ref.close(result);
   }
 }

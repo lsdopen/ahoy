@@ -16,20 +16,20 @@
 
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {EnvironmentService} from '../environments/environment.service';
-import {Environment} from '../environments/environment';
-import {LoggerService} from '../util/logger.service';
+import {ConfirmationService} from 'primeng/api';
+import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
+import {filter, mergeMap} from 'rxjs/operators';
+import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {EnvironmentRelease, EnvironmentReleaseId} from '../environment-release/environment-release';
 import {EnvironmentReleaseService} from '../environment-release/environment-release.service';
-import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
-import {filter, mergeMap} from 'rxjs/operators';
-import {AddReleaseDialogComponent} from './add-release-dialog/add-release-dialog.component';
-import {ReleasesService} from './releases.service';
-import {Release} from './release';
-import {TaskEvent} from '../taskevents/task-events';
+import {Environment} from '../environments/environment';
+import {EnvironmentService} from '../environments/environment.service';
 import {ReleaseService} from '../release/release.service';
-import {Confirmation} from '../components/confirm-dialog/confirm';
-import {DialogService} from '../components/dialog.service';
+import {TaskEvent} from '../taskevents/task-events';
+import {LoggerService} from '../util/logger.service';
+import {AddReleaseDialogComponent} from './add-release-dialog/add-release-dialog.component';
+import {Release} from './release';
+import {ReleasesService} from './releases.service';
 
 @Component({
   selector: 'app-releases',
@@ -48,11 +48,14 @@ export class ReleasesComponent implements OnInit {
               private releasesService: ReleasesService,
               private releaseService: ReleaseService,
               private log: LoggerService,
-              private dialog: MatDialog,
-              private dialogService: DialogService) {
+              private dialogService: DialogService,
+              private confirmationService: ConfirmationService,
+              private breadcrumbService: AppBreadcrumbService) {
   }
 
   ngOnInit() {
+    this.setBreadcrumb();
+
     const environmentId = +this.route.snapshot.queryParamMap.get('environmentId');
 
     this.environmentService.getAll().subscribe((environments) => {
@@ -76,16 +79,33 @@ export class ReleasesComponent implements OnInit {
       .subscribe(env => {
         this.selectedEnvironment = env;
         this.environmentReleaseService.getReleasesByEnvironment(environmentId)
-          .subscribe(envReleases => this.environmentReleases = envReleases);
+          .subscribe(envReleases => {
+            this.environmentReleases = envReleases;
+            this.setBreadcrumb();
+          });
       });
   }
 
+  private setBreadcrumb() {
+    if (this.selectedEnvironment) {
+      this.breadcrumbService.setItems([
+        {label: this.selectedEnvironment.cluster.name, routerLink: '/clusters'},
+        {label: this.selectedEnvironment.name, routerLink: '/environments', queryParams: {clusterId: this.selectedEnvironment.cluster.id}},
+        {label: 'releases'}
+      ]);
+
+    } else {
+      this.breadcrumbService.setItems([{label: 'releases'}]);
+    }
+  }
+
   addRelease() {
-    const dialogConfig = new MatDialogConfig();
+    const dialogConfig = new DynamicDialogConfig();
+    dialogConfig.header = `Add release to ${this.selectedEnvironment.cluster.name}/${this.selectedEnvironment.name}`;
     dialogConfig.data = this.selectedEnvironment;
 
-    const dialogRef = this.dialog.open(AddReleaseDialogComponent, dialogConfig);
-    dialogRef.afterClosed().pipe(
+    const dialogRef = this.dialogService.open(AddReleaseDialogComponent, dialogConfig);
+    dialogRef.onClose.pipe(
       filter((result) => result !== undefined), // cancelled
       mergeMap((release: Release) => {
         const environmentRelease = new EnvironmentRelease();
@@ -101,28 +121,16 @@ export class ReleasesComponent implements OnInit {
     });
   }
 
-  removeRelease(environmentRelease: EnvironmentRelease) {
-    const confirmation = new Confirmation(`Are you sure you want to remove ${(environmentRelease.release as Release).name} from ${(environmentRelease.environment as Environment).name}?`);
-    confirmation.verify = true;
-    confirmation.verifyText = (environmentRelease.release as Release).name;
-    this.dialogService.showConfirmDialog(confirmation).pipe(
-      filter((conf) => conf !== undefined)
-    ).subscribe(() => {
-      this.releaseService.remove(environmentRelease)
-        .subscribe(() => this.getReleases(this.selectedEnvironment.id));
+  removeRelease(event: Event, environmentRelease: EnvironmentRelease) {
+    this.confirmationService.confirm({
+      target: event.target,
+      message: `Are you sure you want to remove ${(environmentRelease.release as Release).name} from ${(environmentRelease.environment as Environment).name}?`,
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.releaseService.remove(environmentRelease)
+          .subscribe(() => this.getReleases(this.selectedEnvironment.id));
+      }
     });
-  }
-
-  compareEnvironments(e1: Environment, e2: Environment): boolean {
-    if (e1 === null) {
-      return e2 === null;
-    }
-
-    if (e2 === null) {
-      return false;
-    }
-
-    return e1.id === e2.id;
   }
 
   environmentChanged() {

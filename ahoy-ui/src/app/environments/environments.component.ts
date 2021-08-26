@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,15 +15,16 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {Environment} from './environment';
-import {EnvironmentService} from './environment.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {DialogService} from '../components/dialog.service';
+import {filter} from 'rxjs/operators';
+import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Cluster} from '../clusters/cluster';
-import {LoggerService} from '../util/logger.service';
 import {ClusterService} from '../clusters/cluster.service';
 import {Confirmation} from '../components/confirm-dialog/confirm';
-import {filter} from 'rxjs/operators';
+import {DialogUtilService} from '../components/dialog-util.service';
+import {LoggerService} from '../util/logger.service';
+import {Environment} from './environment';
+import {EnvironmentService} from './environment.service';
 
 @Component({
   selector: 'app-environments',
@@ -40,11 +41,14 @@ export class EnvironmentsComponent implements OnInit {
     private router: Router,
     private environmentService: EnvironmentService,
     private clusterService: ClusterService,
-    private dialogService: DialogService,
-    private log: LoggerService) {
+    private log: LoggerService,
+    private dialogUtilService: DialogUtilService,
+    private breadcrumbService: AppBreadcrumbService) {
   }
 
   ngOnInit() {
+    this.setBreadcrumb();
+
     const clusterId = +this.route.snapshot.queryParamMap.get('clusterId');
 
     this.clusterService.getAll()
@@ -70,32 +74,35 @@ export class EnvironmentsComponent implements OnInit {
       .subscribe(cluster => {
         this.selectedCluster = cluster;
         this.environmentService.getAllEnvironmentsByCluster(clusterId)
-          .subscribe(envs => this.environments = envs);
+          .subscribe(envs => {
+            this.environments = envs;
+            this.setBreadcrumb();
+          });
       });
   }
 
-  delete(environment: Environment) {
+  private setBreadcrumb() {
+    if (this.selectedCluster) {
+      this.breadcrumbService.setItems([
+        {label: this.selectedCluster.name, routerLink: '/clusters'},
+        {label: 'environments'}
+      ]);
+
+    } else {
+      this.breadcrumbService.setItems([{label: 'environments'}]);
+    }
+  }
+
+  delete(event: Event, environment: Environment) {
     const confirmation = new Confirmation(`Are you sure you want to delete ${environment.name}?`);
     confirmation.verify = true;
     confirmation.verifyText = environment.name;
-    this.dialogService.showConfirmDialog(confirmation).pipe(
+    this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
       this.environmentService.destroy(environment)
         .subscribe(() => this.getEnvironments(this.selectedCluster.id));
     });
-  }
-
-  compareClusters(c1: Cluster, c2: Cluster): boolean {
-    if (c1 === null) {
-      return c2 === null;
-    }
-
-    if (c2 === null) {
-      return c1 === null;
-    }
-
-    return c1.id === c2.id;
   }
 
   clusterChanged() {

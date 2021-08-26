@@ -19,6 +19,7 @@ import {ArgoSettings} from './argo-settings';
 import {ArgoSettingsService} from './argo-settings.service';
 import {NotificationsService} from '../../notifications/notifications.service';
 import {Notification} from '../../notifications/notification';
+import {AppBreadcrumbService} from '../../app.breadcrumb.service';
 
 @Component({
   selector: 'app-argo-settings',
@@ -30,7 +31,13 @@ export class ArgoSettingsComponent implements OnInit {
   hideArgoToken = true;
 
   constructor(private argoSettingsService: ArgoSettingsService,
-              private notificationsService: NotificationsService) { }
+              private notificationsService: NotificationsService,
+              private breadcrumbService: AppBreadcrumbService) {
+    this.breadcrumbService.setItems([
+      {label: 'settings'},
+      {label: 'argo'}
+    ]);
+  }
 
   ngOnInit(): void {
     this.argoSettingsService.get()
