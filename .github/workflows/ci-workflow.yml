@@ -54,4 +54,4 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B -s .m2/settings.xml deploy -Pcoverage -Psonar -Pdocker
+        run: mvn -B -s .m2/settings.xml deploy -Pcoverage -Psonar -Pui-dist -Pdocker
