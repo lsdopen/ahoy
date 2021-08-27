@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {ApplicationVersion} from '../../applications/application';
 import {EnvironmentRelease} from '../../environment-release/environment-release';
 import {ReleaseVersion} from '../release';
@@ -24,16 +24,10 @@ import {ReleaseVersion} from '../release';
   templateUrl: './release-application-version-status.component.html',
   styleUrls: ['./release-application-version-status.component.scss']
 })
-export class ReleaseApplicationVersionStatusComponent implements OnInit {
+export class ReleaseApplicationVersionStatusComponent {
   @Input() environmentRelease: EnvironmentRelease;
   @Input() releaseVersion: ReleaseVersion;
   @Input() applicationVersion: ApplicationVersion;
-
-  constructor() {
-  }
-
-  ngOnInit() {
-  }
 
   status(): string {
     if (!this.environmentRelease.deployed) {

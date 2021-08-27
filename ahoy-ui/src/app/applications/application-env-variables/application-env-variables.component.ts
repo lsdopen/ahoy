@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {ApplicationEnvironmentVariable, ApplicationSecret} from '../application';
 
 @Component({
@@ -22,7 +22,7 @@ import {ApplicationEnvironmentVariable, ApplicationSecret} from '../application'
   templateUrl: './application-env-variables.component.html',
   styleUrls: ['./application-env-variables.component.scss']
 })
-export class ApplicationEnvVariablesComponent implements OnInit {
+export class ApplicationEnvVariablesComponent {
   @Input() environmentVariables: ApplicationEnvironmentVariable[];
   @Input() secrets: ApplicationSecret[];
   type = 'Value';
@@ -30,12 +30,6 @@ export class ApplicationEnvVariablesComponent implements OnInit {
   value: string;
   secret: ApplicationSecret;
   secretKey: string;
-
-  constructor() {
-  }
-
-  ngOnInit() {
-  }
 
   addEnvironmentVariable() {
     if (this.key) {

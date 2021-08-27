@@ -14,24 +14,21 @@
  *    limitations under the License.
  */
 
-import {Component, OnInit} from '@angular/core';
-import {Confirmation} from './confirm';
+import {Component} from '@angular/core';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
+import {Confirmation} from './confirm';
 
 @Component({
   selector: 'app-confirm-dialog',
   templateUrl: './confirm-dialog.component.html',
   styleUrls: ['./confirm-dialog.component.scss']
 })
-export class ConfirmDialogComponent implements OnInit {
+export class ConfirmDialogComponent {
   confirmation: Confirmation;
 
   constructor(public ref: DynamicDialogRef,
               public config: DynamicDialogConfig) {
     this.confirmation = config.data;
-  }
-
-  ngOnInit() {
   }
 
   close(result: any) {

@@ -15,13 +15,13 @@
  */
 
 import {Injectable} from '@angular/core';
-import {LoggerService} from '../../util/logger.service';
-import {RestClientService} from '../../util/rest-client.service';
 import {EMPTY, Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
-import {ArgoSettings} from './argo-settings';
 import {Notification} from '../../notifications/notification';
 import {NotificationsService} from '../../notifications/notifications.service';
+import {LoggerService} from '../../util/logger.service';
+import {RestClientService} from '../../util/rest-client.service';
+import {ArgoSettings} from './argo-settings';
 
 @Injectable({
   providedIn: 'root'
@@ -64,9 +64,9 @@ export class ArgoSettingsService {
 
   testConnection(argoSettings: ArgoSettings): Observable<ArgoSettings> {
     const url = `/data/argoSettings/test`;
-    return this.restClient.post<ArgoSettings>(url, argoSettings, true).pipe(
-      tap((returnedCluster) => {
-        this.log.debug('tested connection to argocd', returnedCluster);
+    return this.restClient.post<null>(url, argoSettings, true).pipe(
+      tap(() => {
+        this.log.debug('tested connection to argocd', argoSettings);
         const text = `Successfully connected to argocd '${argoSettings.argoServer}'`;
         this.notificationsService.notification(new Notification(text));
       }),

@@ -15,13 +15,13 @@
  */
 
 import {Injectable} from '@angular/core';
-import {LoggerService} from '../../util/logger.service';
-import {RestClientService} from '../../util/rest-client.service';
 import {EMPTY, Observable} from 'rxjs';
-import {GitSettings} from './git-settings';
 import {catchError, tap} from 'rxjs/operators';
 import {Notification} from '../../notifications/notification';
 import {NotificationsService} from '../../notifications/notifications.service';
+import {LoggerService} from '../../util/logger.service';
+import {RestClientService} from '../../util/rest-client.service';
+import {GitSettings} from './git-settings';
 
 @Injectable({
   providedIn: 'root'
@@ -74,9 +74,9 @@ export class GitSettingsService {
 
   testConnection(gitSettings: GitSettings): Observable<GitSettings> {
     const url = `/data/gitSettings/test`;
-    return this.restClient.post<GitSettings>(url, gitSettings, true).pipe(
-      tap((returnedCluster) => {
-        this.log.debug('tested connection to git repo', returnedCluster);
+    return this.restClient.post<null>(url, gitSettings, true).pipe(
+      tap(() => {
+        this.log.debug('tested connection to git repo', gitSettings);
         const text = `Successfully connected to git repo '${gitSettings.remoteRepoUri}'`;
         this.notificationsService.notification(new Notification(text));
       }),

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-import {AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {AfterContentChecked, ChangeDetectorRef, Component, Input} from '@angular/core';
 import {ControlContainer, NgForm} from '@angular/forms';
 import {ApplicationSecret, ApplicationVolume} from '../application';
 
@@ -24,15 +24,12 @@ import {ApplicationSecret, ApplicationVolume} from '../application';
   styleUrls: ['./application-volumes.component.scss'],
   viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
 })
-export class ApplicationVolumesComponent implements OnInit, AfterContentChecked {
+export class ApplicationVolumesComponent implements AfterContentChecked {
   @Input() volumes: ApplicationVolume[];
   @Input() secrets: ApplicationSecret[];
   selectedVolumeIndex = 0;
 
   constructor(private cd: ChangeDetectorRef) {
-  }
-
-  ngOnInit(): void {
   }
 
   ngAfterContentChecked(): void {

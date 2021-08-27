@@ -39,13 +39,14 @@ public class NoOpClusterManager implements ClusterManager {
 
 	@Override
 	public void testConnection() {
+		// pass test
 	}
 
 	private void sleep(long millis) {
 		try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			// ignored
 		}
 	}
 }

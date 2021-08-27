@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-import {AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {AfterContentChecked, ChangeDetectorRef, Component, Input} from '@angular/core';
 import {ControlContainer, NgForm} from '@angular/forms';
 import {ApplicationEnvironmentVariable, ApplicationSecret, ApplicationVolume} from '../application';
 
@@ -24,7 +24,7 @@ import {ApplicationEnvironmentVariable, ApplicationSecret, ApplicationVolume} fr
   styleUrls: ['./application-secrets.component.scss'],
   viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
 })
-export class ApplicationSecretsComponent implements OnInit, AfterContentChecked {
+export class ApplicationSecretsComponent implements AfterContentChecked {
   @Input() secrets: ApplicationSecret[];
   @Input() volumes: ApplicationVolume[];
   @Input() environmentVariables: ApplicationEnvironmentVariable[];
@@ -33,9 +33,6 @@ export class ApplicationSecretsComponent implements OnInit, AfterContentChecked 
   selectedSecretIndex = 0;
 
   constructor(private cd: ChangeDetectorRef) {
-  }
-
-  ngOnInit(): void {
   }
 
   ngAfterContentChecked(): void {

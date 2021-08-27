@@ -25,12 +25,13 @@ import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor
-public class Environment {
+public class Environment implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

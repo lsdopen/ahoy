@@ -26,9 +26,6 @@ export class EnvironmentNameUniqueValidatorDirective implements Validator {
   @Input('appEnvironmentNameUnique') environments: Environment[];
   @Input() ignoreOwnId: number;
 
-  constructor() {
-  }
-
   validate(control: AbstractControl): { [key: string]: any } | null {
     return this.environments ? this.checkEnvironmentNameUnique(this.environments)(control) : null;
   }

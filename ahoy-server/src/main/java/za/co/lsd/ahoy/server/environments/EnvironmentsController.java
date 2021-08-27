@@ -34,7 +34,7 @@ public class EnvironmentsController {
 	}
 
 	@PostMapping("/create")
-	public ResponseEntity<?> create(@RequestBody EnvironmentDTO environmentDTO) {
+	public ResponseEntity<Environment> create(@RequestBody EnvironmentDTO environmentDTO) {
 
 		Environment newEnvironment = environmentService.create(new Environment(environmentDTO));
 
@@ -42,7 +42,7 @@ public class EnvironmentsController {
 	}
 
 	@DeleteMapping("/destroy/{environmentId}")
-	public ResponseEntity<?> destroy(@PathVariable Long environmentId) {
+	public ResponseEntity<Environment> destroy(@PathVariable Long environmentId) {
 
 		Environment environment = environmentService.destroy(environmentId);
 
@@ -50,7 +50,7 @@ public class EnvironmentsController {
 	}
 
 	@PostMapping("/duplicate/{sourceEnvironmentId}/{destEnvironmentId}")
-	public ResponseEntity<?> duplicate(@PathVariable Long sourceEnvironmentId, @PathVariable Long destEnvironmentId) {
+	public ResponseEntity<Environment> duplicate(@PathVariable Long sourceEnvironmentId, @PathVariable Long destEnvironmentId) {
 
 		Environment destEnvironment = environmentService.duplicate(sourceEnvironmentId, destEnvironmentId);
 

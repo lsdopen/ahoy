@@ -79,11 +79,9 @@ import {ApplicationsComponent} from './applications/applications.component';
 import {DockerRegistriesComponent} from './applications/docker-registries/docker-registries.component';
 import {ClusterDetailComponent} from './clusters/cluster-detail/cluster-detail.component';
 import {ClustersComponent} from './clusters/clusters.component';
-import {ButtonBarComponent} from './components/button-bar/button-bar.component';
 import {ConfirmDialogComponent} from './components/confirm-dialog/confirm-dialog.component';
 import {VerifyValidatorDirective} from './components/confirm-dialog/verify-validator.directive';
 import {DescriptionDialogComponent} from './components/description-dialog/description-dialog.component';
-import {DetailComponent} from './components/detail/detail.component';
 import {DashboardEnvironmentComponent} from './dashboard/dashboard-environment/dashboard-environment.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {EnvironmentReleaseDeploymentStatusComponent} from './environment-release/environment-release-deployment-status/environment-release-deployment-status.component';
@@ -92,7 +90,6 @@ import {EnvironmentReleaseVersionsComponent} from './environment-release/environ
 import {EnvironmentDetailComponent} from './environments/environment-detail/environment-detail.component';
 import {EnvironmentNameUniqueValidatorDirective} from './environments/environment-name-unique-validator.directive';
 import {EnvironmentsComponent} from './environments/environments.component';
-import {ContentComponent} from './layout/content/content.component';
 import {NotificationsComponent} from './notifications/notifications.component';
 import {ReleaseHistoryComponent} from './release-history/release-history.component';
 import {AddApplicationDialogComponent} from './releases/add-application-dialog/add-application-dialog.component';
@@ -132,9 +129,6 @@ import {ErrorService} from './util/error.service';
     ApplicationDetailComponent,
     ReleasesComponent,
     ReleaseDetailComponent,
-    DetailComponent,
-    ContentComponent,
-    ButtonBarComponent,
     ReleaseManageComponent,
     EnvironmentsComponent,
     EnvironmentDetailComponent,

@@ -14,24 +14,21 @@
  *    limitations under the License.
  */
 
-import {Component, OnInit} from '@angular/core';
-import {Description} from './description';
+import {Component} from '@angular/core';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
+import {Description} from './description';
 
 @Component({
   selector: 'app-description-dialog',
   templateUrl: './description-dialog.component.html',
   styleUrls: ['./description-dialog.component.scss']
 })
-export class DescriptionDialogComponent implements OnInit {
+export class DescriptionDialogComponent {
   description: Description;
 
   constructor(public ref: DynamicDialogRef,
               public config: DynamicDialogConfig) {
     this.description = config.data;
-  }
-
-  ngOnInit() {
   }
 
   close(result: any) {

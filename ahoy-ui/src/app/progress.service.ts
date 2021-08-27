@@ -22,9 +22,6 @@ import {Injectable} from '@angular/core';
 export class ProgressService {
   public progress = false;
 
-  constructor() {
-  }
-
   public showProgress(progress: boolean) {
     this.progress = progress;
   }

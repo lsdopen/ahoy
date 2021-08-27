@@ -34,7 +34,9 @@
     <sonar.sources>src</sonar.sources>
     <sonar.exclusions>
       **/node_modules/**,
-      **/assets/**
+      **/assets/**,
+      src/environments/*,
+      src/polyfills.ts
     </sonar.exclusions>
     <sonar.tests>src</sonar.tests>
     <sonar.test.inclusions>**/*.spec.ts</sonar.test.inclusions>

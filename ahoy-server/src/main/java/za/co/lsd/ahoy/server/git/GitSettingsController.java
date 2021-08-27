@@ -18,12 +18,11 @@ package za.co.lsd.ahoy.server.git;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @RepositoryRestController
 @RequestMapping("/gitSettings")
@@ -36,9 +35,8 @@ public class GitSettingsController {
 	}
 
 	@PostMapping("/test")
-	public ResponseEntity<?> test(@RequestBody GitSettingsDTO gitSettingsDTO) {
+	@ResponseStatus(value = HttpStatus.OK)
+	public void test(@RequestBody GitSettingsDTO gitSettingsDTO) {
 		gitSettingsService.testConnection(new GitSettings(gitSettingsDTO));
-		return new ResponseEntity<>(new HttpHeaders(), HttpStatus.OK);
 	}
-
 }

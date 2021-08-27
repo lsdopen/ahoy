@@ -49,7 +49,7 @@ public class LocalRepo {
 	private final SettingsProvider settingsProvider;
 	private final Path repoPath;
 	private final Path localRepoPath;
-	private Git localRepo;
+	private Git gitRepo;
 
 	public LocalRepo(AhoyServerProperties serverProperties, SettingsProvider settingsProvider) {
 		repoPath = Paths.get(serverProperties.getRepoPath());
@@ -60,19 +60,19 @@ public class LocalRepo {
 	@PostConstruct
 	public void init() {
 		try {
-			if (localRepo == null) {
+			if (gitRepo == null) {
 				if (!Files.exists(localRepoPath)) {
 					Files.createDirectories(localRepoPath);
 
 					log.info("Local repo not found, initialising repo: {}", localRepoPath);
-					localRepo = Git.init()
+					gitRepo = Git.init()
 						.setDirectory(localRepoPath.toFile())
 						.setBare(true)
 						.call();
 
 				} else {
 					log.info("Local repo found, opening: {}", localRepoPath);
-					localRepo = Git.open(localRepoPath.toFile());
+					gitRepo = Git.open(localRepoPath.toFile());
 				}
 			}
 
@@ -106,7 +106,7 @@ public class LocalRepo {
 			GitSettings gitSettings = settingsProvider.getGitSettings();
 
 			log.info("Fetching local repo from remote: {}", gitSettings.getRemoteRepoUri());
-			FetchResult fetchResult = configureCredentials(gitSettings, localRepo.fetch()
+			FetchResult fetchResult = configureCredentials(gitSettings, gitRepo.fetch()
 				.setRemote(gitSettings.getRemoteRepoUri())
 				.setForceUpdate(true)
 				.setRefSpecs("refs/heads/*:refs/heads/*"))
@@ -123,7 +123,7 @@ public class LocalRepo {
 			GitSettings gitSettings = settingsProvider.getGitSettings();
 
 			log.info("Pushing local repo to remote: {}", gitSettings.getRemoteRepoUri());
-			Iterable<PushResult> pushResults = configureCredentials(gitSettings, localRepo.push()
+			Iterable<PushResult> pushResults = configureCredentials(gitSettings, gitRepo.push()
 				.add(gitSettings.getBranch())
 				.setRemote(gitSettings.getRemoteRepoUri()))
 				.call();
@@ -137,7 +137,7 @@ public class LocalRepo {
 	public void testConnection(GitSettings testGitSettings) {
 		try {
 			log.info("Testing connection to git repo remote: {}", testGitSettings.getRemoteRepoUri());
-			FetchResult fetchResult = configureCredentials(testGitSettings, localRepo.fetch()
+			FetchResult fetchResult = configureCredentials(testGitSettings, gitRepo.fetch()
 				.setRemote(testGitSettings.getRemoteRepoUri())
 				.setForceUpdate(true)
 				.setRefSpecs("refs/heads/*:refs/heads/*"))
@@ -151,10 +151,10 @@ public class LocalRepo {
 
 	public void delete() {
 		try {
-			if (localRepo != null) {
+			if (gitRepo != null) {
 				log.info("Deleting local repo: {}", localRepoPath);
 				FileSystemUtils.deleteRecursively(localRepoPath);
-				localRepo = null;
+				gitRepo = null;
 			}
 		} catch (Exception e) {
 			throw new LocalRepoException("Failed to delete local repo", e);
@@ -201,6 +201,8 @@ public class LocalRepo {
 				case REJECTED_MISSING_OBJECT:
 				case REJECTED_OTHER_REASON:
 					throw new LocalRepoException("Ref update for " + refUpdate + ": " + refUpdateResult);
+				default:
+					break;
 			}
 		});
 	}
@@ -215,19 +217,21 @@ public class LocalRepo {
 				case REJECTED_NONFASTFORWARD:
 				case REJECTED_REMOTE_CHANGED:
 					throw new LocalRepoException("Ref update for " + update + ": " + updateStatus);
+				default:
+					break;
 			}
 		});
 	}
 
 	public class WorkingTree implements AutoCloseable {
 		private final Path workingTreePath;
-		private final Git workingTree;
+		private final Git gitWorkingTree;
 
 		public WorkingTree(GitSettings gitSettings) {
 			try {
 				workingTreePath = Files.createTempDirectory(repoPath, "working");
 
-				workingTree = Git.cloneRepository()
+				gitWorkingTree = Git.cloneRepository()
 					.setURI(localRepoPath.toUri().toString())
 					.setDirectory(workingTreePath.toFile())
 					.setBranch(gitSettings.getBranch())
@@ -245,28 +249,28 @@ public class LocalRepo {
 			try {
 				log.info("Pushing working tree with message: {}", message);
 
-				Status status = workingTree.status().call();
+				Status status = gitWorkingTree.status().call();
 				if (status.isClean()) {
 					log.info("Working tree is clean, won't commit or push");
 					return Optional.empty();
 
 				} else {
-					workingTree.add()
+					gitWorkingTree.add()
 						.addFilepattern(".")
 						.call();
 
 					Set<String> missing = status.getMissing();
 					if (!missing.isEmpty()) {
-						RmCommand rm = workingTree.rm();
+						RmCommand rm = gitWorkingTree.rm();
 						missing.forEach(rm::addFilepattern);
 						rm.call();
 					}
 
-					RevCommit commit = workingTree.commit()
+					RevCommit commit = gitWorkingTree.commit()
 						.setMessage(message)
 						.call();
 
-					workingTree.push().call();
+					gitWorkingTree.push().call();
 					log.info("Pushed working tree: {}", commit.getName());
 					return Optional.of(commit.getName());
 				}
@@ -277,7 +281,7 @@ public class LocalRepo {
 
 		public Ref headRef() {
 			try {
-				return workingTree.getRepository().exactRef(Constants.HEAD);
+				return gitWorkingTree.getRepository().exactRef(Constants.HEAD);
 			} catch (Exception e) {
 				throw new LocalRepoException("Failed to get head ref", e);
 			}

@@ -14,17 +14,17 @@
  *    limitations under the License.
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
+import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {EnvironmentRelease} from '../../environment-release/environment-release';
 import {Release, ReleaseVersion} from '../release';
-import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-upgrade-dialog',
   templateUrl: './upgrade-dialog.component.html',
   styleUrls: ['./upgrade-dialog.component.scss']
 })
-export class UpgradeDialogComponent implements OnInit {
+export class UpgradeDialogComponent {
   environmentRelease: EnvironmentRelease;
   release: Release;
   releaseVersion: ReleaseVersion;
@@ -36,9 +36,6 @@ export class UpgradeDialogComponent implements OnInit {
     this.environmentRelease = data.environmentRelease;
     this.release = this.environmentRelease.release as Release;
     this.releaseVersion = data.releaseVersion;
-  }
-
-  ngOnInit() {
   }
 
   close(result: any) {

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-import {AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {AfterContentChecked, ChangeDetectorRef, Component, Input} from '@angular/core';
 import {ControlContainer, NgForm} from '@angular/forms';
 import {ApplicationConfig, ApplicationVersion} from '../application';
 
@@ -24,16 +24,13 @@ import {ApplicationConfig, ApplicationVersion} from '../application';
   styleUrls: ['./application-config-files.component.scss'],
   viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
 })
-export class ApplicationConfigFilesComponent implements OnInit, AfterContentChecked {
+export class ApplicationConfigFilesComponent implements AfterContentChecked {
   @Input() applicationVersion: ApplicationVersion;
   @Input() configs: ApplicationConfig[];
   @Input() editPath = true;
   selectedConfigIndex = 0;
 
   constructor(private cd: ChangeDetectorRef) {
-  }
-
-  ngOnInit(): void {
   }
 
   ngAfterContentChecked(): void {

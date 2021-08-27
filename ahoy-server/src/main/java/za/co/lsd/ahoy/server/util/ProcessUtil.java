@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,6 +25,9 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
 public class ProcessUtil {
+
+	private ProcessUtil() {
+	}
 
 	public static void inputTo(String input, Process process) throws IOException {
 		try (Writer writer = new OutputStreamWriter(process.getOutputStream(), StandardCharsets.UTF_8)) {

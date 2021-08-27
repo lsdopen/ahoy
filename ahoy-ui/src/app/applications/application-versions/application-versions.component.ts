@@ -14,24 +14,21 @@
  *    limitations under the License.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
+import {ConfirmationService} from 'primeng/api';
 import {Application, ApplicationVersion} from '../application';
 import {ApplicationService} from '../application.service';
-import {ConfirmationService} from 'primeng/api';
 
 @Component({
   selector: 'app-application-versions',
   templateUrl: './application-versions.component.html',
   styleUrls: ['./application-versions.component.scss']
 })
-export class ApplicationVersionsComponent implements OnInit {
+export class ApplicationVersionsComponent {
   @Input() application: Application;
 
   constructor(private applicationService: ApplicationService,
               private confirmationService: ConfirmationService) {
-  }
-
-  ngOnInit() {
   }
 
   removeApplicationVersion(event: Event, applicationVersion: ApplicationVersion) {

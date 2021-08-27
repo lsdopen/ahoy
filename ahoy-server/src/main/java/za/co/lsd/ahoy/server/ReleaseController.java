@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -46,10 +46,10 @@ public class ReleaseController {
 	}
 
 	@PostMapping("/deploy/{environmentId}/{releaseId}/{releaseVersionId}")
-	public ResponseEntity<?> deploy(@PathVariable Long environmentId,
-	                                @PathVariable Long releaseId,
-	                                @PathVariable Long releaseVersionId,
-	                                @RequestBody DeployDetails deployDetails) throws ExecutionException, InterruptedException {
+	public ResponseEntity<EnvironmentRelease> deploy(@PathVariable Long environmentId,
+													 @PathVariable Long releaseId,
+													 @PathVariable Long releaseVersionId,
+													 @RequestBody DeployDetails deployDetails) throws ExecutionException, InterruptedException {
 
 		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(environmentId, releaseId);
 
@@ -64,8 +64,8 @@ public class ReleaseController {
 	}
 
 	@PostMapping("/undeploy/{environmentId}/{releaseId}")
-	public ResponseEntity<?> undeploy(@PathVariable Long environmentId,
-	                                  @PathVariable Long releaseId) throws ExecutionException, InterruptedException {
+	public ResponseEntity<EnvironmentRelease> undeploy(@PathVariable Long environmentId,
+													   @PathVariable Long releaseId) throws ExecutionException, InterruptedException {
 
 		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(environmentId, releaseId);
 
@@ -77,20 +77,20 @@ public class ReleaseController {
 	}
 
 	@PostMapping("/promote/{environmentId}/{releaseId}/{destEnvironmentId}")
-	public ResponseEntity<?> promote(@PathVariable Long environmentId, @PathVariable Long releaseId, @PathVariable Long destEnvironmentId) {
+	public ResponseEntity<EnvironmentRelease> promote(@PathVariable Long environmentId, @PathVariable Long releaseId, @PathVariable Long destEnvironmentId) {
 		EnvironmentRelease promotedEnvironmentRelease = releaseService.promote(environmentId, releaseId, destEnvironmentId);
 		return new ResponseEntity<>(promotedEnvironmentRelease, new HttpHeaders(), HttpStatus.OK);
 	}
 
 	@PostMapping("/upgrade/{releaseVersionId}/{version}")
-	public ResponseEntity<?> upgrade(@PathVariable Long releaseVersionId, @PathVariable String version) {
+	public ResponseEntity<ReleaseVersion> upgrade(@PathVariable Long releaseVersionId, @PathVariable String version) {
 		ReleaseVersion upgradedReleaseVersion = releaseService.upgrade(releaseVersionId, version);
 		return new ResponseEntity<>(upgradedReleaseVersion, new HttpHeaders(), HttpStatus.OK);
 	}
 
 	@PostMapping("/remove/{environmentId}/{releaseId}")
-	public ResponseEntity<?> remove(@PathVariable Long environmentId,
-	                                  @PathVariable Long releaseId) throws ExecutionException, InterruptedException {
+	public ResponseEntity<EnvironmentRelease> remove(@PathVariable Long environmentId,
+													 @PathVariable Long releaseId) throws ExecutionException, InterruptedException {
 
 		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(environmentId, releaseId);
 
@@ -99,12 +99,8 @@ public class ReleaseController {
 	}
 
 	@PostMapping("/copyEnvConfig/{environmentId}/{releaseId}/{sourceReleaseVersionId}/{destReleaseVersionId}")
-	public ResponseEntity<?> copyEnvConfig(@PathVariable Long environmentId, @PathVariable Long releaseId, @PathVariable Long sourceReleaseVersionId, @PathVariable Long destReleaseVersionId) {
+	public ResponseEntity<EnvironmentRelease> copyEnvConfig(@PathVariable Long environmentId, @PathVariable Long releaseId, @PathVariable Long sourceReleaseVersionId, @PathVariable Long destReleaseVersionId) {
 		EnvironmentRelease environmentRelease = releaseService.copyEnvConfig(environmentId, releaseId, sourceReleaseVersionId, destReleaseVersionId);
 		return new ResponseEntity<>(environmentRelease, new HttpHeaders(), HttpStatus.OK);
-	}
-
-	private ResponseEntity<?> okResponse() {
-		return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.OK);
 	}
 }

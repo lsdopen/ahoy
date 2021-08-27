@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {EnvironmentRelease} from '../environment-release';
 
 @Component({
@@ -22,13 +22,6 @@ import {EnvironmentRelease} from '../environment-release';
   templateUrl: './environment-release-deployment-status.component.html',
   styleUrls: ['./environment-release-deployment-status.component.scss']
 })
-export class EnvironmentReleaseDeploymentStatusComponent implements OnInit {
+export class EnvironmentReleaseDeploymentStatusComponent {
   @Input() environmentRelease: EnvironmentRelease;
-
-  constructor() {
-  }
-
-  ngOnInit(): void {
-  }
-
 }
