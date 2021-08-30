@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,9 +25,6 @@ import {Application} from '../../applications/application';
 })
 export class ApplicationAllowedValidatorDirective implements Validator {
   @Input('appApplicationAllowed') applications: Application[];
-
-  constructor() {
-  }
 
   validate(control: AbstractControl): { [key: string]: any } | null {
     return this.applications ? this.checkApplicationAllowed(this.applications)(control) : null;

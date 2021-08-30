@@ -14,9 +14,9 @@
  *    limitations under the License.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
-import {ApplicationSecret, ApplicationVolume} from '../application';
+import {Component, Input} from '@angular/core';
 import {ControlContainer, NgForm} from '@angular/forms';
+import {ApplicationSecret, ApplicationVolume} from '../application';
 
 @Component({
   selector: 'app-application-volume-detail',
@@ -24,14 +24,8 @@ import {ControlContainer, NgForm} from '@angular/forms';
   styleUrls: ['./application-volume-detail.component.scss'],
   viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
 })
-export class ApplicationVolumeDetailComponent implements OnInit {
+export class ApplicationVolumeDetailComponent {
   @Input() volume: ApplicationVolume;
   @Input() volumeIndex: number;
   @Input() secrets: ApplicationSecret[];
-
-  constructor() {
-  }
-
-  ngOnInit(): void {
-  }
 }

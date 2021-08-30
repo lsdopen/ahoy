@@ -1,0 +1,54 @@
+/*!
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+$bodyBgColor:#f7f7f7 !default;
+$textColor:#212121 !default;
+$textSecondaryColor:#616161 !default;
+
+$contentBgColor:#ffffff !default;
+$contentAltBgColor:#ECEFF1 !default;
+$overlayContentBgColor:#ffffff !default;
+$dividerColor:#E4E4E4 !default;
+$hoverBgColor:rgba(0,0,0,.04);
+$solidSurfaceTextColor: #ffffff !default;
+
+$menuShadow: 2px 0 4px -1px rgba(0, 0, 0, 0.2), 4px 0 5px 0 rgba(0, 0, 0, 0.14), 1px 0 10px 0 rgba(0, 0, 0, 0.12);
+$submenuShadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
+$menuTooltipBgColor:#1c202c !default;
+$menuTooltipTextColor:#ffffff !default;
+
+$pink: #E91E63 !default;
+$indigo: #3F51B5 !default;
+$yellow: #FFC107 !default;
+$orange: #FF9800 !default;
+$teal: #009688 !default;
+$cyan: #00ACC1 !default;
+$bluegrey: #546E7A !default;
+$purple: #9C27B0 !default;
+$deeppurple: #673AB7 !default;
+$blue: #2196F3 !default;
+$lightblue: #03A9F4 !default;
+$green: #4CAF50 !default;
+$lightgreen: #8BC34A !default;
+$lime: #CDDC39 !default;
+$deeporange: #FF5722 !default;
+$brown: #795548 !default;
+
+:root {
+    --divider-color:#{$dividerColor};
+}
+
+@import './_layout_common';

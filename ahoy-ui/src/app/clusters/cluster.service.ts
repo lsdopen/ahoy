@@ -17,11 +17,11 @@
 import {Injectable} from '@angular/core';
 import {EMPTY, Observable, of} from 'rxjs';
 import {catchError, map, mergeMap, tap} from 'rxjs/operators';
-import {RestClientService} from '../util/rest-client.service';
-import {LoggerService} from '../util/logger.service';
-import {Cluster} from './cluster';
 import {Notification} from '../notifications/notification';
 import {NotificationsService} from '../notifications/notifications.service';
+import {LoggerService} from '../util/logger.service';
+import {RestClientService} from '../util/rest-client.service';
+import {Cluster} from './cluster';
 
 @Injectable({
   providedIn: 'root'
@@ -109,9 +109,9 @@ export class ClusterService {
 
   testConnection(cluster: Cluster): Observable<Cluster> {
     const url = `/data/clusters/test`;
-    return this.restClient.post<Cluster>(url, cluster, true).pipe(
-      tap((returnedCluster) => {
-        this.log.debug('tested connection to cluster', returnedCluster);
+    return this.restClient.post<null>(url, cluster, true).pipe(
+      tap(() => {
+        this.log.debug('tested connection to cluster', cluster);
         const text = `Successfully connected to cluster '${cluster.name}'`;
         this.notificationsService.notification(new Notification(text));
       }),

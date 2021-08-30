@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,41 +14,72 @@
   ~    limitations under the License.
   -->
 
-<app-content [title]="title" [buttonBar]="buttonBar">
+<div class="p-grid">
+  <div class="p-col-12">
 
-  <div *ngIf="clusters && clusters.length > 0" fxFlex>
+    <div class="card">
+      <div class="card-header">
+        <h5>Clusters</h5>
+      </div>
 
-    <table fxFlex fxGrow mat-table [dataSource]="clusters" class="mat-elevation-z0">
-      <ng-container matColumnDef="cluster">
-        <td mat-cell *matCellDef="let cluster" routerLink="/cluster/{{cluster.id}}">{{cluster.name}}</td>
-      </ng-container>
-      <ng-container matColumnDef="host">
-        <td mat-cell *matCellDef="let cluster">{{cluster.host}}</td>
-      </ng-container>
-      <ng-container matColumnDef="delete">
-        <td mat-cell *matCellDef="let cluster" [matTooltip]="cluster.inCluster ? 'May not delete built-in cluster' : ''">
-          <button mat-stroked-button [disabled]="cluster.inCluster" (click)="delete(cluster)">delete</button>
-        </td>
-      </ng-container>
-      <tr mat-row *matRowDef="let cluster; columns: ['cluster', 'host', 'delete'];"></tr>
-    </table>
+      <p-toolbar>
+        <ng-template pTemplate="left">
+          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/cluster/new"></button>
+        </ng-template>
+      </p-toolbar>
 
-  </div>
+      <p-table #dt [value]="clusters" dataKey="id" selectionMode="single"
+               styleClass="p-datatable-clusters p-datatable-striped p-datatable-sm"
+               [scrollable]="true" scrollHeight="600px" [filterDelay]="0" [globalFilterFields]="['name', 'host']"
+               *ngIf="clusters && clusters.length > 0">
+        <ng-template pTemplate="caption">
+          <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
+            <span class="p-input-icon-left p-ml-auto">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"/>
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="name">Cluster
+              <p-sortIcon field="name"></p-sortIcon>
+            </th>
+            <th pSortableColumn="host">Host
+              <p-sortIcon field="host"></p-sortIcon>
+            </th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-cluster>
+          <tr>
+            <td><span class="p-column-title">Cluster</span>
+              {{cluster.name}}
+            </td>
+            <td><span class="p-column-title">Host</span>
+              {{cluster.host}}
+            </td>
+            <td>
+              <button pButton pRipple icon="pi pi-chevron-circle-right" class="p-button-rounded p-button-info p-mr-2"
+                      routerLink="/environments" [queryParams]="{clusterId: cluster.id}"
+                      pTooltip="Manage cluster"></button>
+              <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
+                      routerLink="/cluster/{{cluster.id}}"
+                      pTooltip="Edit cluster"></button>
+              <span pTooltip="{{cluster.inCluster ? 'May not delete built-in cluster' : ''}}">
+                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                        (click)="delete($event, cluster)" [disabled]="cluster.inCluster"
+                        pTooltip="Delete cluster"></button>
+              </span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
 
-  <div *ngIf="clusters && clusters.length === 0" fxFlex fxLayoutAlign="center center">
-    <div class="mat-subheading-2">
-      There are no clusters setup, click <a routerLink="/cluster/new">here</a> to configure a cluster..
+      <div class="p-field" *ngIf="clusters && clusters.length === 0">
+        There are no clusters setup, click <a routerLink="/cluster/new">here</a> to configure a cluster..
+      </div>
+
     </div>
   </div>
-
-</app-content>
-
-<ng-template #title>
-  <div class="mat-title">Clusters</div>
-</ng-template>
-
-<ng-template #buttonBar>
-  <app-button-bar>
-    <button mat-button routerLink="/cluster/new">New</button>
-  </app-button-bar>
-</ng-template>
+</div>

@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -23,13 +23,8 @@ import {Notification} from './notification';
 })
 export class NotificationsService {
   public notifications = new EventEmitter<Notification>();
-  public progress = false;
 
   constructor(private log: LoggerService) {
-  }
-
-  public showProgress(progress: boolean) {
-    this.progress = progress;
   }
 
   public notification(notification: Notification) {

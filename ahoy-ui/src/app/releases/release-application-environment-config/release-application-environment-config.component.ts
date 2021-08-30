@@ -15,7 +15,7 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {Application, ApplicationConfig, ApplicationEnvironmentConfig, ApplicationEnvironmentConfigId, ApplicationSecret, ApplicationVersion, ApplicationVolume} from '../../applications/application';
+import {Application, ApplicationEnvironmentConfig, ApplicationEnvironmentConfigId, ApplicationSecret, ApplicationVersion} from '../../applications/application';
 import {LoggerService} from '../../util/logger.service';
 import {ActivatedRoute} from '@angular/router';
 import {ApplicationService} from '../../applications/application.service';
@@ -41,11 +41,8 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   routeCategory = false;
   environmentVariablesCategory = false;
   configFileCategory = false;
-  selectedConfigIndex: number;
   volumesCategory = false;
-  selectedVolumeIndex: number;
   secretsCategory = false;
-  selectedSecretIndex: number;
 
   constructor(
     private log: LoggerService,
@@ -104,17 +101,14 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
 
     if (this.environmentConfig.configs.length > 0) {
       this.configFileCategory = true;
-      this.selectedConfigIndex = 0;
     }
 
     if (this.environmentConfig.volumes.length > 0) {
       this.volumesCategory = true;
-      this.selectedVolumeIndex = 0;
     }
 
     if (this.environmentConfig.secrets.length > 0) {
       this.secretsCategory = true;
-      this.selectedSecretIndex = 0;
     }
   }
 
@@ -127,54 +121,10 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
     this.location.back();
   }
 
-  routeExpand() {
-    if (!this.environmentConfig.routeHostname) {
+  routeSelectedChange() {
+    if (this.routeCategory && !this.environmentConfig.routeHostname) {
       this.environmentConfig.routeHostname = this.exampleRouteHost;
     }
-  }
-
-  addConfig() {
-    this.environmentConfig.configs.push(new ApplicationConfig());
-    this.selectedConfigIndex = this.environmentConfig.configs.length - 1;
-  }
-
-  deleteConfig() {
-    this.environmentConfig.configs.splice(this.selectedConfigIndex, 1);
-    this.selectedConfigIndex = this.selectedConfigIndex - 1;
-  }
-
-  addVolume() {
-    this.environmentConfig.volumes.push(new ApplicationVolume());
-    this.selectedVolumeIndex = this.applicationVersion.volumes.length - 1;
-  }
-
-  deleteVolume() {
-    this.environmentConfig.volumes.splice(this.selectedVolumeIndex, 1);
-    this.selectedVolumeIndex = this.selectedVolumeIndex - 1;
-  }
-
-  addSecret() {
-    const applicationSecret = new ApplicationSecret();
-    applicationSecret.data = {};
-    this.environmentConfig.secrets.push(applicationSecret);
-    this.selectedSecretIndex = this.environmentConfig.secrets.length - 1;
-  }
-
-  deleteSecret() {
-    this.environmentConfig.secrets.splice(this.selectedSecretIndex, 1);
-    this.selectedSecretIndex = this.selectedSecretIndex - 1;
-  }
-
-  secretInUse(): boolean {
-    const secret = this.environmentConfig.secrets[this.selectedSecretIndex];
-    if (secret && secret.name) {
-      const inUseInVolumes = this.environmentConfig.volumes
-        .filter(volume => volume.type === 'Secret' && volume.secretName === secret.name).length > 0;
-      const inUseInEnvironmentVariables = this.environmentConfig.environmentVariables
-        .filter(envVar => envVar.type === 'Secret' && envVar.secretName === secret.name).length > 0;
-      return inUseInVolumes || inUseInEnvironmentVariables || this.environmentConfig.tlsSecretName === secret.name;
-    }
-    return false;
   }
 
   tlsSecrets(): ApplicationSecret[] {

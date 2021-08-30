@@ -13,7 +13,7 @@ spec:
   tls:
   - hosts:
       - {{ .app.routeHostname }}
-    secretName: {{ .app.tlsSecretName }}
+    secretName: {{ .glob.releaseName }}-{{ .app.name }}-{{ .app.tlsSecretName }}
   {{ end }}
   rules:
   - host: {{ .app.routeHostname }}

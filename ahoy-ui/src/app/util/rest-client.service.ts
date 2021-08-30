@@ -19,7 +19,7 @@ import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {Observable, of, throwError} from 'rxjs';
 import {catchError, mergeMap, tap} from 'rxjs/operators';
 import {LoggerService} from './logger.service';
-import {NotificationsService} from '../notifications/notifications.service';
+import {ProgressService} from '../progress.service';
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +31,7 @@ export class RestClientService {
 
   constructor(
     private log: LoggerService,
-    private notificationsService: NotificationsService,
+    private progressService: ProgressService,
     private http: HttpClient) {
     if (isDevMode()) {
       this.appsUrl = 'http://localhost:8080' + this.appsUrl;
@@ -96,13 +96,13 @@ export class RestClientService {
 
   private startProgress(progress: boolean) {
     if (progress) {
-      this.notificationsService.showProgress(true);
+      this.progressService.showProgress(true);
     }
   }
 
   private stopProgress(progress: boolean) {
     if (progress) {
-      this.notificationsService.showProgress(false);
+      this.progressService.showProgress(false);
     }
   }
 

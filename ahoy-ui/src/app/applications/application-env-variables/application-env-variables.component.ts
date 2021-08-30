@@ -14,32 +14,22 @@
  *    limitations under the License.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {ApplicationEnvironmentVariable, ApplicationSecret} from '../application';
-import {MatTableDataSource} from '@angular/material/table';
 
 @Component({
   selector: 'app-application-env-variables',
   templateUrl: './application-env-variables.component.html',
   styleUrls: ['./application-env-variables.component.scss']
 })
-export class ApplicationEnvVariablesComponent implements OnInit {
+export class ApplicationEnvVariablesComponent {
   @Input() environmentVariables: ApplicationEnvironmentVariable[];
   @Input() secrets: ApplicationSecret[];
-  data = new MatTableDataSource<ApplicationEnvironmentVariable>();
-  displayedColumns = ['key', 'value', 'remove'];
   type = 'Value';
   key: string;
   value: string;
   secret: ApplicationSecret;
   secretKey: string;
-
-  constructor() {
-  }
-
-  ngOnInit() {
-    this.refresh();
-  }
 
   addEnvironmentVariable() {
     if (this.key) {
@@ -64,17 +54,11 @@ export class ApplicationEnvVariablesComponent implements OnInit {
         this.secret = null;
         this.secretKey = null;
       }
-      this.refresh();
     }
   }
 
   removeEnvironmentVariable(environmentVariable: ApplicationEnvironmentVariable) {
     const index = this.environmentVariables.indexOf(environmentVariable);
     this.environmentVariables.splice(index, 1);
-    this.refresh();
-  }
-
-  refresh() {
-    this.data.data = this.environmentVariables;
   }
 }

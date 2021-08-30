@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -36,17 +36,5 @@ export class DockerRegistriesComponent implements OnInit {
       .subscribe((settings) => {
         this.dockerRegistries = settings.dockerRegistries ? settings.dockerRegistries : [];
       });
-  }
-
-  compareRegistries(r1: DockerRegistry, r2: DockerRegistry): boolean {
-    if (!r1) {
-      return !r2;
-    }
-
-    if (!r2) {
-      return !r1;
-    }
-
-    return r1.id === r2.id;
   }
 }

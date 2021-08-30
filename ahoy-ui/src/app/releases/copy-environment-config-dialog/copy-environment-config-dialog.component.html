@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,23 +14,15 @@
   ~    limitations under the License.
   -->
 
-<h2 mat-dialog-title>Copy environment config for version {{destReleaseVersion.version}} from version:</h2>
-
-<form #releaseVersionForm="ngForm">
-  <mat-dialog-content fxFlex fxLayout="column">
-    <mat-form-field>
-      <mat-label>Version</mat-label>
-      <mat-select [(ngModel)]="selectedReleaseVersion" name="sourceReleaseVersion" required>
-        <mat-option *ngFor="let element of releaseVersions" [value]="element">
-          {{element.version}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </mat-dialog-content>
+<form #f="ngForm">
+  <div class="p-fluid">
+    <p-dropdown id="version" [options]="releaseVersions" [(ngModel)]="selected" placeholder="Version" optionLabel="version" name="version" required
+                appendTo="body">
+    </p-dropdown>
+  </div>
 </form>
 
-<mat-dialog-actions>
-  <button mat-button [mat-dialog-close]>Cancel</button>
-  <button mat-raised-button color="primary" [mat-dialog-close]="selectedReleaseVersion" [disabled]="releaseVersionForm.invalid">Ok
-  </button>
-</mat-dialog-actions>
+<div class="p-grid p-pt-3">
+  <button pButton pRipple type="button" icon="pi pi-times" (click)="close(undefined)" label="Cancel" class="p-button-text p-ml-auto p-mr-2"></button>
+  <button pButton pRipple type="button" icon="pi pi-check" (click)="close(selected)" label="Ok" class="p-button-text p-mr-2" [disabled]="f.invalid"></button>
+</div>

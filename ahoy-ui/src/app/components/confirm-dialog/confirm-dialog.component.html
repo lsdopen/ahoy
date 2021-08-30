@@ -14,33 +14,33 @@
   ~    limitations under the License.
   -->
 
-<h1 mat-dialog-title>{{confirmation.title}}</h1>
+<div class="p-grid">
+  <div class="p-col-12">
 
-<form #confirmationForm="ngForm">
-  <mat-dialog-content class="mat-body-1">
-    <div *ngIf="!confirmation.requiresInput" fxLayout="column">
-      {{confirmation.message}}
-    </div>
+    <form #confirmationForm="ngForm">
+      <div class="p-fluid p-col-12">
 
-    <div *ngIf="confirmation.requiresInput" fxLayout="column">
-      <mat-form-field>
-        <mat-label>{{confirmation.message}}</mat-label>
-        <textarea matInput matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="20" name="input" [(ngModel)]="confirmation.input"
-                  required></textarea>
-      </mat-form-field>
-    </div>
+        <div *ngIf="!confirmation.requiresInput" class="p-field">
+          {{confirmation.message}}
+        </div>
 
-    <div *ngIf="confirmation.verify" fxLayout="column">
-      <mat-form-field>
-        <input matInput [(ngModel)]="confirmation.enteredVerifyText" name="verifyText" required [appVerifyText]="confirmation.verifyText">
-        <mat-hint>enter <b>{{confirmation.verifyText}}</b> to confirm</mat-hint>
-      </mat-form-field>
-    </div>
-  </mat-dialog-content>
+        <div *ngIf="confirmation.requiresInput" class="p-field">
+          <label for="confirmationInput">{{confirmation.message}}</label>
+          <textarea rows="10" cols="30" pInputTextarea id="confirmationInput" name="confirmationInput" [(ngModel)]="confirmation.input" required></textarea>
+        </div>
 
-  <mat-dialog-actions>
-    <button mat-button [mat-dialog-close]>Cancel</button>
-    <button mat-raised-button color="primary" type="submit" [mat-dialog-close]="confirmation" [disabled]="confirmationForm.invalid">Confirm</button>
-  </mat-dialog-actions>
+        <div *ngIf="confirmation.verify" class="p-field">
+          <input pInputText id="verifyText" [(ngModel)]="confirmation.enteredVerifyText" name="verifyText" required [appVerifyText]="confirmation.verifyText">
+          <small>enter <b>{{confirmation.verifyText}}</b> to confirm</small>
+        </div>
 
-</form>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<div class="p-grid p-pt-3">
+  <button pButton pRipple type="button" icon="pi pi-times" (click)="close(undefined)" label="Cancel" class="p-button-text p-ml-auto p-mr-2"></button>
+  <button pButton pRipple type="button" icon="pi pi-check" (click)="close(confirmation)" label="Confirm" class="p-button-text p-mr-2" [disabled]="confirmationForm.invalid" autofocus></button>
+</div>

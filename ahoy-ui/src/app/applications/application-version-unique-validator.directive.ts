@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,9 +25,6 @@ import {ApplicationVersion} from './application';
 export class ApplicationVersionUniqueValidatorDirective implements Validator {
   @Input('appApplicationVersionUnique') applicationVersions: ApplicationVersion[];
   @Input() ignoreOwnId: number;
-
-  constructor() {
-  }
 
   validate(control: AbstractControl): { [key: string]: any } | null {
     return this.applicationVersions ? this.checkApplicationVersionUnique(this.applicationVersions)(control) : null;

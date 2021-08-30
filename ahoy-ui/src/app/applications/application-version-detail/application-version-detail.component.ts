@@ -20,7 +20,6 @@ import {ApplicationService} from '../application.service';
 import {Application, ApplicationConfig, ApplicationSecret, ApplicationVersion, ApplicationVolume} from '../application';
 import {Location} from '@angular/common';
 import {ReleasesService} from '../../releases/releases.service';
-import {MatTableDataSource} from '@angular/material/table';
 
 @Component({
   selector: 'app-application-version-detail',
@@ -35,17 +34,12 @@ export class ApplicationVersionDetailComponent implements OnInit {
   editMode: boolean;
   editingVersion: string;
   newServicePort: number;
-  portsDataSource = new MatTableDataSource<number>();
-  portsDisplayedColumns = ['port', 'remove'];
   portsCategory = false;
   healthChecksCategory = false;
   environmentVariablesCategory = false;
   configFilesCategory = false;
-  selectedConfigIndex: number;
   volumesCategory = false;
-  selectedVolumeIndex: number;
   secretsCategory = false;
-  selectedSecretIndex: number;
 
   constructor(
     private route: ActivatedRoute,
@@ -73,7 +67,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
           this.applicationVersion.servicePorts = [];
           this.applicationVersion.environmentVariables = [];
           this.applicationVersion.healthEndpointScheme = 'HTTP';
-          this.portsDataSource.data = this.applicationVersion.servicePorts;
 
           // load previous version details for convenience
           if (this.applicationVersionId && this.applicationVersionId > 0) {
@@ -85,7 +78,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
                 this.applicationVersion.environmentVariables = applicationVersion.environmentVariables;
 
                 this.applicationVersion.servicePorts = applicationVersion.servicePorts;
-                this.portsDataSource.data = this.applicationVersion.servicePorts;
 
                 this.applicationVersion.healthEndpointPath = applicationVersion.healthEndpointPath;
                 this.applicationVersion.healthEndpointPort = applicationVersion.healthEndpointPort;
@@ -110,7 +102,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
               if (!this.applicationVersion.healthEndpointScheme) {
                 this.applicationVersion.healthEndpointScheme = 'HTTP';
               }
-              this.portsDataSource.data = this.applicationVersion.servicePorts;
 
               this.setCategoriesExpanded();
             });
@@ -133,17 +124,14 @@ export class ApplicationVersionDetailComponent implements OnInit {
 
     if (this.applicationVersion.configPath) {
       this.configFilesCategory = true;
-      this.selectedConfigIndex = 0;
     }
 
     if (this.applicationVersion.volumes.length > 0) {
       this.volumesCategory = true;
-      this.selectedVolumeIndex = 0;
     }
 
     if (this.applicationVersion.secrets.length > 0) {
       this.secretsCategory = true;
-      this.selectedSecretIndex = 0;
     }
   }
 
@@ -167,16 +155,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
     this.location.back();
   }
 
-  addConfig() {
-    this.applicationVersion.configs.push(new ApplicationConfig());
-    this.selectedConfigIndex = this.applicationVersion.configs.length - 1;
-  }
-
-  deleteConfig() {
-    this.applicationVersion.configs.splice(this.selectedConfigIndex, 1);
-    this.selectedConfigIndex = this.selectedConfigIndex - 1;
-  }
-
   private cloneConfigs(configs: ApplicationConfig[]): ApplicationConfig[] {
     return configs.map((applicationConfig) => {
       const appConfig = new ApplicationConfig();
@@ -189,24 +167,12 @@ export class ApplicationVersionDetailComponent implements OnInit {
   addServicePort() {
     if (this.newServicePort) {
       this.applicationVersion.servicePorts.push(this.newServicePort);
-      this.portsDataSource.data = this.applicationVersion.servicePorts;
       this.newServicePort = null;
     }
   }
 
   removeServicePort(portIndex: number) {
     this.applicationVersion.servicePorts.splice(portIndex, 1);
-    this.portsDataSource.data = this.applicationVersion.servicePorts;
-  }
-
-  addVolume() {
-    this.applicationVersion.volumes.push(new ApplicationVolume());
-    this.selectedVolumeIndex = this.applicationVersion.volumes.length - 1;
-  }
-
-  deleteVolume() {
-    this.applicationVersion.volumes.splice(this.selectedVolumeIndex, 1);
-    this.selectedVolumeIndex = this.selectedVolumeIndex - 1;
   }
 
   private cloneVolumes(volumes: ApplicationVolume[]): ApplicationVolume[] {
@@ -220,31 +186,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
       appVolume.sizeStorageUnit = applicationVolume.sizeStorageUnit;
       return appVolume;
     });
-  }
-
-  addSecret() {
-    const applicationSecret = new ApplicationSecret();
-    applicationSecret.type = 'Generic';
-    applicationSecret.data = {};
-    this.applicationVersion.secrets.push(applicationSecret);
-    this.selectedSecretIndex = this.applicationVersion.secrets.length - 1;
-  }
-
-  deleteSecret() {
-    this.applicationVersion.secrets.splice(this.selectedSecretIndex, 1);
-    this.selectedSecretIndex = this.selectedSecretIndex - 1;
-  }
-
-  secretInUse(): boolean {
-    const secret = this.applicationVersion.secrets[this.selectedSecretIndex];
-    if (secret && secret.name) {
-      const inUseInVolumes = this.applicationVersion.volumes
-        .filter(volume => volume.type === 'Secret' && volume.secretName === secret.name).length > 0;
-      const inUseInEnvironmentVariables = this.applicationVersion.environmentVariables
-        .filter(envVar => envVar.type === 'Secret' && envVar.secretName === secret.name).length > 0;
-      return inUseInVolumes || inUseInEnvironmentVariables;
-    }
-    return false;
   }
 
   private cloneSecrets(secrets: ApplicationSecret[]): ApplicationSecret[] {

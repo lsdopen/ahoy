@@ -79,6 +79,18 @@ export class AuthService {
     return this.oAuthService.getIdentityClaims();
   }
 
+  public userInitials(): string {
+    // @ts-ignore
+    const name = this.identityClaim().name;
+    const names = name.split(' ');
+    let initials = names[0].charAt(0).toUpperCase();
+
+    if (names.length > 1) {
+      initials += names[names.length - 1].charAt(0).toUpperCase();
+    }
+    return initials;
+  }
+
   public isAuthenticated(): boolean {
     return this.oAuthService.hasValidIdToken() && this.oAuthService.hasValidAccessToken();
   }

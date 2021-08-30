@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,65 +14,92 @@
   ~    limitations under the License.
   -->
 
-<ng-container *ngIf="releaseVersion && existingConfigs">
+<div class="p-grid">
+  <div class="p-col-12">
 
-  <app-content [title]="title" [buttonBar]="buttonBar">
+    <div class="card" *ngIf="releaseVersion && existingConfigs">
+      <div class="card-header">
+        <h5>Applications</h5>
+      </div>
 
-    <table *ngIf="releaseVersion.applicationVersions && releaseVersion.applicationVersions.length > 0" fxFlex fxGrow mat-table [dataSource]="dataSource" class="mat-elevation-z0">
-      <ng-container matColumnDef="application">
-        <td mat-cell *matCellDef="let av" routerLink="/application/{{av.application.id}}/version/{{av.id}}">{{av.application.name}}</td>
-      </ng-container>
-      <ng-container matColumnDef="image">
-        <td mat-cell *matCellDef="let av">{{av.image}}</td>
-      </ng-container>
-      <ng-container matColumnDef="status">
-        <td mat-cell *matCellDef="let av">
-          <app-release-application-version-status [applicationVersion]="av"></app-release-application-version-status>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="launch">
-        <td mat-cell *matCellDef="let av">
-          <a *ngIf="hasRoute(av)" href="{{getRoute(av)}}" target="_blank" fxLayoutAlign="center" class="app-icon-link">
-            <mat-icon>launch</mat-icon>
-          </a>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="version">
-        <td mat-cell *matCellDef="let av">
-          <button mat-stroked-button (click)="upgradeApplication(av)">{{av.version}}</button>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="environment-config">
-        <td mat-cell *matCellDef="let av">
-          <div class="{{hasConfig(av.id) ? 'app-green-button' : 'app-normal-button'}}">
-            <button mat-stroked-button routerLink="/release/{{environmentRelease.id.environmentId}}/{{environmentRelease.id.releaseId}}/config/{{releaseVersion.id}}/{{av.id}}">env</button>
-          </div>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="remove">
-        <td mat-cell *matCellDef="let av">
-          <button mat-stroked-button (click)="removeApplication(av)">remove</button>
-        </td>
-      </ng-container>
-      <tr mat-row *matRowDef="let av; columns: ['application', 'image', 'status', 'launch', 'version', 'environment-config', 'remove'];"></tr>
-    </table>
+      <p-toolbar>
+        <ng-template pTemplate="left">
+          <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain p-mr-2 p-mb-2" (click)="addApplication()"></button>
+        </ng-template>
+      </p-toolbar>
 
-    <div *ngIf="(releaseVersion.applicationVersions && (releaseVersion.applicationVersions.length === 0))" fxFlex fxLayoutAlign="center center">
-      <div class="mat-subheading-2">
+      <div class="p-field" *ngIf="releaseVersion.applicationVersions && (releaseVersion.applicationVersions.length === 0)">
         There are no applications in this release, <a [routerLink]="" (click)="addApplication()">here</a> to add an application..
       </div>
+
+      <p-table #dt [value]="releaseVersion.applicationVersions" dataKey="id" selectionMode="single"
+               styleClass="p-datatable-applicationVersions p-datatable-striped p-datatable-sm"
+               [scrollable]="true" scrollHeight="400px" [filterDelay]="0" [globalFilterFields]="['application.name', 'version', 'image']"
+               *ngIf="releaseVersion.applicationVersions && releaseVersion.applicationVersions.length > 0">
+        <ng-template pTemplate="caption">
+          <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
+            <span class="p-input-icon-left p-ml-auto">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"/>
+              </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="application.name">Application
+              <p-sortIcon field="application.name"></p-sortIcon>
+            </th>
+            <th pSortableColumn="version">Version
+              <p-sortIcon field="version"></p-sortIcon>
+            </th>
+            <th pSortableColumn="image">Image
+              <p-sortIcon field="image"></p-sortIcon>
+            </th>
+            <th pSortableColumn="status.status">Status
+              <p-sortIcon field="status.status"></p-sortIcon>
+            </th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-av>
+          <tr>
+            <td><span class="p-column-title">Application</span>
+              {{av.application.name}}
+            </td>
+            <td><span class="p-column-title">Version</span>
+              {{av.version}}
+            </td>
+            <td><span class="p-column-title">Image</span>
+              {{av.image}}
+            </td>
+            <td><span class="p-column-title">Status</span>
+              <app-release-application-version-status
+                [environmentRelease]="environmentRelease" [releaseVersion]="releaseVersion" [applicationVersion]="av">
+              </app-release-application-version-status>
+            </td>
+            <td>
+              <a *ngIf="hasRoute(av)" pButton pRipple icon="pi pi-external-link" class="p-button-rounded p-button-info p-mr-2"
+                 href="{{getRoute(av)}}" target="_blank"
+                 pTooltip="Open route: {{getRoute(av)}}"></a>
+
+              <button pButton pRipple icon="pi pi-upload" class="p-button-rounded p-button-info p-mr-2"
+                      (click)="upgradeApplication(av)"
+                      pTooltip="Upgrade version"></button>
+              <button pButton pRipple icon="pi pi-folder" class="p-button-rounded {{hasConfig(av.id) ? 'p-button-plain' : 'p-button-outlined'}} p-mr-2"
+                      routerLink="/release/{{environmentRelease.id.environmentId}}/{{environmentRelease.id.releaseId}}/config/{{releaseVersion.id}}/{{av.id}}"
+                      pTooltip="Edit environment config"></button>
+              <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
+                      routerLink="/application/{{av.application.id}}/version/{{av.id}}"
+                      pTooltip="Edit application version"></button>
+              <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                      (click)="removeApplication(av)"
+                      pTooltip="Remove application from release"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+
     </div>
 
-  </app-content>
-
-  <ng-template #title>
-    <div *ngIf="releaseVersion" class="mat-title">Applications</div>
-  </ng-template>
-
-  <ng-template #buttonBar>
-    <app-button-bar>
-      <button mat-button (click)="addApplication()">Add</button>
-    </app-button-bar>
-  </ng-template>
-
-</ng-container>
+  </div>
+</div>

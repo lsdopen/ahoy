@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import {Cluster} from '../clusters/cluster';
 import {ClusterService} from '../clusters/cluster.service';
 import {ActivatedRoute} from '@angular/router';
 import {LoggerService} from '../util/logger.service';
+import {AppBreadcrumbService} from '../app.breadcrumb.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -36,7 +37,10 @@ export class DashboardComponent implements OnInit {
     private route: ActivatedRoute,
     private clusterService: ClusterService,
     private environmentService: EnvironmentService,
-    private log: LoggerService) {
+    private log: LoggerService,
+    private breadcrumbService: AppBreadcrumbService) {
+
+    this.breadcrumbService.setItems([{label: 'dashboard'}]);
   }
 
   ngOnInit() {

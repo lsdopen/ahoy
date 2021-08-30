@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
  *    limitations under the License.
  */
 
-import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {Component} from '@angular/core';
+import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {Description} from './description';
 
 @Component({
@@ -23,14 +23,15 @@ import {Description} from './description';
   templateUrl: './description-dialog.component.html',
   styleUrls: ['./description-dialog.component.scss']
 })
-export class DescriptionDialogComponent implements OnInit {
+export class DescriptionDialogComponent {
   description: Description;
 
-  constructor(@Inject(MAT_DIALOG_DATA) data) {
-    this.description = data;
+  constructor(public ref: DynamicDialogRef,
+              public config: DynamicDialogConfig) {
+    this.description = config.data;
   }
 
-  ngOnInit() {
+  close(result: any) {
+    this.ref.close(result);
   }
-
 }

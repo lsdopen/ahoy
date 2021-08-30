@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -46,6 +46,6 @@ public final class HelmUtils {
 
 	public static String valuesName(Application application) {
 		// TODO; we need to handle all special characters that may be in the app name that the values file won't accept
-		return application.getName().replaceAll("-", "");
+		return application.getName().replace("-", "");
 	}
 }

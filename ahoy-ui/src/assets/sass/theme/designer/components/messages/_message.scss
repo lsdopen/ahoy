@@ -1,0 +1,118 @@
+/*!
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+.p-message {
+    margin: $messageMargin;
+    border-radius: $borderRadius;
+
+    .p-message-wrapper {
+        padding: $messagePadding;
+    }
+
+    .p-message-close {
+        width: $actionIconWidth;
+        height: $actionIconHeight;
+        border-radius: $actionIconBorderRadius;
+        background: transparent;
+        transition: $actionIconTransition;
+
+        &:hover {
+            background: rgba(255,255,255,.3);
+        }
+
+        &:focus {
+            @include focused();
+        }
+    }
+
+    &.p-message-info {
+        background: $infoMessageBg;
+        border: $infoMessageBorder;
+        border-width: $messageBorderWidth;
+        color: $infoMessageTextColor;
+
+        .p-message-icon {
+            color: $infoMessageIconColor;
+        }
+
+        .p-message-close {
+            color: $infoMessageIconColor;
+        }
+    }
+
+    &.p-message-success {
+        background: $successMessageBg;
+        border: $successMessageBorder;
+        border-width: $messageBorderWidth;
+        color: $successMessageTextColor;
+
+        .p-message-icon {
+            color: $successMessageIconColor;
+        }
+
+        .p-message-close {
+            color: $successMessageIconColor;
+        }
+    }
+
+    &.p-message-warn {
+        background: $warningMessageBg;
+        border: $warningMessageBorder;
+        border-width: $messageBorderWidth;
+        color: $warningMessageTextColor;
+
+        .p-message-icon {
+            color: $warningMessageIconColor;
+        }
+
+        .p-message-close {
+            color: $warningMessageIconColor;
+        }
+    }
+
+    &.p-message-error {
+        background: $errorMessageBg;
+        border: $errorMessageBorder;
+        border-width: $messageBorderWidth;
+        color: $errorMessageTextColor;
+
+        .p-message-icon {
+            color: $errorMessageIconColor;
+        }
+
+        .p-message-close {
+            color: $errorMessageIconColor;
+        }
+    }
+
+    .p-message-text {
+        font-size: $messageTextFontSize;
+        font-weight: $messageTextFontWeight;
+    }
+
+    .p-message-icon {
+        font-size: $messageIconFontSize;
+        margin-right: $inlineSpacing;
+    }
+
+    .p-message-summary {
+        font-weight: 700;
+    }
+
+    .p-message-detail {
+        margin-left: $inlineSpacing;
+    }
+}

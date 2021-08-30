@@ -1,0 +1,58 @@
+/*!
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+.p-breadcrumb {
+    background: $breadcrumbBg;
+    border: $breadcrumbBorder;
+    border-radius: $borderRadius;
+    padding: $breadcrumbPadding;
+
+    ul {
+        li {
+            .p-menuitem-link {
+                transition: $listItemTransition;
+                border-radius: $borderRadius;
+
+                &:focus {
+                    @include focused();
+                }
+
+                .p-menuitem-text {
+                    color: $breadcrumbItemTextColor;
+                }
+
+                .p-menuitem-icon {
+                    color: $breadcrumbItemIconColor;
+                }
+            }
+
+            &.p-breadcrumb-chevron {
+                margin: 0 $inlineSpacing 0 $inlineSpacing;
+                color: $breadcrumbSeparatorColor;
+            }
+
+            &:last-child {
+                .p-menuitem-text {
+                    color: $breadcrumbLastItemTextColor;
+                }
+
+                .p-menuitem-icon {
+                    color: $breadcrumbLastItemIconColor;
+                }
+            }
+        }
+    }
+}

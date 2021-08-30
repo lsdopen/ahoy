@@ -1,0 +1,78 @@
+<!--
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
+  ~
+  ~    Licensed under the Apache License, Version 2.0 (the "License");
+  ~    you may not use this file except in compliance with the License.
+  ~    You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~    Unless required by applicable law or agreed to in writing, software
+  ~    distributed under the License is distributed on an "AS IS" BASIS,
+  ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~    See the License for the specific language governing permissions and
+  ~    limitations under the License.
+  -->
+
+<div class="layout-topbar p-shadow-4">
+  <div class="layout-topbar-left">
+    <a class="layout-topbar-logo" routerLink="/">
+      <img id="app-logo" src="assets/layout/images/logo-light.svg" alt="ultima-layout" style="height: 2.25rem">
+    </a>
+
+    <a class="layout-menu-button p-shadow-6" (click)="appMain.onMenuButtonClick($event)" pRipple>
+      <i class="pi pi-chevron-right"></i>
+    </a>
+
+    <a class="layout-topbar-mobile-button" (click)="appMain.onTopbarMobileButtonClick($event)" pRipple>
+      <i class="pi pi-ellipsis-v fs-large"></i>
+    </a>
+  </div>
+
+  <div class="layout-topbar-right" [ngClass]="{'layout-topbar-mobile-active': appMain.mobileTopbarActive}">
+    <div class="layout-topbar-actions-left">
+    </div>
+    <div class="layout-topbar-actions-right">
+      <ul class="layout-topbar-items">
+        <li class="layout-topbar-item notifications">
+          <app-notifications></app-notifications>
+        </li>
+
+        <li class="layout-topbar-item" *ngIf="identityClaim()">
+          <a class="layout-topbar-action p-d-flex p-dir-row p-jc-center p-ai-center p-px-0 rounded-circle" (click)="appMain.onTopbarItemClick($event, 'profile')" pRipple>
+            <p-avatar label="{{userInitials()}}" shape="circle"></p-avatar>
+          </a>
+
+          <ul class="layout-topbar-action-panel p-shadow-6" [@topbarActionPanelAnimation]="'visible'" *ngIf="appMain.activeTopbarItem === 'profile'">
+            <li class="p-px-3">
+              <i class="pi pi-user" [ngClass]="{'p-mr-2': !app.isRTL, 'p-ml-2': app.isRTL}"></i>
+              <span class="fs-normal">{{identityClaim().name}}</span>
+            </li>
+            <p-divider layout="horizontal"></p-divider>
+            <li class="layout-topbar-action-item" routerLink="/settings" pRipple>
+              <div class="p-d-flex p-flex-row p-ai-center">
+                <i class="pi pi-cog" [ngClass]="{'p-mr-2': !app.isRTL, 'p-ml-2': app.isRTL}"></i>
+                <span>Settings</span>
+              </div>
+            </li>
+
+            <li>
+              <a class="layout-topbar-action-item p-d-flex p-flex-row p-ai-center" href="{{issuer()}}/account/?referrer=ahoy" target="_blank" pRipple>
+                <i class="pi pi-user-edit" [ngClass]="{'p-mr-2': !app.isRTL, 'p-ml-2': app.isRTL}"></i>
+                <span>Account</span>
+              </a>
+            </li>
+
+            <li class="layout-topbar-action-item" pRipple (click)="logout()">
+              <div class="p-d-flex p-flex-row p-ai-center">
+                <i class="pi pi-power-off" [ngClass]="{'p-mr-2': !app.isRTL, 'p-ml-2': app.isRTL}"></i>
+                <span>Logout</span>
+              </div>
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+    </div>
+  </div>
+</div>

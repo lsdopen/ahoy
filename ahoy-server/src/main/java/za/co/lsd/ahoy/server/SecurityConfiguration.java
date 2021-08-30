@@ -36,7 +36,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
 			.disable()
 			.headers().frameOptions().disable().and()
 			.authorizeRequests()
-			.antMatchers("/*", "/ws/**", "/auth/**").permitAll()
+			.antMatchers("/*", "/assets/**", "/ws/**", "/auth/**").permitAll()
 			.antMatchers("/data/**").hasAuthority("SCOPE_ahoy")
 			.antMatchers("/api/**").hasAuthority("SCOPE_ahoy")
 			.anyRequest().authenticated()

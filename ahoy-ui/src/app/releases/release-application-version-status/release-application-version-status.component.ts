@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,20 +14,54 @@
  *    limitations under the License.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {ApplicationVersion} from '../../applications/application';
+import {EnvironmentRelease} from '../../environment-release/environment-release';
+import {ReleaseVersion} from '../release';
 
 @Component({
   selector: 'app-release-application-version-status',
   templateUrl: './release-application-version-status.component.html',
   styleUrls: ['./release-application-version-status.component.scss']
 })
-export class ReleaseApplicationVersionStatusComponent implements OnInit {
+export class ReleaseApplicationVersionStatusComponent {
+  @Input() environmentRelease: EnvironmentRelease;
+  @Input() releaseVersion: ReleaseVersion;
   @Input() applicationVersion: ApplicationVersion;
 
-  constructor() { }
+  status(): string {
+    if (!this.environmentRelease.deployed) {
+      return '';
+    }
 
-  ngOnInit() {
+    if (this.environmentRelease.currentReleaseVersion.version !== this.releaseVersion.version) {
+      return '';
+    }
+
+    if (!this.applicationVersion.status) {
+      return 'Missing';
+    }
+
+    return this.applicationVersion.status.status;
   }
 
+  style(): string {
+    if (!this.environmentRelease.deployed) {
+      return '';
+    }
+
+    if (this.environmentRelease.currentReleaseVersion.version !== this.releaseVersion.version) {
+      return '';
+    }
+
+    if (!this.applicationVersion.status) {
+      return 'status-error';
+    }
+
+    if (this.applicationVersion.status.status === 'Healthy') {
+      return 'status-success';
+    }
+
+    return 'status-warn';
+  }
 }

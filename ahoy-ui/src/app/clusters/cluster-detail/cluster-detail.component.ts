@@ -20,6 +20,7 @@ import {ActivatedRoute} from '@angular/router';
 import {Location} from '@angular/common';
 import {LoggerService} from '../../util/logger.service';
 import {ClusterService} from '../cluster.service';
+import {AppBreadcrumbService} from '../../app.breadcrumb.service';
 
 @Component({
   selector: 'app-cluster-detail',
@@ -34,23 +35,36 @@ export class ClusterDetailComponent implements OnInit {
   ];
 
   cluster: Cluster;
+  editMode = false;
   hideToken = true;
 
   constructor(private route: ActivatedRoute,
               private clusterService: ClusterService,
               private location: Location,
-              private log: LoggerService) {
+              private log: LoggerService,
+              private breadcrumbService: AppBreadcrumbService) {
   }
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     if (id === 'new') {
       this.cluster = new Cluster();
+      this.setBreadcrumb();
 
     } else {
+      this.editMode = true;
       this.clusterService.get(+id)
-        .subscribe(cluster => this.cluster = cluster);
+        .subscribe(cluster => {
+          this.cluster = cluster;
+          this.setBreadcrumb();
+        });
     }
+  }
+
+  private setBreadcrumb() {
+    this.breadcrumbService.setItems([
+      {label: (this.editMode ? 'edit' : 'new') + ' cluster'}
+    ]);
   }
 
   save() {

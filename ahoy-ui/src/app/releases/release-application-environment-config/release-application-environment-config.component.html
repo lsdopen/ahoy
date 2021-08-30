@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,225 +14,107 @@
   ~    limitations under the License.
   -->
 
-<ng-container *ngIf="environmentConfig">
-  <form #environmentConfigForm="ngForm">
-    <app-content [title]="title" [buttonBar]="buttonBar">
-      <app-detail>
+<div class="p-grid">
+  <div class="p-col-12" *ngIf="environmentConfig">
 
-        <div fxLayout="column" fxLayoutGap="10px" class="form-area">
+    <div class="card">
+      <div class="card-header">
+        <h5 *ngIf="environmentRelease && releaseVersion && applicationVersion"
+            pTooltip="... in {{environmentRelease.release.name}}:{{releaseVersion.version}} in {{environmentRelease.environment.name}} - {{environmentRelease.environment.cluster.name}}">
+          Environment configuration of {{applicationVersion.application.name}}:{{applicationVersion.version}}
+        </h5>
+      </div>
 
-          <mat-form-field>
-            <input matInput type="number" [min]="0" [max]="100" [(ngModel)]="environmentConfig.replicas" placeholder="Replicas" name="environmentConfigReplicas"
-                   required>
-          </mat-form-field>
+      <p-toolbar>
+        <ng-template pTemplate="left">
+          <button pButton pRipple label="Save" icon="pi pi-save" class="p-button-success p-mr-2 p-mb-2" (click)="save()" [disabled]="environmentConfigForm.invalid"></button>
+          <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-plain p-mb-2" (click)="cancel()"></button>
+        </ng-template>
+      </p-toolbar>
 
-          <mat-expansion-panel [(expanded)]="routeCategory" (afterExpand)="routeExpand()">
-            <mat-expansion-panel-header>
-              <mat-panel-title>Route</mat-panel-title>
-            </mat-expansion-panel-header>
+      <form #environmentConfigForm="ngForm">
+        <div class="p-fluid p-col-12 p-md-5">
 
-            <div fxLayout="column" class="form-area">
-              <mat-form-field>
-                <input matInput [(ngModel)]="environmentConfig.routeHostname" placeholder="Hostname" name="environmentConfigRouteHostname"
-                       pattern="(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])"
-                       required="{{routeCategory}}">
-                <mat-error *ngIf="environmentConfigForm.form.controls.environmentConfigRouteHostname?.hasError('pattern')">
-                  <strong>invalid</strong>
-                </mat-error>
-              </mat-form-field>
-
-              <mat-form-field>
-                <mat-select [(ngModel)]="environmentConfig.routeTargetPort" placeholder="Target Port" name="environmentConfigRouteTargetPort"
-                            required="{{routeCategory}}">
-                  <mat-option>--</mat-option>
-                  <mat-option *ngFor="let port of applicationVersion.servicePorts" [value]="port">
-                    {{port}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-
-              <mat-checkbox [(ngModel)]="environmentConfig.tls" name="environmentConfigTls">Tls</mat-checkbox>
-
-              <mat-form-field *ngIf="environmentConfig.tls" style="margin-top: 10px">
-                <mat-select [(ngModel)]="environmentConfig.tlsSecretName"
-                            name="environmentConfigTlsSecretName" placeholder="Select Tls secret"
-                            required>
-                  <mat-option>--</mat-option>
-                  <mat-option *ngFor="let secret of tlsSecrets()" [value]="secret.name">
-                    {{secret.name}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-
-            </div>
-          </mat-expansion-panel>
-
-          <mat-expansion-panel [(expanded)]="environmentVariablesCategory">
-            <mat-expansion-panel-header>
-              <mat-panel-title>Environment Variables</mat-panel-title>
-            </mat-expansion-panel-header>
-
-            <app-application-env-variables
-              [environmentVariables]="environmentConfig.environmentVariables" [secrets]="environmentConfig.secrets">
-            </app-application-env-variables>
-          </mat-expansion-panel>
-
-          <mat-expansion-panel [(expanded)]="configFileCategory">
-            <mat-expansion-panel-header>
-              <mat-panel-title>Configuration Files</mat-panel-title>
-            </mat-expansion-panel-header>
-
-            <div fxLayout="column" class="form-area">
-              <mat-form-field style="margin-bottom: 15px">
-                <input matInput [(ngModel)]="applicationVersion.configPath" placeholder="Path" name="applicationConfigPath" disabled="true">
-                <mat-hint>Application configuration file path; required for environment configuration file</mat-hint>
-              </mat-form-field>
-
-              <div fxFlex fxLayout="row">
-                <mat-tab-group fxFlex="grow" [(selectedIndex)]="selectedConfigIndex">
-                  <mat-tab *ngFor="let config of environmentConfig.configs; let configIndex = index"
-                           label="{{config.name ? config.name : '<new>'}}">
-                    <div fxFlex fxLayout="column" fxLayoutAlign="start start" class="form-area">
-                      <mat-form-field style="margin-top: 10px">
-                        <input matInput [(ngModel)]="config.name" placeholder="Name"
-                               name="applicationConfigName{{configIndex}}" required>
-                      </mat-form-field>
-
-                      <mat-form-field fxFill>
-                        <textarea matInput [(ngModel)]="config.config" placeholder="Config"
-                                  name="applicationConfig{{configIndex}}"
-                                  type="text"
-                                  matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="20" required></textarea>
-                      </mat-form-field>
-                    </div>
-                  </mat-tab>
-                </mat-tab-group>
-
-                <div fxFlex fxLayout="column">
-                  <button mat-icon-button (click)="addConfig()">
-                    <mat-icon>add_circle</mat-icon>
-                  </button>
-                  <button mat-icon-button (click)="deleteConfig()">
-                    <mat-icon>remove_circle</mat-icon>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </mat-expansion-panel>
-
-          <mat-expansion-panel [(expanded)]="volumesCategory">
-            <mat-expansion-panel-header>
-              <mat-panel-title>Volumes</mat-panel-title>
-            </mat-expansion-panel-header>
-
-            <div fxLayout="column" class="form-area">
-
-              <div fxFlex fxLayout="row">
-                <mat-tab-group fxFlex="grow" [(selectedIndex)]="selectedVolumeIndex">
-                  <mat-tab *ngFor="let volume of environmentConfig.volumes; let volumeIndex = index"
-                           label="{{volume.name ? volume.name : '<new>'}}">
-
-                    <app-application-volume-detail [volume]="volume" [volumeIndex]="volumeIndex" [secrets]="environmentConfig.secrets">
-                    </app-application-volume-detail>
-
-                  </mat-tab>
-                </mat-tab-group>
-
-                <div fxFlex fxLayout="column">
-                  <button mat-icon-button (click)="addVolume()">
-                    <mat-icon>add_circle</mat-icon>
-                  </button>
-                  <button mat-icon-button (click)="deleteVolume()">
-                    <mat-icon>remove_circle</mat-icon>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-          </mat-expansion-panel>
-
-          <mat-expansion-panel [(expanded)]="secretsCategory">
-            <mat-expansion-panel-header>
-              <mat-panel-title>Secrets</mat-panel-title>
-            </mat-expansion-panel-header>
-
-            <div fxFlex fxLayout="row">
-              <mat-tab-group fxFlex="grow" [(selectedIndex)]="selectedSecretIndex">
-                <mat-tab *ngFor="let secret of environmentConfig.secrets; let secretIndex = index"
-                         label="{{secret.name ? secret.name : '<new>'}}">
-                  <div fxFlex fxLayout="column" fxLayoutAlign="start start" class="form-area">
-                    <mat-form-field style="margin-top: 10px">
-                      <input matInput [(ngModel)]="secret.name" placeholder="Name"
-                             name="secretName{{secretIndex}}"
-                             required
-                             [readonly]="secretInUse()"
-                             [matTooltip]="secretInUse() ? 'Secret in use' : ''"
-                             pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$">
-                      <mat-hint>should start with and use lower case letters and numbers</mat-hint>
-                    </mat-form-field>
-
-                    <mat-form-field style="margin-top: 10px">
-                      <mat-select [(ngModel)]="secret.type"
-                                  name="secretType{{secretIndex}}" required placeholder="Type">
-                        <mat-option value="Generic">Generic</mat-option>
-                        <mat-option value="Tls">Tls</mat-option>
-                      </mat-select>
-                    </mat-form-field>
-
-                    <app-application-secret-data *ngIf="secret.type === 'Generic'" fxFill
-                                                 [secretData]="secret.data">
-                    </app-application-secret-data>
-
-                    <div *ngIf="secret.type === 'Tls'" fxLayout="column" fxFill>
-                      <mat-form-field>
-                        <textarea matInput [(ngModel)]="secret.data['tls.crt']" placeholder="Certificate"
-                                  name="secretTlsCertificate{{secretIndex}}"
-                                  type="text"
-                                  matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="30"></textarea>
-                      </mat-form-field>
-
-                      <mat-form-field>
-                        <textarea matInput [(ngModel)]="secret.data['tls.key']" placeholder="Private key"
-                                  name="secretTlsPrivateKey{{secretIndex}}"
-                                  type="text"
-                                  matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="30"></textarea>
-                      </mat-form-field>
-                    </div>
-
-                  </div>
-                </mat-tab>
-              </mat-tab-group>
-
-              <div fxFlex fxLayout="column">
-                <button mat-icon-button (click)="addSecret()">
-                  <mat-icon>add_circle</mat-icon>
-                </button>
-                <button mat-icon-button (click)="deleteSecret()" [disabled]="secretInUse()">
-                  <mat-icon [matTooltip]="secretInUse() ? 'Secret in use' : ''">remove_circle</mat-icon>
-                </button>
-              </div>
-            </div>
-
-          </mat-expansion-panel>
-
+          <div class="p-field p-float-label">
+            <p-inputNumber id="environmentConfigReplicas" name="environmentConfigReplicas" [(ngModel)]="environmentConfig.replicas"
+                           mode="decimal" [showButtons]="true" [min]="0" [max]="100"
+                           required>
+            </p-inputNumber>
+            <label for="environmentConfigReplicas">Replicas</label>
+          </div>
         </div>
 
-      </app-detail>
-    </app-content>
-  </form>
+        <div class="p-col-12">
+          <p-accordion multiple="true">
+            <p-accordionTab header="Route" [(selected)]="routeCategory" (selectedChange)="routeSelectedChange()">
 
-  <ng-template #title>
-    <div *ngIf="environmentRelease && releaseVersion && applicationVersion"
-         class="mat-title" matTooltip="... in {{environmentRelease.release.name}}:{{releaseVersion.version}} in {{environmentRelease.environment.name}} - {{environmentRelease.environment.cluster.name}}">
-      Environment configuration of {{applicationVersion.application.name}}:{{applicationVersion.version}}
+              <div class="p-fluid p-md-5">
+                <div class="p-field p-float-label">
+                  <input pInputText id="environmentConfigRouteHostname" name="environmentConfigRouteHostname" [(ngModel)]="environmentConfig.routeHostname"
+                         pattern="(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])"
+                         required="{{routeCategory}}">
+                  <label for="environmentConfigRouteHostname">Hostname</label>
+                  <small class="p-error" *ngIf="environmentConfigForm.form.controls.environmentConfigRouteHostname?.hasError('pattern')">invalid</small>
+                </div>
+
+                <div class="p-field">
+                  <p-dropdown id="environmentConfigRouteTargetPort" name="environmentConfigRouteTargetPort" [options]="applicationVersion.servicePorts" [(ngModel)]="environmentConfig.routeTargetPort"
+                              placeholder="Target Port" [showClear]="true" required="{{routeCategory}}"></p-dropdown>
+                </div>
+
+                <div class="p-field-checkbox">
+                  <p-checkbox id="environmentConfigTls" name="environmentConfigTls" [(ngModel)]="environmentConfig.tls" binary="true"></p-checkbox>
+                  <label for="environmentConfigTls">Tls</label>
+                </div>
+
+                <div class="p-field" *ngIf="environmentConfig.tls">
+                  <p-dropdown id="environmentConfigTlsSecretName" name="environmentConfigTlsSecretName" [options]="tlsSecrets()" [(ngModel)]="environmentConfig.tlsSecretName"
+                              placeholder="Select Tls secret" optionLabel="name" optionValue="name" [showClear]="true" required></p-dropdown>
+                </div>
+
+              </div>
+
+            </p-accordionTab>
+
+            <p-accordionTab header="Environment Variables" [(selected)]="environmentVariablesCategory">
+
+              <app-application-env-variables
+                [environmentVariables]="environmentConfig.environmentVariables" [secrets]="environmentConfig.secrets">
+              </app-application-env-variables>
+
+            </p-accordionTab>
+
+            <p-accordionTab header="Configuration Files" [(selected)]="configFileCategory">
+
+              <app-application-config-files
+                [applicationVersion]="applicationVersion" [configs]="environmentConfig.configs" [editPath]="false">
+              </app-application-config-files>
+
+            </p-accordionTab>
+
+            <p-accordionTab header="Volumes" [(selected)]="volumesCategory">
+
+              <app-application-volumes
+                [volumes]="environmentConfig.volumes" [secrets]="environmentConfig.secrets">
+              </app-application-volumes>
+
+            </p-accordionTab>
+
+            <p-accordionTab header="Secrets" [(selected)]="secretsCategory">
+
+              <app-application-secrets
+                [secrets]="environmentConfig.secrets"
+                [volumes]="environmentConfig.volumes"
+                [environmentVariables]="environmentConfig.environmentVariables"
+                [routeTlsSecretName]="environmentConfig.tlsSecretName">
+              </app-application-secrets>
+
+            </p-accordionTab>
+
+          </p-accordion>
+        </div>
+
+      </form>
     </div>
-  </ng-template>
-
-  <ng-template #buttonBar>
-    <app-button-bar>
-      <button mat-button (click)="save()" [disabled]="environmentConfigForm.invalid">Save</button>
-      <button mat-button (click)="cancel()">Cancel</button>
-    </app-button-bar>
-  </ng-template>
-
-</ng-container>
+  </div>
+</div>

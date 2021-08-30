@@ -34,15 +34,15 @@ public class ClustersController {
 	}
 
 	@DeleteMapping("/destroy/{clusterId}")
-	public ResponseEntity<?> destroy(@PathVariable Long clusterId) {
+	public ResponseEntity<Cluster> destroy(@PathVariable Long clusterId) {
 		Cluster cluster = clusterService.destroy(clusterId);
 
 		return new ResponseEntity<>(cluster, new HttpHeaders(), HttpStatus.OK);
 	}
 
 	@PostMapping("/test")
-	public ResponseEntity<?> test(@RequestBody ClusterDTO clusterDTO) {
+	@ResponseStatus(value = HttpStatus.OK)
+	public void test(@RequestBody ClusterDTO clusterDTO) {
 		clusterService.testConnection(new Cluster(clusterDTO));
-		return new ResponseEntity<>(new HttpHeaders(), HttpStatus.OK);
 	}
 }

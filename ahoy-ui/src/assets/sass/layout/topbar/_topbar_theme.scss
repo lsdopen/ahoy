@@ -1,0 +1,127 @@
+/*!
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+.layout-topbar {
+    color: $topbarItemTextColor;
+    background-color: $topbarBgColor;
+
+    a {
+        color: $topbarItemTextColor;
+
+        &:hover {
+            background-color: $topbarItemTextHoverBgColor;
+            transition: background-color $transitionDuration;
+        }
+    }
+
+    .layout-topbar-left {
+        background-color: $topbarLeftBgColor;
+
+        .layout-menu-button {
+            color: $topbarMenuButtonTextColor;
+            background-color: $topbarMenuButtonBgColor;
+
+            &:hover {
+                background-color: rgba($topbarMenuButtonBgColor,.7);
+                transition: background-color $transitionDuration;
+            }
+        }
+    }
+
+    .layout-topbar-right {
+        .layout-topbar-actions-left {
+            .layout-megamenu {
+                background: none;
+
+                &.p-megamenu .p-megamenu-root-list > .p-menuitem {
+                    > .p-menuitem-link {
+                        .p-menuitem-text,
+                        .p-menuitem-icon,
+                        .p-submenu-icon {
+                            color: $topbarItemTextColor;
+                        }
+
+                        &:not(.p-disabled):hover {
+                            background: $topbarItemTextHoverBgColor;
+                            transition: background-color $transitionDuration;
+                        }
+                    }
+                }
+            }
+        }
+
+        .layout-topbar-actions-right {
+            .layout-topbar-items {
+                .layout-topbar-action-panel {
+                    background-color: $overlayContentBgColor;
+                    color: $textColor;
+
+                    a {
+                        color: $textColor;
+
+                        &:hover {
+                            background-color: transparent;
+                            transition: none;
+                        }
+                    }
+
+                    .layout-topbar-action-item {
+                        &:hover {
+                            background-color: $hoverBgColor;
+                            transition: background-color $transitionDuration;
+                        }
+                    }
+                }
+
+                .layout-topbar-item {
+                    &.layout-search-item {
+                        .layout-search-panel {
+                                input {
+                                    background-color: $bodyBgColor;
+                                    color: $textColor;
+
+                                    &:hover {
+                                        background-color: $bodyBgColor;
+                                        color: $textColor;
+                                    }
+                                }
+
+                                .p-inputgroup-addon:first-child,
+                                .p-inputgroup button:first-child,
+                                .p-inputgroup input:first-child {
+                                    background-color: $bodyBgColor;
+                                    color: $textColor;
+                                }
+
+                                .p-inputgroup-addon:last-child,
+                                .p-inputgroup button:last-child,
+                                .p-inputgroup input:last-child {
+                                    background-color: $bodyBgColor;
+                                    color: $textColor;
+                                }
+
+                                .p-inputgroup-addon {
+                                    .p-button-text {
+                                        color: $textColor;
+                                    }
+                                }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

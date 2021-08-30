@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {EnvironmentRelease} from '../environment-release';
 
 @Component({
@@ -22,12 +22,6 @@ import {EnvironmentRelease} from '../environment-release';
   templateUrl: './environment-release-versions.component.html',
   styleUrls: ['./environment-release-versions.component.scss']
 })
-export class EnvironmentReleaseVersionsComponent implements OnInit {
+export class EnvironmentReleaseVersionsComponent {
   @Input() environmentRelease: EnvironmentRelease;
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
 }

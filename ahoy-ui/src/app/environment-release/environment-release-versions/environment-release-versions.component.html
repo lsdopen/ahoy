@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2020 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,18 +14,12 @@
   ~    limitations under the License.
   -->
 
-<ng-container *ngIf="environmentRelease">
-  <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="5px">
+<div class="p-fluid" *ngIf="environmentRelease">
+  <p-tag *ngIf="environmentRelease.currentReleaseVersion" value="{{environmentRelease.currentReleaseVersion.version}}"
+         pTooltip="Current release version"
+         styleClass="p-mr-2" [rounded]="true"></p-tag>
 
-    <div *ngIf="environmentRelease.currentReleaseVersion" fxLayout="row" fxLayoutAlign="center center" class="current-release-version">
-      <mat-icon color="primary">label</mat-icon>
-      <span *ngIf="environmentRelease.currentReleaseVersion" class="mat-body">{{environmentRelease.currentReleaseVersion.version}}</span>
-    </div>
-
-    <div *ngIf="environmentRelease.latestReleaseVersion" fxLayout="row" fxLayoutAlign="center center" class="latest-release-version">
-      <mat-icon color="accent">label</mat-icon>
-      <span *ngIf="environmentRelease.latestReleaseVersion" class="mat-body">{{environmentRelease.latestReleaseVersion.version}}</span>
-    </div>
-
-  </div>
-</ng-container>
+  <p-tag *ngIf="environmentRelease.latestReleaseVersion" value="{{environmentRelease.latestReleaseVersion.version}}"
+         pTooltip="Latest release version"
+         styleClass="p-mr-2" severity="info" [rounded]="true"></p-tag>
+</div>
