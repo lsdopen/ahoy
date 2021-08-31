@@ -23,6 +23,7 @@ import {ApplicationsComponent} from './applications/applications.component';
 import {ClusterDetailComponent} from './clusters/cluster-detail/cluster-detail.component';
 import {ClustersComponent} from './clusters/clusters.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
+import {EnvironmentReleasesComponent} from './environment-release/environment-releases.component';
 import {EnvironmentDetailComponent} from './environments/environment-detail/environment-detail.component';
 import {EnvironmentsComponent} from './environments/environments.component';
 import {ReleaseHistoryComponent} from './release-history/release-history.component';
@@ -49,6 +50,8 @@ const routes: Routes = [
       {path: 'release/edit/:environmentId/:releaseId/version/:releaseVersionId', component: ReleaseDetailComponent},
       {path: 'release/:environmentId/:releaseId/config/:relVersionId/:appVersionId', component: ReleaseApplicationEnvironmentConfigComponent},
       {path: 'releasehistory/:releaseId', component: ReleaseHistoryComponent},
+
+      {path: 'environmentreleases/:environmentId', component: EnvironmentReleasesComponent},
 
       {path: 'environments', component: EnvironmentsComponent, canActivate: [SettingsGuard]},
       {path: 'environment/:id', component: EnvironmentDetailComponent},

@@ -15,10 +15,10 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {Environment} from '../../environments/environment';
-import {Release} from '../release';
-import {ReleasesService} from '../releases.service';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
+import {Environment} from '../../environments/environment';
+import {Release} from '../../releases/release';
+import {ReleasesService} from '../../releases/releases.service';
 
 @Component({
   selector: 'app-add-release-dialog',

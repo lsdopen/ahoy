@@ -84,9 +84,11 @@ import {VerifyValidatorDirective} from './components/confirm-dialog/verify-valid
 import {DescriptionDialogComponent} from './components/description-dialog/description-dialog.component';
 import {DashboardEnvironmentComponent} from './dashboard/dashboard-environment/dashboard-environment.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
+import {AddReleaseDialogComponent} from './environment-release/add-release-dialog/add-release-dialog.component';
 import {EnvironmentReleaseDeploymentStatusComponent} from './environment-release/environment-release-deployment-status/environment-release-deployment-status.component';
 import {EnvironmentReleaseStatusComponent} from './environment-release/environment-release-status/environment-release-status.component';
 import {EnvironmentReleaseVersionsComponent} from './environment-release/environment-release-versions/environment-release-versions.component';
+import {EnvironmentReleasesComponent} from './environment-release/environment-releases.component';
 import {EnvironmentDetailComponent} from './environments/environment-detail/environment-detail.component';
 import {EnvironmentNameUniqueValidatorDirective} from './environments/environment-name-unique-validator.directive';
 import {EnvironmentsComponent} from './environments/environments.component';
@@ -94,7 +96,6 @@ import {NotificationsComponent} from './notifications/notifications.component';
 import {ReleaseHistoryComponent} from './release-history/release-history.component';
 import {AddApplicationDialogComponent} from './releases/add-application-dialog/add-application-dialog.component';
 import {ApplicationAllowedValidatorDirective} from './releases/add-application-dialog/application-allowed.directive';
-import {AddReleaseDialogComponent} from './releases/add-release-dialog/add-release-dialog.component';
 import {CopyEnvironmentConfigDialogComponent} from './releases/copy-environment-config-dialog/copy-environment-config-dialog.component';
 import {PromoteDialogComponent} from './releases/promote-dialog/promote-dialog.component';
 import {ReleaseApplicationEnvironmentConfigComponent} from './releases/release-application-environment-config/release-application-environment-config.component';
@@ -170,7 +171,8 @@ import {ErrorService} from './util/error.service';
     EnvironmentReleaseDeploymentStatusComponent,
     ApplicationConfigFilesComponent,
     ApplicationVolumesComponent,
-    ApplicationSecretsComponent
+    ApplicationSecretsComponent,
+    EnvironmentReleasesComponent
   ],
   imports: [
     BrowserModule,

@@ -75,7 +75,7 @@
             </td>
             <td>
               <button pButton pRipple icon="pi pi-chevron-circle-right" class="p-button-rounded p-button-info p-mr-2"
-                      routerLink="/releases" [queryParams]="{environmentId: environment.id}"
+                      routerLink="/environmentreleases/{{environment.id}}"
                       pTooltip="Manage environment"></button>
               <button pButton pRipple icon="pi pi-copy" class="p-button-rounded p-button-plain p-mr-2"
                       routerLink="/environment/new" [queryParams]="{clusterId: selectedCluster.id, sourceEnvironmentId: environment.id}"

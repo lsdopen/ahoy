@@ -20,23 +20,23 @@ import {ConfirmationService} from 'primeng/api';
 import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
 import {filter, mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
-import {AddReleaseDialogComponent} from '../environment-release/add-release-dialog/add-release-dialog.component';
 import {EnvironmentRelease, EnvironmentReleaseId} from '../environment-release/environment-release';
 import {EnvironmentReleaseService} from '../environment-release/environment-release.service';
 import {Environment} from '../environments/environment';
 import {EnvironmentService} from '../environments/environment.service';
 import {ReleaseService} from '../release/release.service';
+import {Release} from '../releases/release';
+import {ReleasesService} from '../releases/releases.service';
 import {TaskEvent} from '../taskevents/task-events';
 import {LoggerService} from '../util/logger.service';
-import {Release} from './release';
-import {ReleasesService} from './releases.service';
+import {AddReleaseDialogComponent} from './add-release-dialog/add-release-dialog.component';
 
 @Component({
-  selector: 'app-releases',
-  templateUrl: './releases.component.html',
-  styleUrls: ['./releases.component.scss']
+  selector: 'app-environment-releases',
+  templateUrl: './environment-releases.component.html',
+  styleUrls: ['./environment-releases.component.scss']
 })
-export class ReleasesComponent implements OnInit {
+export class EnvironmentReleasesComponent implements OnInit {
   environments: Environment[] = undefined;
   environmentReleases: EnvironmentRelease[] = undefined;
   selectedEnvironment: Environment;
@@ -56,20 +56,11 @@ export class ReleasesComponent implements OnInit {
   ngOnInit() {
     this.setBreadcrumb();
 
-    const environmentId = +this.route.snapshot.queryParamMap.get('environmentId');
+    const environmentId = +this.route.snapshot.paramMap.get('environmentId');
 
     this.environmentService.getAll().subscribe((environments) => {
       this.environments = environments;
-
-      if (environmentId === 0) {
-        this.environmentService.getLastUsedId().subscribe((lastUsedEnvironmentId) => {
-          if (lastUsedEnvironmentId !== 0) {
-            this.getReleases(lastUsedEnvironmentId);
-          }
-        });
-      } else {
-        this.getReleases(environmentId);
-      }
+      this.getReleases(environmentId);
     });
   }
 
