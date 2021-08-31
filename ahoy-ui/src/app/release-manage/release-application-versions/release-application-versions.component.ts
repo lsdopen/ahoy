@@ -15,17 +15,17 @@
  */
 
 import {Component, EventEmitter, Input, OnInit} from '@angular/core';
-import {Application, ApplicationEnvironmentConfig, ApplicationVersion} from '../../applications/application';
-import {Release, ReleaseVersion} from '../release';
-import {AddApplicationDialogComponent} from '../add-application-dialog/add-application-dialog.component';
+import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
 import {filter} from 'rxjs/operators';
-import {EnvironmentRelease} from '../../environment-release/environment-release';
-import {ReleasesService} from '../releases.service';
+import {Application, ApplicationEnvironmentConfig, ApplicationVersion} from '../../applications/application';
 import {ApplicationService} from '../../applications/application.service';
 import {Confirmation} from '../../components/confirm-dialog/confirm';
 import {DialogUtilService} from '../../components/dialog-util.service';
-import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
+import {EnvironmentRelease} from '../../environment-release/environment-release';
 import {Environment} from '../../environments/environment';
+import {Release, ReleaseVersion} from '../../releases/release';
+import {ReleaseService} from '../../releases/release.service';
+import {AddApplicationDialogComponent} from '../add-application-dialog/add-application-dialog.component';
 
 @Component({
   selector: 'app-release-application-versions',
@@ -39,7 +39,7 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
   existingConfigs: Map<number, ApplicationEnvironmentConfig>;
 
   constructor(
-    private releasesService: ReleasesService,
+    private releasesService: ReleaseService,
     private applicationService: ApplicationService,
     private dialogService: DialogService,
     private dialogUtilService: DialogUtilService) {

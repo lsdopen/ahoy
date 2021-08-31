@@ -25,11 +25,11 @@ import {EnvironmentRelease, EnvironmentReleaseId} from '../environment-release/e
 import {EnvironmentReleaseService} from '../environment-release/environment-release.service';
 import {Environment} from '../environments/environment';
 import {EnvironmentService} from '../environments/environment.service';
-import {ReleaseService} from '../release/release.service';
+import {ReleaseManageService} from '../release-manage/release-manage.service';
 import {TaskEvent} from '../taskevents/task-events';
 import {LoggerService} from '../util/logger.service';
 import {Release} from './release';
-import {ReleasesService} from './releases.service';
+import {ReleaseService} from './release.service';
 
 @Component({
   selector: 'app-releases',
@@ -45,8 +45,8 @@ export class ReleasesComponent implements OnInit {
               private router: Router,
               private environmentService: EnvironmentService,
               private environmentReleaseService: EnvironmentReleaseService,
-              private releasesService: ReleasesService,
-              private releaseService: ReleaseService,
+              private releasesService: ReleaseService,
+              private releaseService: ReleaseManageService,
               private log: LoggerService,
               private dialogService: DialogService,
               private confirmationService: ConfirmationService,

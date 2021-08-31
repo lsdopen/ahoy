@@ -15,11 +15,11 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {ApplicationService} from '../../applications/application.service';
-import {Application, ApplicationVersion} from '../../applications/application';
-import {EnvironmentRelease} from '../../environment-release/environment-release';
-import {ReleaseVersion} from '../release';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
+import {Application, ApplicationVersion} from '../../applications/application';
+import {ApplicationService} from '../../applications/application.service';
+import {EnvironmentRelease} from '../../environment-release/environment-release';
+import {ReleaseVersion} from '../../releases/release';
 
 @Component({
   selector: 'app-add-application',

@@ -14,18 +14,18 @@
  *    limitations under the License.
  */
 
-import {Component, OnInit} from '@angular/core';
-import {Application, ApplicationEnvironmentConfig, ApplicationEnvironmentConfigId, ApplicationSecret, ApplicationVersion} from '../../applications/application';
-import {LoggerService} from '../../util/logger.service';
-import {ActivatedRoute} from '@angular/router';
-import {ApplicationService} from '../../applications/application.service';
 import {Location} from '@angular/common';
-import {EnvironmentRelease, EnvironmentReleaseId} from '../../environment-release/environment-release';
-import {Environment} from '../../environments/environment';
-import {Release, ReleaseVersion} from '../release';
-import {EnvironmentReleaseService} from '../../environment-release/environment-release.service';
-import {ReleasesService} from '../releases.service';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {mergeMap} from 'rxjs/operators';
+import {Application, ApplicationEnvironmentConfig, ApplicationEnvironmentConfigId, ApplicationSecret, ApplicationVersion} from '../../applications/application';
+import {ApplicationService} from '../../applications/application.service';
+import {EnvironmentRelease, EnvironmentReleaseId} from '../../environment-release/environment-release';
+import {EnvironmentReleaseService} from '../../environment-release/environment-release.service';
+import {Environment} from '../../environments/environment';
+import {Release, ReleaseVersion} from '../../releases/release';
+import {ReleaseService} from '../../releases/release.service';
+import {LoggerService} from '../../util/logger.service';
 
 @Component({
   selector: 'app-release-application-environment-config',
@@ -49,7 +49,7 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
     private route: ActivatedRoute,
     private applicationService: ApplicationService,
     private environmentReleaseService: EnvironmentReleaseService,
-    private releasesService: ReleasesService,
+    private releasesService: ReleaseService,
     private location: Location) {
   }
 

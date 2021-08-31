@@ -14,19 +14,19 @@
  *    limitations under the License.
  */
 
-import {Component, OnInit} from '@angular/core';
-import {ReleasesService} from '../releases.service';
-import {Release, ReleaseVersion} from '../release';
-import {ActivatedRoute, Router} from '@angular/router';
 import {Location} from '@angular/common';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {mergeMap} from 'rxjs/operators';
+import {AppBreadcrumbService} from '../../app.breadcrumb.service';
+import {ApplicationService} from '../../applications/application.service';
 import {Environment} from '../../environments/environment';
 import {EnvironmentService} from '../../environments/environment.service';
-import {mergeMap} from 'rxjs/operators';
+import {Release, ReleaseVersion} from '../../releases/release';
+import {ReleaseService} from '../../releases/release.service';
 import {LoggerService} from '../../util/logger.service';
-import {ApplicationService} from '../../applications/application.service';
-import {EnvironmentRelease, EnvironmentReleaseId} from '../../environment-release/environment-release';
-import {EnvironmentReleaseService} from '../../environment-release/environment-release.service';
-import {AppBreadcrumbService} from '../../app.breadcrumb.service';
+import {EnvironmentRelease, EnvironmentReleaseId} from '../environment-release';
+import {EnvironmentReleaseService} from '../environment-release.service';
 
 @Component({
   selector: 'app-release-detail',
@@ -45,7 +45,7 @@ export class ReleaseDetailComponent implements OnInit {
     private log: LoggerService,
     private route: ActivatedRoute,
     private router: Router,
-    private releasesService: ReleasesService,
+    private releasesService: ReleaseService,
     private environmentService: EnvironmentService,
     private environmentReleaseService: EnvironmentReleaseService,
     private applicationService: ApplicationService,

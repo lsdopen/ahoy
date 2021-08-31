@@ -14,27 +14,27 @@
  *    limitations under the License.
  */
 
+import {Location} from '@angular/common';
 import {Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Location} from '@angular/common';
-import {LoggerService} from '../../util/logger.service';
-import {EnvironmentService} from '../../environments/environment.service';
-import {filter, mergeMap} from 'rxjs/operators';
-import {Observable, of, Subscription} from 'rxjs';
-import {PromoteDialogComponent} from '../promote-dialog/promote-dialog.component';
-import {UpgradeDialogComponent} from '../upgrade-dialog/upgrade-dialog.component';
-import {Release, ReleaseVersion} from '../release';
-import {EnvironmentReleaseService} from '../../environment-release/environment-release.service';
-import {DeployDetails, EnvironmentRelease} from '../../environment-release/environment-release';
-import {CopyEnvironmentConfigDialogComponent} from '../copy-environment-config-dialog/copy-environment-config-dialog.component';
-import {TaskEvent} from '../../taskevents/task-events';
-import {Environment} from '../../environments/environment';
-import {Confirmation} from '../../components/confirm-dialog/confirm';
-import {DialogUtilService} from '../../components/dialog-util.service';
-import {ReleaseService} from '../../release/release.service';
-import {AppBreadcrumbService} from '../../app.breadcrumb.service';
 import {MenuItem} from 'primeng/api';
 import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
+import {Observable, of, Subscription} from 'rxjs';
+import {filter, mergeMap} from 'rxjs/operators';
+import {AppBreadcrumbService} from '../app.breadcrumb.service';
+import {Confirmation} from '../components/confirm-dialog/confirm';
+import {DialogUtilService} from '../components/dialog-util.service';
+import {DeployDetails, EnvironmentRelease} from '../environment-release/environment-release';
+import {EnvironmentReleaseService} from '../environment-release/environment-release.service';
+import {Environment} from '../environments/environment';
+import {EnvironmentService} from '../environments/environment.service';
+import {Release, ReleaseVersion} from '../releases/release';
+import {TaskEvent} from '../taskevents/task-events';
+import {LoggerService} from '../util/logger.service';
+import {CopyEnvironmentConfigDialogComponent} from './copy-environment-config-dialog/copy-environment-config-dialog.component';
+import {PromoteDialogComponent} from './promote-dialog/promote-dialog.component';
+import {ReleaseManageService} from './release-manage.service';
+import {UpgradeDialogComponent} from './upgrade-dialog/upgrade-dialog.component';
 
 @Component({
   selector: 'app-release-manage',
@@ -53,7 +53,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private releaseService: ReleaseService,
+    private releaseService: ReleaseManageService,
     private environmentService: EnvironmentService,
     private environmentReleaseService: EnvironmentReleaseService,
     private log: LoggerService,

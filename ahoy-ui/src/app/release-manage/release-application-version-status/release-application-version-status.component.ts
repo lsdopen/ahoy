@@ -17,7 +17,7 @@
 import {Component, Input} from '@angular/core';
 import {ApplicationVersion} from '../../applications/application';
 import {EnvironmentRelease} from '../../environment-release/environment-release';
-import {ReleaseVersion} from '../release';
+import {ReleaseVersion} from '../../releases/release';
 
 @Component({
   selector: 'app-release-application-version-status',

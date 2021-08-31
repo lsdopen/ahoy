@@ -14,12 +14,12 @@
  *    limitations under the License.
  */
 
+import {Location} from '@angular/common';
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ApplicationService} from '../application.service';
+import {ReleaseService} from '../../releases/release.service';
 import {Application, ApplicationConfig, ApplicationSecret, ApplicationVersion, ApplicationVolume} from '../application';
-import {Location} from '@angular/common';
-import {ReleasesService} from '../../releases/releases.service';
+import {ApplicationService} from '../application.service';
 
 @Component({
   selector: 'app-application-version-detail',
@@ -44,7 +44,7 @@ export class ApplicationVersionDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private applicationService: ApplicationService,
-    private releasesService: ReleasesService,
+    private releasesService: ReleaseService,
     private location: Location) {
   }
 

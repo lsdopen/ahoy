@@ -14,16 +14,16 @@
  *    limitations under the License.
  */
 
-import {Component, OnInit} from '@angular/core';
-import {ReleaseHistory} from './release-history';
-import {ActivatedRoute} from '@angular/router';
-import {ReleaseHistoryService} from './release-history.service';
-import {ReleasesService} from '../releases/releases.service';
-import {Release} from '../releases/release';
 import {Location} from '@angular/common';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Description} from '../components/description-dialog/description';
 import {DialogUtilService} from '../components/dialog-util.service';
-import {AppBreadcrumbService} from '../app.breadcrumb.service';
+import {Release} from '../releases/release';
+import {ReleaseService} from '../releases/release.service';
+import {ReleaseHistory} from './release-history';
+import {ReleaseHistoryService} from './release-history.service';
 
 @Component({
   selector: 'app-release-history',
@@ -36,7 +36,7 @@ export class ReleaseHistoryComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private location: Location,
-              private releasesService: ReleasesService,
+              private releasesService: ReleaseService,
               private releaseHistoryService: ReleaseHistoryService,
               private dialogUtilService: DialogUtilService,
               private breadcrumbService: AppBreadcrumbService) {

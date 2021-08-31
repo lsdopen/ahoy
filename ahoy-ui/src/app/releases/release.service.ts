@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,16 +15,16 @@
  */
 
 import {Injectable} from '@angular/core';
-import {Release, ReleaseVersion} from './release';
 import {Observable} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
-import {RestClientService} from '../util/rest-client.service';
 import {LoggerService} from '../util/logger.service';
+import {RestClientService} from '../util/rest-client.service';
+import {Release, ReleaseVersion} from './release';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ReleasesService {
+export class ReleaseService {
 
   constructor(
     private log: LoggerService,

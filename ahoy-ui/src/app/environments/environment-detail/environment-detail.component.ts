@@ -14,19 +14,19 @@
  *    limitations under the License.
  */
 
-import {Component, OnInit} from '@angular/core';
-import {Environment} from '../environment';
-import {ActivatedRoute} from '@angular/router';
 import {Location} from '@angular/common';
-import {EnvironmentService} from '../environment.service';
-import {ClusterService} from '../../clusters/cluster.service';
-import {Cluster} from '../../clusters/cluster';
-import {EnvironmentReleaseId} from '../../environment-release/environment-release';
-import {mergeMap} from 'rxjs/operators';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {of} from 'rxjs';
-import {EnvironmentReleaseService} from '../../environment-release/environment-release.service';
-import {ReleaseService} from '../../release/release.service';
+import {mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../../app.breadcrumb.service';
+import {Cluster} from '../../clusters/cluster';
+import {ClusterService} from '../../clusters/cluster.service';
+import {EnvironmentReleaseId} from '../../environment-release/environment-release';
+import {EnvironmentReleaseService} from '../../environment-release/environment-release.service';
+import {ReleaseManageService} from '../../release-manage/release-manage.service';
+import {Environment} from '../environment';
+import {EnvironmentService} from '../environment.service';
 
 @Component({
   selector: 'app-environment-detail',
@@ -45,7 +45,7 @@ export class EnvironmentDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private environmentService: EnvironmentService,
     private environmentReleaseService: EnvironmentReleaseService,
-    private releaseService: ReleaseService,
+    private releaseService: ReleaseManageService,
     private clusterService: ClusterService,
     private location: Location,
     private breadcrumbService: AppBreadcrumbService) {

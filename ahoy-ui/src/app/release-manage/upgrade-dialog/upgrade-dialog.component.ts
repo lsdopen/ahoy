@@ -14,32 +14,28 @@
  *    limitations under the License.
  */
 
-import {Component, OnInit} from '@angular/core';
-import {EnvironmentRelease} from '../../environment-release/environment-release';
-import {Release, ReleaseVersion} from '../release';
+import {Component} from '@angular/core';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
+import {EnvironmentRelease} from '../../environment-release/environment-release';
+import {Release, ReleaseVersion} from '../../releases/release';
 
 @Component({
-  selector: 'app-copy-environment-config-dialog',
-  templateUrl: './copy-environment-config-dialog.component.html',
-  styleUrls: ['./copy-environment-config-dialog.component.scss']
+  selector: 'app-upgrade-dialog',
+  templateUrl: './upgrade-dialog.component.html',
+  styleUrls: ['./upgrade-dialog.component.scss']
 })
-export class CopyEnvironmentConfigDialogComponent implements OnInit {
-  private environmentRelease: EnvironmentRelease;
-  destReleaseVersion: ReleaseVersion;
-  releaseVersions: ReleaseVersion[];
-  selected: ReleaseVersion;
+export class UpgradeDialogComponent {
+  environmentRelease: EnvironmentRelease;
+  release: Release;
+  releaseVersion: ReleaseVersion;
+  version: string;
 
   constructor(public ref: DynamicDialogRef,
               public config: DynamicDialogConfig) {
     const data = config.data;
     this.environmentRelease = data.environmentRelease;
-    this.destReleaseVersion = data.releaseVersion;
-  }
-
-  ngOnInit() {
-    this.releaseVersions = (this.environmentRelease.release as Release).releaseVersions
-      .filter(rel => rel.id !== this.destReleaseVersion.id);
+    this.release = this.environmentRelease.release as Release;
+    this.releaseVersion = data.releaseVersion;
   }
 
   close(result: any) {

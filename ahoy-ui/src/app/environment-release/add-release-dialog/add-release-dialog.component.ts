@@ -18,7 +18,7 @@ import {Component, OnInit} from '@angular/core';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {Environment} from '../../environments/environment';
 import {Release} from '../../releases/release';
-import {ReleasesService} from '../../releases/releases.service';
+import {ReleaseService} from '../../releases/release.service';
 
 @Component({
   selector: 'app-add-release-dialog',
@@ -30,7 +30,7 @@ export class AddReleaseDialogComponent implements OnInit {
   selected: Release;
   environment: Environment;
 
-  constructor(private releasesService: ReleasesService,
+  constructor(private releasesService: ReleaseService,
               public ref: DynamicDialogRef,
               public config: DynamicDialogConfig) {
     this.environment = config.data;

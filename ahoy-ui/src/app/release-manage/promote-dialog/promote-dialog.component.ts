@@ -15,12 +15,12 @@
  */
 
 import {Component, OnInit} from '@angular/core';
+import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
+import {Cluster} from '../../clusters/cluster';
+import {EnvironmentRelease} from '../../environment-release/environment-release';
 import {Environment} from '../../environments/environment';
 import {EnvironmentService} from '../../environments/environment.service';
-import {EnvironmentRelease} from '../../environment-release/environment-release';
-import {Release, ReleaseVersion} from '../release';
-import {Cluster} from '../../clusters/cluster';
-import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
+import {Release, ReleaseVersion} from '../../releases/release';
 
 @Component({
   selector: 'app-promote-dialog',

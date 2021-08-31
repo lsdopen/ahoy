@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,18 +17,18 @@
 import {Injectable} from '@angular/core';
 import {EMPTY, Observable, Subject} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
-import {RestClientService} from '../util/rest-client.service';
-import {LoggerService} from '../util/logger.service';
 import {DeployDetails, EnvironmentRelease, EnvironmentReleaseId} from '../environment-release/environment-release';
-import {Release, ReleaseVersion} from '../releases/release';
-import {NotificationsService} from '../notifications/notifications.service';
 import {Environment} from '../environments/environment';
 import {Notification} from '../notifications/notification';
+import {NotificationsService} from '../notifications/notifications.service';
+import {Release, ReleaseVersion} from '../releases/release';
+import {LoggerService} from '../util/logger.service';
+import {RestClientService} from '../util/rest-client.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ReleaseService {
+export class ReleaseManageService {
   private environmentReleaseChangedSubject = new Subject<EnvironmentRelease>();
 
   constructor(private restClient: RestClientService,
