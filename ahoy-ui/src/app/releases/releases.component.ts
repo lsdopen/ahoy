@@ -67,6 +67,7 @@ export class ReleasesComponent implements OnInit {
     const dialogConfig = new DynamicDialogConfig();
     dialogConfig.header = `Add ${release.name} to:`;
     dialogConfig.data = {release};
+    dialogConfig.width = '25%';
 
     const dialogRef = this.dialogService.open(AddToEnvironmentDialogComponent, dialogConfig);
     dialogRef.onClose.pipe(
@@ -81,6 +82,15 @@ export class ReleasesComponent implements OnInit {
         return this.environmentReleaseService.save(environmentRelease);
       })
     ).subscribe(() => this.getReleases());
+  }
+
+  canEdit(release: Release) {
+    for (const environmentRelease of release.environmentReleases) {
+      if (environmentRelease.deployed) {
+        return false;
+      }
+    }
+    return true;
   }
 
   deleteRelease(event, release: Release) {

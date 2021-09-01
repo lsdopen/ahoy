@@ -17,6 +17,7 @@
 import {Location} from '@angular/common';
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
+import {of} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../../app.breadcrumb.service';
 import {ApplicationService} from '../../applications/application.service';
@@ -35,6 +36,7 @@ export class ReleaseDetailComponent implements OnInit {
   release: Release;
   releaseVersion: ReleaseVersion;
   releasesForValidation: Release[];
+  editMode = false;
 
   constructor(
     private log: LoggerService,
@@ -49,13 +51,20 @@ export class ReleaseDetailComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.setBreadcrumb();
-
     const releaseId = this.route.snapshot.paramMap.get('releaseId');
 
     if (releaseId === 'new') {
       this.release = new Release();
       this.releaseVersion = new ReleaseVersion();
+      this.setBreadcrumb();
+
+    } else {
+      this.editMode = true;
+      this.releasesService.get(+releaseId)
+        .subscribe(rel => {
+          this.release = rel;
+          this.setBreadcrumb();
+        });
     }
 
     this.releasesService.getAll()
@@ -64,7 +73,7 @@ export class ReleaseDetailComponent implements OnInit {
 
   private setBreadcrumb() {
     this.breadcrumbService.setItems([
-      {label: 'new release'}
+      {label: (this.editMode ? 'edit' : 'new') + ' release'}
     ]);
   }
 
@@ -73,8 +82,11 @@ export class ReleaseDetailComponent implements OnInit {
       .pipe(
         mergeMap(release => {
           this.release = release;
-          this.releaseVersion.release = this.releasesService.link(release.id);
-          return this.releasesService.saveVersion(this.releaseVersion);
+          if (!this.editMode) {
+            this.releaseVersion.release = this.releasesService.link(release.id);
+            return this.releasesService.saveVersion(this.releaseVersion);
+          }
+          return of(release);
         })
       )
       .subscribe(() => this.location.back());

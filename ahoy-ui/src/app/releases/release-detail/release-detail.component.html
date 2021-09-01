@@ -15,7 +15,7 @@
   -->
 
 <div class="p-grid">
-  <div class="p-col-12" *ngIf="release && releaseVersion && releasesForValidation">
+  <div class="p-col-12" *ngIf="release && releasesForValidation">
 
     <div class="card">
       <div class="card-header">
@@ -47,7 +47,7 @@
             </small>
           </div>
 
-          <div class="p-field p-float-label">
+          <div class="p-field p-float-label" *ngIf="!editMode && releaseVersion">
             <input pInputText id="releaseVersion" [(ngModel)]="releaseVersion.version" name="version"
                    required
                    [appReleaseVersionUnique]="release.releaseVersions"

@@ -71,6 +71,12 @@
               <button pButton pRipple icon="pi pi-folder" class="p-button-rounded p-button-plain p-mr-2"
                       (click)="addToEnvironment(release)"
                       pTooltip="Add to environment"></button>
+              <span pTooltip="{{!canEdit(release) ? 'May only edit releases that have not been deployed to any environments' : ''}}">
+                <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
+                        [disabled]="!canEdit(release)"
+                        routerLink="/release/{{release.id}}"
+                        pTooltip="Edit release"></button>
+              </span>
               <span pTooltip="{{release.environmentReleases && release.environmentReleases.length > 0 ? 'In order to delete release, remove release from all environments' : ''}}">
                 <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
                         [disabled]="release.environmentReleases && release.environmentReleases.length > 0"
