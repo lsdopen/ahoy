@@ -21,7 +21,7 @@
   <div class="card">
     <div class="card-header">
       <p-chip styleClass="chip-environment" label="{{environment.name}}"
-              routerLink="/releases" [queryParams]="{environmentId: environment.id}"></p-chip>
+              routerLink="/environmentreleases/{{environment.id}}"></p-chip>
     </div>
 
     <p-table #dt [value]="environmentReleases" dataKey="id" selectionMode="single"

@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,19 +14,3 @@
  *    limitations under the License.
  */
 
-import {ApplicationVersion} from '../applications/application';
-import {EnvironmentRelease} from '../environment-release/environment-release';
-
-export class Release {
-  id: number;
-  name: string;
-  releaseVersions: ReleaseVersion[];
-  environmentReleases: EnvironmentRelease[];
-}
-
-export class ReleaseVersion {
-  id: number;
-  version: string;
-  release: Release | string;
-  applicationVersions: ApplicationVersion[] = undefined;
-}

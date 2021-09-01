@@ -35,7 +35,15 @@ export class ReleaseService {
     const url = `/data/releases`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.releases as Release[]),
-      tap((apps) => this.log.debug(`fetched ${apps.length} releases`))
+      tap((releases) => this.log.debug(`fetched ${releases.length} releases`))
+    );
+  }
+
+  getAllSummary(): Observable<Release[]> {
+    const url = `/data/releases?projection=releaseSummary`;
+    return this.restClient.get<any>(url).pipe(
+      map(response => response._embedded.releases as Release[]),
+      tap((releases) => this.log.debug(`fetched ${releases.length} releases`))
     );
   }
 
@@ -43,7 +51,7 @@ export class ReleaseService {
     const url = `/data/releases/search/forAdd?environmentId=${environmentIdToIgnore}&projection=release`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.releases as Release[]),
-      tap((apps) => this.log.debug(`fetched ${apps.length} releases for add`))
+      tap((releases) => this.log.debug(`fetched ${releases.length} releases for add`))
     );
   }
 
@@ -51,7 +59,7 @@ export class ReleaseService {
     const url = `/data/environments/${environmentId}/releases`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.releases as Release[]),
-      tap((rels) => this.log.debug(`fetched ${rels.length} releases for environment=${environmentId}`))
+      tap((releases) => this.log.debug(`fetched ${releases.length} releases for environment=${environmentId}`))
     );
   }
 
@@ -82,6 +90,15 @@ export class ReleaseService {
         tap((rel) => this.log.debug('updated release', rel))
       );
     }
+  }
+
+  delete(release: Release): Observable<Release> {
+    const id = release.id;
+    const url = `/data/releases/${id}`;
+
+    return this.restClient.delete<Release>(url).pipe(
+      tap(() => this.log.debug('deleted release', release))
+    );
   }
 
   saveVersion(releaseVersion: ReleaseVersion): Observable<ReleaseVersion> {

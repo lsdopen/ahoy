@@ -37,7 +37,7 @@
 
       <p-toolbar>
         <ng-template pTemplate="left">
-          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/release/edit/{{selectedEnvironment.id}}/new"></button>
+          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/environmentrelease/edit/{{selectedEnvironment.id}}/new"></button>
           <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain p-mb-2" (click)="addRelease()"></button>
         </ng-template>
 
@@ -56,7 +56,7 @@
       </p-toolbar>
 
       <div class="p-field" *ngIf="environmentReleases && (environmentReleases.length === 0)">
-        There are no releases in this environment, create a <a routerLink="/release/edit/{{selectedEnvironment.id}}/new">new</a> release or <a [routerLink]="" (click)="addRelease()">add</a> a existing release..
+        There are no releases in this environment, create a <a routerLink="/environmentrelease/edit/{{selectedEnvironment.id}}/new">new</a> release or <a [routerLink]="" (click)="addRelease()">add</a> a existing release..
       </div>
 
       <p-table #dt [value]="environmentReleases" dataKey="id" selectionMode="single"

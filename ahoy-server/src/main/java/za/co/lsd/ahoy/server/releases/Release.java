@@ -41,7 +41,7 @@ public class Release implements Serializable {
 	@JsonIgnore
 	private List<EnvironmentRelease> environmentReleases;
 
-	@OneToMany(mappedBy = "release")
+	@OneToMany(mappedBy = "release", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	private List<ReleaseVersion> releaseVersions;
 

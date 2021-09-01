@@ -30,10 +30,10 @@ import {EnvironmentReleaseService} from '../environment-release.service';
 
 @Component({
   selector: 'app-release-detail',
-  templateUrl: './release-detail.component.html',
-  styleUrls: ['./release-detail.component.scss']
+  templateUrl: './environment-release-detail.component.html',
+  styleUrls: ['./environment-release-detail.component.scss']
 })
-export class ReleaseDetailComponent implements OnInit {
+export class EnvironmentReleaseDetailComponent implements OnInit {
   environment: Environment;
   editMode = false;
   release: Release;

@@ -16,37 +16,29 @@
 
 import {Component, OnInit} from '@angular/core';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
-import {Cluster} from '../../clusters/cluster';
-import {EnvironmentRelease} from '../../environment-release/environment-release';
 import {Environment} from '../../environments/environment';
 import {EnvironmentService} from '../../environments/environment.service';
-import {Release, ReleaseVersion} from '../../releases/release';
+import {Release} from '../../releases/release';
 
 @Component({
   selector: 'app-promote-dialog',
-  templateUrl: './promote-dialog.component.html',
-  styleUrls: ['./promote-dialog.component.scss']
+  templateUrl: './add-to-environment-dialog.component.html',
+  styleUrls: ['./add-to-environment-dialog.component.scss']
 })
-export class PromoteDialogComponent implements OnInit {
-  environmentRelease: EnvironmentRelease;
+export class AddToEnvironmentDialogComponent implements OnInit {
+  release: Release;
   environments: Environment[];
   selected: Environment;
-  release: Release;
-  releaseVersion: ReleaseVersion;
-  cluster: Cluster;
 
   constructor(private environmentService: EnvironmentService,
               public ref: DynamicDialogRef,
               public config: DynamicDialogConfig) {
     const data = config.data;
-    this.environmentRelease = data.environmentRelease;
-    this.release = this.environmentRelease.release as Release;
-    this.releaseVersion = data.releaseVersion;
-    this.cluster = (this.environmentRelease.environment as Environment).cluster;
+    this.release = data.release;
   }
 
   ngOnInit() {
-    this.environmentService.getAllForPromotion(this.environmentRelease.id.releaseId)
+    this.environmentService.getAllForPromotion(this.release.id)
       .subscribe(environments => this.environments = environments);
   }
 

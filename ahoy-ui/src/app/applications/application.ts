@@ -21,6 +21,7 @@ export class Application {
   id: number;
   name: string;
   applicationVersions: ApplicationVersion[];
+  latestApplicationVersion: ApplicationVersion;
 }
 
 export class ApplicationVersion {

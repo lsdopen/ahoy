@@ -20,14 +20,13 @@ import {ConfirmationService} from 'primeng/api';
 import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
 import {filter, mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
-import {AddReleaseDialogComponent} from '../environment-release/add-release-dialog/add-release-dialog.component';
 import {EnvironmentRelease, EnvironmentReleaseId} from '../environment-release/environment-release';
 import {EnvironmentReleaseService} from '../environment-release/environment-release.service';
 import {Environment} from '../environments/environment';
 import {EnvironmentService} from '../environments/environment.service';
-import {ReleaseManageService} from '../release-manage/release-manage.service';
 import {TaskEvent} from '../taskevents/task-events';
 import {LoggerService} from '../util/logger.service';
+import {AddToEnvironmentDialogComponent} from './add-to-environment-dialog/add-to-environment-dialog.component';
 import {Release} from './release';
 import {ReleaseService} from './release.service';
 
@@ -37,114 +36,70 @@ import {ReleaseService} from './release.service';
   styleUrls: ['./releases.component.scss']
 })
 export class ReleasesComponent implements OnInit {
-  environments: Environment[] = undefined;
-  environmentReleases: EnvironmentRelease[] = undefined;
-  selectedEnvironment: Environment;
+  releases: Release[] = undefined;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
+              private releaseService: ReleaseService,
               private environmentService: EnvironmentService,
               private environmentReleaseService: EnvironmentReleaseService,
-              private releasesService: ReleaseService,
-              private releaseService: ReleaseManageService,
               private log: LoggerService,
               private dialogService: DialogService,
               private confirmationService: ConfirmationService,
               private breadcrumbService: AppBreadcrumbService) {
+
+    this.breadcrumbService.setItems([{label: 'releases'}]);
   }
 
   ngOnInit() {
-    this.setBreadcrumb();
-
-    const environmentId = +this.route.snapshot.queryParamMap.get('environmentId');
-
-    this.environmentService.getAll().subscribe((environments) => {
-      this.environments = environments;
-
-      if (environmentId === 0) {
-        this.environmentService.getLastUsedId().subscribe((lastUsedEnvironmentId) => {
-          if (lastUsedEnvironmentId !== 0) {
-            this.getReleases(lastUsedEnvironmentId);
-          }
-        });
-      } else {
-        this.getReleases(environmentId);
-      }
-    });
+    this.getReleases();
   }
 
-  private getReleases(environmentId) {
-    this.log.debug('getting environment releases for environmentId=', environmentId);
-    this.environmentService.get(environmentId)
-      .subscribe(env => {
-        this.selectedEnvironment = env;
-        this.environmentReleaseService.getReleasesByEnvironment(environmentId)
-          .subscribe(envReleases => {
-            this.environmentReleases = envReleases;
-            this.setBreadcrumb();
-          });
+  private getReleases() {
+    this.log.debug('getting all releases');
+    this.releaseService.getAllSummary()
+      .subscribe((releases) => {
+        this.releases = releases;
       });
   }
 
-  private setBreadcrumb() {
-    if (this.selectedEnvironment) {
-      this.breadcrumbService.setItems([
-        {label: this.selectedEnvironment.cluster.name, routerLink: '/clusters'},
-        {label: this.selectedEnvironment.name, routerLink: '/environments', queryParams: {clusterId: this.selectedEnvironment.cluster.id}},
-        {label: 'releases'}
-      ]);
-
-    } else {
-      this.breadcrumbService.setItems([{label: 'releases'}]);
-    }
-  }
-
-  addRelease() {
+  addToEnvironment(release: Release) {
     const dialogConfig = new DynamicDialogConfig();
-    dialogConfig.header = `Add release to ${this.selectedEnvironment.cluster.name}/${this.selectedEnvironment.name}`;
-    dialogConfig.data = this.selectedEnvironment;
+    dialogConfig.header = `Add ${release.name} to:`;
+    dialogConfig.data = {release};
 
-    const dialogRef = this.dialogService.open(AddReleaseDialogComponent, dialogConfig);
+    const dialogRef = this.dialogService.open(AddToEnvironmentDialogComponent, dialogConfig);
     dialogRef.onClose.pipe(
       filter((result) => result !== undefined), // cancelled
-      mergeMap((release: Release) => {
+      mergeMap((selectedEnvironment: Environment) => {
         const environmentRelease = new EnvironmentRelease();
         environmentRelease.id = new EnvironmentReleaseId();
 
-        environmentRelease.environment = this.environmentService.link(this.selectedEnvironment.id);
-        environmentRelease.release = this.releasesService.link(release.id);
+        environmentRelease.environment = this.environmentService.link(selectedEnvironment.id);
+        environmentRelease.release = this.releaseService.link(release.id);
 
         return this.environmentReleaseService.save(environmentRelease);
       })
-    ).subscribe(() => {
-      this.getReleases(this.selectedEnvironment.id);
-    });
+    ).subscribe(() => this.getReleases());
   }
 
-  removeRelease(event: Event, environmentRelease: EnvironmentRelease) {
+  deleteRelease(event, release: Release) {
     this.confirmationService.confirm({
       target: event.target,
-      message: `Are you sure you want to remove ${(environmentRelease.release as Release).name} from ${(environmentRelease.environment as Environment).name}?`,
+      message: `Are you sure you want to delete ${release.name}?`,
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.releaseService.remove(environmentRelease)
-          .subscribe(() => this.getReleases(this.selectedEnvironment.id));
+        this.releaseService.delete(release)
+          .subscribe(() => this.getReleases());
       }
     });
-  }
-
-  environmentChanged() {
-    this.getReleases(this.selectedEnvironment.id);
   }
 
   taskEventOccurred(event: TaskEvent) {
     if (event.releaseStatusChangedEvent) {
-      const statusChangedEvent = event.releaseStatusChangedEvent;
-      if (this.selectedEnvironment.id === statusChangedEvent.environmentReleaseId.environmentId) {
-        setTimeout(() => {
-          this.getReleases(this.selectedEnvironment.id);
-        }, 1000);
-      }
+      setTimeout(() => {
+        this.getReleases();
+      }, 1000);
     }
   }
 }

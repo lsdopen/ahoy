@@ -45,8 +45,8 @@ export class EnvironmentReleasesComponent implements OnInit {
               private router: Router,
               private environmentService: EnvironmentService,
               private environmentReleaseService: EnvironmentReleaseService,
-              private releasesService: ReleaseService,
-              private releaseService: ReleaseManageService,
+              private releaseService: ReleaseService,
+              private releaseManageService: ReleaseManageService,
               private log: LoggerService,
               private dialogService: DialogService,
               private confirmationService: ConfirmationService,
@@ -103,7 +103,7 @@ export class EnvironmentReleasesComponent implements OnInit {
         environmentRelease.id = new EnvironmentReleaseId();
 
         environmentRelease.environment = this.environmentService.link(this.selectedEnvironment.id);
-        environmentRelease.release = this.releasesService.link(release.id);
+        environmentRelease.release = this.releaseService.link(release.id);
 
         return this.environmentReleaseService.save(environmentRelease);
       })
@@ -118,7 +118,7 @@ export class EnvironmentReleasesComponent implements OnInit {
       message: `Are you sure you want to remove ${(environmentRelease.release as Release).name} from ${(environmentRelease.environment as Environment).name}?`,
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.releaseService.remove(environmentRelease)
+        this.releaseManageService.remove(environmentRelease)
           .subscribe(() => this.getReleases(this.selectedEnvironment.id));
       }
     });

@@ -15,14 +15,13 @@
  */
 
 import {Injectable} from '@angular/core';
-import {LoggerService} from '../util/logger.service';
-import {RestClientService} from '../util/rest-client.service';
 import {EMPTY, Observable, of} from 'rxjs';
-import {Environment} from './environment';
 import {catchError, map, mergeMap, tap} from 'rxjs/operators';
-import {EnvironmentRelease} from '../environment-release/environment-release';
 import {Notification} from '../notifications/notification';
 import {NotificationsService} from '../notifications/notifications.service';
+import {LoggerService} from '../util/logger.service';
+import {RestClientService} from '../util/rest-client.service';
+import {Environment} from './environment';
 
 @Injectable({
   providedIn: 'root'
@@ -52,8 +51,8 @@ export class EnvironmentService {
     );
   }
 
-  getAllForPromotion(environmentRelease: EnvironmentRelease): Observable<Environment[]> {
-    const url = `/data/environments/search/forPromotion?releaseId=${environmentRelease.id.releaseId}`;
+  getAllForPromotion(releaseId: number): Observable<Environment[]> {
+    const url = `/data/environments/search/forPromotion?releaseId=${releaseId}`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.environments as Environment[]),
       tap((envs) => this.log.debug(`fetched ${envs.length} environments`))

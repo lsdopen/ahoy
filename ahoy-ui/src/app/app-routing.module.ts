@@ -23,13 +23,14 @@ import {ApplicationsComponent} from './applications/applications.component';
 import {ClusterDetailComponent} from './clusters/cluster-detail/cluster-detail.component';
 import {ClustersComponent} from './clusters/clusters.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
-import {ReleaseDetailComponent} from './environment-release/environment-release-detail/release-detail.component';
+import {EnvironmentReleaseDetailComponent} from './environment-release/environment-release-detail/environment-release-detail.component';
 import {EnvironmentReleasesComponent} from './environment-release/environment-releases.component';
 import {EnvironmentDetailComponent} from './environments/environment-detail/environment-detail.component';
 import {EnvironmentsComponent} from './environments/environments.component';
 import {ReleaseHistoryComponent} from './release-history/release-history.component';
 import {ReleaseApplicationEnvironmentConfigComponent} from './release-manage/release-application-environment-config/release-application-environment-config.component';
 import {ReleaseManageComponent} from './release-manage/release-manage.component';
+import {ReleaseDetailComponent} from './releases/release-detail/release-detail.component';
 import {ReleasesComponent} from './releases/releases.component';
 import {ArgoSettingsComponent} from './settings/argo-settings/argo-settings.component';
 import {DockerSettingsComponent} from './settings/docker-settings/docker-settings.component';
@@ -45,13 +46,16 @@ const routes: Routes = [
       {path: '', component: DashboardComponent, canActivate: [SettingsGuard]},
 
       {path: 'releases', component: ReleasesComponent, canActivate: [SettingsGuard]},
+      {path: 'release/:releaseId', component: ReleaseDetailComponent},
+
       {path: 'release/:environmentId/:releaseId/version/:releaseVersionId', component: ReleaseManageComponent},
-      {path: 'release/edit/:environmentId/:releaseId', component: ReleaseDetailComponent},
-      {path: 'release/edit/:environmentId/:releaseId/version/:releaseVersionId', component: ReleaseDetailComponent},
       {path: 'release/:environmentId/:releaseId/config/:relVersionId/:appVersionId', component: ReleaseApplicationEnvironmentConfigComponent},
+
       {path: 'releasehistory/:releaseId', component: ReleaseHistoryComponent},
 
       {path: 'environmentreleases/:environmentId', component: EnvironmentReleasesComponent},
+      {path: 'environmentrelease/edit/:environmentId/:releaseId', component: EnvironmentReleaseDetailComponent},
+      {path: 'environmentrelease/edit/:environmentId/:releaseId/version/:releaseVersionId', component: EnvironmentReleaseDetailComponent},
 
       {path: 'environments', component: EnvironmentsComponent, canActivate: [SettingsGuard]},
       {path: 'environment/:id', component: EnvironmentDetailComponent},

@@ -20,49 +20,25 @@
     <p-confirmPopup></p-confirmPopup>
     <app-task-events-listener (taskEventEmitter)="taskEventOccurred($event)"></app-task-events-listener>
 
-    <div class="card" *ngIf="environments && environments.length === 0">
-      <div class="card-header">
-        <h5>Releases</h5>
-      </div>
-
-      <div class="p-field">
-        There are no environments setup, click <a routerLink="/environments">here</a> to manage environments..
-      </div>
-    </div>
-
-    <div class="card" *ngIf="selectedEnvironment">
+    <div class="card">
       <div class="card-header">
         <h5>Releases</h5>
       </div>
 
       <p-toolbar>
         <ng-template pTemplate="left">
-          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/release/edit/{{selectedEnvironment.id}}/new"></button>
-          <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain p-mb-2" (click)="addRelease()"></button>
-        </ng-template>
-
-        <ng-template pTemplate="right">
-          <p-dropdown [options]="environments" [(ngModel)]="selectedEnvironment"
-                      placeholder="Environment" optionLabel="name"
-                      (onChange)="environmentChanged()">
-            <ng-template let-environment pTemplate="selectedItem">
-              <div>{{environment.cluster.name}}/{{environment.name}}</div>
-            </ng-template>
-            <ng-template let-environment pTemplate="item">
-              <div>{{environment.cluster.name}}/{{environment.name}}</div>
-            </ng-template>
-          </p-dropdown>
+          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/release/new"></button>
         </ng-template>
       </p-toolbar>
 
-      <div class="p-field" *ngIf="environmentReleases && (environmentReleases.length === 0)">
-        There are no releases in this environment, create a <a routerLink="/release/edit/{{selectedEnvironment.id}}/new">new</a> release or <a [routerLink]="" (click)="addRelease()">add</a> a existing release..
+      <div class="p-field" *ngIf="releases && (releases.length === 0)">
+        There are no releases, create a <a routerLink="/release/new">new</a> release..
       </div>
 
-      <p-table #dt [value]="environmentReleases" dataKey="id" selectionMode="single"
+      <p-table #dt [value]="releases" dataKey="id" selectionMode="single"
                styleClass="p-datatable-releases p-datatable-striped p-datatable-sm"
-               [scrollable]="true" scrollHeight="600px" [filterDelay]="0" [globalFilterFields]="['release.name']"
-               *ngIf="environmentReleases && environmentReleases.length > 0">
+               [scrollable]="true" scrollHeight="600px" [filterDelay]="0" [globalFilterFields]="['name']"
+               *ngIf="releases && releases.length > 0">
         <ng-template pTemplate="caption">
           <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
             <span class="p-input-icon-left p-ml-auto">
@@ -73,42 +49,34 @@
         </ng-template>
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="release.name">Release
+            <th pSortableColumn="name">Release
               <p-sortIcon field="release.name"></p-sortIcon>
             </th>
-            <th pSortableColumn="deployed">State
-              <p-sortIcon field="deployed"></p-sortIcon>
-            </th>
-            <th pSortableColumn="applicationsTotal">Applications
-              <p-sortIcon field="applicationsTotal"></p-sortIcon>
-            </th>
-            <th pSortableColumn="currentReleaseVersion">Version
-              <p-sortIcon field="currentReleaseVersion"></p-sortIcon>
-            </th>
+            <th>Environments</th>
             <th></th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-er>
+        <ng-template pTemplate="body" let-release>
           <tr>
             <td><span class="p-column-title">Release</span>
-              {{er.release.name}}
+              {{release.name}}
             </td>
-            <td><span class="p-column-title">State</span>
-              <app-environment-release-deployment-status [environmentRelease]="er"></app-environment-release-deployment-status>
-            </td>
-            <td><span class="p-column-title">Applications</span>
-              <app-environment-release-status [environmentRelease]="er"></app-environment-release-status>
-            </td>
-            <td><span class="p-column-title">Version</span>
-              <app-environment-release-versions [environmentRelease]="er"></app-environment-release-versions>
+            <td><span class="p-column-title">Environments</span>
+              <span *ngFor="let environmentRelease of release.environmentReleases">
+                <p-chip styleClass="{{'chip-environment status-' + (environmentRelease.deployed ? 'deployed' : 'undeployed')}}" label="{{environmentRelease.environment.name}}" class="p-mr-1"
+                        routerLink="/environmentreleases/{{environmentRelease.environment.id}}"></p-chip>
+              </span>
             </td>
             <td>
-              <button pButton pRipple icon="pi pi-chevron-circle-right" class="p-button-rounded p-button-info p-mr-2"
-                      routerLink="/release/{{er.id.environmentId}}/{{er.id.releaseId}}/version/{{er.currentReleaseVersion ? er.currentReleaseVersion.id : er.latestReleaseVersion.id}}"
-                      pTooltip="Manage release"></button>
-              <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
-                      (click)="removeRelease($event, er)"
-                      pTooltip="Remove release from environment"></button>
+              <button pButton pRipple icon="pi pi-folder" class="p-button-rounded p-button-plain p-mr-2"
+                      (click)="addToEnvironment(release)"
+                      pTooltip="Add to environment"></button>
+              <span pTooltip="{{release.environmentReleases && release.environmentReleases.length > 0 ? 'In order to delete release, remove release from all environments' : ''}}">
+                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                        [disabled]="release.environmentReleases && release.environmentReleases.length > 0"
+                        (click)="deleteRelease($event, release)"
+                        pTooltip="Delete release"></button>
+              </span>
             </td>
           </tr>
         </ng-template>

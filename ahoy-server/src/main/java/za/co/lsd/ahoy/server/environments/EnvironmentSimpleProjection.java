@@ -14,19 +14,13 @@
  *    limitations under the License.
  */
 
-import {ApplicationVersion} from '../applications/application';
-import {EnvironmentRelease} from '../environment-release/environment-release';
+package za.co.lsd.ahoy.server.environments;
 
-export class Release {
-  id: number;
-  name: string;
-  releaseVersions: ReleaseVersion[];
-  environmentReleases: EnvironmentRelease[];
-}
+import org.springframework.data.rest.core.config.Projection;
 
-export class ReleaseVersion {
-  id: number;
-  version: string;
-  release: Release | string;
-  applicationVersions: ApplicationVersion[] = undefined;
+@Projection(name = "environmentSimple", types = {Environment.class})
+public interface EnvironmentSimpleProjection {
+	long getId();
+
+	String getName();
 }

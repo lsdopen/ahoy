@@ -1,0 +1,67 @@
+<!--
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
+  ~
+  ~    Licensed under the Apache License, Version 2.0 (the "License");
+  ~    you may not use this file except in compliance with the License.
+  ~    You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~    Unless required by applicable law or agreed to in writing, software
+  ~    distributed under the License is distributed on an "AS IS" BASIS,
+  ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~    See the License for the specific language governing permissions and
+  ~    limitations under the License.
+  -->
+
+<div class="p-grid">
+  <div class="p-col-12" *ngIf="release && releaseVersion && releasesForValidation">
+
+    <div class="card">
+      <div class="card-header">
+        <h5>New release</h5>
+      </div>
+
+      <p-toolbar>
+        <ng-template pTemplate="left">
+          <button pButton pRipple label="Save" icon="pi pi-save" class="p-button-success p-mr-2 p-mb-2" (click)="save()" [disabled]="releaseForm.invalid"></button>
+          <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-plain p-mb-2" (click)="cancel()"></button>
+        </ng-template>
+      </p-toolbar>
+
+      <form #releaseForm="ngForm">
+        <div class="p-fluid p-col-12 p-md-5">
+
+          <div class="p-field p-float-label">
+            <input pInputText id="releaseName" [(ngModel)]="release.name" name="releaseName"
+                   required
+                   pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
+                   [appReleaseNameUnique]="releasesForValidation"
+                   [ignoreOwnId]="release.id">
+            <label for="releaseName">Name</label>
+            <small class="p-error" *ngIf="releaseForm.form.controls.releaseName?.hasError('pattern')">
+              Name invalid: should start with and use lower case letters and numbers
+            </small>
+            <small class="p-error" *ngIf="releaseForm.form.controls.releaseName?.hasError('releaseNameNotUnique')">
+              Release already exists
+            </small>
+          </div>
+
+          <div class="p-field p-float-label">
+            <input pInputText id="releaseVersion" [(ngModel)]="releaseVersion.version" name="version"
+                   required
+                   [appReleaseVersionUnique]="release.releaseVersions"
+                   [ignoreOwnId]="releaseVersion.id">
+            <label for="releaseVersion">Version</label>
+            <small class="p-error" *ngIf="releaseForm.form.controls.version?.hasError('releaseVersionNotUnique')">
+              Version already exists
+            </small>
+          </div>
+
+        </div>
+      </form>
+
+    </div>
+
+  </div>
+</div>

@@ -86,7 +86,7 @@ import {DashboardEnvironmentComponent} from './dashboard/dashboard-environment/d
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {AddReleaseDialogComponent} from './environment-release/add-release-dialog/add-release-dialog.component';
 import {EnvironmentReleaseDeploymentStatusComponent} from './environment-release/environment-release-deployment-status/environment-release-deployment-status.component';
-import {ReleaseDetailComponent} from './environment-release/environment-release-detail/release-detail.component';
+import {EnvironmentReleaseDetailComponent} from './environment-release/environment-release-detail/environment-release-detail.component';
 import {EnvironmentReleaseStatusComponent} from './environment-release/environment-release-status/environment-release-status.component';
 import {EnvironmentReleaseVersionsComponent} from './environment-release/environment-release-versions/environment-release-versions.component';
 import {EnvironmentReleasesComponent} from './environment-release/environment-releases.component';
@@ -104,6 +104,8 @@ import {ReleaseApplicationVersionStatusComponent} from './release-manage/release
 import {ReleaseApplicationVersionsComponent} from './release-manage/release-application-versions/release-application-versions.component';
 import {ReleaseManageComponent} from './release-manage/release-manage.component';
 import {UpgradeDialogComponent} from './release-manage/upgrade-dialog/upgrade-dialog.component';
+import {AddToEnvironmentDialogComponent} from './releases/add-to-environment-dialog/add-to-environment-dialog.component';
+import {ReleaseDetailComponent} from './releases/release-detail/release-detail.component';
 import {ReleaseNameUniqueValidatorDirective} from './releases/release-name-unique-validator.directive';
 import {ReleaseVersionUniqueValidatorDirective} from './releases/release-version-unique-validator.directive';
 import {ReleasesComponent} from './releases/releases.component';
@@ -129,7 +131,7 @@ import {ErrorService} from './util/error.service';
     ApplicationsComponent,
     ApplicationDetailComponent,
     ReleasesComponent,
-    ReleaseDetailComponent,
+    EnvironmentReleaseDetailComponent,
     ReleaseManageComponent,
     EnvironmentsComponent,
     EnvironmentDetailComponent,
@@ -172,7 +174,9 @@ import {ErrorService} from './util/error.service';
     ApplicationConfigFilesComponent,
     ApplicationVolumesComponent,
     ApplicationSecretsComponent,
-    EnvironmentReleasesComponent
+    EnvironmentReleasesComponent,
+    ReleaseDetailComponent,
+    AddToEnvironmentDialogComponent
   ],
   imports: [
     BrowserModule,

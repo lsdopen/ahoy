@@ -107,7 +107,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     this.menuItems = [
       {
         label: 'Edit', icon: 'pi pi-fw pi-pencil', disabled: !this.canEdit(),
-        routerLink: `/release/edit/${this.environmentRelease.id.environmentId}/${this.environmentRelease.id.releaseId}/version/${this.releaseVersion.id}`
+        routerLink: `/environmentrelease/edit/${this.environmentRelease.id.environmentId}/${this.environmentRelease.id.releaseId}/version/${this.releaseVersion.id}`
       },
       {
         label: 'History', icon: 'pi pi-fw pi-list',
