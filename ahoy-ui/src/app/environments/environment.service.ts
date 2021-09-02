@@ -80,9 +80,9 @@ export class EnvironmentService {
         const text = `${createdEnvironment.name} ` + `was created in cluster ${createdEnvironment.cluster.name}`;
         this.notificationsService.notification(new Notification(text));
       }),
-      catchError(() => {
+      catchError((error) => {
         const text = `Failed to create environment ${environment.name}`;
-        this.notificationsService.notification(new Notification(text, true));
+        this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })
     );
@@ -100,9 +100,9 @@ export class EnvironmentService {
         const text = `${destroyedEnvironment.name} ` + `was destroyed from cluster ${destroyedEnvironment.cluster.name}`;
         this.notificationsService.notification(new Notification(text));
       }),
-      catchError(() => {
+      catchError((error) => {
         const text = `Failed to destroy environment ${environment.name}`;
-        this.notificationsService.notification(new Notification(text, true));
+        this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })
     );
@@ -119,9 +119,9 @@ export class EnvironmentService {
         const text = `${duplicatedEnvironment.name} ` + `was duplicated in cluster ${duplicatedEnvironment.cluster.name}`;
         this.notificationsService.notification(new Notification(text));
       }),
-      catchError(() => {
+      catchError((error) => {
         const text = `Failed to duplicate environment ${destEnvironment.name} from environment: ${sourceEnvironment.name}`;
-        this.notificationsService.notification(new Notification(text, true));
+        this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })
     );

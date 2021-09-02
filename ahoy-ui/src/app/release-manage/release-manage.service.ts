@@ -47,10 +47,10 @@ export class ReleaseManageService {
           + `deployed to environment ${(deployedEnvironmentRelease.environment as Environment).name}`;
         this.notificationsService.notification(new Notification(text));
       }),
-      catchError(() => {
+      catchError((error) => {
         const text = `Failed to deploy ${(environmentRelease.release as Release).name} : ${releaseVersion.version} `
           + `to environment ${(environmentRelease.environment as Environment).name}`;
-        this.notificationsService.notification(new Notification(text, true));
+        this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })
     );
@@ -67,10 +67,10 @@ export class ReleaseManageService {
           + `was undeployed from environment ${(unDeployedEnvironmentRelease.environment as Environment).name}`;
         this.notificationsService.notification(new Notification(text));
       }),
-      catchError(() => {
+      catchError((error) => {
         const text = `Failed to undeploy ${(environmentRelease.release as Release).name} `
           + `from environment ${(environmentRelease.environment as Environment).name}`;
-        this.notificationsService.notification(new Notification(text, true));
+        this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })
     );
@@ -86,10 +86,10 @@ export class ReleaseManageService {
           + `was removed from environment ${(removedEnvironmentRelease.environment as Environment).name}`;
         this.notificationsService.notification(new Notification(text));
       }),
-      catchError(() => {
+      catchError((error) => {
         const text = `Failed to remove ${(environmentRelease.release as Release).name} `
           + `from environment ${(environmentRelease.environment as Environment).name}`;
-        this.notificationsService.notification(new Notification(text, true));
+        this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })
     );
@@ -105,9 +105,9 @@ export class ReleaseManageService {
           + `was promoted to environment ${(environmentRelease.environment as Environment).name}`;
         this.notificationsService.notification(new Notification(text));
       }),
-      catchError(() => {
+      catchError((error) => {
         const text = `Failed to promote release`;
-        this.notificationsService.notification(new Notification(text, true));
+        this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })
     );

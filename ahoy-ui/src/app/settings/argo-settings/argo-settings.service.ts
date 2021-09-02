@@ -70,9 +70,9 @@ export class ArgoSettingsService {
         const text = `Successfully connected to argocd '${argoSettings.argoServer}'`;
         this.notificationsService.notification(new Notification(text));
       }),
-      catchError(() => {
+      catchError((error) => {
         const text = `Failed to connect to argocd ${argoSettings.argoServer}`;
-        this.notificationsService.notification(new Notification(text, true));
+        this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })
     );

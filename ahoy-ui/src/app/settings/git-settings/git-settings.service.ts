@@ -80,9 +80,9 @@ export class GitSettingsService {
         const text = `Successfully connected to git repo '${gitSettings.remoteRepoUri}'`;
         this.notificationsService.notification(new Notification(text));
       }),
-      catchError(() => {
+      catchError((error) => {
         const text = `Failed to connect to git repo ${gitSettings.remoteRepoUri}`;
-        this.notificationsService.notification(new Notification(text, true));
+        this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })
     );

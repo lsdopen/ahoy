@@ -108,6 +108,6 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   }
 
   showDescription(notification: Notification) {
-    this.dialogUtilService.showDescriptionDialog(new Description('Notification', notification.text));
+    this.dialogUtilService.showDescriptionDialog(new Description('Notification', notification.text, notification.errorTrace));
   }
 }
