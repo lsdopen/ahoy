@@ -16,10 +16,12 @@
 
 package za.co.lsd.ahoy.server.applications;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import za.co.lsd.ahoy.server.docker.DockerRegistry;
+import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 import za.co.lsd.ahoy.server.util.IntegerListConverter;
 
 import javax.persistence.*;
@@ -70,6 +72,10 @@ public class ApplicationVersion implements Serializable {
 	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("applicationVersionReference")
 	private List<ApplicationSecret> secrets;
+
+	@ManyToMany(mappedBy = "applicationVersions")
+	@JsonIgnore
+	private List<ReleaseVersion> releaseVersions;
 
 	public ApplicationVersion(@NotNull String version, @NotNull String image, Application application) {
 		this.version = version;

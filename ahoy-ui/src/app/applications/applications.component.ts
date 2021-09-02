@@ -15,14 +15,14 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {ApplicationService} from './application.service';
-import {Application} from './application';
 import {ActivatedRoute} from '@angular/router';
-import {LoggerService} from '../util/logger.service';
-import {AppBreadcrumbService} from '../app.breadcrumb.service';
-import {DialogUtilService} from '../components/dialog-util.service';
 import {filter} from 'rxjs/operators';
+import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Confirmation} from '../components/confirm-dialog/confirm';
+import {DialogUtilService} from '../components/dialog-util.service';
+import {LoggerService} from '../util/logger.service';
+import {Application} from './application';
+import {ApplicationService} from './application.service';
 
 @Component({
   selector: 'app-applications',
@@ -50,6 +50,25 @@ export class ApplicationsComponent implements OnInit {
     this.log.debug('Getting all applications');
     this.applicationService.getAll()
       .subscribe(applications => this.applications = applications);
+  }
+
+  canDelete(application: Application): boolean {
+    for (const applicationVersion of application.applicationVersions) {
+      if (applicationVersion.releaseVersions && applicationVersion.releaseVersions.length > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  usedByReleases(application: Application): string[] {
+    const usedBy = new Set<string>();
+    for (const applicationVersion of application.applicationVersions) {
+      for (const releaseVersion of applicationVersion.releaseVersions) {
+        usedBy.add(releaseVersion.releaseName);
+      }
+    }
+    return Array.from(usedBy.values()).sort();
   }
 
   delete(event: Event, application: Application) {

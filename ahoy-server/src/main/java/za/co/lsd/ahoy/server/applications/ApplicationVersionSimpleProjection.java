@@ -16,22 +16,13 @@
 
 package za.co.lsd.ahoy.server.applications;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
 
-import java.util.List;
-
-@Projection(name = "application", types = {Application.class})
-public interface ApplicationProjection {
-	@Value("#{target.id}")
+@Projection(name = "applicationVersionSimple", types = {ApplicationVersion.class})
+public interface ApplicationVersionSimpleProjection {
 	long getId();
 
-	@Value("#{target.name}")
-	String getName();
+	String getVersion();
 
-	@Value("#{target.applicationVersions}")
-	List<ApplicationVersionSummaryProjection> getApplicationVersions();
-
-	@Value("#{target.latestApplicationVersion()}")
-	ApplicationVersionSimpleProjection getLatestApplicationVersion();
+	String getImage();
 }

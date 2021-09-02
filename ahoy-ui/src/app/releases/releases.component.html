@@ -63,7 +63,7 @@
             </td>
             <td><span class="p-column-title">Environments</span>
               <span *ngFor="let environmentRelease of release.environmentReleases">
-                <p-chip styleClass="{{'chip-environment status-' + (environmentRelease.deployed ? 'deployed' : 'undeployed')}}" label="{{environmentRelease.environment.name}}" class="p-mr-1"
+                <p-chip styleClass="p-mr-1 p-mb-1 {{'chip-environment status-' + (environmentRelease.deployed ? 'deployed' : 'undeployed')}}" label="{{environmentRelease.environment.name}}"
                         routerLink="/environmentreleases/{{environmentRelease.environment.id}}"></p-chip>
               </span>
             </td>

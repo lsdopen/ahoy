@@ -15,6 +15,7 @@
  */
 
 import {EnvironmentReleaseId} from '../environment-release/environment-release';
+import {ReleaseVersion} from '../releases/release';
 import {DockerRegistry} from '../settings/docker-settings/docker-settings';
 
 export class Application {
@@ -40,6 +41,7 @@ export class ApplicationVersion {
   secrets: ApplicationSecret[];
   configPath: string;
   status: ApplicationReleaseStatus;
+  releaseVersions: ReleaseVersion[];
 }
 
 export class ApplicationEnvironmentVariable {

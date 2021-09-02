@@ -31,10 +31,22 @@ export class ApplicationVersionsComponent {
               private confirmationService: ConfirmationService) {
   }
 
-  removeApplicationVersion(event: Event, applicationVersion: ApplicationVersion) {
+  canDelete(applicationVersion: ApplicationVersion) {
+    return !(applicationVersion.releaseVersions && applicationVersion.releaseVersions.length > 0);
+  }
+
+  usedByReleaseVersions(applicationVersion: ApplicationVersion): string[] {
+    const usedBy = new Set<string>();
+    for (const releaseVersion of applicationVersion.releaseVersions) {
+      usedBy.add(`${releaseVersion.releaseName}:${releaseVersion.version}`);
+    }
+    return Array.from(usedBy.values()).sort();
+  }
+
+  delete(event: Event, applicationVersion: ApplicationVersion) {
     this.confirmationService.confirm({
       target: event.target,
-      message: `Are you sure you want to remove version ${applicationVersion.version} from ${this.application.name}?`,
+      message: `Are you sure you want to delete version ${applicationVersion.version} from ${this.application.name}?`,
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.applicationService.deleteVersion(applicationVersion)
