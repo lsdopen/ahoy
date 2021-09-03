@@ -38,7 +38,7 @@ export class ApplicationVersionsComponent {
   usedByReleaseVersions(applicationVersion: ApplicationVersion): string[] {
     const usedBy = new Set<string>();
     for (const releaseVersion of applicationVersion.releaseVersions) {
-      usedBy.add(`${releaseVersion.releaseName}:${releaseVersion.version}`);
+      usedBy.add(`${releaseVersion.releaseName}`);
     }
     return Array.from(usedBy.values()).sort();
   }
