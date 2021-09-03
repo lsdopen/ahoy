@@ -53,7 +53,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private releaseService: ReleaseManageService,
+    private releaseManageService: ReleaseManageService,
     private environmentService: EnvironmentService,
     private environmentReleaseService: EnvironmentReleaseService,
     private log: LoggerService,
@@ -133,7 +133,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
 
   private subscribeToEnvironmentReleaseChanged() {
     if (!this.environmentReleaseChangedSubscription) {
-      this.environmentReleaseChangedSubscription = this.releaseService.environmentReleaseChanged()
+      this.environmentReleaseChangedSubscription = this.releaseManageService.environmentReleaseChanged()
         .subscribe((environmentRelease) => {
           if (EnvironmentReleaseService.environmentReleaseEquals(this.environmentRelease, environmentRelease)) {
             this.getEnvironmentRelease(environmentRelease.id.environmentId, environmentRelease.id.releaseId, this.releaseVersion.id)
@@ -171,7 +171,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
       const deployDetails = new DeployDetails(conf.input);
-      this.releaseService.deploy(this.environmentRelease, this.releaseVersion, deployDetails).subscribe();
+      this.releaseManageService.deploy(this.environmentRelease, this.releaseVersion, deployDetails).subscribe();
     });
   }
 
@@ -183,7 +183,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
-      this.releaseService.undeploy(this.environmentRelease).subscribe();
+      this.releaseManageService.undeploy(this.environmentRelease).subscribe();
     });
   }
 
@@ -200,7 +200,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     dialogRef.onClose.pipe(
       filter((result) => result !== undefined), // cancelled
       mergeMap((destEnvironment) => {
-        return this.releaseService.promote(this.environmentRelease.id, destEnvironment.id);
+        return this.releaseManageService.promote(this.environmentRelease.id, destEnvironment.id);
       })
     ).subscribe((newEnvironmentRelease: EnvironmentRelease) => this.reload(newEnvironmentRelease.id.environmentId, this.releaseVersion.id));
   }
@@ -218,7 +218,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     dialogRef.onClose.pipe(
       filter((result) => result !== undefined), // cancelled
       mergeMap((version) => {
-        return this.releaseService.upgrade(this.releaseVersion.id, version);
+        return this.releaseManageService.upgrade(this.releaseVersion.id, version);
       })
     ).subscribe((newReleaseVersion: ReleaseVersion) => this.reload(this.environmentRelease.id.environmentId, newReleaseVersion.id));
   }
@@ -240,7 +240,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     dialogRef.onClose.pipe(
       filter((result) => result !== undefined), // cancelled
       mergeMap((selectedReleaseVersion) => {
-        return this.releaseService.copyEnvConfig(this.environmentRelease.id, selectedReleaseVersion.id, this.releaseVersion.id);
+        return this.releaseManageService.copyEnvConfig(this.environmentRelease.id, selectedReleaseVersion.id, this.releaseVersion.id);
       })
     ).subscribe(() => this.reload(this.environmentRelease.id.environmentId, this.releaseVersion.id));
   }
@@ -305,7 +305,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
       const deployDetails = new DeployDetails(conf.input);
-      this.releaseService.deploy(this.environmentRelease, this.environmentRelease.previousReleaseVersion, deployDetails)
+      this.releaseManageService.deploy(this.environmentRelease, this.environmentRelease.previousReleaseVersion, deployDetails)
         .subscribe(() => this.log.debug('rolled back release:', this.environmentRelease));
     });
   }
@@ -328,5 +328,9 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
 
   isCurrentEnvironmentRelease(environmentRelease: EnvironmentRelease) {
     return EnvironmentReleaseService.environmentReleaseEquals(this.environmentRelease, environmentRelease);
+  }
+
+  applicationVersionsChanged() {
+    this.reloadCurrent();
   }
 }

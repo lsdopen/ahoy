@@ -104,7 +104,8 @@
       <app-release-application-versions
         [environmentRelease]="environmentRelease"
         [releaseVersion]="releaseVersion"
-        [releaseChanged]="releaseChanged">
+        [releaseChanged]="releaseChanged"
+        (applicationVersionsChanged)="applicationVersionsChanged()">
       </app-release-application-versions>
 
     </div>

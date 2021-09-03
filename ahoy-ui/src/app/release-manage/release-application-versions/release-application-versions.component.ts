@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-import {Component, EventEmitter, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
 import {filter} from 'rxjs/operators';
 import {Application, ApplicationEnvironmentConfig, ApplicationVersion} from '../../applications/application';
@@ -36,6 +36,7 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
   @Input() environmentRelease: EnvironmentRelease;
   @Input() releaseVersion: ReleaseVersion;
   @Input() releaseChanged: EventEmitter<{ environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion }>;
+  @Output() applicationVersionsChanged = new EventEmitter();
   existingConfigs: Map<number, ApplicationEnvironmentConfig>;
 
   constructor(
@@ -104,7 +105,10 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
       filter((result) => result !== undefined) // cancelled
     ).subscribe((applicationVersion) => {
       this.releasesService.associateApplication(this.releaseVersion.id, applicationVersion.id)
-        .subscribe(() => this.getReleaseVersion());
+        .subscribe(() => {
+          this.getReleaseVersion();
+          this.applicationVersionsChanged.next();
+        });
     });
   }
 
@@ -117,7 +121,11 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
       this.releasesService.removeAssociatedApplication(this.releaseVersion.id, applicationVersion.id)
-        .subscribe(() => this.getReleaseVersion());
+        .subscribe(() => {
+            this.getReleaseVersion();
+            this.applicationVersionsChanged.next();
+          }
+        );
     });
   }
 
