@@ -59,8 +59,8 @@ export class AppTopBarComponent {
     return this.authService.userInitials();
   }
 
-  issuer(): string {
-    return this.authService.issuer();
+  accountUri(): string {
+    return this.authService.accountUri();
   }
 
   logout() {

@@ -27,4 +27,6 @@ public class AuthInfo {
 	private String clientId;
 	@Value("${ahoy.auth.issuer}")
 	private String issuer;
+	@Value("${ahoy.auth.account-uri}")
+	private String accountUri;
 }
