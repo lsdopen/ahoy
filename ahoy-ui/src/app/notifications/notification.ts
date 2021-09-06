@@ -40,6 +40,10 @@ export class Notification {
 
   minutesAgo() {
     const now = new Date();
-    return now.getMinutes() - this.time.getMinutes();
+    return this.minutesSinceEpoch(now) - this.minutesSinceEpoch(this.time);
+  }
+
+  minutesSinceEpoch(d: Date) {
+    return Math.floor(d.getTime() / (1000.0 * 60));
   }
 }
