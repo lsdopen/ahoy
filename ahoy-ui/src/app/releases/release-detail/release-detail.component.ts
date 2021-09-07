@@ -72,9 +72,18 @@ export class ReleaseDetailComponent implements OnInit {
   }
 
   private setBreadcrumb() {
-    this.breadcrumbService.setItems([
-      {label: (this.editMode ? 'edit' : 'new') + ' release'}
-    ]);
+    if (this.editMode) {
+      this.breadcrumbService.setItems([
+        {label: 'releases', routerLink: '/releases'},
+        {label: this.release.name},
+        {label: this.editMode ? 'edit' : 'new'}
+      ]);
+    } else {
+      this.breadcrumbService.setItems([
+        {label: 'releases', routerLink: '/releases'},
+        {label: this.editMode ? 'edit' : 'new'}
+      ]);
+    }
   }
 
   save() {

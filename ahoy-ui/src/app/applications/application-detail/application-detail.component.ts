@@ -66,9 +66,18 @@ export class ApplicationDetailComponent implements OnInit {
   }
 
   private setBreadcrumb() {
-    this.breadcrumbService.setItems([
-      {label: (this.editMode ? 'edit' : 'new') + ' application'}
-    ]);
+    if (this.editMode) {
+      this.breadcrumbService.setItems([
+        {label: 'applications', routerLink: '/applications'},
+        {label: this.application.name},
+        {label: 'edit'}
+      ]);
+    } else {
+      this.breadcrumbService.setItems([
+        {label: 'applications', routerLink: '/applications'},
+        {label: 'new'}
+      ]);
+    }
   }
 
   save() {

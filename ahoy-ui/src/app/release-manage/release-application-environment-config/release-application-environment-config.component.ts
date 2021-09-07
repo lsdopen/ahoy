@@ -18,6 +18,7 @@ import {Location} from '@angular/common';
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {mergeMap} from 'rxjs/operators';
+import {AppBreadcrumbService} from '../../app.breadcrumb.service';
 import {Application, ApplicationEnvironmentConfig, ApplicationEnvironmentConfigId, ApplicationSecret, ApplicationVersion} from '../../applications/application';
 import {ApplicationService} from '../../applications/application.service';
 import {EnvironmentRelease, EnvironmentReleaseId} from '../../environment-release/environment-release';
@@ -44,13 +45,13 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   volumesCategory = false;
   secretsCategory = false;
 
-  constructor(
-    private log: LoggerService,
-    private route: ActivatedRoute,
-    private applicationService: ApplicationService,
-    private environmentReleaseService: EnvironmentReleaseService,
-    private releasesService: ReleaseService,
-    private location: Location) {
+  constructor(private log: LoggerService,
+              private route: ActivatedRoute,
+              private applicationService: ApplicationService,
+              private environmentReleaseService: EnvironmentReleaseService,
+              private releasesService: ReleaseService,
+              private location: Location,
+              private breadcrumbService: AppBreadcrumbService) {
   }
 
   ngOnInit() {
@@ -87,7 +88,22 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
         const clusterHost = (this.environmentRelease.environment as Environment).cluster.host;
         this.exampleRouteHost = `${releaseName}-${appName}-${envName}.${clusterHost}`;
         this.setCategoriesExpanded();
+        this.setBreadcrumb();
       });
+  }
+
+  private setBreadcrumb() {
+    const env = (this.environmentRelease.environment as Environment);
+    const rel = (this.environmentRelease.release as Release);
+    const app = (this.applicationVersion.application as Application);
+    this.breadcrumbService.setItems([
+      {label: env.name, routerLink: '/environments'},
+      {label: rel.name, routerLink: `/release/${rel.id}/${env.id}/version/${this.releaseVersion.id}`},
+      {label: this.releaseVersion.version, routerLink: `/release/${rel.id}/${env.id}/version/${this.releaseVersion.id}`},
+      {label: app.name},
+      {label: this.applicationVersion.version},
+      {label: 'env config'}
+    ]);
   }
 
   private setCategoriesExpanded() {

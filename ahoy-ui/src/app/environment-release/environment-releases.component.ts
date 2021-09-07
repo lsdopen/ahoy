@@ -80,7 +80,6 @@ export class EnvironmentReleasesComponent implements OnInit {
   private setBreadcrumb() {
     if (this.selectedEnvironment) {
       this.breadcrumbService.setItems([
-        {label: this.selectedEnvironment.cluster.name, routerLink: '/clusters'},
         {label: this.selectedEnvironment.name, routerLink: '/environments'},
         {label: 'releases'}
       ]);

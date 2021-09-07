@@ -90,9 +90,24 @@ export class EnvironmentDetailComponent implements OnInit {
   }
 
   private setBreadcrumb() {
-    this.breadcrumbService.setItems([
-      {label: (!this.sourceEnvironment ? (this.editMode ? 'edit' : 'new') : 'duplicate') + ' environment'}
-    ]);
+    if (this.editMode) {
+      this.breadcrumbService.setItems([
+        {label: 'environments', routerLink: '/environments'},
+        {label: this.environment.name},
+        {label: 'edit'}
+      ]);
+    } else if (this.sourceEnvironment) {
+      this.breadcrumbService.setItems([
+        {label: 'environments', routerLink: '/environments'},
+        {label: this.sourceEnvironment.name},
+        {label: 'duplicate'}
+      ]);
+    } else {
+      this.breadcrumbService.setItems([
+        {label: 'environments', routerLink: '/environments'},
+        {label: 'new'}
+      ]);
+    }
   }
 
   save() {

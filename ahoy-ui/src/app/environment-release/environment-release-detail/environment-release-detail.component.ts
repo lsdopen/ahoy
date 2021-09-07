@@ -95,9 +95,10 @@ export class EnvironmentReleaseDetailComponent implements OnInit {
 
   private setBreadcrumb() {
     this.breadcrumbService.setItems([
-      {label: this.environment.cluster.name, routerLink: '/clusters'},
       {label: this.environment.name, routerLink: '/environments'},
-      {label: (this.editMode ? 'edit' : 'new') + ' release'}
+      {label: this.release.name, routerLink: `/release/${this.environment.id}/${this.release.id}/version/${this.releaseVersion.id}`},
+      {label: this.releaseVersion.version},
+      {label: this.editMode ? 'edit' : 'new'}
     ]);
   }
 

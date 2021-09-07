@@ -124,7 +124,6 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     const env = (this.environmentRelease.environment as Environment);
     const rel = (this.environmentRelease.release as Release);
     this.breadcrumbService.setItems([
-      {label: env.cluster.name, routerLink: '/clusters'},
       {label: env.name, routerLink: '/environments'},
       {label: rel.name},
       {label: this.releaseVersion.version}
