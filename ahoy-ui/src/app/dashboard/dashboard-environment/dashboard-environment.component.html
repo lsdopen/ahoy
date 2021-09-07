@@ -22,6 +22,7 @@
     <div class="card-header">
       <p-chip styleClass="chip-environment" label="{{environment.name}}"
               routerLink="/environmentreleases/{{environment.id}}"></p-chip>
+      <span class="fs-normal note-cluster">{{environment.cluster.name}}</span>
     </div>
 
     <p-table #dt [value]="environmentReleases" dataKey="id" selectionMode="single"

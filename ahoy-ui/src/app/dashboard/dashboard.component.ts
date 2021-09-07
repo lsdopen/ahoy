@@ -15,13 +15,13 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {EnvironmentService} from '../environments/environment.service';
-import {Environment} from '../environments/environment';
+import {ActivatedRoute} from '@angular/router';
+import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Cluster} from '../clusters/cluster';
 import {ClusterService} from '../clusters/cluster.service';
-import {ActivatedRoute} from '@angular/router';
+import {Environment} from '../environments/environment';
+import {EnvironmentService} from '../environments/environment.service';
 import {LoggerService} from '../util/logger.service';
-import {AppBreadcrumbService} from '../app.breadcrumb.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -29,63 +29,31 @@ import {AppBreadcrumbService} from '../app.breadcrumb.service';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  selectedCluster: Cluster;
-  environments: Environment[] = undefined;
-  clusters: Cluster[] = undefined;
+  environments: Environment[] = [];
+  clusters: Cluster[] = [];
 
-  constructor(
-    private route: ActivatedRoute,
-    private clusterService: ClusterService,
-    private environmentService: EnvironmentService,
-    private log: LoggerService,
-    private breadcrumbService: AppBreadcrumbService) {
-
+  constructor(private route: ActivatedRoute,
+              private environmentService: EnvironmentService,
+              private clusterService: ClusterService,
+              private log: LoggerService,
+              private breadcrumbService: AppBreadcrumbService) {
     this.breadcrumbService.setItems([{label: 'dashboard'}]);
   }
 
   ngOnInit() {
-    const clusterId = +this.route.snapshot.queryParamMap.get('clusterId');
+    this.clusterService.getAll().subscribe((clusters) => {
+      this.clusters = clusters;
+    });
 
-    this.clusterService.getAll()
-      .subscribe((clusters) => {
-        this.clusters = clusters;
+    this.getEnvironments();
+  }
 
-        if (clusterId === 0) {
-          this.clusterService.getLastUsedId().subscribe((lastUsedClusterId) => {
-            if (lastUsedClusterId !== 0) {
-              this.getEnvironments(lastUsedClusterId);
-            }
-          });
-        } else {
-          this.getEnvironments(clusterId);
-        }
+  private getEnvironments() {
+    this.log.debug('getting all environments');
+
+    this.environmentService.getAll()
+      .subscribe((environments) => {
+        this.environments = environments;
       });
-  }
-
-  private getEnvironments(clusterId: number) {
-    this.log.debug('getting environments for clusterId=', clusterId);
-
-    this.clusterService.get(clusterId)
-      .subscribe(cluster => {
-        this.selectedCluster = cluster;
-        this.environmentService.getAllEnvironmentsByCluster(clusterId)
-          .subscribe(envs => this.environments = envs);
-      });
-  }
-
-  compareClusters(c1: Cluster, c2: Cluster): boolean {
-    if (c1 === null) {
-      return c2 === null;
-    }
-
-    if (c2 === null) {
-      return c1 === null;
-    }
-
-    return c1.id === c2.id;
-  }
-
-  clusterChanged() {
-    this.getEnvironments(this.selectedCluster.id);
   }
 }
