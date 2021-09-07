@@ -44,14 +44,7 @@
         <ng-template pTemplate="right">
           <p-dropdown [options]="environments" [(ngModel)]="selectedEnvironment"
                       placeholder="Environment" optionLabel="name"
-                      (onChange)="environmentChanged()">
-            <ng-template let-environment pTemplate="selectedItem">
-              <div>{{environment.cluster.name}}/{{environment.name}}</div>
-            </ng-template>
-            <ng-template let-environment pTemplate="item">
-              <div>{{environment.cluster.name}}/{{environment.name}}</div>
-            </ng-template>
-          </p-dropdown>
+                      (onChange)="environmentChanged()"></p-dropdown>
         </ng-template>
       </p-toolbar>
 
