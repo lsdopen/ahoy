@@ -35,7 +35,7 @@
       </div>
 
       <div class="p-field" *ngIf="selectedCluster && (environments && (environments.length === 0))">
-        There are no environments in this cluster, <a routerLink="/environment/new" [queryParams]="{clusterId: selectedCluster.id}">create</a> an environment..
+        There are no environments in this cluster, <a routerLink="/environment/new">create</a> an environment..
       </div>
 
     </div>

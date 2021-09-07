@@ -38,6 +38,7 @@ export class EnvironmentDetailComponent implements OnInit {
   editMode = false;
   sourceEnvironment: Environment;
   cluster: Cluster;
+  clusters: Cluster[] = undefined;
   environment: Environment;
   environmentsForValidation: Environment[];
 
@@ -52,47 +53,44 @@ export class EnvironmentDetailComponent implements OnInit {
   }
 
   ngOnInit() {
-    const clusterId = +this.route.snapshot.queryParamMap.get('clusterId');
-    this.clusterService.get(clusterId)
-      .subscribe(cluster => {
-        this.cluster = cluster;
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id === 'new') {
+      this.environment = new Environment();
+      const sourceEnvironmentId = +this.route.snapshot.queryParamMap.get('sourceEnvironmentId');
+      if (sourceEnvironmentId) {
+        this.environmentService.get(sourceEnvironmentId)
+          .subscribe((env) => {
+            this.sourceEnvironment = env;
+            this.setBreadcrumb();
+          });
+      }
 
-        const id = this.route.snapshot.paramMap.get('id');
-        if (id === 'new') {
-          this.environment = new Environment();
-          const sourceEnvironmentId = +this.route.snapshot.queryParamMap.get('sourceEnvironmentId');
-          if (sourceEnvironmentId) {
-            this.environmentService.get(sourceEnvironmentId)
-              .subscribe((env) => {
-                this.sourceEnvironment = env;
-                this.setBreadcrumb();
-              });
-          }
+      const environmentId = +this.route.snapshot.queryParamMap.get('environmentId');
+      const releaseId = +this.route.snapshot.queryParamMap.get('releaseId');
+      if (environmentId && releaseId) {
+        this.environmentReleaseId = EnvironmentReleaseId.new(environmentId, releaseId);
+      }
 
-          const environmentId = +this.route.snapshot.queryParamMap.get('environmentId');
-          const releaseId = +this.route.snapshot.queryParamMap.get('releaseId');
-          if (environmentId && releaseId) {
-            this.environmentReleaseId = EnvironmentReleaseId.new(environmentId, releaseId);
-          }
-
+      this.setBreadcrumb();
+    } else {
+      this.editMode = true;
+      this.environmentService.get(+id)
+        .subscribe((env) => {
+          this.environment = env;
           this.setBreadcrumb();
-        } else {
-          this.editMode = true;
-          this.environmentService.get(+id)
-            .subscribe((env) => {
-              this.environment = env;
-              this.setBreadcrumb();
-            });
-        }
-      });
+        });
+    }
 
-    this.environmentService.getAllEnvironmentsByCluster(clusterId)
+    this.clusterService.getAll().subscribe((clusters) => {
+      this.clusters = clusters;
+    });
+
+    this.environmentService.getAll()
       .subscribe((environments) => this.environmentsForValidation = environments);
   }
 
   private setBreadcrumb() {
     this.breadcrumbService.setItems([
-      {label: this.cluster.name, routerLink: '/clusters'},
       {label: (!this.sourceEnvironment ? (this.editMode ? 'edit' : 'new') : 'duplicate') + ' environment'}
     ]);
   }

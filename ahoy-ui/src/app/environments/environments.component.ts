@@ -32,7 +32,6 @@ import {EnvironmentService} from './environment.service';
   styleUrls: ['./environments.component.scss']
 })
 export class EnvironmentsComponent implements OnInit {
-  selectedCluster: Cluster;
   environments: Environment[] = undefined;
   clusters: Cluster[] = undefined;
 
@@ -49,48 +48,24 @@ export class EnvironmentsComponent implements OnInit {
   ngOnInit() {
     this.setBreadcrumb();
 
-    const clusterId = +this.route.snapshot.queryParamMap.get('clusterId');
+    this.clusterService.getAll().subscribe((clusters) => {
+      this.clusters = clusters;
+    });
 
-    this.clusterService.getAll()
-      .subscribe((clusters) => {
-        this.clusters = clusters;
-
-        if (clusterId === 0) {
-          this.clusterService.getLastUsedId().subscribe((lastUsedClusterId) => {
-            if (lastUsedClusterId !== 0) {
-              this.getEnvironments(lastUsedClusterId);
-            }
-          });
-        } else {
-          this.getEnvironments(clusterId);
-        }
-      });
-  }
-
-  private getEnvironments(clusterId: number) {
-    this.log.debug('getting environments for clusterId=', clusterId);
-
-    this.clusterService.get(clusterId)
-      .subscribe(cluster => {
-        this.selectedCluster = cluster;
-        this.environmentService.getAllEnvironmentsByCluster(clusterId)
-          .subscribe(envs => {
-            this.environments = envs;
-            this.setBreadcrumb();
-          });
-      });
+    this.getEnvironments();
   }
 
   private setBreadcrumb() {
-    if (this.selectedCluster) {
-      this.breadcrumbService.setItems([
-        {label: this.selectedCluster.name, routerLink: '/clusters'},
-        {label: 'environments'}
-      ]);
+    this.breadcrumbService.setItems([{label: 'environments'}]);
+  }
 
-    } else {
-      this.breadcrumbService.setItems([{label: 'environments'}]);
-    }
+  private getEnvironments() {
+    this.log.debug('getting all environments');
+
+    this.environmentService.getAll()
+      .subscribe((environments) => {
+        this.environments = environments;
+      });
   }
 
   delete(event: Event, environment: Environment) {
@@ -101,11 +76,7 @@ export class EnvironmentsComponent implements OnInit {
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
       this.environmentService.destroy(environment)
-        .subscribe(() => this.getEnvironments(this.selectedCluster.id));
+        .subscribe(() => this.getEnvironments());
     });
-  }
-
-  clusterChanged() {
-    this.getEnvironments(this.selectedCluster.id);
   }
 }
