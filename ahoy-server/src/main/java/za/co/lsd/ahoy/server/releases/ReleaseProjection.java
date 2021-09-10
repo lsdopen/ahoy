@@ -31,4 +31,7 @@ public interface ReleaseProjection {
 
 	@Value("#{target.releaseVersions}")
 	List<ReleaseVersionProjection> getReleaseVersions();
+
+	@Value("#{target.latestReleaseVersion()}")
+	ReleaseVersionSummaryProjection getLatestReleaseVersion();
 }

@@ -22,6 +22,7 @@ export class Release {
   name: string;
   releaseVersions: ReleaseVersion[];
   environmentReleases: EnvironmentRelease[];
+  latestReleaseVersion: ReleaseVersion;
 }
 
 export class ReleaseVersion {

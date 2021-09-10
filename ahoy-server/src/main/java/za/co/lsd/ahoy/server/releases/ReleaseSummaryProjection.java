@@ -32,4 +32,7 @@ public interface ReleaseSummaryProjection {
 
 	@Value("#{target.environmentReleases}")
 	List<EnvironmentReleaseSummaryProjection> getEnvironmentReleases();
+
+	@Value("#{target.latestReleaseVersion()}")
+	ReleaseVersionSummaryProjection getLatestReleaseVersion();
 }

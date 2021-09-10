@@ -47,6 +47,13 @@ public class Release implements Serializable {
 	@OrderBy("id")
 	private List<ReleaseVersion> releaseVersions;
 
+	public ReleaseVersion latestReleaseVersion() {
+		if (releaseVersions != null && releaseVersions.size() > 0) {
+			return releaseVersions.get(releaseVersions.size() - 1);
+		}
+		return null;
+	}
+
 	public Release(@NotNull String name) {
 		this.name = name;
 	}

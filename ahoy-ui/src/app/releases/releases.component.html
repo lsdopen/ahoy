@@ -37,7 +37,7 @@
 
       <p-table #dt [value]="releases" dataKey="id" selectionMode="single"
                styleClass="p-datatable-releases p-datatable-striped p-datatable-sm"
-               [scrollable]="true" scrollHeight="600px" [filterDelay]="0" [globalFilterFields]="['name']"
+               [scrollable]="true" scrollHeight="600px" [filterDelay]="0" [globalFilterFields]="['name', 'latestReleaseVersion.version']"
                *ngIf="releases && releases.length > 0">
         <ng-template pTemplate="caption">
           <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
@@ -52,6 +52,9 @@
             <th pSortableColumn="name">Release
               <p-sortIcon field="release.name"></p-sortIcon>
             </th>
+            <th pSortableColumn="latestReleaseVersion.version">Latest version
+              <p-sortIcon field="latestReleaseVersion.version"></p-sortIcon>
+            </th>
             <th>Environments</th>
             <th></th>
           </tr>
@@ -60,6 +63,10 @@
           <tr>
             <td><span class="p-column-title">Release</span>
               {{release.name}}
+            </td>
+            <td><span class="p-column-title">Latest version</span>
+              <span *ngIf="release.latestReleaseVersion">{{release.latestReleaseVersion.version}}</span>
+              <span *ngIf="!release.latestReleaseVersion">-</span>
             </td>
             <td><span class="p-column-title">Environments</span>
               <span *ngFor="let environmentRelease of release.environmentReleases">
