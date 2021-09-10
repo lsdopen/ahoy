@@ -24,6 +24,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,18 +44,22 @@ public class ApplicationEnvironmentConfig {
 
 	@OneToMany(mappedBy = "applicationEnvironmentConfig", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("applicationEnvironmentConfigReference")
+	@OrderBy("id")
 	private List<ApplicationEnvironmentVariable> environmentVariables;
 
 	@OneToMany(mappedBy = "applicationEnvironmentConfig", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("applicationEnvironmentConfigReference")
+	@OrderBy("id")
 	private List<ApplicationConfig> configs;
 
 	@OneToMany(mappedBy = "applicationEnvironmentConfig", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("applicationEnvironmentConfigReference")
+	@OrderBy("id")
 	private List<ApplicationVolume> volumes;
 
 	@OneToMany(mappedBy = "applicationEnvironmentConfig", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("applicationEnvironmentConfigReference")
+	@OrderBy("id")
 	private List<ApplicationSecret> secrets;
 
 	public ApplicationEnvironmentConfig(ApplicationDeploymentId id, ApplicationEnvironmentConfig applicationEnvironmentConfig) {

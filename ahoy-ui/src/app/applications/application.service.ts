@@ -33,7 +33,7 @@ export class ApplicationService {
   }
 
   getAll(): Observable<Application[]> {
-    const url = `/data/applications?projection=application`;
+    const url = `/data/applications?projection=application&sort=id`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.applications as Application[]),
       tap(apps => this.log.debug(`fetched ${apps.length} apps`))

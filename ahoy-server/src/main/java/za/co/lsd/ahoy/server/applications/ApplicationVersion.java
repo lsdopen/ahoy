@@ -59,22 +59,27 @@ public class ApplicationVersion implements Serializable {
 
 	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("applicationVersionReference")
+	@OrderBy("id")
 	private List<ApplicationEnvironmentVariable> environmentVariables;
 
 	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("applicationVersionReference")
+	@OrderBy("id")
 	private List<ApplicationConfig> configs;
 
 	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("applicationVersionReference")
+	@OrderBy("id")
 	private List<ApplicationVolume> volumes;
 
 	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("applicationVersionReference")
+	@OrderBy("id")
 	private List<ApplicationSecret> secrets;
 
 	@ManyToMany(mappedBy = "applicationVersions")
 	@JsonIgnore
+	@OrderBy("id")
 	private List<ReleaseVersion> releaseVersions;
 
 	public ApplicationVersion(@NotNull String version, @NotNull String image, Application application) {

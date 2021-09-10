@@ -46,6 +46,7 @@ public class ReleaseVersion implements Serializable {
             joinColumns = @JoinColumn(name = "RELEASE_VERSION_ID"),
             inverseJoinColumns = @JoinColumn(name = "APPLICATION_VERSIONS_ID"))
     @JsonIgnore
+    @OrderBy("id")
     private List<ApplicationVersion> applicationVersions;
 
     public ReleaseVersion(@NotNull String version, Release release, List<ApplicationVersion> applicationVersions) {

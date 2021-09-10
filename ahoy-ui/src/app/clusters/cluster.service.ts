@@ -37,7 +37,7 @@ export class ClusterService {
   }
 
   getAll(): Observable<Cluster[]> {
-    const url = `/data/clusters`;
+    const url = `/data/clusters?sort=id`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.clusters as Cluster[]),
       tap(apps => this.log.debug(`fetched ${apps.length} clusters`))

@@ -37,6 +37,7 @@ public class Application {
 
 	@OneToMany(mappedBy = "application", cascade = CascadeType.REMOVE)
 	@JsonIgnore
+	@OrderBy("id")
 	private List<ApplicationVersion> applicationVersions;
 
 	public ApplicationVersion latestApplicationVersion() {

@@ -32,7 +32,7 @@ export class ReleaseService {
   }
 
   getAll(): Observable<Release[]> {
-    const url = `/data/releases`;
+    const url = `/data/releases?sort=id`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.releases as Release[]),
       tap((releases) => this.log.debug(`fetched ${releases.length} releases`))
@@ -40,7 +40,7 @@ export class ReleaseService {
   }
 
   getAllSummary(): Observable<Release[]> {
-    const url = `/data/releases?projection=releaseSummary`;
+    const url = `/data/releases?projection=releaseSummary&sort=id`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.releases as Release[]),
       tap((releases) => this.log.debug(`fetched ${releases.length} releases`))
@@ -55,6 +55,7 @@ export class ReleaseService {
     );
   }
 
+  // TODO: the url seems wrong, fix or delete method
   getAllByEnvironment(environmentId: number): Observable<Release[]> {
     const url = `/data/environments/${environmentId}/releases`;
     return this.restClient.get<any>(url).pipe(

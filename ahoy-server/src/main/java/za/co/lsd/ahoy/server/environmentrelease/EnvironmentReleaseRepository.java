@@ -27,7 +27,7 @@ import java.util.Optional;
 public interface EnvironmentReleaseRepository extends CrudRepository<EnvironmentRelease, EnvironmentReleaseId> {
 
 	@RestResource(path = "byRelease", rel = "byRelease")
-	Iterable<EnvironmentRelease> findByRelease_Id(@Param("releaseId") long releaseId);
+	Iterable<EnvironmentRelease> findByRelease_Id_OrderByEnvironmentId(@Param("releaseId") long releaseId);
 
 	Optional<EnvironmentRelease> findByArgoCdUid(String argoCdUid);
 }

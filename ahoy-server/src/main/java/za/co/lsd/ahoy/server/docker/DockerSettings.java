@@ -24,6 +24,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import java.util.List;
 
 @Entity
@@ -34,5 +35,6 @@ public class DockerSettings {
 	private Long id;
 	@OneToMany(mappedBy = "dockerSettings", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference
+	@OrderBy("id")
 	private List<DockerRegistry> dockerRegistries;
 }

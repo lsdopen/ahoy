@@ -65,6 +65,7 @@ public class EnvironmentRelease implements Serializable {
 
 	@OneToMany(mappedBy = "environmentRelease", cascade = CascadeType.REMOVE)
 	@JsonIgnore
+	@OrderBy("id")
 	private List<ReleaseHistory> releaseHistories;
 
 	public EnvironmentRelease(Environment environment, Release release) {

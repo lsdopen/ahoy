@@ -45,6 +45,7 @@ public class Environment implements Serializable {
 	@OneToMany(mappedBy = "environment", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	@ToString.Exclude
+	@OrderBy("environment.id")
 	private List<EnvironmentRelease> environmentReleases;
 
 	public Environment(@NotNull String name, Cluster cluster) {

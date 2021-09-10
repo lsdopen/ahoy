@@ -186,7 +186,7 @@ public class ReleaseService {
 		ReleaseVersion upgradedReleaseVersion = new ReleaseVersion(version, currentReleaseVersion.getRelease(), new ArrayList<>(currentReleaseVersion.getApplicationVersions()));
 		upgradedReleaseVersion = releaseVersionRepository.save(upgradedReleaseVersion);
 
-		Iterable<EnvironmentRelease> environmentReleases = environmentReleaseRepository.findByRelease_Id(currentReleaseVersion.getRelease().getId());
+		Iterable<EnvironmentRelease> environmentReleases = environmentReleaseRepository.findByRelease_Id_OrderByEnvironmentId(currentReleaseVersion.getRelease().getId());
 		for (EnvironmentRelease environmentRelease : environmentReleases) {
 
 			for (ApplicationVersion applicationVersion : upgradedReleaseVersion.getApplicationVersions()) {
