@@ -45,7 +45,7 @@ import {NotificationsService} from './notifications.service';
 export class NotificationsComponent implements OnInit, OnDestroy {
   private notificationsSubscription: Subscription;
   private topBarMenuSubscription: Subscription;
-  private readonly NOTIFICATIONS_TO_SHOW = 3;
+  private readonly NOTIFICATIONS_TO_SHOW = 5;
   notifications: Notification[];
   viewed = true;
 
