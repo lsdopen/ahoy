@@ -45,7 +45,7 @@ import {NotificationsService} from './notifications.service';
 export class NotificationsComponent implements OnInit, OnDestroy {
   private notificationsSubscription: Subscription;
   private topBarMenuSubscription: Subscription;
-  private readonly NOTIFICATIONS_TO_SHOW = 5;
+  private readonly NOTIFICATIONS_TO_SHOW = 3;
   notifications: Notification[];
   viewed = true;
 
@@ -79,10 +79,10 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   }
 
   private onNotification(notification: Notification) {
-    this.notifications.push(notification);
+    this.notifications.unshift(notification);
     const length = this.notifications.length;
     if (length > this.NOTIFICATIONS_TO_SHOW) {
-      this.notifications = this.notifications.slice(length - this.NOTIFICATIONS_TO_SHOW);
+      this.notifications.pop();
     }
     this.viewed = false;
     this.messageService.add({
