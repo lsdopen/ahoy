@@ -249,6 +249,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
       ['/release', this.environmentRelease.id.environmentId, this.environmentRelease.id.releaseId, 'version', this.releaseVersion.id])
       .then(() => this.setBreadcrumb());
     this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
+    this.setupMenuItems();
   }
 
   reloadCurrent() {
