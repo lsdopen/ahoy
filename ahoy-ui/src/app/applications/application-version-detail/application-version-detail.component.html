@@ -142,6 +142,7 @@
             <p-accordionTab header="Secrets" [(selected)]="secretsCategory">
 
               <app-application-secrets
+                [parentForm]="applicationVersionForm"
                 [secrets]="applicationVersion.secrets"
                 [volumes]="applicationVersion.volumes"
                 [environmentVariables]="applicationVersion.environmentVariables"

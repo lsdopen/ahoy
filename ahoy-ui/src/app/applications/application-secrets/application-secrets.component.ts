@@ -25,6 +25,7 @@ import {ApplicationEnvironmentVariable, ApplicationSecret, ApplicationVolume} fr
   viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
 })
 export class ApplicationSecretsComponent implements AfterContentChecked {
+  @Input() parentForm: NgForm;
   @Input() secrets: ApplicationSecret[];
   @Input() volumes: ApplicationVolume[];
   @Input() environmentVariables: ApplicationEnvironmentVariable[];
@@ -68,5 +69,9 @@ export class ApplicationSecretsComponent implements AfterContentChecked {
         (this.routeTlsSecretName !== undefined ? this.routeTlsSecretName === secret.name : false);
     }
     return false;
+  }
+
+  secretAlreadyExists(secretIndex: number) {
+    return this.parentForm.form.controls['secretName' + secretIndex]?.hasError('secretNameNotUnique');
   }
 }

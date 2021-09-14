@@ -115,6 +115,7 @@ import {GitSettingsComponent} from './settings/git-settings/git-settings.compone
 import {SettingsComponent} from './settings/settings.component';
 import {TaskEventsListenerComponent} from './taskevents/task-events-listener/task-events-listener.component';
 import {ErrorService} from './util/error.service';
+import {SecretNameUniqueValidatorDirective} from "./applications/application-secrets/secret-name-unique-validator.directive";
 
 @NgModule({
   declarations: [
@@ -150,6 +151,7 @@ import {ErrorService} from './util/error.service';
     ApplicationVersionsComponent,
     ApplicationVersionDetailComponent,
     ApplicationNameUniqueValidatorDirective,
+    SecretNameUniqueValidatorDirective,
     ApplicationVersionUniqueValidatorDirective,
     ApplicationAllowedValidatorDirective,
     NotificationsComponent,
