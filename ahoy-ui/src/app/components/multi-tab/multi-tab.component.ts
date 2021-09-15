@@ -25,6 +25,8 @@ export class MultiTabComponent implements OnInit, AfterContentChecked {
   @Input() content: TemplateRef<any>;
   @Input() items: object[];
   @Input() itemFactory: TabItemFactory<object>;
+  @Input() deleteDisabled: (item) => boolean;
+  @Input() deleteDisabledTooltip: (item) => string;
   indexes: number[] = [];
   indexCount = 0;
   selectedIndex = 0;
@@ -58,6 +60,24 @@ export class MultiTabComponent implements OnInit, AfterContentChecked {
         this.selectedIndex = this.items.length - 1;
       }
     });
+  }
+
+  isDeleteDisabled(): boolean {
+    if (this.deleteDisabled) {
+      const item = this.items[this.selectedIndex];
+      return this.deleteDisabled(item);
+    }
+    return false;
+  }
+
+  getDeleteDisabledTooltip(): string {
+    if (this.deleteDisabled && this.deleteDisabledTooltip) {
+      const item = this.items[this.selectedIndex];
+      if (this.deleteDisabled(item)) {
+        return this.deleteDisabledTooltip(item);
+      }
+    }
+    return '';
   }
 }
 

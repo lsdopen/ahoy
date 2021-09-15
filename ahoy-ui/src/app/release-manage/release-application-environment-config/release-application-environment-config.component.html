@@ -94,20 +94,33 @@
 
             <p-accordionTab header="Volumes" [(selected)]="volumesCategory">
 
-              <app-application-volumes
-                [volumes]="environmentConfig.volumes" [secrets]="environmentConfig.secrets">
-              </app-application-volumes>
+              <app-multi-tab [content]="volumeContent" [items]="environmentConfig.volumes" [itemFactory]="applicationVolumeFactory()">
+
+                <ng-template #volumeContent let-volume let-volumeIndex="index">
+                  <app-application-volume-detail [volume]="volume" [volumeIndex]="volumeIndex" [secrets]="environmentConfig.secrets">
+                  </app-application-volume-detail>
+                </ng-template>
+
+              </app-multi-tab>
 
             </p-accordionTab>
 
             <p-accordionTab header="Secrets" [(selected)]="secretsCategory">
 
-              <app-application-secrets
-                [secrets]="environmentConfig.secrets"
-                [volumes]="environmentConfig.volumes"
-                [environmentVariables]="environmentConfig.environmentVariables"
-                [routeTlsSecretName]="environmentConfig.tlsSecretName">
-              </app-application-secrets>
+              <app-multi-tab [content]="secretContent" [items]="environmentConfig.secrets" [itemFactory]="applicationSecretFactory()"
+                             [deleteDisabled]="secretInUse()" [deleteDisabledTooltip]="secretInUseTooltip()">
+
+                <ng-template #secretContent let-secret let-secretIndex="index">
+                  <app-application-secrets
+                    [parentForm]="environmentConfigForm"
+                    [secret]="secret"
+                    [secretIndex]="secretIndex"
+                    [secretInUse]="secretInUse()"
+                    [secretsForValidation]="environmentConfig.secrets">
+                  </app-application-secrets>
+                </ng-template>
+
+              </app-multi-tab>
 
             </p-accordionTab>
 

@@ -223,4 +223,32 @@ export class ApplicationVersionDetailComponent implements OnInit {
       return new ApplicationVolume();
     };
   }
+
+  applicationSecretFactory(): TabItemFactory<ApplicationSecret> {
+    return (): ApplicationSecret => {
+      const applicationSecret = new ApplicationSecret();
+      applicationSecret.type = 'Generic';
+      applicationSecret.data = {};
+      return applicationSecret;
+    };
+  }
+
+  secretInUse() {
+    return (secret: ApplicationSecret): boolean => {
+      if (secret && secret.name) {
+        const inUseInVolumes = this.applicationVersion.volumes
+          .filter(volume => volume.type === 'Secret' && volume.secretName === secret.name).length > 0;
+        const inUseInEnvironmentVariables = this.applicationVersion.environmentVariables
+          .filter(envVar => envVar.type === 'Secret' && envVar.secretName === secret.name).length > 0;
+        return inUseInVolumes || inUseInEnvironmentVariables;
+      }
+      return false;
+    };
+  }
+
+  secretInUseTooltip() {
+    return (secret: ApplicationSecret): string => {
+      return 'Secret in use';
+    };
+  }
 }

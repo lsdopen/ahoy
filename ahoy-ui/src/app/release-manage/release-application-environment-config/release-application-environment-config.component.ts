@@ -19,8 +19,9 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../../app.breadcrumb.service';
-import {Application, ApplicationEnvironmentConfig, ApplicationEnvironmentConfigId, ApplicationSecret, ApplicationVersion} from '../../applications/application';
+import {Application, ApplicationEnvironmentConfig, ApplicationEnvironmentConfigId, ApplicationSecret, ApplicationVersion, ApplicationVolume} from '../../applications/application';
 import {ApplicationService} from '../../applications/application.service';
+import {TabItemFactory} from '../../components/multi-tab/multi-tab.component';
 import {EnvironmentRelease, EnvironmentReleaseId} from '../../environment-release/environment-release';
 import {EnvironmentReleaseService} from '../../environment-release/environment-release.service';
 import {Environment} from '../../environments/environment';
@@ -148,5 +149,40 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
       return this.environmentConfig.secrets.filter(secret => secret.type === 'Tls');
     }
     return [];
+  }
+
+  applicationVolumeFactory(): TabItemFactory<ApplicationVolume> {
+    return (): ApplicationVolume => {
+      return new ApplicationVolume();
+    };
+  }
+
+  applicationSecretFactory(): TabItemFactory<ApplicationSecret> {
+    return (): ApplicationSecret => {
+      const applicationSecret = new ApplicationSecret();
+      applicationSecret.type = 'Generic';
+      applicationSecret.data = {};
+      return applicationSecret;
+    };
+  }
+
+  secretInUse() {
+    return (secret: ApplicationSecret): boolean => {
+      if (secret && secret.name) {
+        const inUseInVolumes = this.environmentConfig.volumes
+          .filter(volume => volume.type === 'Secret' && volume.secretName === secret.name).length > 0;
+        const inUseInEnvironmentVariables = this.environmentConfig.environmentVariables
+          .filter(envVar => envVar.type === 'Secret' && envVar.secretName === secret.name).length > 0;
+        return inUseInVolumes || inUseInEnvironmentVariables ||
+          (this.environmentConfig.tlsSecretName !== undefined ? this.environmentConfig.tlsSecretName === secret.name : false);
+      }
+      return false;
+    };
+  }
+
+  secretInUseTooltip() {
+    return (secret: ApplicationSecret): string => {
+      return 'Secret in use';
+    };
   }
 }

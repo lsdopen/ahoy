@@ -133,9 +133,9 @@
 
             <p-accordionTab header="Volumes" [(selected)]="volumesCategory">
 
-              <app-multi-tab [content]="content" [items]="applicationVersion.volumes" [itemFactory]="applicationVolumeFactory()">
+              <app-multi-tab [content]="volumeContent" [items]="applicationVersion.volumes" [itemFactory]="applicationVolumeFactory()">
 
-                <ng-template #content let-volume let-volumeIndex="index">
+                <ng-template #volumeContent let-volume let-volumeIndex="index">
                   <app-application-volume-detail [volume]="volume" [volumeIndex]="volumeIndex" [secrets]="applicationVersion.secrets">
                   </app-application-volume-detail>
                 </ng-template>
@@ -146,13 +146,20 @@
 
             <p-accordionTab header="Secrets" [(selected)]="secretsCategory">
 
-              <app-application-secrets
-                [parentForm]="applicationVersionForm"
-                [secrets]="applicationVersion.secrets"
-                [volumes]="applicationVersion.volumes"
-                [environmentVariables]="applicationVersion.environmentVariables"
-                [routeTlsSecretName]="undefined">
-              </app-application-secrets>
+              <app-multi-tab [content]="secretContent" [items]="applicationVersion.secrets" [itemFactory]="applicationSecretFactory()"
+                             [deleteDisabled]="secretInUse()" [deleteDisabledTooltip]="secretInUseTooltip()">
+
+                <ng-template #secretContent let-secret let-secretIndex="index">
+                  <app-application-secrets
+                    [parentForm]="applicationVersionForm"
+                    [secret]="secret"
+                    [secretIndex]="secretIndex"
+                    [secretInUse]="secretInUse()"
+                    [secretsForValidation]="applicationVersion.secrets">
+                  </app-application-secrets>
+                </ng-template>
+
+              </app-multi-tab>
 
             </p-accordionTab>
           </p-accordion>

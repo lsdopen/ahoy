@@ -14,9 +14,9 @@
  *    limitations under the License.
  */
 
-import {AfterContentChecked, ChangeDetectorRef, Component, Input} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {ControlContainer, NgForm} from '@angular/forms';
-import {ApplicationEnvironmentVariable, ApplicationSecret, ApplicationVolume} from '../application';
+import {ApplicationSecret} from '../application';
 
 @Component({
   selector: 'app-application-secrets',
@@ -24,51 +24,14 @@ import {ApplicationEnvironmentVariable, ApplicationSecret, ApplicationVolume} fr
   styleUrls: ['./application-secrets.component.scss'],
   viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
 })
-export class ApplicationSecretsComponent implements AfterContentChecked {
+export class ApplicationSecretsComponent {
   @Input() parentForm: NgForm;
-  @Input() secrets: ApplicationSecret[];
-  @Input() volumes: ApplicationVolume[];
-  @Input() environmentVariables: ApplicationEnvironmentVariable[];
-  @Input() routeTlsSecretName: string;
+  @Input() secret: ApplicationSecret;
+  @Input() secretIndex: number;
+  @Input() secretsForValidation: ApplicationSecret[];
+  @Input() secretInUse: (secret) => boolean;
 
-  selectedSecretIndex = 0;
-
-  constructor(private cd: ChangeDetectorRef) {
-  }
-
-  ngAfterContentChecked(): void {
-    this.cd.detectChanges();
-  }
-
-  addSecret() {
-    const applicationSecret = new ApplicationSecret();
-    applicationSecret.type = 'Generic';
-    applicationSecret.data = {};
-    this.secrets.push(applicationSecret);
-    setTimeout(() => this.selectedSecretIndex = this.secrets.length - 1);
-  }
-
-  deleteSecret() {
-    this.secrets.splice(this.selectedSecretIndex, 1);
-    setTimeout(() => {
-      if (this.selectedSecretIndex === this.secrets.length) {
-        // only move one tab back if its the last tab
-        this.selectedSecretIndex = this.secrets.length - 1;
-      }
-    });
-  }
-
-  secretInUse(): boolean {
-    const secret = this.secrets[this.selectedSecretIndex];
-    if (secret && secret.name) {
-      const inUseInVolumes = this.volumes
-        .filter(volume => volume.type === 'Secret' && volume.secretName === secret.name).length > 0;
-      const inUseInEnvironmentVariables = this.environmentVariables
-        .filter(envVar => envVar.type === 'Secret' && envVar.secretName === secret.name).length > 0;
-      return inUseInVolumes || inUseInEnvironmentVariables ||
-        (this.routeTlsSecretName !== undefined ? this.routeTlsSecretName === secret.name : false);
-    }
-    return false;
+  constructor() {
   }
 
   secretAlreadyExists(secretIndex: number) {
