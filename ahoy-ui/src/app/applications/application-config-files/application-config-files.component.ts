@@ -14,8 +14,9 @@
  *    limitations under the License.
  */
 
-import {AfterContentChecked, ChangeDetectorRef, Component, Input} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {ControlContainer, NgForm} from '@angular/forms';
+import {TabItemFactory} from '../../components/multi-tab/multi-tab.component';
 import {ApplicationConfig, ApplicationVersion} from '../application';
 
 @Component({
@@ -24,31 +25,17 @@ import {ApplicationConfig, ApplicationVersion} from '../application';
   styleUrls: ['./application-config-files.component.scss'],
   viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
 })
-export class ApplicationConfigFilesComponent implements AfterContentChecked {
+export class ApplicationConfigFilesComponent {
   @Input() applicationVersion: ApplicationVersion;
   @Input() configs: ApplicationConfig[];
   @Input() editPath = true;
-  selectedConfigIndex = 0;
 
-  constructor(private cd: ChangeDetectorRef) {
+  constructor() {
   }
 
-  ngAfterContentChecked(): void {
-    this.cd.detectChanges();
-  }
-
-  addConfig() {
-    this.configs.push(new ApplicationConfig());
-    setTimeout(() => this.selectedConfigIndex = this.configs.length - 1);
-  }
-
-  deleteConfig() {
-    this.configs.splice(this.selectedConfigIndex, 1);
-    setTimeout(() => {
-      if (this.selectedConfigIndex === this.configs.length) {
-        // only move one tab back if its the last tab
-        this.selectedConfigIndex = this.configs.length - 1;
-      }
-    });
+  applicationConfigFactory(): TabItemFactory<ApplicationConfig> {
+    return (): ApplicationConfig => {
+      return new ApplicationConfig();
+    };
   }
 }
