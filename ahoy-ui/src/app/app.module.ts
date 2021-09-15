@@ -70,11 +70,11 @@ import {ApplicationEnvVariablesComponent} from './applications/application-env-v
 import {ApplicationNameUniqueValidatorDirective} from './applications/application-name-unique-validator.directive';
 import {ApplicationSecretDataComponent} from './applications/application-secret-data/application-secret-data.component';
 import {ApplicationSecretsComponent} from './applications/application-secrets/application-secrets.component';
+import {SecretNameUniqueValidatorDirective} from './applications/application-secrets/secret-name-unique-validator.directive';
 import {ApplicationVersionDetailComponent} from './applications/application-version-detail/application-version-detail.component';
 import {ApplicationVersionUniqueValidatorDirective} from './applications/application-version-unique-validator.directive';
 import {ApplicationVersionsComponent} from './applications/application-versions/application-versions.component';
 import {ApplicationVolumeDetailComponent} from './applications/application-volume-detail/application-volume-detail.component';
-import {ApplicationVolumesComponent} from './applications/application-volumes/application-volumes.component';
 import {ApplicationsComponent} from './applications/applications.component';
 import {DockerRegistriesComponent} from './applications/docker-registries/docker-registries.component';
 import {ClusterDetailComponent} from './clusters/cluster-detail/cluster-detail.component';
@@ -82,6 +82,7 @@ import {ClustersComponent} from './clusters/clusters.component';
 import {ConfirmDialogComponent} from './components/confirm-dialog/confirm-dialog.component';
 import {VerifyValidatorDirective} from './components/confirm-dialog/verify-validator.directive';
 import {DescriptionDialogComponent} from './components/description-dialog/description-dialog.component';
+import {MultiTabComponent} from './components/multi-tab/multi-tab.component';
 import {DashboardEnvironmentComponent} from './dashboard/dashboard-environment/dashboard-environment.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {AddReleaseDialogComponent} from './environment-release/add-release-dialog/add-release-dialog.component';
@@ -115,7 +116,6 @@ import {GitSettingsComponent} from './settings/git-settings/git-settings.compone
 import {SettingsComponent} from './settings/settings.component';
 import {TaskEventsListenerComponent} from './taskevents/task-events-listener/task-events-listener.component';
 import {ErrorService} from './util/error.service';
-import {SecretNameUniqueValidatorDirective} from "./applications/application-secrets/secret-name-unique-validator.directive";
 
 @NgModule({
   declarations: [
@@ -174,11 +174,11 @@ import {SecretNameUniqueValidatorDirective} from "./applications/application-sec
     ApplicationVolumeDetailComponent,
     EnvironmentReleaseDeploymentStatusComponent,
     ApplicationConfigFilesComponent,
-    ApplicationVolumesComponent,
     ApplicationSecretsComponent,
     EnvironmentReleasesComponent,
     ReleaseDetailComponent,
-    AddToEnvironmentDialogComponent
+    AddToEnvironmentDialogComponent,
+    MultiTabComponent
   ],
   imports: [
     BrowserModule,

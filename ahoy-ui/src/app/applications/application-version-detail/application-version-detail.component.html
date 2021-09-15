@@ -133,9 +133,14 @@
 
             <p-accordionTab header="Volumes" [(selected)]="volumesCategory">
 
-              <app-application-volumes
-                [volumes]="applicationVersion.volumes" [secrets]="applicationVersion.secrets">
-              </app-application-volumes>
+              <app-multi-tab [content]="content" [items]="applicationVersion.volumes" [itemFactory]="applicationVolumeFactory()">
+
+                <ng-template #content let-volume let-volumeIndex="index">
+                  <app-application-volume-detail [volume]="volume" [volumeIndex]="volumeIndex" [secrets]="applicationVersion.secrets">
+                  </app-application-volume-detail>
+                </ng-template>
+
+              </app-multi-tab>
 
             </p-accordionTab>
 

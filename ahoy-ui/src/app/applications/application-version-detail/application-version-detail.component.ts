@@ -18,6 +18,7 @@ import {Location} from '@angular/common';
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {AppBreadcrumbService} from '../../app.breadcrumb.service';
+import {TabItemFactory} from '../../components/multi-tab/multi-tab.component';
 import {ReleaseService} from '../../releases/release.service';
 import {Application, ApplicationConfig, ApplicationSecret, ApplicationVersion, ApplicationVolume} from '../application';
 import {ApplicationService} from '../application.service';
@@ -215,5 +216,11 @@ export class ApplicationVersionDetailComponent implements OnInit {
       appSecret.data = applicationSecret.data;
       return appSecret;
     });
+  }
+
+  applicationVolumeFactory(): TabItemFactory<ApplicationVolume> {
+    return (): ApplicationVolume => {
+      return new ApplicationVolume();
+    };
   }
 }

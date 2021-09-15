@@ -16,17 +16,16 @@
 
 <div class="p-fluid">
   <div class="p-col-12 p-md-5">
-    <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-plain p-mr-2" (click)="addVolume()"></button>
-    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteVolume()"></button>
+    <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-plain p-mr-2" (click)="add()"></button>
+    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="delete()"></button>
   </div>
 
-  <div *ngIf="volumes && volumes.length > 0" class="p-col-12">
-    <p-tabView orientation="left" [(activeIndex)]="selectedVolumeIndex">
-      <p-tabPanel [header]="volume.name ? volume.name : '<new>'"
-                  *ngFor="let volume of volumes; let volumeIndex = index" [selected]="volumeIndex == 0">
+  <div *ngIf="items && items.length > 0" class="p-col-12">
+    <p-tabView orientation="left" [(activeIndex)]="selectedIndex">
+      <p-tabPanel [header]="item.name ? item.name : '<new>'"
+                  *ngFor="let item of items; let itemIndex = index" [selected]="itemIndex == 0">
 
-        <app-application-volume-detail [volume]="volume" [volumeIndex]="volumeIndex" [secrets]="secrets">
-        </app-application-volume-detail>
+        <ng-template [ngTemplateOutlet]="content" [ngTemplateOutletContext]="{$implicit: item, index: indexes[itemIndex]}"></ng-template>
 
       </p-tabPanel>
     </p-tabView>
