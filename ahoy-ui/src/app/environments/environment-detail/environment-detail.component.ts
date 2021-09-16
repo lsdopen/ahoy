@@ -25,6 +25,7 @@ import {ClusterService} from '../../clusters/cluster.service';
 import {EnvironmentReleaseId} from '../../environment-release/environment-release';
 import {EnvironmentReleaseService} from '../../environment-release/environment-release.service';
 import {ReleaseManageService} from '../../release-manage/release-manage.service';
+import {PromoteOptions} from '../../releases/release';
 import {Environment} from '../environment';
 import {EnvironmentService} from '../environment.service';
 
@@ -34,7 +35,8 @@ import {EnvironmentService} from '../environment.service';
   styleUrls: ['./environment-detail.component.scss']
 })
 export class EnvironmentDetailComponent implements OnInit {
-  private environmentReleaseId: EnvironmentReleaseId;
+  private promoteEnvironmentReleaseId: EnvironmentReleaseId;
+  private promoteCopyEnvironmentConfig: boolean;
   editMode = false;
   sourceEnvironment: Environment;
   cluster: Cluster;
@@ -68,7 +70,8 @@ export class EnvironmentDetailComponent implements OnInit {
       const environmentId = +this.route.snapshot.queryParamMap.get('environmentId');
       const releaseId = +this.route.snapshot.queryParamMap.get('releaseId');
       if (environmentId && releaseId) {
-        this.environmentReleaseId = EnvironmentReleaseId.new(environmentId, releaseId);
+        this.promoteEnvironmentReleaseId = EnvironmentReleaseId.new(environmentId, releaseId);
+        this.promoteCopyEnvironmentConfig = JSON.parse(this.route.snapshot.queryParamMap.get('copyEnvironmentConfig'));
       }
 
       this.setBreadcrumb();
@@ -122,9 +125,12 @@ export class EnvironmentDetailComponent implements OnInit {
           return of(environment);
         }),
         mergeMap((environment: Environment) => {
-          if (this.environmentReleaseId) {
+          if (this.promoteEnvironmentReleaseId) {
             // we're promoting to this new environment
-            return this.releaseService.promote(this.environmentReleaseId, environment.id);
+            const promoteOptions = new PromoteOptions();
+            promoteOptions.destEnvironmentId = environment.id;
+            promoteOptions.copyEnvironmentConfig = this.promoteCopyEnvironmentConfig;
+            return this.releaseService.promote(this.promoteEnvironmentReleaseId, promoteOptions);
           }
           return of(environment);
         })

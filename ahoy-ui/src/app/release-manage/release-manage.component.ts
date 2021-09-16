@@ -28,7 +28,7 @@ import {DeployDetails, EnvironmentRelease} from '../environment-release/environm
 import {EnvironmentReleaseService} from '../environment-release/environment-release.service';
 import {Environment} from '../environments/environment';
 import {EnvironmentService} from '../environments/environment.service';
-import {Release, ReleaseVersion, UpgradeOptions} from '../releases/release';
+import {PromoteOptions, Release, ReleaseVersion, UpgradeOptions} from '../releases/release';
 import {TaskEvent} from '../taskevents/task-events';
 import {LoggerService} from '../util/logger.service';
 import {CopyEnvironmentConfigDialogComponent} from './copy-environment-config-dialog/copy-environment-config-dialog.component';
@@ -194,12 +194,13 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     const dialogConfig = new DynamicDialogConfig();
     dialogConfig.header = `Promote ${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} to:`;
     dialogConfig.data = {environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion};
+    dialogConfig.width = '25%';
 
     const dialogRef = this.dialogService.open(PromoteDialogComponent, dialogConfig);
     dialogRef.onClose.pipe(
       filter((result) => result !== undefined), // cancelled
-      mergeMap((destEnvironment) => {
-        return this.releaseManageService.promote(this.environmentRelease.id, destEnvironment.id);
+      mergeMap((promoteOptions: PromoteOptions) => {
+        return this.releaseManageService.promote(this.environmentRelease.id, promoteOptions);
       })
     ).subscribe((newEnvironmentRelease: EnvironmentRelease) => this.reload(newEnvironmentRelease.id.environmentId, this.releaseVersion.id));
   }

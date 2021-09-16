@@ -21,7 +21,7 @@ import {DeployDetails, EnvironmentRelease, EnvironmentReleaseId} from '../enviro
 import {Environment} from '../environments/environment';
 import {Notification} from '../notifications/notification';
 import {NotificationsService} from '../notifications/notifications.service';
-import {Release, ReleaseVersion, UpgradeOptions} from '../releases/release';
+import {PromoteOptions, Release, ReleaseVersion, UpgradeOptions} from '../releases/release';
 import {LoggerService} from '../util/logger.service';
 import {RestClientService} from '../util/rest-client.service';
 
@@ -95,10 +95,10 @@ export class ReleaseManageService {
     );
   }
 
-  promote(environmentReleaseId: EnvironmentReleaseId, destEnvironmentId: number): Observable<EnvironmentRelease> {
-    this.log.debug(`promoting environment release: ${environmentReleaseId} to environment: ${destEnvironmentId}`);
-    const url = `/api/release/promote/${environmentReleaseId.environmentId}/${environmentReleaseId.releaseId}/${destEnvironmentId}`;
-    return this.restClient.post<EnvironmentRelease>(url).pipe(
+  promote(environmentReleaseId: EnvironmentReleaseId, promoteOptions: PromoteOptions): Observable<EnvironmentRelease> {
+    this.log.debug(`promoting environment release: ${environmentReleaseId} to environment: ${promoteOptions.destEnvironmentId}`);
+    const url = `/api/release/promote/${environmentReleaseId.environmentId}/${environmentReleaseId.releaseId}`;
+    return this.restClient.post<EnvironmentRelease>(url, promoteOptions).pipe(
       tap((environmentRelease) => {
         this.log.debug('promoted release to new environment', environmentRelease);
         const text = `${(environmentRelease.release as Release).name} `

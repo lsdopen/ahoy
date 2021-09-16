@@ -20,7 +20,7 @@ import {Cluster} from '../../clusters/cluster';
 import {EnvironmentRelease} from '../../environment-release/environment-release';
 import {Environment} from '../../environments/environment';
 import {EnvironmentService} from '../../environments/environment.service';
-import {Release, ReleaseVersion} from '../../releases/release';
+import {PromoteOptions, Release, ReleaseVersion} from '../../releases/release';
 
 @Component({
   selector: 'app-promote-dialog',
@@ -34,6 +34,7 @@ export class PromoteDialogComponent implements OnInit {
   release: Release;
   releaseVersion: ReleaseVersion;
   cluster: Cluster;
+  promoteOptions = new PromoteOptions();
 
   constructor(private environmentService: EnvironmentService,
               public ref: DynamicDialogRef,

@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
+import za.co.lsd.ahoy.server.releases.PromoteOptions;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 import za.co.lsd.ahoy.server.releases.ReleaseVersionRepository;
 import za.co.lsd.ahoy.server.releases.UpgradeOptions;
@@ -77,14 +78,16 @@ public class ReleaseController {
 		return new ResponseEntity<>(undeployedEnvironmentRelease.get(), new HttpHeaders(), HttpStatus.OK);
 	}
 
-	@PostMapping("/promote/{environmentId}/{releaseId}/{destEnvironmentId}")
-	public ResponseEntity<EnvironmentRelease> promote(@PathVariable Long environmentId, @PathVariable Long releaseId, @PathVariable Long destEnvironmentId) {
-		EnvironmentRelease promotedEnvironmentRelease = releaseService.promote(environmentId, releaseId, destEnvironmentId);
+	@PostMapping("/promote/{environmentId}/{releaseId}")
+	public ResponseEntity<EnvironmentRelease> promote(@PathVariable Long environmentId, @PathVariable Long releaseId,
+													  @RequestBody PromoteOptions promoteOptions) {
+		EnvironmentRelease promotedEnvironmentRelease = releaseService.promote(environmentId, releaseId, promoteOptions);
 		return new ResponseEntity<>(promotedEnvironmentRelease, new HttpHeaders(), HttpStatus.OK);
 	}
 
 	@PostMapping("/upgrade/{releaseVersionId}")
-	public ResponseEntity<ReleaseVersion> upgrade(@PathVariable Long releaseVersionId, @RequestBody UpgradeOptions upgradeOptions) {
+	public ResponseEntity<ReleaseVersion> upgrade(@PathVariable Long releaseVersionId,
+												  @RequestBody UpgradeOptions upgradeOptions) {
 		ReleaseVersion upgradedReleaseVersion = releaseService.upgrade(releaseVersionId, upgradeOptions);
 		return new ResponseEntity<>(upgradedReleaseVersion, new HttpHeaders(), HttpStatus.OK);
 	}

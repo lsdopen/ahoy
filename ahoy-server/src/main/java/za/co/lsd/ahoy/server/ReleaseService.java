@@ -35,6 +35,7 @@ import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.environments.EnvironmentException;
 import za.co.lsd.ahoy.server.environments.EnvironmentRepository;
+import za.co.lsd.ahoy.server.releases.PromoteOptions;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 import za.co.lsd.ahoy.server.releases.ReleaseVersionRepository;
 import za.co.lsd.ahoy.server.releases.UpgradeOptions;
@@ -152,8 +153,9 @@ public class ReleaseService {
 	}
 
 	@Transactional
-	public EnvironmentRelease promote(Long environmentId, Long releaseId, Long destEnvironmentId) {
+	public EnvironmentRelease promote(Long environmentId, Long releaseId, PromoteOptions promoteOptions) {
 		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(environmentId, releaseId);
+		Long destEnvironmentId = promoteOptions.getDestEnvironmentId();
 		log.info("Promoting environment release: {} to environment: {}", environmentReleaseId, destEnvironmentId);
 
 		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
@@ -172,8 +174,17 @@ public class ReleaseService {
 			promotedEnvironmentRelease.setId(new EnvironmentReleaseId());
 			promotedEnvironmentRelease.setRelease(environmentRelease.getRelease());
 			promotedEnvironmentRelease.setEnvironment(destEnvironment);
+			promotedEnvironmentRelease = environmentReleaseRepository.save(promotedEnvironmentRelease);
 
-			return environmentReleaseRepository.save(promotedEnvironmentRelease);
+			if (promoteOptions.isCopyEnvironmentConfig()) {
+				log.info("Copy environment config selected, copying config to promoted environment release: {}", promotedEnvironmentRelease);
+
+				for (ReleaseVersion releaseVersion : environmentRelease.getRelease().getReleaseVersions()) {
+					copyEnvironmentConfig(environmentRelease, promotedEnvironmentRelease, releaseVersion);
+				}
+			}
+
+			return promotedEnvironmentRelease;
 		}
 	}
 
@@ -192,21 +203,7 @@ public class ReleaseService {
 
 			Iterable<EnvironmentRelease> environmentReleases = environmentReleaseRepository.findByRelease_Id_OrderByEnvironmentId(currentReleaseVersion.getRelease().getId());
 			for (EnvironmentRelease environmentRelease : environmentReleases) {
-
-				for (ApplicationVersion applicationVersion : upgradedReleaseVersion.getApplicationVersions()) {
-					Optional<ApplicationEnvironmentConfig> currentEnvironmentConfig = environmentConfigProvider.environmentConfigFor(
-						environmentRelease, currentReleaseVersion, applicationVersion);
-
-					if (currentEnvironmentConfig.isPresent()) {
-						ApplicationDeploymentId id = new ApplicationDeploymentId(
-							environmentRelease.getId(),
-							upgradedReleaseVersion.getId(),
-							applicationVersion.getId());
-
-						ApplicationEnvironmentConfig newEnvironmentConfig = new ApplicationEnvironmentConfig(id, currentEnvironmentConfig.get());
-						applicationEnvironmentConfigRepository.save(newEnvironmentConfig);
-					}
-				}
+				copyEnvironmentConfig(environmentRelease, currentReleaseVersion, upgradedReleaseVersion);
 			}
 		}
 
@@ -225,25 +222,46 @@ public class ReleaseService {
 		ReleaseVersion destReleaseVersion = releaseVersionRepository.findById(destReleaseVersionId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find destReleaseVersionId: " + destReleaseVersionId));
 
+		copyEnvironmentConfig(environmentRelease, sourceReleaseVersion, destReleaseVersion);
+
+		return environmentRelease;
+	}
+
+	/**
+	 * Copies environment config from one release version to another for the same environment release.
+	 */
+	private void copyEnvironmentConfig(EnvironmentRelease environmentRelease, ReleaseVersion sourceReleaseVersion, ReleaseVersion destReleaseVersion) {
+		this.copyEnvironmentConfig(environmentRelease, sourceReleaseVersion, environmentRelease, destReleaseVersion);
+	}
+
+	/**
+	 * Copies environment config from one environment release to another for the same version.
+	 */
+	private void copyEnvironmentConfig(EnvironmentRelease sourceEnvironmentRelease, EnvironmentRelease destEnvironmentRelease, ReleaseVersion releaseVersion) {
+		this.copyEnvironmentConfig(sourceEnvironmentRelease, releaseVersion, destEnvironmentRelease, releaseVersion);
+	}
+
+	/**
+	 * Copies environment config from one environment release version to another environment release version.
+	 */
+	private void copyEnvironmentConfig(EnvironmentRelease sourceEnvironmentRelease, ReleaseVersion sourceReleaseVersion, EnvironmentRelease destEnvironmentRelease, ReleaseVersion destReleaseVersion) {
 		for (ApplicationVersion applicationVersion : destReleaseVersion.getApplicationVersions()) {
 			Optional<ApplicationEnvironmentConfig> sourceConfig = environmentConfigProvider.environmentConfigFor(
-				environmentRelease, sourceReleaseVersion, applicationVersion);
+				sourceEnvironmentRelease, sourceReleaseVersion, applicationVersion);
 
 			if (sourceConfig.isPresent()) {
 				Optional<ApplicationEnvironmentConfig> destConfig = environmentConfigProvider.environmentConfigFor(
-					environmentRelease, destReleaseVersion, applicationVersion);
+					destEnvironmentRelease, destReleaseVersion, applicationVersion);
 
 				if (destConfig.isEmpty()) {
 					ApplicationDeploymentId id = new ApplicationDeploymentId(
-						environmentRelease.getId(),
+						destEnvironmentRelease.getId(),
 						destReleaseVersion.getId(),
 						applicationVersion.getId());
 					applicationEnvironmentConfigRepository.save(new ApplicationEnvironmentConfig(id, sourceConfig.get()));
 				}
 			}
 		}
-
-		return environmentRelease;
 	}
 
 	@Async("deploymentTaskExecutor")

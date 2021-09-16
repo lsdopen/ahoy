@@ -33,6 +33,11 @@ export class ReleaseVersion {
   releaseName: string;
 }
 
+export class PromoteOptions {
+  destEnvironmentId: number;
+  copyEnvironmentConfig = false;
+}
+
 export class UpgradeOptions {
   version: string;
   copyEnvironmentConfig = true;

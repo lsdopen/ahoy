@@ -16,17 +16,29 @@
 
 <form #f="ngForm">
   <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2"
-          routerLink="/environment/new" [queryParams]="{environmentId: environmentRelease.id.environmentId, releaseId: environmentRelease.id.releaseId}"
+          routerLink="/environment/new" [queryParams]="{environmentId: environmentRelease.id.environmentId, releaseId: environmentRelease.id.releaseId, copyEnvironmentConfig: promoteOptions.copyEnvironmentConfig}"
           (click)="cancel()"></button>
 
-  <div class="p-fluid">
-    <p-dropdown id="environment" [options]="environments" [(ngModel)]="selected" placeholder="Environment" optionLabel="name" name="environment" required
-                appendTo="body">
-    </p-dropdown>
+  <div class="p-fluid p-mt-2">
+
+    <div class="p-field">
+      <p-dropdown id="environment" name="environment" [options]="environments" [(ngModel)]="promoteOptions.destEnvironmentId"
+                  placeholder="Environment" optionLabel="name" optionValue="id"
+                  required
+                  appendTo="body">
+      </p-dropdown>
+    </div>
+
+    <div class="p-field-checkbox">
+      <p-checkbox id="copyEnvironmentConfig" name="copyEnvironmentConfig" [(ngModel)]="promoteOptions.copyEnvironmentConfig" binary="true"></p-checkbox>
+      <label for="copyEnvironmentConfig">Copy environment config</label>
+    </div>
+    <small>Please note: if copied, any environment specific configuration should be updated for the new environment</small>
+
   </div>
 </form>
 
 <div class="p-grid p-pt-3">
   <button pButton pRipple type="button" icon="pi pi-times" (click)="close(undefined)" label="Cancel" class="p-button-text p-ml-auto p-mr-2"></button>
-  <button pButton pRipple type="button" icon="pi pi-check" (click)="close(selected)" label="Ok" class="p-button-text p-mr-2" [disabled]="f.invalid"></button>
+  <button pButton pRipple type="button" icon="pi pi-check" (click)="close(promoteOptions)" label="Ok" class="p-button-text p-mr-2" [disabled]="f.invalid"></button>
 </div>
