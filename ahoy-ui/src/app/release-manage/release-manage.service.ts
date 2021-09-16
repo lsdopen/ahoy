@@ -21,7 +21,7 @@ import {DeployDetails, EnvironmentRelease, EnvironmentReleaseId} from '../enviro
 import {Environment} from '../environments/environment';
 import {Notification} from '../notifications/notification';
 import {NotificationsService} from '../notifications/notifications.service';
-import {Release, ReleaseVersion} from '../releases/release';
+import {Release, ReleaseVersion, UpgradeOptions} from '../releases/release';
 import {LoggerService} from '../util/logger.service';
 import {RestClientService} from '../util/rest-client.service';
 
@@ -113,10 +113,10 @@ export class ReleaseManageService {
     );
   }
 
-  upgrade(releaseVersionId: number, version: string): Observable<ReleaseVersion> {
-    this.log.debug(`upgrading release version: ${releaseVersionId} to version: ${version}`);
-    const url = `/api/release/upgrade/${releaseVersionId}/${version}`;
-    return this.restClient.post<ReleaseVersion>(url).pipe(
+  upgrade(releaseVersionId: number, upgradeOptions: UpgradeOptions): Observable<ReleaseVersion> {
+    this.log.debug(`upgrading release version: ${releaseVersionId} to version: ${upgradeOptions.version}`);
+    const url = `/api/release/upgrade/${releaseVersionId}`;
+    return this.restClient.post<ReleaseVersion>(url, upgradeOptions).pipe(
       tap((upgradedReleaseVersion) => this.log.debug('upgraded release version', upgradedReleaseVersion))
     );
   }

@@ -18,7 +18,7 @@
   <div class="p-fluid p-mt-2">
 
     <div class="p-field p-float-label">
-      <input pInputText id="releaseName" [(ngModel)]="version" name="version"
+      <input pInputText id="releaseName" [(ngModel)]="upgradeOptions.version" name="version"
              [appReleaseVersionUnique]="release.releaseVersions"
              required>
       <label for="releaseName">Version</label>
@@ -27,10 +27,15 @@
       </small>
     </div>
 
+    <div class="p-field-checkbox">
+      <p-checkbox id="copyEnvironmentConfig" name="copyEnvironmentConfig" [(ngModel)]="upgradeOptions.copyEnvironmentConfig" binary="true"></p-checkbox>
+      <label for="copyEnvironmentConfig">Copy environment config</label>
+    </div>
+
   </div>
 </form>
 
 <div class="p-grid p-pt-3">
   <button pButton pRipple type="button" icon="pi pi-times" (click)="close(undefined)" label="Cancel" class="p-button-text p-ml-auto p-mr-2"></button>
-  <button pButton pRipple type="button" icon="pi pi-check" (click)="close(version)" label="Ok" class="p-button-text p-mr-2" [disabled]="f.invalid"></button>
+  <button pButton pRipple type="button" icon="pi pi-check" (click)="close(upgradeOptions)" label="Ok" class="p-button-text p-mr-2" [disabled]="f.invalid"></button>
 </div>

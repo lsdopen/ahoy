@@ -14,26 +14,12 @@
  *    limitations under the License.
  */
 
-import {ApplicationVersion} from '../applications/application';
-import {EnvironmentRelease} from '../environment-release/environment-release';
+package za.co.lsd.ahoy.server.releases;
 
-export class Release {
-  id: number;
-  name: string;
-  releaseVersions: ReleaseVersion[];
-  environmentReleases: EnvironmentRelease[];
-  latestReleaseVersion: ReleaseVersion;
-}
+import lombok.Data;
 
-export class ReleaseVersion {
-  id: number;
-  version: string;
-  release: Release | string;
-  applicationVersions: ApplicationVersion[] = undefined;
-  releaseName: string;
-}
-
-export class UpgradeOptions {
-  version: string;
-  copyEnvironmentConfig = true;
+@Data
+public class UpgradeOptions {
+	private String version;
+	private boolean copyEnvironmentConfig;
 }

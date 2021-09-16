@@ -17,7 +17,7 @@
 import {Component} from '@angular/core';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {EnvironmentRelease} from '../../environment-release/environment-release';
-import {Release, ReleaseVersion} from '../../releases/release';
+import {Release, ReleaseVersion, UpgradeOptions} from '../../releases/release';
 
 @Component({
   selector: 'app-upgrade-dialog',
@@ -28,7 +28,9 @@ export class UpgradeDialogComponent {
   environmentRelease: EnvironmentRelease;
   release: Release;
   releaseVersion: ReleaseVersion;
+  upgradeOptions = new UpgradeOptions();
   version: string;
+  copyEnvironmentConfig: boolean;
 
   constructor(public ref: DynamicDialogRef,
               public config: DynamicDialogConfig) {

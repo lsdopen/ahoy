@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import za.co.lsd.ahoy.server.environments.EnvironmentException;
 import za.co.lsd.ahoy.server.environments.EnvironmentRepository;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 import za.co.lsd.ahoy.server.releases.ReleaseVersionRepository;
+import za.co.lsd.ahoy.server.releases.UpgradeOptions;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -56,12 +57,12 @@ public class ReleaseService {
 	private ApplicationEventPublisher eventPublisher;
 
 	public ReleaseService(EnvironmentRepository environmentRepository,
-	                      EnvironmentReleaseRepository environmentReleaseRepository,
-	                      ReleaseVersionRepository releaseVersionRepository,
-	                      ApplicationEnvironmentConfigRepository applicationEnvironmentConfigRepository,
-	                      ApplicationEnvironmentConfigProvider environmentConfigProvider,
-	                      ApplicationReleaseStatusRepository applicationReleaseStatusRepository,
-	                      ReleaseManager releaseManager) {
+						  EnvironmentReleaseRepository environmentReleaseRepository,
+						  ReleaseVersionRepository releaseVersionRepository,
+						  ApplicationEnvironmentConfigRepository applicationEnvironmentConfigRepository,
+						  ApplicationEnvironmentConfigProvider environmentConfigProvider,
+						  ApplicationReleaseStatusRepository applicationReleaseStatusRepository,
+						  ReleaseManager releaseManager) {
 		this.environmentRepository = environmentRepository;
 		this.environmentReleaseRepository = environmentReleaseRepository;
 		this.releaseVersionRepository = releaseVersionRepository;
@@ -177,30 +178,34 @@ public class ReleaseService {
 	}
 
 	@Transactional
-	public ReleaseVersion upgrade(Long releaseVersionId, String version) {
+	public ReleaseVersion upgrade(Long releaseVersionId, UpgradeOptions upgradeOptions) {
 		ReleaseVersion currentReleaseVersion = releaseVersionRepository.findById(releaseVersionId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find release version: " + releaseVersionId));
 
-		log.info("Upgrading release version: {} to version: {}", currentReleaseVersion.getVersion(), version);
+		log.info("Upgrading release version: {} to version: {}", currentReleaseVersion.getVersion(), upgradeOptions.getVersion());
 
-		ReleaseVersion upgradedReleaseVersion = new ReleaseVersion(version, currentReleaseVersion.getRelease(), new ArrayList<>(currentReleaseVersion.getApplicationVersions()));
+		ReleaseVersion upgradedReleaseVersion = new ReleaseVersion(upgradeOptions.getVersion(), currentReleaseVersion.getRelease(), new ArrayList<>(currentReleaseVersion.getApplicationVersions()));
 		upgradedReleaseVersion = releaseVersionRepository.save(upgradedReleaseVersion);
 
-		Iterable<EnvironmentRelease> environmentReleases = environmentReleaseRepository.findByRelease_Id_OrderByEnvironmentId(currentReleaseVersion.getRelease().getId());
-		for (EnvironmentRelease environmentRelease : environmentReleases) {
+		if (upgradeOptions.isCopyEnvironmentConfig()) {
+			log.info("Copy environment config selected, copying config to new version: {}", upgradeOptions.getVersion());
 
-			for (ApplicationVersion applicationVersion : upgradedReleaseVersion.getApplicationVersions()) {
-				Optional<ApplicationEnvironmentConfig> currentEnvironmentConfig = environmentConfigProvider.environmentConfigFor(
-					environmentRelease, currentReleaseVersion, applicationVersion);
+			Iterable<EnvironmentRelease> environmentReleases = environmentReleaseRepository.findByRelease_Id_OrderByEnvironmentId(currentReleaseVersion.getRelease().getId());
+			for (EnvironmentRelease environmentRelease : environmentReleases) {
 
-				if (currentEnvironmentConfig.isPresent()) {
-					ApplicationDeploymentId id = new ApplicationDeploymentId(
-						environmentRelease.getId(),
-						upgradedReleaseVersion.getId(),
-						applicationVersion.getId());
+				for (ApplicationVersion applicationVersion : upgradedReleaseVersion.getApplicationVersions()) {
+					Optional<ApplicationEnvironmentConfig> currentEnvironmentConfig = environmentConfigProvider.environmentConfigFor(
+						environmentRelease, currentReleaseVersion, applicationVersion);
 
-					ApplicationEnvironmentConfig newEnvironmentConfig = new ApplicationEnvironmentConfig(id, currentEnvironmentConfig.get());
-					applicationEnvironmentConfigRepository.save(newEnvironmentConfig);
+					if (currentEnvironmentConfig.isPresent()) {
+						ApplicationDeploymentId id = new ApplicationDeploymentId(
+							environmentRelease.getId(),
+							upgradedReleaseVersion.getId(),
+							applicationVersion.getId());
+
+						ApplicationEnvironmentConfig newEnvironmentConfig = new ApplicationEnvironmentConfig(id, currentEnvironmentConfig.get());
+						applicationEnvironmentConfigRepository.save(newEnvironmentConfig);
+					}
 				}
 			}
 		}

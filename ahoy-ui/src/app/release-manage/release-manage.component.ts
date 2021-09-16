@@ -28,7 +28,7 @@ import {DeployDetails, EnvironmentRelease} from '../environment-release/environm
 import {EnvironmentReleaseService} from '../environment-release/environment-release.service';
 import {Environment} from '../environments/environment';
 import {EnvironmentService} from '../environments/environment.service';
-import {Release, ReleaseVersion} from '../releases/release';
+import {Release, ReleaseVersion, UpgradeOptions} from '../releases/release';
 import {TaskEvent} from '../taskevents/task-events';
 import {LoggerService} from '../util/logger.service';
 import {CopyEnvironmentConfigDialogComponent} from './copy-environment-config-dialog/copy-environment-config-dialog.component';
@@ -212,12 +212,13 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     const dialogConfig = new DynamicDialogConfig();
     dialogConfig.header = `Upgrade ${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} to version:`;
     dialogConfig.data = {environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion};
+    dialogConfig.width = '25%';
 
     const dialogRef = this.dialogService.open(UpgradeDialogComponent, dialogConfig);
     dialogRef.onClose.pipe(
       filter((result) => result !== undefined), // cancelled
-      mergeMap((version) => {
-        return this.releaseManageService.upgrade(this.releaseVersion.id, version);
+      mergeMap((upgradeOptions: UpgradeOptions) => {
+        return this.releaseManageService.upgrade(this.releaseVersion.id, upgradeOptions);
       })
     ).subscribe((newReleaseVersion: ReleaseVersion) => this.reload(this.environmentRelease.id.environmentId, newReleaseVersion.id));
   }
