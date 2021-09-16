@@ -16,9 +16,13 @@
 
 package za.co.lsd.ahoy.server.releases;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PromoteOptions {
 	private Long destEnvironmentId;
 	private boolean copyEnvironmentConfig;

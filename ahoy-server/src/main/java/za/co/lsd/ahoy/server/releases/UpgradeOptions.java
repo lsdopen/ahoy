@@ -16,9 +16,13 @@
 
 package za.co.lsd.ahoy.server.releases;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UpgradeOptions {
 	private String version;
 	private boolean copyEnvironmentConfig;

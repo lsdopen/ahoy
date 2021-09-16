@@ -18,14 +18,13 @@ package za.co.lsd.ahoy.server;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import za.co.lsd.ahoy.server.applications.Application;
-import za.co.lsd.ahoy.server.applications.ApplicationReleaseStatusRepository;
-import za.co.lsd.ahoy.server.applications.ApplicationVersion;
+import za.co.lsd.ahoy.server.applications.*;
 import za.co.lsd.ahoy.server.argocd.model.ArgoApplication;
 import za.co.lsd.ahoy.server.argocd.model.ArgoMetadata;
 import za.co.lsd.ahoy.server.argocd.model.HealthStatus;
@@ -35,12 +34,12 @@ import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
 import za.co.lsd.ahoy.server.environments.Environment;
-import za.co.lsd.ahoy.server.releases.Release;
-import za.co.lsd.ahoy.server.releases.ReleaseHistory;
-import za.co.lsd.ahoy.server.releases.ReleaseHistoryRepository;
-import za.co.lsd.ahoy.server.releases.ReleaseVersion;
+import za.co.lsd.ahoy.server.environments.EnvironmentRepository;
+import za.co.lsd.ahoy.server.releases.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -57,6 +56,14 @@ public class ReleaseServiceTest {
 	private ApplicationReleaseStatusRepository applicationReleaseStatusRepository;
 	@MockBean
 	private ReleaseHistoryRepository releaseHistoryRepository;
+	@MockBean
+	private ReleaseVersionRepository releaseVersionRepository;
+	@MockBean
+	private ApplicationEnvironmentConfigRepository applicationEnvironmentConfigRepository;
+	@MockBean
+	private ApplicationEnvironmentConfigProvider environmentConfigProvider;
+	@MockBean
+	private EnvironmentRepository environmentRepository;
 	@Autowired
 	private ReleaseService releaseService;
 
@@ -201,5 +208,205 @@ public class ReleaseServiceTest {
 		verify(applicationReleaseStatusRepository, times(1)).deleteAll(any());
 		verify(environmentReleaseRepository, times(1)).save(same(undeployedEnvironmentRelease));
 		verify(releaseHistoryRepository, times(1)).save(any(ReleaseHistory.class));
+	}
+
+	@Test
+	public void upgrade() {
+		// given
+		Release release = new Release(1L, "release1");
+
+		Application application = new Application("app1");
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
+
+		UpgradeOptions upgradeOptions = new UpgradeOptions("1.1.0", false);
+
+		when(releaseVersionRepository.findById(1L)).thenReturn(Optional.of(releaseVersion));
+		ReleaseVersion resultReleaseVersion = new ReleaseVersion(2L, upgradeOptions.getVersion(), releaseVersion.getRelease(), new ArrayList<>(releaseVersion.getApplicationVersions()));
+		when(releaseVersionRepository.save(any(ReleaseVersion.class))).thenReturn(resultReleaseVersion);
+
+		// when
+		ReleaseVersion upgradedReleaseVersion = releaseService.upgrade(releaseVersion.getId(), upgradeOptions);
+
+		// then
+		ArgumentCaptor<ReleaseVersion> releaseVersionCaptor = ArgumentCaptor.forClass(ReleaseVersion.class);
+		verify(releaseVersionRepository, times(1)).save(releaseVersionCaptor.capture());
+
+		ReleaseVersion savedReleaseVersion = releaseVersionCaptor.getValue();
+		assertEquals("1.1.0", savedReleaseVersion.getVersion(), "Saved release version incorrect");
+		assertEquals(release, savedReleaseVersion.getRelease(), "Saved release version has incorrect release");
+		assertEquals(releaseVersion.getApplicationVersions(), savedReleaseVersion.getApplicationVersions(), "Saved released version doesn't have the application versions from the upgraded version");
+
+		assertSame(resultReleaseVersion, upgradedReleaseVersion, "The saved release version should have been returned");
+		verifyNoInteractions(applicationEnvironmentConfigRepository);
+	}
+
+	@Test
+	public void upgradeWithCopyEnvironmentConfig() {
+		// given
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
+		Environment environment = new Environment(1L, "dev", cluster);
+		Release release = new Release(1L, "release1");
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(new EnvironmentReleaseId(1L, 1L), environment, release);
+
+		Application application = new Application("app1");
+		ApplicationVersion applicationVersion = new ApplicationVersion(1L, "1.0.0", "image", application);
+		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
+
+		UpgradeOptions upgradeOptions = new UpgradeOptions("1.1.0", true);
+
+		when(releaseVersionRepository.findById(1L)).thenReturn(Optional.of(releaseVersion));
+		ReleaseVersion resultReleaseVersion = new ReleaseVersion(2L, upgradeOptions.getVersion(), releaseVersion.getRelease(), new ArrayList<>(releaseVersion.getApplicationVersions()));
+		when(releaseVersionRepository.save(any(ReleaseVersion.class))).thenReturn(resultReleaseVersion);
+
+		when(environmentReleaseRepository.findByRelease_Id_OrderByEnvironmentId(release.getId())).thenReturn(Collections.singletonList(environmentRelease));
+
+		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
+		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion)).thenReturn(Optional.of(environmentConfig));
+		when(environmentConfigProvider.environmentConfigFor(environmentRelease, resultReleaseVersion, applicationVersion)).thenReturn(Optional.empty());
+
+		// when
+		ReleaseVersion upgradedReleaseVersion = releaseService.upgrade(releaseVersion.getId(), upgradeOptions);
+
+		// then
+		ArgumentCaptor<ReleaseVersion> releaseVersionCaptor = ArgumentCaptor.forClass(ReleaseVersion.class);
+		verify(releaseVersionRepository, times(1)).save(releaseVersionCaptor.capture());
+
+		ReleaseVersion savedReleaseVersion = releaseVersionCaptor.getValue();
+		assertEquals("1.1.0", savedReleaseVersion.getVersion(), "Saved release version incorrect");
+		assertEquals(release, savedReleaseVersion.getRelease(), "Saved release version has incorrect release");
+		assertEquals(releaseVersion.getApplicationVersions(), savedReleaseVersion.getApplicationVersions(), "Saved released version doesn't have the application versions from the upgraded version");
+
+		assertSame(resultReleaseVersion, upgradedReleaseVersion, "The saved release version should have been returned");
+
+		ArgumentCaptor<ApplicationEnvironmentConfig> applicationEnvironmentConfigArgumentCaptor = ArgumentCaptor.forClass(ApplicationEnvironmentConfig.class);
+		verify(applicationEnvironmentConfigRepository, times(1)).save(applicationEnvironmentConfigArgumentCaptor.capture());
+
+		ApplicationEnvironmentConfig savedEnvironmentConfig = applicationEnvironmentConfigArgumentCaptor.getValue();
+		assertEquals(new ApplicationDeploymentId(environmentRelease.getId(), resultReleaseVersion.getId(), applicationVersion.getId()), savedEnvironmentConfig.getId(),
+			"Environment config deployment ID incorrect; this means the config is not related to the correct entity");
+		assertEquals("myapp1-route", savedEnvironmentConfig.getRouteHostname(), "Environment config route incorrect");
+		assertEquals(8080, savedEnvironmentConfig.getRouteTargetPort(), "Environment config port incorrect");
+	}
+
+	@Test
+	public void promote() {
+		// given
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
+		Environment environment = new Environment(1L, "dev", cluster);
+		Release release = new Release(1L, "release1");
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(new EnvironmentReleaseId(1L, 1L), environment, release);
+
+		Application application = new Application("app1");
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
+
+		Environment destEnvironment = new Environment(2L, "qa", cluster);
+
+		PromoteOptions promoteOptions = new PromoteOptions(destEnvironment.getId(), false);
+
+		when(environmentReleaseRepository.findById(environmentRelease.getId())).thenReturn(Optional.of(environmentRelease));
+		EnvironmentReleaseId resultEnvironmentReleaseId = new EnvironmentReleaseId(destEnvironment.getId(), release.getId());
+		when(environmentReleaseRepository.findById(resultEnvironmentReleaseId)).thenReturn(Optional.empty());
+		when(environmentRepository.findById(destEnvironment.getId())).thenReturn(Optional.of(destEnvironment));
+
+		EnvironmentRelease resultEnvironmentRelease = new EnvironmentRelease(resultEnvironmentReleaseId, destEnvironment, release);
+		when(environmentReleaseRepository.save(any(EnvironmentRelease.class))).thenReturn(resultEnvironmentRelease);
+
+		// when
+		EnvironmentRelease promotedEnvironmentRelease = releaseService.promote(environment.getId(), release.getId(), promoteOptions);
+
+		// then
+		ArgumentCaptor<EnvironmentRelease> environmentReleaseArgumentCaptor = ArgumentCaptor.forClass(EnvironmentRelease.class);
+		verify(environmentReleaseRepository, times(1)).save(environmentReleaseArgumentCaptor.capture());
+
+		EnvironmentRelease savedEnvironmentRelease = environmentReleaseArgumentCaptor.getValue();
+		assertEquals(release, savedEnvironmentRelease.getRelease(), "Saved environment release has incorrect release");
+		assertEquals(destEnvironment, savedEnvironmentRelease.getEnvironment(), "Saved environment release has incorrect environment");
+
+		assertSame(resultEnvironmentRelease, promotedEnvironmentRelease, "The saved environment release should have been returned");
+		verifyNoInteractions(applicationEnvironmentConfigRepository);
+	}
+
+	@Test
+	public void promoteAlreadyExists() {
+		// given
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
+		Environment environment = new Environment(1L, "dev", cluster);
+		Release release = new Release(1L, "release1");
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(new EnvironmentReleaseId(1L, 1L), environment, release);
+
+		Application application = new Application("app1");
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+
+		Environment destEnvironment = new Environment(2L, "qa", cluster);
+
+		PromoteOptions promoteOptions = new PromoteOptions(destEnvironment.getId(), false);
+
+		when(environmentReleaseRepository.findById(environmentRelease.getId())).thenReturn(Optional.of(environmentRelease));
+		EnvironmentReleaseId resultEnvironmentReleaseId = new EnvironmentReleaseId(destEnvironment.getId(), release.getId());
+		EnvironmentRelease resultEnvironmentRelease = new EnvironmentRelease(resultEnvironmentReleaseId, destEnvironment, release);
+		when(environmentReleaseRepository.findById(resultEnvironmentReleaseId)).thenReturn(Optional.of(resultEnvironmentRelease));
+
+		// when
+		EnvironmentRelease promotedEnvironmentRelease = releaseService.promote(environment.getId(), release.getId(), promoteOptions);
+
+		// then
+		verify(environmentReleaseRepository, never()).save(any(EnvironmentRelease.class));
+
+		assertSame(resultEnvironmentRelease, promotedEnvironmentRelease, "The saved environment release should have been returned");
+		verifyNoInteractions(applicationEnvironmentConfigRepository);
+	}
+
+	@Test
+	public void promoteWithCopyEnvironmentConfig() {
+		// given
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
+		Environment environment = new Environment(1L, "dev", cluster);
+		Release release = new Release(1L, "release1");
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(new EnvironmentReleaseId(1L, 1L), environment, release);
+
+		Application application = new Application("app1");
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
+		release.setReleaseVersions(Collections.singletonList(releaseVersion));
+
+		Environment destEnvironment = new Environment(2L, "qa", cluster);
+
+		PromoteOptions promoteOptions = new PromoteOptions(destEnvironment.getId(), true);
+
+		when(environmentReleaseRepository.findById(environmentRelease.getId())).thenReturn(Optional.of(environmentRelease));
+		EnvironmentReleaseId resultEnvironmentReleaseId = new EnvironmentReleaseId(destEnvironment.getId(), release.getId());
+		when(environmentReleaseRepository.findById(resultEnvironmentReleaseId)).thenReturn(Optional.empty());
+		when(environmentRepository.findById(destEnvironment.getId())).thenReturn(Optional.of(destEnvironment));
+
+		EnvironmentRelease resultEnvironmentRelease = new EnvironmentRelease(resultEnvironmentReleaseId, destEnvironment, release);
+		when(environmentReleaseRepository.save(any(EnvironmentRelease.class))).thenReturn(resultEnvironmentRelease);
+
+		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
+		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion)).thenReturn(Optional.of(environmentConfig));
+		when(environmentConfigProvider.environmentConfigFor(resultEnvironmentRelease, releaseVersion, applicationVersion)).thenReturn(Optional.empty());
+
+		// when
+		EnvironmentRelease promotedEnvironmentRelease = releaseService.promote(environment.getId(), release.getId(), promoteOptions);
+
+		// then
+		ArgumentCaptor<EnvironmentRelease> environmentReleaseArgumentCaptor = ArgumentCaptor.forClass(EnvironmentRelease.class);
+		verify(environmentReleaseRepository, times(1)).save(environmentReleaseArgumentCaptor.capture());
+
+		EnvironmentRelease savedEnvironmentRelease = environmentReleaseArgumentCaptor.getValue();
+		assertEquals(release, savedEnvironmentRelease.getRelease(), "Saved environment release has incorrect release");
+		assertEquals(destEnvironment, savedEnvironmentRelease.getEnvironment(), "Saved environment release has incorrect environment");
+
+		assertSame(resultEnvironmentRelease, promotedEnvironmentRelease, "The saved environment release should have been returned");
+
+		ArgumentCaptor<ApplicationEnvironmentConfig> applicationEnvironmentConfigArgumentCaptor = ArgumentCaptor.forClass(ApplicationEnvironmentConfig.class);
+		verify(applicationEnvironmentConfigRepository, times(1)).save(applicationEnvironmentConfigArgumentCaptor.capture());
+
+		ApplicationEnvironmentConfig savedEnvironmentConfig = applicationEnvironmentConfigArgumentCaptor.getValue();
+		assertEquals(new ApplicationDeploymentId(resultEnvironmentRelease.getId(), releaseVersion.getId(), applicationVersion.getId()), savedEnvironmentConfig.getId(),
+			"Environment config deployment ID incorrect; this means the config is not related to the correct entity");
+		assertEquals("myapp1-route", savedEnvironmentConfig.getRouteHostname(), "Environment config route incorrect");
+		assertEquals(8080, savedEnvironmentConfig.getRouteTargetPort(), "Environment config port incorrect");
 	}
 }

@@ -193,13 +193,13 @@ public class ReleaseService {
 		ReleaseVersion currentReleaseVersion = releaseVersionRepository.findById(releaseVersionId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find release version: " + releaseVersionId));
 
-		log.info("Upgrading release version: {} to version: {}", currentReleaseVersion.getVersion(), upgradeOptions.getVersion());
+		log.info("Upgrading release version: {} to version: {}", currentReleaseVersion, upgradeOptions.getVersion());
 
 		ReleaseVersion upgradedReleaseVersion = new ReleaseVersion(upgradeOptions.getVersion(), currentReleaseVersion.getRelease(), new ArrayList<>(currentReleaseVersion.getApplicationVersions()));
 		upgradedReleaseVersion = releaseVersionRepository.save(upgradedReleaseVersion);
 
 		if (upgradeOptions.isCopyEnvironmentConfig()) {
-			log.info("Copy environment config selected, copying config to new version: {}", upgradeOptions.getVersion());
+			log.info("Copy environment config selected, copying config to new version: {}", upgradedReleaseVersion);
 
 			Iterable<EnvironmentRelease> environmentReleases = environmentReleaseRepository.findByRelease_Id_OrderByEnvironmentId(currentReleaseVersion.getRelease().getId());
 			for (EnvironmentRelease environmentRelease : environmentReleases) {

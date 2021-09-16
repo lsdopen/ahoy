@@ -88,6 +88,13 @@ public class ApplicationVersion implements Serializable {
 		this.application = application;
 	}
 
+	public ApplicationVersion(@NotNull Long id, @NotNull String version, @NotNull String image, Application application) {
+		this.id = id;
+		this.version = version;
+		this.image = image;
+		this.application = application;
+	}
+
 	public boolean hasConfigs() {
 		return configs != null && configs.size() > 0;
 	}
