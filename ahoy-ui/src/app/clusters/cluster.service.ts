@@ -37,7 +37,7 @@ export class ClusterService {
   }
 
   getAll(): Observable<Cluster[]> {
-    const url = `/data/clusters`;
+    const url = `/data/clusters?sort=id`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.clusters as Cluster[]),
       tap(apps => this.log.debug(`fetched ${apps.length} clusters`))
@@ -99,9 +99,9 @@ export class ClusterService {
         const text = `${destroyedCluster.name} ` + `was destroyed`;
         this.notificationsService.notification(new Notification(text));
       }),
-      catchError(() => {
+      catchError((error) => {
         const text = `Failed to destroy cluster ${cluster.name}`;
-        this.notificationsService.notification(new Notification(text, true));
+        this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })
     );
@@ -115,9 +115,9 @@ export class ClusterService {
         const text = `Successfully connected to cluster '${cluster.name}'`;
         this.notificationsService.notification(new Notification(text));
       }),
-      catchError(() => {
+      catchError((error) => {
         const text = `Failed to connect to cluster ${cluster.name}`;
-        this.notificationsService.notification(new Notification(text, true));
+        this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })
     );

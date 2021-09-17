@@ -14,19 +14,20 @@
  *    limitations under the License.
  */
 
-import {Component, OnInit} from '@angular/core';
-import {Environment} from '../environment';
-import {ActivatedRoute} from '@angular/router';
 import {Location} from '@angular/common';
-import {EnvironmentService} from '../environment.service';
-import {ClusterService} from '../../clusters/cluster.service';
-import {Cluster} from '../../clusters/cluster';
-import {EnvironmentReleaseId} from '../../environment-release/environment-release';
-import {mergeMap} from 'rxjs/operators';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {of} from 'rxjs';
-import {EnvironmentReleaseService} from '../../environment-release/environment-release.service';
-import {ReleaseService} from '../../release/release.service';
+import {mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../../app.breadcrumb.service';
+import {Cluster} from '../../clusters/cluster';
+import {ClusterService} from '../../clusters/cluster.service';
+import {EnvironmentReleaseId} from '../../environment-release/environment-release';
+import {EnvironmentReleaseService} from '../../environment-release/environment-release.service';
+import {ReleaseManageService} from '../../release-manage/release-manage.service';
+import {PromoteOptions} from '../../releases/release';
+import {Environment} from '../environment';
+import {EnvironmentService} from '../environment.service';
 
 @Component({
   selector: 'app-environment-detail',
@@ -34,10 +35,12 @@ import {AppBreadcrumbService} from '../../app.breadcrumb.service';
   styleUrls: ['./environment-detail.component.scss']
 })
 export class EnvironmentDetailComponent implements OnInit {
-  private environmentReleaseId: EnvironmentReleaseId;
+  private promoteEnvironmentReleaseId: EnvironmentReleaseId;
+  private promoteCopyEnvironmentConfig: boolean;
   editMode = false;
   sourceEnvironment: Environment;
   cluster: Cluster;
+  clusters: Cluster[] = undefined;
   environment: Environment;
   environmentsForValidation: Environment[];
 
@@ -45,56 +48,69 @@ export class EnvironmentDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private environmentService: EnvironmentService,
     private environmentReleaseService: EnvironmentReleaseService,
-    private releaseService: ReleaseService,
+    private releaseService: ReleaseManageService,
     private clusterService: ClusterService,
     private location: Location,
     private breadcrumbService: AppBreadcrumbService) {
   }
 
   ngOnInit() {
-    const clusterId = +this.route.snapshot.queryParamMap.get('clusterId');
-    this.clusterService.get(clusterId)
-      .subscribe(cluster => {
-        this.cluster = cluster;
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id === 'new') {
+      this.environment = new Environment();
+      const sourceEnvironmentId = +this.route.snapshot.queryParamMap.get('sourceEnvironmentId');
+      if (sourceEnvironmentId) {
+        this.environmentService.get(sourceEnvironmentId)
+          .subscribe((env) => {
+            this.sourceEnvironment = env;
+            this.setBreadcrumb();
+          });
+      }
 
-        const id = this.route.snapshot.paramMap.get('id');
-        if (id === 'new') {
-          this.environment = new Environment();
-          const sourceEnvironmentId = +this.route.snapshot.queryParamMap.get('sourceEnvironmentId');
-          if (sourceEnvironmentId) {
-            this.environmentService.get(sourceEnvironmentId)
-              .subscribe((env) => {
-                this.sourceEnvironment = env;
-                this.setBreadcrumb();
-              });
-          }
+      const environmentId = +this.route.snapshot.queryParamMap.get('environmentId');
+      const releaseId = +this.route.snapshot.queryParamMap.get('releaseId');
+      if (environmentId && releaseId) {
+        this.promoteEnvironmentReleaseId = EnvironmentReleaseId.new(environmentId, releaseId);
+        this.promoteCopyEnvironmentConfig = JSON.parse(this.route.snapshot.queryParamMap.get('copyEnvironmentConfig'));
+      }
 
-          const environmentId = +this.route.snapshot.queryParamMap.get('environmentId');
-          const releaseId = +this.route.snapshot.queryParamMap.get('releaseId');
-          if (environmentId && releaseId) {
-            this.environmentReleaseId = EnvironmentReleaseId.new(environmentId, releaseId);
-          }
-
+      this.setBreadcrumb();
+    } else {
+      this.editMode = true;
+      this.environmentService.get(+id)
+        .subscribe((env) => {
+          this.environment = env;
           this.setBreadcrumb();
-        } else {
-          this.editMode = true;
-          this.environmentService.get(+id)
-            .subscribe((env) => {
-              this.environment = env;
-              this.setBreadcrumb();
-            });
-        }
-      });
+        });
+    }
 
-    this.environmentService.getAllEnvironmentsByCluster(clusterId)
+    this.clusterService.getAll().subscribe((clusters) => {
+      this.clusters = clusters;
+    });
+
+    this.environmentService.getAll()
       .subscribe((environments) => this.environmentsForValidation = environments);
   }
 
   private setBreadcrumb() {
-    this.breadcrumbService.setItems([
-      {label: this.cluster.name, routerLink: '/clusters'},
-      {label: (!this.sourceEnvironment ? (this.editMode ? 'edit' : 'new') : 'duplicate') + ' environment'}
-    ]);
+    if (this.editMode) {
+      this.breadcrumbService.setItems([
+        {label: 'environments', routerLink: '/environments'},
+        {label: this.environment.name},
+        {label: 'edit'}
+      ]);
+    } else if (this.sourceEnvironment) {
+      this.breadcrumbService.setItems([
+        {label: 'environments', routerLink: '/environments'},
+        {label: this.sourceEnvironment.name},
+        {label: 'duplicate'}
+      ]);
+    } else {
+      this.breadcrumbService.setItems([
+        {label: 'environments', routerLink: '/environments'},
+        {label: 'new'}
+      ]);
+    }
   }
 
   save() {
@@ -109,9 +125,12 @@ export class EnvironmentDetailComponent implements OnInit {
           return of(environment);
         }),
         mergeMap((environment: Environment) => {
-          if (this.environmentReleaseId) {
+          if (this.promoteEnvironmentReleaseId) {
             // we're promoting to this new environment
-            return this.releaseService.promote(this.environmentReleaseId, environment.id);
+            const promoteOptions = new PromoteOptions();
+            promoteOptions.destEnvironmentId = environment.id;
+            promoteOptions.copyEnvironmentConfig = this.promoteCopyEnvironmentConfig;
+            return this.releaseService.promote(this.promoteEnvironmentReleaseId, promoteOptions);
           }
           return of(environment);
         })

@@ -14,19 +14,25 @@
   ~    limitations under the License.
   -->
 
-<div class="p-col" *ngIf="environment && environmentReleases && environmentReleases.length > 0">
+<div *ngIf="environment">
 
   <app-task-events-listener (taskEventEmitter)="taskEventOccurred($event)"></app-task-events-listener>
 
   <div class="card">
     <div class="card-header">
       <p-chip styleClass="chip-environment" label="{{environment.name}}"
-              routerLink="/releases" [queryParams]="{environmentId: environment.id}"></p-chip>
+              routerLink="/environmentreleases/{{environment.id}}"></p-chip>
+      <span class="fs-normal note-cluster">{{environment.cluster.name}}</span>
+    </div>
+
+    <div class="p-field" *ngIf="environmentReleases && environmentReleases.length === 0">
+      There are no releases in this environment, <a routerLink="/environmentreleases/{{environment.id}}">create or add</a> a release..
     </div>
 
     <p-table #dt [value]="environmentReleases" dataKey="id" selectionMode="single"
              styleClass="p-datatable-releases p-datatable-sm"
-             [scrollable]="false">
+             [scrollable]="false"
+             *ngIf="environmentReleases && environmentReleases.length > 0">
 
       <ng-template pTemplate="body" let-er>
         <tr routerLink="/release/{{er.id.environmentId}}/{{er.id.releaseId}}/version/{{er.currentReleaseVersion ? er.currentReleaseVersion.id : er.latestReleaseVersion.id}}">

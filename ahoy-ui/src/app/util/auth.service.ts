@@ -38,6 +38,7 @@ export class AuthService {
     disableAtHashCheck: true,
     showDebugInformation: true
   };
+  private authInfo: AuthInfo;
 
   constructor(private router: Router,
               private oAuthService: OAuthService,
@@ -45,6 +46,7 @@ export class AuthService {
               private log: LoggerService) {
 
     this.getAuthInfo().subscribe((authInfo) => {
+      this.authInfo = authInfo;
       this.authConfig.clientId = authInfo.clientId;
       this.authConfig.issuer = authInfo.issuer;
       this.oAuthService.configure(this.authConfig);
@@ -64,11 +66,16 @@ export class AuthService {
 
   public logout() {
     this.log.debug('Logging out...');
+    this.authInfo = null;
     this.oAuthService.logOut();
   }
 
   public issuer(): string {
     return this.authConfig.issuer;
+  }
+
+  public accountUri(): string {
+    return this.authInfo.accountUri;
   }
 
   public accessToken(): string {

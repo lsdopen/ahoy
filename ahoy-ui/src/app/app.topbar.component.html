@@ -56,8 +56,8 @@
               </div>
             </li>
 
-            <li>
-              <a class="layout-topbar-action-item p-d-flex p-flex-row p-ai-center" href="{{issuer()}}/account/?referrer=ahoy" target="_blank" pRipple>
+            <li *ngIf="accountUri()">
+              <a class="layout-topbar-action-item p-d-flex p-flex-row p-ai-center" href="{{accountUri()}}" target="_blank" pRipple>
                 <i class="pi pi-user-edit" [ngClass]="{'p-mr-2': !app.isRTL, 'p-ml-2': app.isRTL}"></i>
                 <span>Account</span>
               </a>

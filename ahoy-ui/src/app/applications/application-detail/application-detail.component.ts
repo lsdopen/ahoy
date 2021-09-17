@@ -14,13 +14,13 @@
  *    limitations under the License.
  */
 
-import {Component, OnInit} from '@angular/core';
-import {Application, ApplicationVersion} from '../application';
-import {ActivatedRoute} from '@angular/router';
-import {ApplicationService} from '../application.service';
 import {Location} from '@angular/common';
-import {ReleasesService} from '../../releases/releases.service';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {AppBreadcrumbService} from '../../app.breadcrumb.service';
+import {ReleaseService} from '../../releases/release.service';
+import {Application, ApplicationVersion} from '../application';
+import {ApplicationService} from '../application.service';
 
 @Component({
   selector: 'app-application-detail',
@@ -37,7 +37,7 @@ export class ApplicationDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private applicationService: ApplicationService,
-    private releasesService: ReleasesService,
+    private releasesService: ReleaseService,
     private location: Location,
     private breadcrumbService: AppBreadcrumbService) {
   }
@@ -66,9 +66,18 @@ export class ApplicationDetailComponent implements OnInit {
   }
 
   private setBreadcrumb() {
-    this.breadcrumbService.setItems([
-      {label: (this.editMode ? 'edit' : 'new') + ' application'}
-    ]);
+    if (this.editMode) {
+      this.breadcrumbService.setItems([
+        {label: 'applications', routerLink: '/applications'},
+        {label: this.application.name},
+        {label: 'edit'}
+      ]);
+    } else {
+      this.breadcrumbService.setItems([
+        {label: 'applications', routerLink: '/applications'},
+        {label: 'new'}
+      ]);
+    }
   }
 
   save() {

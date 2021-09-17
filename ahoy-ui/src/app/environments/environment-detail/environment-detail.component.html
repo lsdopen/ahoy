@@ -15,7 +15,7 @@
   -->
 
 <div class="p-grid">
-  <div class="p-col-12" *ngIf="cluster && environment && environmentsForValidation">
+  <div class="p-col-12" *ngIf="environment && environmentsForValidation">
 
     <div class="card">
       <div class="card-header">
@@ -41,6 +41,11 @@
             <small class="p-error" *ngIf="environmentForm.form.controls.environmentName?.hasError('environmentNameNotUnique')">
               Environment already exists
             </small>
+          </div>
+
+          <div class="p-field">
+            <p-dropdown id="cluster" name="cluster" [options]="clusters" [(ngModel)]="cluster"
+                        placeholder="Cluster" optionLabel="name" required></p-dropdown>
           </div>
 
         </div>

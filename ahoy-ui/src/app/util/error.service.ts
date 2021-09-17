@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
  *    limitations under the License.
  */
 
+import {HttpErrorResponse} from '@angular/common/http';
 import {ErrorHandler, Injectable, NgZone} from '@angular/core';
 import {Notification} from '../notifications/notification';
 import {NotificationsService} from '../notifications/notifications.service';
 import {LoggerService} from './logger.service';
-import {HttpErrorResponse} from '@angular/common/http';
 
 @Injectable()
 export class ErrorService implements ErrorHandler {
@@ -38,7 +38,7 @@ export class ErrorService implements ErrorHandler {
     const text = ('message' in error) ? error.message : `Unknown error:  ${error.toString()}`;
 
     this.zone.run(() => {
-      this.notificationsService.notification(new Notification(text, true));
+      this.notificationsService.notification(new Notification(text, error));
     });
   }
 }

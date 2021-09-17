@@ -27,7 +27,7 @@
   <li class="p-mb-3">
     <span class="p-px-3 fs-small">You have <b>{{unreadNotifications()}}</b> new notifications</span>
   </li>
-  <li *ngFor="let notification of notifications?.reverse()" class="layout-topbar-action-item" (click)="showDescription(notification)">
+  <li *ngFor="let notification of notifications" class="layout-topbar-action-item" (click)="showDescription(notification)">
     <div class="p-d-flex p-flex-row p-ai-center">
       <i class="pi pi-{{notification.error ? 'exclamation-triangle' : 'info-circle'}} fs-large"></i>
       <div class="p-d-flex p-flex-column" [ngClass]="{'p-ml-3': !app.isRTL, 'p-mr-3': app.isRTL}" style="flex-grow: 1;">

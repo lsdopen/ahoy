@@ -20,10 +20,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.CascadeType;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,18 +40,22 @@ public class ApplicationEnvironmentConfig {
 
 	@OneToMany(mappedBy = "applicationEnvironmentConfig", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("applicationEnvironmentConfigReference")
+	@OrderBy("id")
 	private List<ApplicationEnvironmentVariable> environmentVariables;
 
 	@OneToMany(mappedBy = "applicationEnvironmentConfig", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("applicationEnvironmentConfigReference")
+	@OrderBy("id")
 	private List<ApplicationConfig> configs;
 
 	@OneToMany(mappedBy = "applicationEnvironmentConfig", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("applicationEnvironmentConfigReference")
+	@OrderBy("id")
 	private List<ApplicationVolume> volumes;
 
 	@OneToMany(mappedBy = "applicationEnvironmentConfig", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("applicationEnvironmentConfigReference")
+	@OrderBy("id")
 	private List<ApplicationSecret> secrets;
 
 	public ApplicationEnvironmentConfig(ApplicationDeploymentId id, ApplicationEnvironmentConfig applicationEnvironmentConfig) {
@@ -62,10 +63,14 @@ public class ApplicationEnvironmentConfig {
 		this.replicas = applicationEnvironmentConfig.getReplicas();
 		this.routeHostname = applicationEnvironmentConfig.getRouteHostname();
 		this.routeTargetPort = applicationEnvironmentConfig.getRouteTargetPort();
-		this.environmentVariables = new ArrayList<>(applicationEnvironmentConfig.getEnvironmentVariables());
-		this.configs = new ArrayList<>(applicationEnvironmentConfig.getConfigs());
-		this.volumes = new ArrayList<>(applicationEnvironmentConfig.getVolumes());
-		this.secrets = new ArrayList<>(applicationEnvironmentConfig.getSecrets());
+		this.environmentVariables = applicationEnvironmentConfig.getEnvironmentVariables() != null ?
+			new ArrayList<>(applicationEnvironmentConfig.getEnvironmentVariables()) : null;
+		this.configs = applicationEnvironmentConfig.getConfigs() != null ?
+			new ArrayList<>(applicationEnvironmentConfig.getConfigs()) : null;
+		this.volumes = applicationEnvironmentConfig.getVolumes() != null ?
+			new ArrayList<>(applicationEnvironmentConfig.getVolumes()) : null;
+		this.secrets = applicationEnvironmentConfig.getSecrets() != null ?
+			new ArrayList<>(applicationEnvironmentConfig.getSecrets()) : null;
 	}
 
 	public ApplicationEnvironmentConfig(String routeHostname, Integer routeTargetPort) {

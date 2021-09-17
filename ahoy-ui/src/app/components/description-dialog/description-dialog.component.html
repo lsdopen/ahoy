@@ -15,8 +15,16 @@
   -->
 
 <div class="p-grid">
-  <div class="p-col-12">
-    <textarea rows="10" cols="60" pInputTextarea readonly>{{description.text}}</textarea>
+  <div class="p-fluid p-col-12">
+    <div class="p-field">
+      <textarea rows="5" cols="60" pInputTextarea autoResize="autoResize" readonly [(ngModel)]="description.text"></textarea>
+    </div>
+
+    <p-accordion *ngIf="description.trace">
+      <p-accordionTab header="Trace" [selected]="false">
+        <textarea rows="15" cols="60" pInputTextarea readonly style="white-space: pre" [(ngModel)]="description.trace"></textarea>
+      </p-accordionTab>
+    </p-accordion>
   </div>
 </div>
 

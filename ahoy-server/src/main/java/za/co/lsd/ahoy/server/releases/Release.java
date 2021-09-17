@@ -39,11 +39,20 @@ public class Release implements Serializable {
 
 	@OneToMany(mappedBy = "release")
 	@JsonIgnore
+	@OrderBy("environment.id")
 	private List<EnvironmentRelease> environmentReleases;
 
-	@OneToMany(mappedBy = "release")
+	@OneToMany(mappedBy = "release", cascade = CascadeType.REMOVE)
 	@JsonIgnore
+	@OrderBy("id")
 	private List<ReleaseVersion> releaseVersions;
+
+	public ReleaseVersion latestReleaseVersion() {
+		if (releaseVersions != null && releaseVersions.size() > 0) {
+			return releaseVersions.get(releaseVersions.size() - 1);
+		}
+		return null;
+	}
 
 	public Release(@NotNull String name) {
 		this.name = name;

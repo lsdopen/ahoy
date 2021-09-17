@@ -15,14 +15,13 @@
  */
 
 import {Injectable} from '@angular/core';
-import {LoggerService} from '../util/logger.service';
-import {RestClientService} from '../util/rest-client.service';
 import {EMPTY, Observable, of} from 'rxjs';
-import {Environment} from './environment';
 import {catchError, map, mergeMap, tap} from 'rxjs/operators';
-import {EnvironmentRelease} from '../environment-release/environment-release';
 import {Notification} from '../notifications/notification';
 import {NotificationsService} from '../notifications/notifications.service';
+import {LoggerService} from '../util/logger.service';
+import {RestClientService} from '../util/rest-client.service';
+import {Environment} from './environment';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +37,7 @@ export class EnvironmentService {
   }
 
   getAll(): Observable<Environment[]> {
-    return this.restClient.get<any>('/data/environments?projection=environment').pipe(
+    return this.restClient.get<any>('/data/environments?projection=environment&sort=id').pipe(
       map(response => response._embedded.environments as Environment[]),
       tap((envs) => this.log.debug(`fetched ${envs.length} environments`))
     );
@@ -52,8 +51,8 @@ export class EnvironmentService {
     );
   }
 
-  getAllForPromotion(environmentRelease: EnvironmentRelease): Observable<Environment[]> {
-    const url = `/data/environments/search/forPromotion?releaseId=${environmentRelease.id.releaseId}`;
+  getAllForPromotion(releaseId: number): Observable<Environment[]> {
+    const url = `/data/environments/search/forPromotion?releaseId=${releaseId}`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.environments as Environment[]),
       tap((envs) => this.log.debug(`fetched ${envs.length} environments`))
@@ -81,9 +80,9 @@ export class EnvironmentService {
         const text = `${createdEnvironment.name} ` + `was created in cluster ${createdEnvironment.cluster.name}`;
         this.notificationsService.notification(new Notification(text));
       }),
-      catchError(() => {
+      catchError((error) => {
         const text = `Failed to create environment ${environment.name}`;
-        this.notificationsService.notification(new Notification(text, true));
+        this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })
     );
@@ -101,9 +100,9 @@ export class EnvironmentService {
         const text = `${destroyedEnvironment.name} ` + `was destroyed from cluster ${destroyedEnvironment.cluster.name}`;
         this.notificationsService.notification(new Notification(text));
       }),
-      catchError(() => {
+      catchError((error) => {
         const text = `Failed to destroy environment ${environment.name}`;
-        this.notificationsService.notification(new Notification(text, true));
+        this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })
     );
@@ -120,9 +119,9 @@ export class EnvironmentService {
         const text = `${duplicatedEnvironment.name} ` + `was duplicated in cluster ${duplicatedEnvironment.cluster.name}`;
         this.notificationsService.notification(new Notification(text));
       }),
-      catchError(() => {
+      catchError((error) => {
         const text = `Failed to duplicate environment ${destEnvironment.name} from environment: ${sourceEnvironment.name}`;
-        this.notificationsService.notification(new Notification(text, true));
+        this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })
     );

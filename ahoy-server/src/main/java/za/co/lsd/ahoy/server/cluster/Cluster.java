@@ -60,6 +60,7 @@ public class Cluster implements Serializable {
 	@OneToMany(mappedBy = "cluster", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	@ToString.Exclude
+	@OrderBy("id")
 	private List<Environment> environments;
 
 	public Cluster(@NotNull String name, @NotNull String masterUrl, @NotNull ClusterType type) {

@@ -1,0 +1,114 @@
+<!--
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
+  ~
+  ~    Licensed under the Apache License, Version 2.0 (the "License");
+  ~    you may not use this file except in compliance with the License.
+  ~    You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~    Unless required by applicable law or agreed to in writing, software
+  ~    distributed under the License is distributed on an "AS IS" BASIS,
+  ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~    See the License for the specific language governing permissions and
+  ~    limitations under the License.
+  -->
+
+<div class="p-grid">
+  <div class="p-col-12">
+
+    <app-task-events-listener (taskEventEmitter)="taskEventOccurred($event)"></app-task-events-listener>
+
+    <div *ngIf="environmentRelease && releaseVersion">
+
+      <div class="card p-mb-3">
+        <div class="card-header">
+          <h5>{{environmentRelease.release.name}}</h5>
+        </div>
+
+        <p-toolbar>
+          <ng-template pTemplate="left">
+            <button pButton pRipple label="Deploy" icon="pi pi-sign-in" class="p-button-plain p-mr-2 p-mb-2" *ngIf="canDeploy()" (click)="deploy()"></button>
+            <button pButton pRipple label="Redeploy" icon="pi pi-refresh" class="p-button-plain p-mr-2 p-mb-2" *ngIf="canRedeploy()" (click)="deploy()"></button>
+            <button pButton pRipple label="Undeploy" icon="pi pi-sign-out" class="p-button-warning p-mr-2 p-mb-2" *ngIf="canUndeploy()" (click)="undeploy()"></button>
+            <button pButton pRipple label="Rollback" icon="pi pi-undo" class="p-button-warning p-mr-2 p-mb-2" *ngIf="canRollback()" (click)="rollback()"></button>
+            <button pButton pRipple label="Promote" icon="pi pi-folder" class="p-button-info p-mr-2 p-mb-2" *ngIf="canPromote()" (click)="promote()"></button>
+            <button pButton pRipple label="Upgrade" icon="pi pi-upload" class="p-button-info p-mr-2 p-mb-2" *ngIf="canUpgrade()" (click)="upgrade()"></button>
+          </ng-template>
+
+          <ng-template pTemplate="right">
+            <p-dropdown [options]="environmentRelease.release.releaseVersions" [(ngModel)]="releaseVersion"
+                        placeholder="Version" optionLabel="version"
+                        (onChange)="releaseVersionChanged()">
+            </p-dropdown>
+
+            <p-menu #menu [popup]="true" [model]="menuItems" [style]="{'width':'250px'}"></p-menu>
+            <button pButton pRipple type="button" icon="pi pi-ellipsis-v" class="p-button-rounded p-ml-2" (click)="menu.toggle($event)"></button>
+
+          </ng-template>
+        </p-toolbar>
+
+        <p-table #dt [value]="environmentReleases" [(selection)]="selectedEnvironmentRelease" dataKey="id.environmentId" selectionMode="single" (selectionChange)="reloadCurrent()"
+                 styleClass="p-datatable-releases p-datatable-striped p-datatable-sm"
+                 [scrollable]="true" scrollHeight="150px" [filterDelay]="0" [globalFilterFields]="['environment.name', 'environment.cluster.name']">
+          <ng-template pTemplate="caption">
+            <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
+              <span class="p-input-icon-left p-ml-auto">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"/>
+              </span>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="environment.name">Environment
+                <p-sortIcon field="environment.name"></p-sortIcon>
+              </th>
+              <th pSortableColumn="environment.cluster.name">Cluster
+                <p-sortIcon field="environment.cluster.name"></p-sortIcon>
+              </th>
+              <th pSortableColumn="deployed">State
+                <p-sortIcon field="deployed"></p-sortIcon>
+              </th>
+              <th pSortableColumn="applicationsTotal">Applications
+                <p-sortIcon field="applicationsTotal"></p-sortIcon>
+              </th>
+              <th pSortableColumn="currentReleaseVersion">Version
+                <p-sortIcon field="currentReleaseVersion"></p-sortIcon>
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-er>
+            <tr [pSelectableRow]="er">
+              <td><span class="p-column-title">Environment</span>
+                {{er.environment.name}}
+              </td>
+              <td><span class="p-column-title">Cluster</span>
+                {{er.environment.cluster.name}}
+              </td>
+              <td><span class="p-column-title">State</span>
+                <app-environment-release-deployment-status [environmentRelease]="er"></app-environment-release-deployment-status>
+              </td>
+              <td><span class="p-column-title">Applications</span>
+                <app-environment-release-status [environmentRelease]="er"></app-environment-release-status>
+              </td>
+              <td><span class="p-column-title">Version</span>
+                <app-environment-release-versions [environmentRelease]="er"></app-environment-release-versions>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+
+      </div>
+
+      <app-release-application-versions
+        [environmentRelease]="environmentRelease"
+        [releaseVersion]="releaseVersion"
+        [releaseChanged]="releaseChanged"
+        (applicationVersionsChanged)="applicationVersionsChanged()">
+      </app-release-application-versions>
+
+    </div>
+
+  </div>
+</div>

@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,11 +15,14 @@
  */
 
 import {ApplicationVersion} from '../applications/application';
+import {EnvironmentRelease} from '../environment-release/environment-release';
 
 export class Release {
   id: number;
   name: string;
   releaseVersions: ReleaseVersion[];
+  environmentReleases: EnvironmentRelease[];
+  latestReleaseVersion: ReleaseVersion;
 }
 
 export class ReleaseVersion {
@@ -27,4 +30,15 @@ export class ReleaseVersion {
   version: string;
   release: Release | string;
   applicationVersions: ApplicationVersion[] = undefined;
+  releaseName: string;
+}
+
+export class PromoteOptions {
+  destEnvironmentId: number;
+  copyEnvironmentConfig = false;
+}
+
+export class UpgradeOptions {
+  version: string;
+  copyEnvironmentConfig = true;
 }

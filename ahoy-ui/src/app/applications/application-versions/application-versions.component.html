@@ -49,24 +49,33 @@
             <th pSortableColumn="image">Image
               <p-sortIcon field="image"></p-sortIcon>
             </th>
+            <th>Releases</th>
             <th></th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-element>
+        <ng-template pTemplate="body" let-applicationVersion>
           <tr>
             <td><span class="p-column-title">Version</span>
-              {{element.version}}
+              {{applicationVersion.version}}
             </td>
             <td><span class="p-column-title">Image</span>
-              {{element.image}}
+              {{applicationVersion.image}}
+            </td>
+            <td><span class="p-column-title">Releases</span>
+              <span *ngFor="let releaseName of usedByReleaseVersions(applicationVersion)">
+                <p-chip styleClass="p-mr-1 p-mb-1" label="{{releaseName}}"></p-chip>
+              </span>
             </td>
             <td>
               <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
-                      routerLink="version/{{element.id}}"
+                      routerLink="version/{{applicationVersion.id}}"
                       pTooltip="Edit version"></button>
-              <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
-                      (click)="removeApplicationVersion($event, element)"
-                      pTooltip="Delete version from application"></button>
+              <span pTooltip="{{!canDelete(applicationVersion) ? 'In order to delete application version, remove application from all release versions or delete these releases' : ''}}">
+                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                        [disabled]="!canDelete(applicationVersion)"
+                        (click)="delete($event, applicationVersion)"
+                        pTooltip="Delete version from application"></button>
+              </span>
             </td>
           </tr>
         </ng-template>

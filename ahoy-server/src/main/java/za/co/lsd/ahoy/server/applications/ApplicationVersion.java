@@ -16,10 +16,12 @@
 
 package za.co.lsd.ahoy.server.applications;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import za.co.lsd.ahoy.server.docker.DockerRegistry;
+import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 import za.co.lsd.ahoy.server.util.IntegerListConverter;
 
 import javax.persistence.*;
@@ -57,21 +59,37 @@ public class ApplicationVersion implements Serializable {
 
 	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("applicationVersionReference")
+	@OrderBy("id")
 	private List<ApplicationEnvironmentVariable> environmentVariables;
 
 	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("applicationVersionReference")
+	@OrderBy("id")
 	private List<ApplicationConfig> configs;
 
 	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("applicationVersionReference")
+	@OrderBy("id")
 	private List<ApplicationVolume> volumes;
 
 	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("applicationVersionReference")
+	@OrderBy("id")
 	private List<ApplicationSecret> secrets;
 
+	@ManyToMany(mappedBy = "applicationVersions")
+	@JsonIgnore
+	@OrderBy("id")
+	private List<ReleaseVersion> releaseVersions;
+
 	public ApplicationVersion(@NotNull String version, @NotNull String image, Application application) {
+		this.version = version;
+		this.image = image;
+		this.application = application;
+	}
+
+	public ApplicationVersion(@NotNull Long id, @NotNull String version, @NotNull String image, Application application) {
+		this.id = id;
 		this.version = version;
 		this.image = image;
 		this.application = application;

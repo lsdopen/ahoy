@@ -32,50 +32,54 @@ import java.util.Objects;
 @NoArgsConstructor
 @Table(uniqueConstraints = @UniqueConstraint(name = "release_version", columnNames = {"release_id", "version"}))
 public class ReleaseVersion implements Serializable {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	@NotNull
-	private String version;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @NotNull
+    private String version;
 
-	@ManyToOne
-	private Release release;
+    @ManyToOne
+    private Release release;
 
-	@ManyToMany
-	@JsonIgnore
-	private List<ApplicationVersion> applicationVersions;
+    @ManyToMany
+    @JoinTable(name = "RELEASE_VERSION_APPLICATION_VERSIONS",
+            joinColumns = @JoinColumn(name = "RELEASE_VERSION_ID"),
+            inverseJoinColumns = @JoinColumn(name = "APPLICATION_VERSIONS_ID"))
+    @JsonIgnore
+    @OrderBy("id")
+    private List<ApplicationVersion> applicationVersions;
 
-	public ReleaseVersion(@NotNull String version, Release release, List<ApplicationVersion> applicationVersions) {
-		this.version = version;
-		this.release = release;
-		this.applicationVersions = applicationVersions;
-	}
+    public ReleaseVersion(@NotNull String version, Release release, List<ApplicationVersion> applicationVersions) {
+        this.version = version;
+        this.release = release;
+        this.applicationVersions = applicationVersions;
+    }
 
-	public ReleaseVersion(@NotNull Long id, @NotNull String version, Release release, List<ApplicationVersion> applicationVersions) {
-		this.id = id;
-		this.version = version;
-		this.release = release;
-		this.applicationVersions = applicationVersions;
-	}
+    public ReleaseVersion(@NotNull Long id, @NotNull String version, Release release, List<ApplicationVersion> applicationVersions) {
+        this.id = id;
+        this.version = version;
+        this.release = release;
+        this.applicationVersions = applicationVersions;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		ReleaseVersion that = (ReleaseVersion) o;
-		return id.equals(that.id);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ReleaseVersion that = (ReleaseVersion) o;
+        return id.equals(that.id);
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
-	@Override
-	public String toString() {
-		return "ReleaseVersion{" +
-			"id=" + id +
-			", version='" + version + '\'' +
-			'}';
-	}
+    @Override
+    public String toString() {
+        return "ReleaseVersion{" +
+                "id=" + id +
+                ", version='" + version + '\'' +
+                '}';
+    }
 }

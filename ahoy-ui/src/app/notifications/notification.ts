@@ -14,21 +14,36 @@
  *    limitations under the License.
  */
 
+import {HttpErrorResponse} from '@angular/common/http';
+
 export class Notification {
   text: string;
   viewed: boolean;
-  error: boolean;
   time: Date;
+  error: any;
+  errorMessage: string;
+  errorTrace: string;
 
-  constructor(text: string, error = false) {
+  constructor(text: string, error?: any) {
     this.text = text;
     this.viewed = false;
     this.error = error;
     this.time = new Date();
+
+    if (error instanceof HttpErrorResponse && error.status !== 0) {
+      error = error.error;
+
+      this.errorMessage = ('message' in error) ? error.message : `Unknown error:  ${error.toString()}`;
+      this.errorTrace = ('trace' in error) ? error.trace : undefined;
+    }
   }
 
   minutesAgo() {
     const now = new Date();
-    return now.getMinutes() - this.time.getMinutes();
+    return this.minutesSinceEpoch(now) - this.minutesSinceEpoch(this.time);
+  }
+
+  minutesSinceEpoch(d: Date) {
+    return Math.floor(d.getTime() / (1000.0 * 60));
   }
 }

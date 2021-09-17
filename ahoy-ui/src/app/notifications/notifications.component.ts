@@ -79,10 +79,10 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   }
 
   private onNotification(notification: Notification) {
-    this.notifications.push(notification);
+    this.notifications.unshift(notification);
     const length = this.notifications.length;
     if (length > this.NOTIFICATIONS_TO_SHOW) {
-      this.notifications = this.notifications.slice(length - this.NOTIFICATIONS_TO_SHOW);
+      this.notifications.pop();
     }
     this.viewed = false;
     this.messageService.add({
@@ -108,6 +108,6 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   }
 
   showDescription(notification: Notification) {
-    this.dialogUtilService.showDescriptionDialog(new Description('Notification', notification.text));
+    this.dialogUtilService.showDescriptionDialog(new Description('Notification', notification.text, notification.errorTrace));
   }
 }

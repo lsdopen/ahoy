@@ -15,11 +15,11 @@
   -->
 
 <div class="p-grid">
-  <div class="p-col-12" *ngIf="environment && release && environmentRelease && releaseVersion && releasesForValidation">
+  <div class="p-col-12" *ngIf="release && releasesForValidation">
 
     <div class="card">
       <div class="card-header">
-        <h5>{{editMode ? "Edit" : "New"}} release</h5>
+        <h5>New release</h5>
       </div>
 
       <p-toolbar>
@@ -37,8 +37,7 @@
                    required
                    pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
                    [appReleaseNameUnique]="releasesForValidation"
-                   [ignoreOwnId]="release.id"
-                   [readOnly]="editMode">
+                   [ignoreOwnId]="release.id">
             <label for="releaseName">Name</label>
             <small class="p-error" *ngIf="releaseForm.form.controls.releaseName?.hasError('pattern')">
               Name invalid: should start with and use lower case letters and numbers
@@ -48,7 +47,7 @@
             </small>
           </div>
 
-          <div class="p-field p-float-label">
+          <div class="p-field p-float-label" *ngIf="!editMode && releaseVersion">
             <input pInputText id="releaseVersion" [(ngModel)]="releaseVersion.version" name="version"
                    required
                    [appReleaseVersionUnique]="release.releaseVersions"

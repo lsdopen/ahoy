@@ -14,12 +14,14 @@
  *    limitations under the License.
  */
 
+import {Location} from '@angular/common';
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ApplicationService} from '../application.service';
+import {AppBreadcrumbService} from '../../app.breadcrumb.service';
+import {TabItemFactory} from '../../components/multi-tab/multi-tab.component';
+import {ReleaseService} from '../../releases/release.service';
 import {Application, ApplicationConfig, ApplicationSecret, ApplicationVersion, ApplicationVolume} from '../application';
-import {Location} from '@angular/common';
-import {ReleasesService} from '../../releases/releases.service';
+import {ApplicationService} from '../application.service';
 
 @Component({
   selector: 'app-application-version-detail',
@@ -41,11 +43,11 @@ export class ApplicationVersionDetailComponent implements OnInit {
   volumesCategory = false;
   secretsCategory = false;
 
-  constructor(
-    private route: ActivatedRoute,
-    private applicationService: ApplicationService,
-    private releasesService: ReleasesService,
-    private location: Location) {
+  constructor(private route: ActivatedRoute,
+              private applicationService: ApplicationService,
+              private releasesService: ReleaseService,
+              private location: Location,
+              private breadcrumbService: AppBreadcrumbService) {
   }
 
   ngOnInit() {
@@ -68,6 +70,7 @@ export class ApplicationVersionDetailComponent implements OnInit {
           this.applicationVersion.environmentVariables = [];
           this.applicationVersion.healthEndpointScheme = 'HTTP';
 
+          this.setBreadcrumb();
           // load previous version details for convenience
           if (this.applicationVersionId && this.applicationVersionId > 0) {
             this.applicationService.getVersion(this.applicationVersionId)
@@ -104,9 +107,27 @@ export class ApplicationVersionDetailComponent implements OnInit {
               }
 
               this.setCategoriesExpanded();
+              this.setBreadcrumb();
             });
         }
       });
+  }
+
+  private setBreadcrumb() {
+    if (this.editMode) {
+      this.breadcrumbService.setItems([
+        {label: 'applications', routerLink: '/applications'},
+        {label: this.application.name, routerLink: `/application/${this.application.id}`},
+        {label: this.applicationVersion.version},
+        {label: 'edit'}
+      ]);
+    } else {
+      this.breadcrumbService.setItems([
+        {label: 'applications', routerLink: '/applications'},
+        {label: this.application.name, routerLink: `/application/${this.application.id}`},
+        {label: 'new'}
+      ]);
+    }
   }
 
   private setCategoriesExpanded() {
@@ -195,5 +216,39 @@ export class ApplicationVersionDetailComponent implements OnInit {
       appSecret.data = applicationSecret.data;
       return appSecret;
     });
+  }
+
+  applicationVolumeFactory(): TabItemFactory<ApplicationVolume> {
+    return (): ApplicationVolume => {
+      return new ApplicationVolume();
+    };
+  }
+
+  applicationSecretFactory(): TabItemFactory<ApplicationSecret> {
+    return (): ApplicationSecret => {
+      const applicationSecret = new ApplicationSecret();
+      applicationSecret.type = 'Generic';
+      applicationSecret.data = {};
+      return applicationSecret;
+    };
+  }
+
+  secretInUse() {
+    return (secret: ApplicationSecret): boolean => {
+      if (secret && secret.name) {
+        const inUseInVolumes = this.applicationVersion.volumes
+          .filter(volume => volume.type === 'Secret' && volume.secretName === secret.name).length > 0;
+        const inUseInEnvironmentVariables = this.applicationVersion.environmentVariables
+          .filter(envVar => envVar.type === 'Secret' && envVar.secretName === secret.name).length > 0;
+        return inUseInVolumes || inUseInEnvironmentVariables;
+      }
+      return false;
+    };
+  }
+
+  secretInUseTooltip() {
+    return (secret: ApplicationSecret): string => {
+      return 'Secret in use';
+    };
   }
 }

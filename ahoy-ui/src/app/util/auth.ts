@@ -17,4 +17,5 @@
 export class AuthInfo {
   clientId: string;
   issuer: string;
+  accountUri: string;
 }

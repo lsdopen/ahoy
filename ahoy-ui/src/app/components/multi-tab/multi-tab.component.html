@@ -1,0 +1,36 @@
+<!--
+  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
+  ~
+  ~    Licensed under the Apache License, Version 2.0 (the "License");
+  ~    you may not use this file except in compliance with the License.
+  ~    You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~    Unless required by applicable law or agreed to in writing, software
+  ~    distributed under the License is distributed on an "AS IS" BASIS,
+  ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~    See the License for the specific language governing permissions and
+  ~    limitations under the License.
+  -->
+
+<div class="p-fluid">
+  <div class="p-col-12 p-md-5">
+    <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-plain p-mr-2" (click)="add()"></button>
+    <span [pTooltip]="getDeleteDisabledTooltip()">
+      <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="delete()"
+              [disabled]="isDeleteDisabled()"></button>
+    </span>
+  </div>
+
+  <div *ngIf="items && items.length > 0" class="p-col-12">
+    <p-tabView orientation="left" [(activeIndex)]="selectedIndex">
+      <p-tabPanel [header]="item.name ? item.name : '<new>'"
+                  *ngFor="let item of items; let itemIndex = index" [selected]="itemIndex == 0">
+
+        <ng-template [ngTemplateOutlet]="content" [ngTemplateOutletContext]="{$implicit: item, index: indexes[itemIndex]}"></ng-template>
+
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</div>

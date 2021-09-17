@@ -15,6 +15,20 @@
  */
 
 :host ::ng-deep {
+  .chip-environment {
+    cursor: pointer;
+
+    &.status-deployed {
+      background: #C8E6C9;
+      color: #256029;
+    }
+
+    &.status-undeployed {
+      background: #FEEDAF;
+      color: #8A5340;
+    }
+  }
+
   .table-header {
     display: flex;
     justify-content: space-between;
