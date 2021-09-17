@@ -44,9 +44,7 @@
             </small>
           </div>
 
-          <div class="p-field">
-            <app-docker-registries [applicationVersion]="applicationVersion"></app-docker-registries>
-          </div>
+          <app-docker-registries [applicationVersion]="applicationVersion"></app-docker-registries>
 
           <div class="p-field p-float-label">
             <input pInputText id="applicationImage" [(ngModel)]="applicationVersion.image" name="applicationImage" required>
