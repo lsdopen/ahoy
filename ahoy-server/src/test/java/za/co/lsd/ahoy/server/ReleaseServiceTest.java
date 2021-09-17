@@ -297,10 +297,6 @@ public class ReleaseServiceTest {
 		Release release = new Release(1L, "release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(new EnvironmentReleaseId(1L, 1L), environment, release);
 
-		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
-		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
-
 		Environment destEnvironment = new Environment(2L, "qa", cluster);
 
 		PromoteOptions promoteOptions = new PromoteOptions(destEnvironment.getId(), false);
@@ -335,9 +331,6 @@ public class ReleaseServiceTest {
 		Environment environment = new Environment(1L, "dev", cluster);
 		Release release = new Release(1L, "release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(new EnvironmentReleaseId(1L, 1L), environment, release);
-
-		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
 
 		Environment destEnvironment = new Environment(2L, "qa", cluster);
 
