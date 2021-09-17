@@ -28,7 +28,8 @@
 
     <form #settingsForm="ngForm">
 
-      <app-multi-tab [content]="dockerRegistryContent" [items]="dockerSettings.dockerRegistries" [itemFactory]="dockerRegistryFactory()">
+      <app-multi-tab [content]="dockerRegistryContent" [items]="dockerSettings.dockerRegistries" [itemFactory]="dockerRegistryFactory()"
+                     [deleteDisabled]="registryInUse()" [deleteDisabledTooltip]="registryInUseTooltip()">
 
         <ng-template #dockerRegistryContent let-dockerRegistry let-i="index">
           <div class="p-fluid p-col-12 p-md-5">

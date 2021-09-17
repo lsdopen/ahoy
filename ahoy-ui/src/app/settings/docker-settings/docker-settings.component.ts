@@ -16,6 +16,8 @@
 
 import {Component, OnInit} from '@angular/core';
 import {AppBreadcrumbService} from '../../app.breadcrumb.service';
+import {ApplicationVersion} from '../../applications/application';
+import {ApplicationService} from '../../applications/application.service';
 import {TabItemFactory} from '../../components/multi-tab/multi-tab.component';
 import {Notification} from '../../notifications/notification';
 import {NotificationsService} from '../../notifications/notifications.service';
@@ -31,8 +33,10 @@ export class DockerSettingsComponent implements OnInit {
   dockerSettings: DockerSettings;
   hideDockerPassword = true;
   selectedIndex: number;
+  applicationVersions: ApplicationVersion[];
 
   constructor(private dockerSettingsService: DockerSettingsService,
+              private applicationService: ApplicationService,
               private notificationsService: NotificationsService,
               private breadcrumbService: AppBreadcrumbService) {
     this.breadcrumbService.setItems([
@@ -51,6 +55,11 @@ export class DockerSettingsComponent implements OnInit {
           this.selectedIndex = 0;
         }
       });
+
+    this.applicationService.getAllVersions()
+      .subscribe((applicationVersions) => {
+        this.applicationVersions = applicationVersions;
+      });
   }
 
   save() {
@@ -62,6 +71,24 @@ export class DockerSettingsComponent implements OnInit {
   dockerRegistryFactory(): TabItemFactory<DockerRegistry> {
     return (): DockerRegistry => {
       return new DockerRegistry();
+    };
+  }
+
+  registryInUse() {
+    return (registry: DockerRegistry): boolean => {
+      if (this.applicationVersions) {
+        return this.applicationVersions
+          .filter((version) => version.dockerRegistry)
+          .filter((version) => version.dockerRegistry.id === registry.id)
+          .length > 0;
+      }
+      return false;
+    };
+  }
+
+  registryInUseTooltip() {
+    return (registry: DockerRegistry): string => {
+      return `${registry.name} in use`;
     };
   }
 }
