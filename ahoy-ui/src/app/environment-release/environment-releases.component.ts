@@ -91,7 +91,7 @@ export class EnvironmentReleasesComponent implements OnInit {
 
   addRelease() {
     const dialogConfig = new DynamicDialogConfig();
-    dialogConfig.header = `Add release to ${this.selectedEnvironment.cluster.name}/${this.selectedEnvironment.name}`;
+    dialogConfig.header = `Add a release to ${this.selectedEnvironment.name}:`;
     dialogConfig.data = this.selectedEnvironment;
 
     const dialogRef = this.dialogService.open(AddReleaseDialogComponent, dialogConfig);

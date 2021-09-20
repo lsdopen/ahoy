@@ -194,7 +194,6 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     const dialogConfig = new DynamicDialogConfig();
     dialogConfig.header = `Promote ${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} to:`;
     dialogConfig.data = {environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion};
-    dialogConfig.width = '25%';
 
     const dialogRef = this.dialogService.open(PromoteDialogComponent, dialogConfig);
     dialogRef.onClose.pipe(
@@ -213,7 +212,6 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     const dialogConfig = new DynamicDialogConfig();
     dialogConfig.header = `Upgrade ${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} to version:`;
     dialogConfig.data = {environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion};
-    dialogConfig.width = '25%';
 
     const dialogRef = this.dialogService.open(UpgradeDialogComponent, dialogConfig);
     dialogRef.onClose.pipe(

@@ -65,9 +65,8 @@ export class ReleasesComponent implements OnInit {
 
   addToEnvironment(release: Release) {
     const dialogConfig = new DynamicDialogConfig();
-    dialogConfig.header = `Add ${release.name} to:`;
+    dialogConfig.header = `Add ${release.name} to environment:`;
     dialogConfig.data = {release};
-    dialogConfig.width = '25%';
 
     const dialogRef = this.dialogService.open(AddToEnvironmentDialogComponent, dialogConfig);
     dialogRef.onClose.pipe(
