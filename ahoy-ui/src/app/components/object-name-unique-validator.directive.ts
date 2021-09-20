@@ -16,35 +16,38 @@
 
 import {Directive, Input} from '@angular/core';
 import {AbstractControl, NG_VALIDATORS, Validator, ValidatorFn} from '@angular/forms';
-import {ApplicationSecret} from "../application";
 
 @Directive({
-  selector: '[appSecretNameUnique]',
-  providers: [{provide: NG_VALIDATORS, useExisting: SecretNameUniqueValidatorDirective, multi: true}]
+  selector: '[appObjectNameUnique]',
+  providers: [{provide: NG_VALIDATORS, useExisting: ObjectNameUniqueValidatorDirective, multi: true}]
 })
-export class SecretNameUniqueValidatorDirective implements Validator {
-  @Input('appSecretNameUnique') secrets: ApplicationSecret[];
+export class ObjectNameUniqueValidatorDirective implements Validator {
+  @Input('appObjectNameUnique') objects: Nameable[];
   @Input() selectedIndex: number;
 
   validate(control: AbstractControl): { [key: string]: any } | null {
-    return this.secrets ? this.checkSecretNameUnique(this.secrets)(control) : null;
+    return this.objects ? this.checkObjectNameUnique(this.objects)(control) : null;
   }
 
-  private checkSecretNameUnique(secrets: ApplicationSecret[]): ValidatorFn {
+  private checkObjectNameUnique(objects: Nameable[]): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
 
       let notUnique = false;
-      for (let i = 0; i < secrets.length; i++) {
-        if (i === this.selectedIndex) {
+      for (let i = 0; i < objects.length; i++) {
+        if (i === this.selectedIndex || !control.value) {
           continue;
         }
-        if (secrets[i].name === control.value) {
+        if (objects[i].name === control.value) {
           notUnique = true;
           break;
         }
       }
 
-      return notUnique ? {secretNameNotUnique: {value: control.value}} : null;
+      return notUnique ? {objectNameNotUnique: {value: control.value}} : null;
     };
   }
+}
+
+export declare interface Nameable {
+  name: string;
 }

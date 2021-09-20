@@ -87,7 +87,10 @@
             <p-accordionTab header="Configuration Files" [(selected)]="configFileCategory">
 
               <app-application-config-files
-                [applicationVersion]="applicationVersion" [configs]="environmentConfig.configs" [editPath]="false">
+                [parentForm]="environmentConfigForm"
+                [applicationVersion]="applicationVersion"
+                [configs]="environmentConfig.configs"
+                [editPath]="false">
               </app-application-config-files>
 
             </p-accordionTab>
@@ -97,7 +100,12 @@
               <app-multi-tab [content]="volumeContent" [items]="environmentConfig.volumes" [itemFactory]="applicationVolumeFactory()">
 
                 <ng-template #volumeContent let-volume let-volumeIndex="index">
-                  <app-application-volume-detail [volume]="volume" [volumeIndex]="volumeIndex" [secrets]="environmentConfig.secrets">
+                  <app-application-volume-detail
+                    [parentForm]="environmentConfigForm"
+                    [volume]="volume"
+                    [volumeIndex]="volumeIndex"
+                    [secrets]="environmentConfig.secrets"
+                    [volumesForValidation]="environmentConfig.volumes">
                   </app-application-volume-detail>
                 </ng-template>
 

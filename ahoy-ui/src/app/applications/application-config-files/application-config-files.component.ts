@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-import {Component, Input} from '@angular/core';
+import {AfterContentChecked, ChangeDetectorRef, Component, Input} from '@angular/core';
 import {ControlContainer, NgForm} from '@angular/forms';
 import {TabItemFactory} from '../../components/multi-tab/multi-tab.component';
 import {ApplicationConfig, ApplicationVersion} from '../application';
@@ -25,12 +25,17 @@ import {ApplicationConfig, ApplicationVersion} from '../application';
   styleUrls: ['./application-config-files.component.scss'],
   viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
 })
-export class ApplicationConfigFilesComponent {
+export class ApplicationConfigFilesComponent implements AfterContentChecked {
+  @Input() parentForm: NgForm;
   @Input() applicationVersion: ApplicationVersion;
   @Input() configs: ApplicationConfig[];
   @Input() editPath = true;
 
-  constructor() {
+  constructor(private cd: ChangeDetectorRef) {
+  }
+
+  ngAfterContentChecked(): void {
+    this.cd.detectChanges();
   }
 
   applicationConfigFactory(): TabItemFactory<ApplicationConfig> {

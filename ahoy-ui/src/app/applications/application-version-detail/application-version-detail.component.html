@@ -124,7 +124,9 @@
             <p-accordionTab header="Configuration Files" [(selected)]="configFilesCategory">
 
               <app-application-config-files
-                [applicationVersion]="applicationVersion" [configs]="applicationVersion.configs">
+                [parentForm]="applicationVersionForm"
+                [applicationVersion]="applicationVersion"
+                [configs]="applicationVersion.configs">
               </app-application-config-files>
 
             </p-accordionTab>
@@ -134,7 +136,12 @@
               <app-multi-tab [content]="volumeContent" [items]="applicationVersion.volumes" [itemFactory]="applicationVolumeFactory()">
 
                 <ng-template #volumeContent let-volume let-volumeIndex="index">
-                  <app-application-volume-detail [volume]="volume" [volumeIndex]="volumeIndex" [secrets]="applicationVersion.secrets">
+                  <app-application-volume-detail
+                    [parentForm]="applicationVersionForm"
+                    [volume]="volume"
+                    [volumeIndex]="volumeIndex"
+                    [secrets]="applicationVersion.secrets"
+                    [volumesForValidation]="applicationVersion.volumes">
                   </app-application-volume-detail>
                 </ng-template>
 

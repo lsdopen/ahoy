@@ -31,8 +31,13 @@
       <div class="p-fluid p-col-12 p-md-5">
         <div class="p-field p-float-label">
           <input pInputText id="applicationConfigName{{configIndex}}" [(ngModel)]="config.name" name="applicationConfigName{{configIndex}}"
-                 required>
+                 required
+                 [appObjectNameUnique]="configs"
+                 [selectedIndex]="configIndex">
           <label for="applicationConfigName{{configIndex}}">Name</label>
+          <small class="p-error" *ngIf="parentForm.form.controls['applicationConfigName' + configIndex]?.hasError('objectNameNotUnique')">
+            Config already exists
+          </small>
         </div>
 
         <div class="p-field p-float-label">

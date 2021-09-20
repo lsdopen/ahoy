@@ -70,7 +70,6 @@ import {ApplicationEnvVariablesComponent} from './applications/application-env-v
 import {ApplicationNameUniqueValidatorDirective} from './applications/application-name-unique-validator.directive';
 import {ApplicationSecretDataComponent} from './applications/application-secret-data/application-secret-data.component';
 import {ApplicationSecretsComponent} from './applications/application-secrets/application-secrets.component';
-import {SecretNameUniqueValidatorDirective} from './applications/application-secrets/secret-name-unique-validator.directive';
 import {ApplicationVersionDetailComponent} from './applications/application-version-detail/application-version-detail.component';
 import {ApplicationVersionUniqueValidatorDirective} from './applications/application-version-unique-validator.directive';
 import {ApplicationVersionsComponent} from './applications/application-versions/application-versions.component';
@@ -83,6 +82,7 @@ import {ConfirmDialogComponent} from './components/confirm-dialog/confirm-dialog
 import {VerifyValidatorDirective} from './components/confirm-dialog/verify-validator.directive';
 import {DescriptionDialogComponent} from './components/description-dialog/description-dialog.component';
 import {MultiTabComponent} from './components/multi-tab/multi-tab.component';
+import {ObjectNameUniqueValidatorDirective} from './components/object-name-unique-validator.directive';
 import {DashboardEnvironmentComponent} from './dashboard/dashboard-environment/dashboard-environment.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {AddReleaseDialogComponent} from './environment-release/add-release-dialog/add-release-dialog.component';
@@ -151,7 +151,6 @@ import {ErrorService} from './util/error.service';
     ApplicationVersionsComponent,
     ApplicationVersionDetailComponent,
     ApplicationNameUniqueValidatorDirective,
-    SecretNameUniqueValidatorDirective,
     ApplicationVersionUniqueValidatorDirective,
     ApplicationAllowedValidatorDirective,
     NotificationsComponent,
@@ -178,7 +177,8 @@ import {ErrorService} from './util/error.service';
     EnvironmentReleasesComponent,
     ReleaseDetailComponent,
     AddToEnvironmentDialogComponent,
-    MultiTabComponent
+    MultiTabComponent,
+    ObjectNameUniqueValidatorDirective
   ],
   imports: [
     BrowserModule,

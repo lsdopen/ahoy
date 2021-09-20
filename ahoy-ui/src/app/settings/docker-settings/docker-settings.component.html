@@ -34,8 +34,13 @@
         <ng-template #dockerRegistryContent let-dockerRegistry let-i="index">
           <div class="p-fluid p-col-12 p-md-5">
             <div class="p-field p-float-label">
-              <input pInputText id="dockerRegistryName{{i}}" [(ngModel)]="dockerRegistry.name" name="dockerRegistryName{{i}}" required>
+              <input pInputText id="dockerRegistryName{{i}}" [(ngModel)]="dockerRegistry.name" name="dockerRegistryName{{i}}" required
+                     [appObjectNameUnique]="dockerSettings.dockerRegistries"
+                     [selectedIndex]="i">
               <label for="dockerRegistryName{{i}}">Name</label>
+              <small class="p-error" *ngIf="settingsForm.form.controls['dockerRegistryName' + i]?.hasError('objectNameNotUnique')">
+                Registry already exists
+              </small>
             </div>
             <div class="p-field p-float-label">
               <input pInputText id="dockerServerName{{i}}" [(ngModel)]="dockerRegistry.server" name="dockerServerName{{i}}" required>
