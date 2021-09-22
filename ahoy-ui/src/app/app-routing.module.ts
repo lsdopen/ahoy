@@ -31,6 +31,7 @@ import {ReleaseHistoryComponent} from './release-history/release-history.compone
 import {ReleaseApplicationEnvironmentConfigComponent} from './release-manage/release-application-environment-config/release-application-environment-config.component';
 import {ReleaseManageComponent} from './release-manage/release-manage.component';
 import {ReleaseDetailComponent} from './releases/release-detail/release-detail.component';
+import {ReleaseVersionDetailComponent} from './releases/release-version-detail/release-version-detail.component';
 import {ReleasesComponent} from './releases/releases.component';
 import {ArgoSettingsComponent} from './settings/argo-settings/argo-settings.component';
 import {DockerSettingsComponent} from './settings/docker-settings/docker-settings.component';
@@ -47,6 +48,7 @@ const routes: Routes = [
 
       {path: 'releases', component: ReleasesComponent, canActivate: [SettingsGuard]},
       {path: 'release/:releaseId', component: ReleaseDetailComponent},
+      {path: 'release/:releaseId/version/:releaseVersionId', component: ReleaseVersionDetailComponent},
 
       {path: 'release/:environmentId/:releaseId/version/:releaseVersionId', component: ReleaseManageComponent},
       {path: 'release/:environmentId/:releaseId/config/:relVersionId/:appVersionId', component: ReleaseApplicationEnvironmentConfigComponent},

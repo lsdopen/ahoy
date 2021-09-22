@@ -24,14 +24,13 @@ import java.util.List;
 
 @Projection(name = "releaseSummary", types = {Release.class})
 public interface ReleaseSummaryProjection {
-	@Value("#{target.id}")
 	long getId();
 
-	@Value("#{target.name}")
 	String getName();
 
-	@Value("#{target.environmentReleases}")
 	List<EnvironmentReleaseSummaryProjection> getEnvironmentReleases();
+
+	List<ReleaseVersionSummaryProjection> getReleaseVersions();
 
 	@Value("#{target.latestReleaseVersion()}")
 	ReleaseVersionSummaryProjection getLatestReleaseVersion();

@@ -49,6 +49,10 @@ public class ReleaseVersion implements Serializable {
     @OrderBy("id")
     private List<ApplicationVersion> applicationVersions;
 
+    @OneToMany(mappedBy = "releaseVersion", cascade = CascadeType.REMOVE, orphanRemoval = true)
+	@JsonIgnore
+	private List<ReleaseHistory> releaseHistories;
+
     public ReleaseVersion(@NotNull String version, Release release, List<ApplicationVersion> applicationVersions) {
         this.version = version;
         this.release = release;

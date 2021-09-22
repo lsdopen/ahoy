@@ -83,6 +83,7 @@ import {VerifyValidatorDirective} from './components/confirm-dialog/verify-valid
 import {DescriptionDialogComponent} from './components/description-dialog/description-dialog.component';
 import {MultiTabComponent} from './components/multi-tab/multi-tab.component';
 import {ObjectNameUniqueValidatorDirective} from './components/object-name-unique-validator.directive';
+import {ObjectVersionUniqueValidatorDirective} from './components/object-version-unique-validator.directive';
 import {DashboardEnvironmentComponent} from './dashboard/dashboard-environment/dashboard-environment.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {AddReleaseDialogComponent} from './environment-release/add-release-dialog/add-release-dialog.component';
@@ -108,7 +109,9 @@ import {UpgradeDialogComponent} from './release-manage/upgrade-dialog/upgrade-di
 import {AddToEnvironmentDialogComponent} from './releases/add-to-environment-dialog/add-to-environment-dialog.component';
 import {ReleaseDetailComponent} from './releases/release-detail/release-detail.component';
 import {ReleaseNameUniqueValidatorDirective} from './releases/release-name-unique-validator.directive';
+import {ReleaseVersionDetailComponent} from './releases/release-version-detail/release-version-detail.component';
 import {ReleaseVersionUniqueValidatorDirective} from './releases/release-version-unique-validator.directive';
+import {ReleaseVersionsComponent} from './releases/release-versions/release-versions.component';
 import {ReleasesComponent} from './releases/releases.component';
 import {ArgoSettingsComponent} from './settings/argo-settings/argo-settings.component';
 import {DockerSettingsComponent} from './settings/docker-settings/docker-settings.component';
@@ -178,7 +181,10 @@ import {ErrorService} from './util/error.service';
     ReleaseDetailComponent,
     AddToEnvironmentDialogComponent,
     MultiTabComponent,
-    ObjectNameUniqueValidatorDirective
+    ObjectNameUniqueValidatorDirective,
+    ObjectVersionUniqueValidatorDirective,
+    ReleaseVersionsComponent,
+    ReleaseVersionDetailComponent
   ],
   imports: [
     BrowserModule,

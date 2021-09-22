@@ -19,6 +19,7 @@ package za.co.lsd.ahoy.server.environmentrelease;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
 import za.co.lsd.ahoy.server.environments.EnvironmentSimpleProjection;
+import za.co.lsd.ahoy.server.releases.ReleaseVersionSummaryProjection;
 
 @Projection(name = "environmentReleaseSummary", types = {EnvironmentRelease.class})
 public interface EnvironmentReleaseSummaryProjection {
@@ -26,6 +27,8 @@ public interface EnvironmentReleaseSummaryProjection {
 	EnvironmentReleaseId getId();
 
 	EnvironmentSimpleProjection getEnvironment();
+
+	ReleaseVersionSummaryProjection getCurrentReleaseVersion();
 
 	@Value("#{target.hasCurrentReleaseVersion()}")
 	Boolean getDeployed();

@@ -14,17 +14,22 @@
   ~    limitations under the License.
   -->
 
-<div class="p-grid">
+<div class="p-grid" xmlns="http://www.w3.org/1999/html">
   <div class="p-col-12" *ngIf="release && releasesForValidation">
 
-    <div class="card">
+    <app-task-events-listener (taskEventEmitter)="taskEventOccurred($event)"></app-task-events-listener>
+
+    <div class="card p-mb-3">
       <div class="card-header">
-        <h5>New release</h5>
+        <h5>{{editMode ? "Edit" : "New"}} release</h5>
       </div>
 
       <p-toolbar>
         <ng-template pTemplate="left">
-          <button pButton pRipple label="Save" icon="pi pi-save" class="p-button-success p-mr-2 p-mb-2" (click)="save()" [disabled]="releaseForm.invalid"></button>
+          <span [pTooltip]="isDeployed() ? 'Unable to edit release version that is deployed to an environment' : ''">
+            <button pButton pRipple label="Save" icon="pi pi-save" class="p-button-success p-mr-2 p-mb-2" (click)="save()"
+                    [disabled]="releaseForm.invalid || isDeployed()"></button>
+          </span>
           <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-plain p-mb-2" (click)="cancel()"></button>
         </ng-template>
       </p-toolbar>
@@ -36,6 +41,7 @@
             <input pInputText id="releaseName" [(ngModel)]="release.name" name="releaseName"
                    required
                    pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
+                   [disabled]="isDeployed()"
                    [appReleaseNameUnique]="releasesForValidation"
                    [ignoreOwnId]="release.id">
             <label for="releaseName">Name</label>
@@ -62,6 +68,9 @@
       </form>
 
     </div>
+
+    <app-release-versions *ngIf="editMode" [release]="release">
+    </app-release-versions>
 
   </div>
 </div>

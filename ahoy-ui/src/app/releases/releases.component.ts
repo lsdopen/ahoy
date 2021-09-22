@@ -83,15 +83,6 @@ export class ReleasesComponent implements OnInit {
     ).subscribe(() => this.getReleases());
   }
 
-  canEdit(release: Release) {
-    for (const environmentRelease of release.environmentReleases) {
-      if (environmentRelease.deployed) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   deleteRelease(event, release: Release) {
     this.confirmationService.confirm({
       target: event.target,

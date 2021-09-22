@@ -25,6 +25,7 @@ import {EnvironmentReleaseService} from '../../environment-release/environment-r
 import {EnvironmentService} from '../../environments/environment.service';
 import {Release, ReleaseVersion} from '../../releases/release';
 import {ReleaseService} from '../../releases/release.service';
+import {TaskEvent} from '../../taskevents/task-events';
 import {LoggerService} from '../../util/logger.service';
 
 @Component({
@@ -42,7 +43,7 @@ export class ReleaseDetailComponent implements OnInit {
     private log: LoggerService,
     private route: ActivatedRoute,
     private router: Router,
-    private releasesService: ReleaseService,
+    private releaseService: ReleaseService,
     private environmentService: EnvironmentService,
     private environmentReleaseService: EnvironmentReleaseService,
     private applicationService: ApplicationService,
@@ -60,15 +61,19 @@ export class ReleaseDetailComponent implements OnInit {
 
     } else {
       this.editMode = true;
-      this.releasesService.get(+releaseId)
-        .subscribe(rel => {
-          this.release = rel;
-          this.setBreadcrumb();
-        });
+      this.getRelease(+releaseId);
     }
 
-    this.releasesService.getAll()
-      .subscribe(rels => this.releasesForValidation = rels);
+    this.releaseService.getAll()
+      .subscribe(releases => this.releasesForValidation = releases);
+  }
+
+  private getRelease(releaseId: number) {
+    this.releaseService.getSummary(releaseId)
+      .subscribe(rel => {
+        this.release = rel;
+        this.setBreadcrumb();
+      });
   }
 
   private setBreadcrumb() {
@@ -87,13 +92,13 @@ export class ReleaseDetailComponent implements OnInit {
   }
 
   save() {
-    this.releasesService.save(this.release)
+    this.releaseService.save(this.release)
       .pipe(
         mergeMap(release => {
           this.release = release;
           if (!this.editMode) {
-            this.releaseVersion.release = this.releasesService.link(release.id);
-            return this.releasesService.saveVersion(this.releaseVersion);
+            this.releaseVersion.release = this.releaseService.link(release.id);
+            return this.releaseService.saveVersion(this.releaseVersion);
           }
           return of(release);
         })
@@ -104,5 +109,18 @@ export class ReleaseDetailComponent implements OnInit {
   cancel() {
     this.release = undefined;
     this.location.back();
+  }
+
+  isDeployed(): boolean {
+    return this.release.environmentReleases.find((environmentRelease) => environmentRelease.deployed) !== undefined;
+  }
+
+  taskEventOccurred(event: TaskEvent) {
+    if (event.releaseStatusChangedEvent) {
+      const statusChangedEvent = event.releaseStatusChangedEvent;
+      if (this.release.id === statusChangedEvent.environmentReleaseId.releaseId) {
+        this.getRelease(this.release.id);
+      }
+    }
   }
 }
