@@ -36,10 +36,10 @@
           <div class="p-field p-float-label">
             <input pInputText id="releaseVersion" name="releaseVersion" [(ngModel)]="releaseVersion.version"
                    required
-                   [appObjectVersionUnique]="release.releaseVersions"
+                   [appVersionUnique]="release.releaseVersions"
                    [ignoreOwnId]="releaseVersion.id">
             <label for="releaseVersion">Version</label>
-            <small class="p-error" *ngIf="releaseVersionForm.form.controls.releaseVersion?.hasError('objectVersionNotUnique')">
+            <small class="p-error" *ngIf="releaseVersionForm.form.controls.releaseVersion?.hasError('versionNotUnique')">
               Release version already exists
             </small>
           </div>

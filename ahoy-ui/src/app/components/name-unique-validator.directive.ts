@@ -16,26 +16,30 @@
 
 import {Directive, Input} from '@angular/core';
 import {AbstractControl, NG_VALIDATORS, Validator, ValidatorFn} from '@angular/forms';
-import {Release} from './release';
 
 @Directive({
-  selector: '[appReleaseNameUnique]',
-  providers: [{provide: NG_VALIDATORS, useExisting: ReleaseNameUniqueValidatorDirective, multi: true}]
+  selector: '[appNameUnique]',
+  providers: [{provide: NG_VALIDATORS, useExisting: NameUniqueValidatorDirective, multi: true}]
 })
-export class ReleaseNameUniqueValidatorDirective implements Validator {
-  @Input('appReleaseNameUnique') releases: Release[];
+export class NameUniqueValidatorDirective implements Validator {
+  @Input('appNameUnique') nameables: Nameable[];
   @Input() ignoreOwnId: number;
 
   validate(control: AbstractControl): { [key: string]: any } | null {
-    return this.releases ? this.checkReleaseNameUnique(this.releases)(control) : null;
+    return this.nameables ? this.checkNameUnique(this.nameables)(control) : null;
   }
 
-  private checkReleaseNameUnique(releases: Release[]): ValidatorFn {
+  private checkNameUnique(nameables: Nameable[]): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
-      const notUnique = releases
-        .filter(rel => rel.id !== this.ignoreOwnId)
-        .find(rel => rel.name === control.value);
-      return notUnique ? {releaseNameNotUnique: {value: control.value}} : null;
+      const notUnique = nameables
+        .filter(nameable => nameable.id !== this.ignoreOwnId)
+        .find(nameable => nameable.name === control.value);
+      return notUnique ? {nameNotUnique: {value: control.value}} : null;
     };
   }
+}
+
+export declare interface Nameable {
+  id: number;
+  name: string;
 }

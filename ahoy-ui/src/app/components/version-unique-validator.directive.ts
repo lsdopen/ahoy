@@ -18,23 +18,23 @@ import {Directive, Input} from '@angular/core';
 import {AbstractControl, NG_VALIDATORS, Validator, ValidatorFn} from '@angular/forms';
 
 @Directive({
-  selector: '[appObjectVersionUnique]',
-  providers: [{provide: NG_VALIDATORS, useExisting: ObjectVersionUniqueValidatorDirective, multi: true}]
+  selector: '[appVersionUnique]',
+  providers: [{provide: NG_VALIDATORS, useExisting: VersionUniqueValidatorDirective, multi: true}]
 })
-export class ObjectVersionUniqueValidatorDirective implements Validator {
-  @Input('appObjectVersionUnique') objects: Versionable[];
+export class VersionUniqueValidatorDirective implements Validator {
+  @Input('appVersionUnique') versionables: Versionable[];
   @Input() ignoreOwnId: number;
 
   validate(control: AbstractControl): { [key: string]: any } | null {
-    return this.objects ? this.checkObjectVersionUnique(this.objects)(control) : null;
+    return this.versionables ? this.checkVersionUnique(this.versionables)(control) : null;
   }
 
-  private checkObjectVersionUnique(objects: Versionable[]): ValidatorFn {
+  private checkVersionUnique(versionables: Versionable[]): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
-      const notUnique = objects
-        .filter(object => object.id !== this.ignoreOwnId)
-        .find(object => object.version === control.value);
-      return notUnique ? {objectVersionNotUnique: {value: control.value}} : null;
+      const notUnique = versionables
+        .filter(versionable => versionable.id !== this.ignoreOwnId)
+        .find(versionable => versionable.version === control.value);
+      return notUnique ? {versionNotUnique: {value: control.value}} : null;
     };
   }
 }

@@ -36,10 +36,10 @@
           <div class="p-field p-float-label">
             <input pInputText id="applicationVersion" [(ngModel)]="applicationVersion.version" name="applicationVersion"
                    required
-                   [appApplicationVersionUnique]="application.applicationVersions"
+                   [appVersionUnique]="application.applicationVersions"
                    [ignoreOwnId]="applicationVersion.id">
             <label for="applicationVersion">Version</label>
-            <small class="p-error" *ngIf="applicationVersionForm.form.controls.applicationVersion?.hasError('applicationVersionNotUnique')">
+            <small class="p-error" *ngIf="applicationVersionForm.form.controls.applicationVersion?.hasError('versionNotUnique')">
               Application version already exists
             </small>
           </div>

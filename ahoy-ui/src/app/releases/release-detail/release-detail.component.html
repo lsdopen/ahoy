@@ -42,13 +42,13 @@
                    required
                    pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
                    [disabled]="isDeployed()"
-                   [appReleaseNameUnique]="releasesForValidation"
+                   [appNameUnique]="releasesForValidation"
                    [ignoreOwnId]="release.id">
             <label for="releaseName">Name</label>
             <small class="p-error" *ngIf="releaseForm.form.controls.releaseName?.hasError('pattern')">
               Name invalid: should start with and use lower case letters and numbers
             </small>
-            <small class="p-error" *ngIf="releaseForm.form.controls.releaseName?.hasError('releaseNameNotUnique')">
+            <small class="p-error" *ngIf="releaseForm.form.controls.releaseName?.hasError('nameNotUnique')">
               Release already exists
             </small>
           </div>
@@ -56,10 +56,10 @@
           <div class="p-field p-float-label" *ngIf="!editMode && releaseVersion">
             <input pInputText id="releaseVersion" [(ngModel)]="releaseVersion.version" name="version"
                    required
-                   [appReleaseVersionUnique]="release.releaseVersions"
+                   [appVersionUnique]="release.releaseVersions"
                    [ignoreOwnId]="releaseVersion.id">
             <label for="releaseVersion">Version</label>
-            <small class="p-error" *ngIf="releaseForm.form.controls.version?.hasError('releaseVersionNotUnique')">
+            <small class="p-error" *ngIf="releaseForm.form.controls.version?.hasError('versionNotUnique')">
               Version already exists
             </small>
           </div>

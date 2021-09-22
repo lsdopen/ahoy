@@ -35,6 +35,6 @@ export class ApplicationSecretsComponent {
   }
 
   secretAlreadyExists(secretIndex: number) {
-    return this.parentForm.form.controls['secretName' + secretIndex]?.hasError('objectNameNotUnique');
+    return this.parentForm.form.controls['secretName' + secretIndex]?.hasError('tabItemNameNotUnique');
   }
 }
