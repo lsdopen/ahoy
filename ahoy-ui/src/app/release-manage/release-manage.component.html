@@ -28,6 +28,10 @@
 
         <p-toolbar>
           <ng-template pTemplate="left">
+            <p-dropdown [options]="environmentRelease.release.releaseVersions" [(ngModel)]="releaseVersion"
+                        placeholder="Version" optionLabel="version" class="p-mr-2 p-mb-2"
+                        (onChange)="releaseVersionChanged()">
+            </p-dropdown>
             <button pButton pRipple label="Deploy" icon="pi pi-sign-in" class="p-button-plain p-mr-2 p-mb-2" *ngIf="canDeploy()" (click)="deploy()"></button>
             <button pButton pRipple label="Redeploy" icon="pi pi-refresh" class="p-button-plain p-mr-2 p-mb-2" *ngIf="canRedeploy()" (click)="deploy()"></button>
             <button pButton pRipple label="Undeploy" icon="pi pi-sign-out" class="p-button-warning p-mr-2 p-mb-2" *ngIf="canUndeploy()" (click)="undeploy()"></button>
@@ -37,14 +41,8 @@
           </ng-template>
 
           <ng-template pTemplate="right">
-            <p-dropdown [options]="environmentRelease.release.releaseVersions" [(ngModel)]="releaseVersion"
-                        placeholder="Version" optionLabel="version"
-                        (onChange)="releaseVersionChanged()">
-            </p-dropdown>
-
             <p-menu #menu [popup]="true" [model]="menuItems" [style]="{'width':'250px'}"></p-menu>
             <button pButton pRipple type="button" icon="pi pi-ellipsis-v" class="p-button-rounded p-ml-2" (click)="menu.toggle($event)"></button>
-
           </ng-template>
         </p-toolbar>
 
@@ -64,8 +62,8 @@
               <th pSortableColumn="environment.name">Environment
                 <p-sortIcon field="environment.name"></p-sortIcon>
               </th>
-              <th pSortableColumn="environment.cluster.name">Cluster
-                <p-sortIcon field="environment.cluster.name"></p-sortIcon>
+              <th pSortableColumn="currentReleaseVersion">Version
+                <p-sortIcon field="currentReleaseVersion"></p-sortIcon>
               </th>
               <th pSortableColumn="deployed">State
                 <p-sortIcon field="deployed"></p-sortIcon>
@@ -73,8 +71,8 @@
               <th pSortableColumn="applicationsTotal">Applications
                 <p-sortIcon field="applicationsTotal"></p-sortIcon>
               </th>
-              <th pSortableColumn="currentReleaseVersion">Version
-                <p-sortIcon field="currentReleaseVersion"></p-sortIcon>
+              <th pSortableColumn="environment.cluster.name">Cluster
+                <p-sortIcon field="environment.cluster.name"></p-sortIcon>
               </th>
             </tr>
           </ng-template>
@@ -83,8 +81,8 @@
               <td><span class="p-column-title">Environment</span>
                 {{er.environment.name}}
               </td>
-              <td><span class="p-column-title">Cluster</span>
-                {{er.environment.cluster.name}}
+              <td><span class="p-column-title">Version</span>
+                <app-environment-release-versions [environmentRelease]="er"></app-environment-release-versions>
               </td>
               <td><span class="p-column-title">State</span>
                 <app-environment-release-deployment-status [environmentRelease]="er"></app-environment-release-deployment-status>
@@ -92,8 +90,8 @@
               <td><span class="p-column-title">Applications</span>
                 <app-environment-release-status [environmentRelease]="er"></app-environment-release-status>
               </td>
-              <td><span class="p-column-title">Version</span>
-                <app-environment-release-versions [environmentRelease]="er"></app-environment-release-versions>
+              <td><span class="p-column-title">Cluster</span>
+                {{er.environment.cluster.name}}
               </td>
             </tr>
           </ng-template>

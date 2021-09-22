@@ -52,11 +52,11 @@
             <th pSortableColumn="version">Version
               <p-sortIcon field="version"></p-sortIcon>
             </th>
-            <th pSortableColumn="image">Image
-              <p-sortIcon field="image"></p-sortIcon>
-            </th>
             <th pSortableColumn="status.status">Status
               <p-sortIcon field="status.status"></p-sortIcon>
+            </th>
+            <th pSortableColumn="image">Image
+              <p-sortIcon field="image"></p-sortIcon>
             </th>
             <th></th>
           </tr>
@@ -69,13 +69,13 @@
             <td><span class="p-column-title">Version</span>
               {{av.version}}
             </td>
-            <td><span class="p-column-title">Image</span>
-              {{av.image}}
-            </td>
             <td><span class="p-column-title">Status</span>
               <app-release-application-version-status
                 [environmentRelease]="environmentRelease" [releaseVersion]="releaseVersion" [applicationVersion]="av">
               </app-release-application-version-status>
+            </td>
+            <td><span class="p-column-title">Image</span>
+              {{av.image}}
             </td>
             <td>
               <a *ngIf="hasRoute(av)" pButton pRipple icon="pi pi-external-link" class="p-button-rounded p-button-info p-mr-2"
