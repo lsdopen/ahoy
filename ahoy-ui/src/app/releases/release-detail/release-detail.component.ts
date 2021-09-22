@@ -81,12 +81,12 @@ export class ReleaseDetailComponent implements OnInit {
       this.breadcrumbService.setItems([
         {label: 'releases', routerLink: '/releases'},
         {label: this.release.name},
-        {label: this.editMode ? 'edit' : 'new'}
+        {label: 'edit'}
       ]);
     } else {
       this.breadcrumbService.setItems([
         {label: 'releases', routerLink: '/releases'},
-        {label: this.editMode ? 'edit' : 'new'}
+        {label: 'new'}
       ]);
     }
   }
@@ -112,7 +112,8 @@ export class ReleaseDetailComponent implements OnInit {
   }
 
   isDeployed(): boolean {
-    return this.release.environmentReleases.find((environmentRelease) => environmentRelease.deployed) !== undefined;
+    return this.release.environmentReleases &&
+      this.release.environmentReleases.find((environmentRelease) => environmentRelease.deployed) !== undefined;
   }
 
   taskEventOccurred(event: TaskEvent) {
