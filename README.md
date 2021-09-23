@@ -19,7 +19,13 @@ Think Helm, Git, GitOps, Continuous Deployment using ArgoCD awesomeness, all don
 - deploy, promote and upgrade applications and services across environments
 - get an overview of the status of releases across environments and clusters
 
+### Dashboard
+
 ![Dashboard](./docs/images/dashboard.png)
+
+### Manage Release
+
+![Manage Release](./docs/images/manage-release.png)
 
 ## Documentation
 
