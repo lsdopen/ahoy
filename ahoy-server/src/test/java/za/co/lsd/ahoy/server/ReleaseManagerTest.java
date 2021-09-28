@@ -85,10 +85,10 @@ public class ReleaseManagerTest {
 		when(argoClient.getApplication("test-cluster-dev-release1")).thenReturn(Optional.empty());
 		when(settingsProvider.getGitSettings()).thenReturn(new GitSettings("https://github.com/test/test-releases.git"));
 
-		DeployDetails deployDetails = new DeployDetails("This is a test commit message");
+		DeployOptions deployOptions = new DeployOptions(releaseVersion.getId(), "This is a test commit message");
 
 		// when
-		releaseManager.deploy(environmentRelease, releaseVersion, deployDetails);
+		releaseManager.deploy(environmentRelease, releaseVersion, deployOptions);
 
 		// then
 		verify(chartGenerator, times(1)).generate(same(environmentRelease), same(releaseVersion), same(testPath));
@@ -143,10 +143,10 @@ public class ReleaseManagerTest {
 		when(argoClient.getApplication("test-cluster-dev-release1")).thenReturn(Optional.of(new ArgoApplication()));
 		when(settingsProvider.getGitSettings()).thenReturn(new GitSettings("https://github.com/test/test-releases.git"));
 
-		DeployDetails deployDetails = new DeployDetails("This is a test commit message");
+		DeployOptions deployOptions = new DeployOptions(releaseVersion.getId(), "This is a test commit message");
 
 		// when
-		releaseManager.deploy(environmentRelease, releaseVersion, deployDetails);
+		releaseManager.deploy(environmentRelease, releaseVersion, deployOptions);
 
 		// then
 		verify(chartGenerator, times(1)).generate(same(environmentRelease), same(releaseVersion), same(testPath));

@@ -24,7 +24,7 @@ import {filter, mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Confirmation} from '../components/confirm-dialog/confirm';
 import {DialogUtilService} from '../components/dialog-util.service';
-import {DeployDetails, EnvironmentRelease} from '../environment-release/environment-release';
+import {DeployOptions, EnvironmentRelease} from '../environment-release/environment-release';
 import {EnvironmentReleaseService} from '../environment-release/environment-release.service';
 import {Environment} from '../environments/environment';
 import {EnvironmentService} from '../environments/environment.service';
@@ -169,8 +169,8 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
-      const deployDetails = new DeployDetails(conf.input);
-      this.releaseManageService.deploy(this.environmentRelease, this.releaseVersion, deployDetails).subscribe();
+      const deployOptions = new DeployOptions(this.releaseVersion.id, conf.input);
+      this.releaseManageService.deploy(this.environmentRelease, deployOptions).subscribe();
     });
   }
 
@@ -304,8 +304,8 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
-      const deployDetails = new DeployDetails(conf.input);
-      this.releaseManageService.deploy(this.environmentRelease, this.environmentRelease.previousReleaseVersion, deployDetails)
+      const deployOptions = new DeployOptions(this.environmentRelease.previousReleaseVersion.id, conf.input);
+      this.releaseManageService.deploy(this.environmentRelease, deployOptions)
         .subscribe(() => this.log.debug('rolled back release:', this.environmentRelease));
     });
   }

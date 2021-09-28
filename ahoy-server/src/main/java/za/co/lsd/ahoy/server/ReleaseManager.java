@@ -56,7 +56,7 @@ public class ReleaseManager {
 		this.clusterManagerFactory = clusterManagerFactory;
 	}
 
-	public ArgoApplication deploy(EnvironmentRelease environmentRelease, ReleaseVersion releaseVersion, DeployDetails deployDetails) throws ReleaseManagerException {
+	public ArgoApplication deploy(EnvironmentRelease environmentRelease, ReleaseVersion releaseVersion, DeployOptions deployOptions) throws ReleaseManagerException {
 		Objects.requireNonNull(environmentRelease, "environmentRelease is required");
 		Objects.requireNonNull(releaseVersion, "releaseVersion is required");
 
@@ -64,7 +64,7 @@ public class ReleaseManager {
 			Optional<String> commit;
 			try (LocalRepo.WorkingTree workingTree = localRepo.requestWorkingTree()) {
 				chartGenerator.generate(environmentRelease, releaseVersion, workingTree.getPath());
-				commit = workingTree.push(deployDetails.getCommitMessage());
+				commit = workingTree.push(deployOptions.getCommitMessage());
 			}
 
 			if (commit.isPresent()) {
@@ -88,7 +88,7 @@ public class ReleaseManager {
 				argoApplication = argoClient.createApplication(argoApplication);
 			}
 
-			log.info("Deployed with commit message: {}", deployDetails.getCommitMessage());
+			log.info("Deployed with commit message: {}", deployOptions.getCommitMessage());
 			return argoApplication;
 
 		} catch (Exception e) {

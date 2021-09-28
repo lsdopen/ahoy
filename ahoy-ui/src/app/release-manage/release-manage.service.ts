@@ -17,7 +17,7 @@
 import {Injectable} from '@angular/core';
 import {EMPTY, Observable, Subject} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
-import {DeployDetails, EnvironmentRelease, EnvironmentReleaseId} from '../environment-release/environment-release';
+import {DeployOptions, EnvironmentRelease, EnvironmentReleaseId} from '../environment-release/environment-release';
 import {Environment} from '../environments/environment';
 import {Notification} from '../notifications/notification';
 import {NotificationsService} from '../notifications/notifications.service';
@@ -36,10 +36,10 @@ export class ReleaseManageService {
               private log: LoggerService) {
   }
 
-  deploy(environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion, deployDetails: DeployDetails): Observable<EnvironmentRelease> {
+  deploy(environmentRelease: EnvironmentRelease, deployOptions: DeployOptions): Observable<EnvironmentRelease> {
     this.log.debug('deploying environment release', environmentRelease);
-    const url = `/api/release/deploy/${environmentRelease.id.environmentId}/${environmentRelease.id.releaseId}/${releaseVersion.id}`;
-    return this.restClient.post<EnvironmentRelease>(url, deployDetails, true).pipe(
+    const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentRelease.id)}/deploy`;
+    return this.restClient.post<EnvironmentRelease>(url, deployOptions, true).pipe(
       tap((deployedEnvironmentRelease) => {
         this.log.debug('deployed environment release', deployedEnvironmentRelease);
         this.environmentReleaseChangedSubject.next(deployedEnvironmentRelease);
@@ -48,7 +48,7 @@ export class ReleaseManageService {
         this.notificationsService.notification(new Notification(text));
       }),
       catchError((error) => {
-        const text = `Failed to deploy ${(environmentRelease.release as Release).name} : ${releaseVersion.version} `
+        const text = `Failed to deploy ${(environmentRelease.release as Release).name} : ${deployOptions.releaseVersionId} `
           + `to environment ${(environmentRelease.environment as Environment).name}`;
         this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
@@ -58,7 +58,7 @@ export class ReleaseManageService {
 
   undeploy(environmentRelease: EnvironmentRelease): Observable<EnvironmentRelease> {
     this.log.debug('undeploying environment release:', environmentRelease);
-    const url = `/api/release/undeploy/${environmentRelease.id.environmentId}/${environmentRelease.id.releaseId}`;
+    const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentRelease.id)}/undeploy`;
     return this.restClient.post<EnvironmentRelease>(url, null, true).pipe(
       tap((unDeployedEnvironmentRelease) => {
         this.log.debug('undeployed environment release', unDeployedEnvironmentRelease);
@@ -78,8 +78,8 @@ export class ReleaseManageService {
 
   remove(environmentRelease: EnvironmentRelease): Observable<EnvironmentRelease> {
     this.log.debug('removing environment release:', environmentRelease);
-    const url = `/api/release/remove/${environmentRelease.id.environmentId}/${environmentRelease.id.releaseId}`;
-    return this.restClient.post<EnvironmentRelease>(url, null, true).pipe(
+    const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentRelease.id)}/remove`;
+    return this.restClient.delete<EnvironmentRelease>(url, true).pipe(
       tap((removedEnvironmentRelease) => {
         this.log.debug('removed environment release', removedEnvironmentRelease);
         const text = `${(removedEnvironmentRelease.release as Release).name} `
@@ -97,7 +97,7 @@ export class ReleaseManageService {
 
   promote(environmentReleaseId: EnvironmentReleaseId, promoteOptions: PromoteOptions): Observable<EnvironmentRelease> {
     this.log.debug(`promoting environment release: ${environmentReleaseId} to environment: ${promoteOptions.destEnvironmentId}`);
-    const url = `/api/release/promote/${environmentReleaseId.environmentId}/${environmentReleaseId.releaseId}`;
+    const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentReleaseId)}/promote`;
     return this.restClient.post<EnvironmentRelease>(url, promoteOptions).pipe(
       tap((environmentRelease) => {
         this.log.debug('promoted release to new environment', environmentRelease);
@@ -115,7 +115,7 @@ export class ReleaseManageService {
 
   upgrade(releaseVersionId: number, upgradeOptions: UpgradeOptions): Observable<ReleaseVersion> {
     this.log.debug(`upgrading release version: ${releaseVersionId} to version: ${upgradeOptions.version}`);
-    const url = `/api/release/upgrade/${releaseVersionId}`;
+    const url = `/api/releaseVersions/${releaseVersionId}/upgrade`;
     return this.restClient.post<ReleaseVersion>(url, upgradeOptions).pipe(
       tap((upgradedReleaseVersion) => this.log.debug('upgraded release version', upgradedReleaseVersion))
     );
@@ -123,7 +123,7 @@ export class ReleaseManageService {
 
   copyEnvConfig(environmentReleaseId: EnvironmentReleaseId, sourceReleaseVersionId: number, destReleaseVersionId: number): Observable<EnvironmentRelease> {
     this.log.debug(`copying environment config for release: ${environmentReleaseId} from sourceReleaseVersionId: ${sourceReleaseVersionId} to destReleaseVersionId: ${destReleaseVersionId}`);
-    const url = `/api/release/copyEnvConfig/${environmentReleaseId.environmentId}/${environmentReleaseId.releaseId}/${sourceReleaseVersionId}/${destReleaseVersionId}`;
+    const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentReleaseId)}/copyEnvConfig?sourceReleaseVersionId=${sourceReleaseVersionId}&destReleaseVersionId=${destReleaseVersionId}`;
     return this.restClient.post<EnvironmentRelease>(url).pipe(
       tap((environmentRelease) => this.log.debug('copied environment config for release', environmentRelease))
     );
@@ -131,7 +131,7 @@ export class ReleaseManageService {
 
   copyAppEnvConfig(releaseVersionId: number, sourceApplicationVersionId: number, destApplicationVersionId: number): Observable<EnvironmentRelease> {
     this.log.debug(`copying environment config for release version: ${releaseVersionId} from sourceApplicationVersionId: ${sourceApplicationVersionId} to destApplicationVersionId: ${destApplicationVersionId}`);
-    const url = `/api/release/releaseVersions/${releaseVersionId}/copyAppEnvConfig?sourceApplicationVersionId=${sourceApplicationVersionId}&destApplicationVersionId=${destApplicationVersionId}`;
+    const url = `/api/releaseVersions/${releaseVersionId}/copyAppEnvConfig?sourceApplicationVersionId=${sourceApplicationVersionId}&destApplicationVersionId=${destApplicationVersionId}`;
     return this.restClient.post<EnvironmentRelease>(url).pipe(
       tap(() => this.log.debug('copied environment config for release version', releaseVersionId))
     );

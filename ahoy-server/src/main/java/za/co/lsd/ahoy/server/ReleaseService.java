@@ -83,14 +83,20 @@ public class ReleaseService {
 
 	@Async("deploymentTaskExecutor")
 	@Transactional
-	public Future<EnvironmentRelease> deploy(EnvironmentRelease environmentRelease, ReleaseVersion releaseVersion, DeployDetails deployDetails) {
+	public Future<EnvironmentRelease> deploy(EnvironmentReleaseId environmentReleaseId, DeployOptions deployOptions) {
+		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
+
+		ReleaseVersion releaseVersion = releaseVersionRepository.findById(deployOptions.getReleaseVersionId())
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find releaseVersion in release, releaseVersionId: " + deployOptions.getReleaseVersionId()));
+
 		log.info("Deploying environment release: {}, release version: {}", environmentRelease, releaseVersion);
 
 		ReleaseVersion previousReleaseVersion = environmentRelease.getCurrentReleaseVersion();
 		boolean redeploy = releaseVersion.equals(previousReleaseVersion);
 		boolean upgrade = previousReleaseVersion != null && !redeploy;
 
-		ArgoApplication argoApplication = releaseManager.deploy(environmentRelease, releaseVersion, deployDetails);
+		ArgoApplication argoApplication = releaseManager.deploy(environmentRelease, releaseVersion, deployOptions);
 
 		environmentRelease.setCurrentReleaseVersion(releaseVersion);
 		environmentRelease.setArgoCdName(argoApplication.getMetadata().getName());
@@ -111,7 +117,10 @@ public class ReleaseService {
 
 	@Async("deploymentTaskExecutor")
 	@Transactional
-	public Future<EnvironmentRelease> undeploy(EnvironmentRelease environmentRelease) {
+	public Future<EnvironmentRelease> undeploy(EnvironmentReleaseId environmentReleaseId) {
+		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
+
 		log.info("Undeploying environment release: {}", environmentRelease);
 
 		ReleaseVersion currentReleaseVersion = environmentRelease.getCurrentReleaseVersion();
@@ -144,7 +153,7 @@ public class ReleaseService {
 		if (environmentRelease.hasCurrentReleaseVersion()) {
 			log.info("{} is currently deployed in {}, undeploying...", environmentRelease.getRelease().getName(), environmentRelease.getEnvironment().getName());
 			try {
-				undeploy(environmentRelease).get();
+				undeploy(environmentReleaseId).get();
 			} catch (Exception e) {
 				throw new EnvironmentException("Failed to undeploy " + environmentRelease + " from " + environmentRelease.getEnvironment(), e);
 			}
@@ -156,15 +165,14 @@ public class ReleaseService {
 	}
 
 	@Transactional
-	public EnvironmentRelease promote(Long environmentId, Long releaseId, PromoteOptions promoteOptions) {
-		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(environmentId, releaseId);
+	public EnvironmentRelease promote(EnvironmentReleaseId environmentReleaseId, PromoteOptions promoteOptions) {
 		Long destEnvironmentId = promoteOptions.getDestEnvironmentId();
 		log.info("Promoting environment release: {} to environment: {}", environmentReleaseId, destEnvironmentId);
 
 		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
 
-		Optional<EnvironmentRelease> optionalPromotedEnvironmentRelease = environmentReleaseRepository.findById(new EnvironmentReleaseId(destEnvironmentId, releaseId));
+		Optional<EnvironmentRelease> optionalPromotedEnvironmentRelease = environmentReleaseRepository.findById(new EnvironmentReleaseId(destEnvironmentId, environmentReleaseId.getReleaseId()));
 
 		if (optionalPromotedEnvironmentRelease.isPresent()) {
 			return optionalPromotedEnvironmentRelease.get();
@@ -214,8 +222,7 @@ public class ReleaseService {
 	}
 
 	@Transactional
-	public EnvironmentRelease copyEnvConfig(Long environmentId, Long releaseId, Long sourceReleaseVersionId, Long destReleaseVersionId) {
-		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(environmentId, releaseId);
+	public EnvironmentRelease copyEnvConfig(EnvironmentReleaseId environmentReleaseId, Long sourceReleaseVersionId, Long destReleaseVersionId) {
 		log.info("Copying environment config for release: {} from sourceReleaseVersionId: {} to destReleaseVersionId: {}", environmentReleaseId, sourceReleaseVersionId, destReleaseVersionId);
 
 		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)

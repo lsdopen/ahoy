@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,10 +21,12 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class DeployDetails {
+public class DeployOptions {
+	private Long releaseVersionId;
 	private String commitMessage;
 
-	public DeployDetails(String commitMessage) {
+	public DeployOptions(Long releaseVersionId, String commitMessage) {
+		this.releaseVersionId = releaseVersionId;
 		this.commitMessage = commitMessage;
 	}
 }
