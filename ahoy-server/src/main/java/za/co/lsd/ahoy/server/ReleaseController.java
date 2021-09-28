@@ -107,4 +107,12 @@ public class ReleaseController {
 		EnvironmentRelease environmentRelease = releaseService.copyEnvConfig(environmentId, releaseId, sourceReleaseVersionId, destReleaseVersionId);
 		return new ResponseEntity<>(environmentRelease, new HttpHeaders(), HttpStatus.OK);
 	}
+
+	@PostMapping("/releaseVersions/{releaseVersionId}/copyAppEnvConfig")
+	public ResponseEntity<EnvironmentRelease> copyApplicationVersionEnvConfig(@PathVariable Long releaseVersionId,
+																			  @RequestParam Long sourceApplicationVersionId,
+																			  @RequestParam Long destApplicationVersionId) {
+		releaseService.copyApplicationVersionEnvConfig(releaseVersionId, sourceApplicationVersionId, destApplicationVersionId);
+		return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.OK);
+	}
 }

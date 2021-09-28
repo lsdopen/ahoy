@@ -55,6 +55,8 @@ public class ReleaseServiceTest {
 	@MockBean
 	private ApplicationReleaseStatusRepository applicationReleaseStatusRepository;
 	@MockBean
+	private ApplicationVersionRepository applicationVersionRepository;
+	@MockBean
 	private ReleaseHistoryRepository releaseHistoryRepository;
 	@MockBean
 	private ReleaseVersionRepository releaseVersionRepository;
@@ -401,5 +403,72 @@ public class ReleaseServiceTest {
 			"Environment config deployment ID incorrect; this means the config is not related to the correct entity");
 		assertEquals("myapp1-route", savedEnvironmentConfig.getRouteHostname(), "Environment config route incorrect");
 		assertEquals(8080, savedEnvironmentConfig.getRouteTargetPort(), "Environment config port incorrect");
+	}
+
+	@Test
+	public void copyApplicationVersionEnvConfig() {
+		// given
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
+		Environment environment = new Environment(1L, "dev", cluster);
+		Release release = new Release(1L, "release1");
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(new EnvironmentReleaseId(1L, 1L), environment, release);
+
+		Application application = new Application("app1");
+		ApplicationVersion applicationVersion1 = new ApplicationVersion(1L, "1.0.0", "image", application);
+		ApplicationVersion applicationVersion2 = new ApplicationVersion(2L, "2.0.0", "image", application);
+		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion2));
+
+		when(releaseVersionRepository.findById(1L)).thenReturn(Optional.of(releaseVersion));
+		when(applicationVersionRepository.findById(1L)).thenReturn(Optional.of(applicationVersion1));
+		when(applicationVersionRepository.findById(2L)).thenReturn(Optional.of(applicationVersion2));
+
+		when(environmentReleaseRepository.findByRelease_Id_OrderByEnvironmentId(release.getId())).thenReturn(Collections.singletonList(environmentRelease));
+
+		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
+		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion1)).thenReturn(Optional.of(environmentConfig));
+		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion2)).thenReturn(Optional.empty());
+
+		// when
+		releaseService.copyApplicationVersionEnvConfig(releaseVersion.getId(), applicationVersion1.getId(), applicationVersion2.getId());
+
+		// then
+		ArgumentCaptor<ApplicationEnvironmentConfig> applicationEnvironmentConfigArgumentCaptor = ArgumentCaptor.forClass(ApplicationEnvironmentConfig.class);
+		verify(applicationEnvironmentConfigRepository, times(1)).save(applicationEnvironmentConfigArgumentCaptor.capture());
+
+		ApplicationEnvironmentConfig savedEnvironmentConfig = applicationEnvironmentConfigArgumentCaptor.getValue();
+		assertEquals(new ApplicationDeploymentId(environmentRelease.getId(), releaseVersion.getId(), applicationVersion2.getId()), savedEnvironmentConfig.getId(),
+			"Environment config deployment ID incorrect; this means the config is not related to the correct entity");
+		assertEquals("myapp1-route", savedEnvironmentConfig.getRouteHostname(), "Environment config route incorrect");
+		assertEquals(8080, savedEnvironmentConfig.getRouteTargetPort(), "Environment config port incorrect");
+	}
+
+	@Test
+	public void copyApplicationVersionEnvConfigExistingConfig() {
+		// given
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
+		Environment environment = new Environment(1L, "dev", cluster);
+		Release release = new Release(1L, "release1");
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(new EnvironmentReleaseId(1L, 1L), environment, release);
+
+		Application application = new Application("app1");
+		ApplicationVersion applicationVersion1 = new ApplicationVersion(1L, "1.0.0", "image", application);
+		ApplicationVersion applicationVersion2 = new ApplicationVersion(2L, "2.0.0", "image", application);
+		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion2));
+
+		when(releaseVersionRepository.findById(1L)).thenReturn(Optional.of(releaseVersion));
+		when(applicationVersionRepository.findById(1L)).thenReturn(Optional.of(applicationVersion1));
+		when(applicationVersionRepository.findById(2L)).thenReturn(Optional.of(applicationVersion2));
+
+		when(environmentReleaseRepository.findByRelease_Id_OrderByEnvironmentId(release.getId())).thenReturn(Collections.singletonList(environmentRelease));
+
+		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
+		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion1)).thenReturn(Optional.of(environmentConfig));
+		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion2)).thenReturn(Optional.of(environmentConfig));
+
+		// when
+		releaseService.copyApplicationVersionEnvConfig(releaseVersion.getId(), applicationVersion1.getId(), applicationVersion2.getId());
+
+		// then
+		verify(applicationEnvironmentConfigRepository, never()).save(any(ApplicationEnvironmentConfig.class));
 	}
 }

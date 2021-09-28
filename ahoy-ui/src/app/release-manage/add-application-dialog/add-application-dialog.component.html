@@ -19,7 +19,7 @@
           routerLink="/application/new" [queryParams]="{releaseVersionId: releaseVersion.id}"
           (click)="cancel()"></button>
   <button *ngIf="applicationMode" pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2"
-          routerLink="/application/{{selectedApplication.id}}/version/new" [queryParams]="{releaseVersionId: releaseVersion.id, applicationVersionId: currentApplicationVersion.id}"
+          routerLink="/application/{{selectedApplication.id}}/version/new" [queryParams]="{releaseVersionId: releaseVersion.id, applicationVersionId: currentApplicationVersion.id, copyEnvironmentConfig: upgradeAppOptions.copyEnvironmentConfig}"
           (click)="cancel()"></button>
 
   <div class="p-fluid">
@@ -36,9 +36,14 @@
     </div>
 
     <div class="p-field">
-      <p-dropdown id="applicationVersion" [options]="applicationVersions" [(ngModel)]="selectedVersion" placeholder="Version" optionLabel="version" name="applicationVersion" required
+      <p-dropdown id="applicationVersion" [options]="applicationVersions" [(ngModel)]="upgradeAppOptions.applicationVersion" placeholder="Version" optionLabel="version" name="applicationVersion" required
                   appendTo="body">
       </p-dropdown>
+    </div>
+
+    <div class="p-field-checkbox" *ngIf="applicationMode">
+      <p-checkbox id="copyEnvironmentConfig" name="copyEnvironmentConfig" [(ngModel)]="upgradeAppOptions.copyEnvironmentConfig" binary="true"></p-checkbox>
+      <label for="copyEnvironmentConfig">Copy environment config</label>
     </div>
 
   </div>
@@ -46,5 +51,5 @@
 
 <div class="p-grid p-pt-3">
   <button pButton pRipple type="button" icon="pi pi-times" (click)="close(undefined)" label="Cancel" class="p-button-text p-ml-auto p-mr-2"></button>
-  <button pButton pRipple type="button" icon="pi pi-check" (click)="close(selectedVersion)" label="Ok" class="p-button-text p-mr-2" [disabled]="f.invalid"></button>
+  <button pButton pRipple type="button" icon="pi pi-check" (click)="close(upgradeAppOptions)" label="Ok" class="p-button-text p-mr-2" [disabled]="f.invalid"></button>
 </div>

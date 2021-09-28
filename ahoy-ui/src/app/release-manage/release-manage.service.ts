@@ -129,6 +129,14 @@ export class ReleaseManageService {
     );
   }
 
+  copyAppEnvConfig(releaseVersionId: number, sourceApplicationVersionId: number, destApplicationVersionId: number): Observable<EnvironmentRelease> {
+    this.log.debug(`copying environment config for release version: ${releaseVersionId} from sourceApplicationVersionId: ${sourceApplicationVersionId} to destApplicationVersionId: ${destApplicationVersionId}`);
+    const url = `/api/release/releaseVersions/${releaseVersionId}/copyAppEnvConfig?sourceApplicationVersionId=${sourceApplicationVersionId}&destApplicationVersionId=${destApplicationVersionId}`;
+    return this.restClient.post<EnvironmentRelease>(url).pipe(
+      tap(() => this.log.debug('copied environment config for release version', releaseVersionId))
+    );
+  }
+
   public environmentReleaseChanged(): Observable<EnvironmentRelease> {
     return this.environmentReleaseChangedSubject.asObservable();
   }

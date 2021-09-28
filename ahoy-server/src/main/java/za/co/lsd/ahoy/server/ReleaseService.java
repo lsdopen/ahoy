@@ -54,6 +54,7 @@ public class ReleaseService {
 	private final ApplicationEnvironmentConfigRepository applicationEnvironmentConfigRepository;
 	private final ApplicationEnvironmentConfigProvider environmentConfigProvider;
 	private final ApplicationReleaseStatusRepository applicationReleaseStatusRepository;
+	private final ApplicationVersionRepository applicationVersionRepository;
 	private final ReleaseManager releaseManager;
 	private ApplicationEventPublisher eventPublisher;
 
@@ -63,6 +64,7 @@ public class ReleaseService {
 						  ApplicationEnvironmentConfigRepository applicationEnvironmentConfigRepository,
 						  ApplicationEnvironmentConfigProvider environmentConfigProvider,
 						  ApplicationReleaseStatusRepository applicationReleaseStatusRepository,
+						  ApplicationVersionRepository applicationVersionRepository,
 						  ReleaseManager releaseManager) {
 		this.environmentRepository = environmentRepository;
 		this.environmentReleaseRepository = environmentReleaseRepository;
@@ -70,6 +72,7 @@ public class ReleaseService {
 		this.applicationEnvironmentConfigRepository = applicationEnvironmentConfigRepository;
 		this.environmentConfigProvider = environmentConfigProvider;
 		this.applicationReleaseStatusRepository = applicationReleaseStatusRepository;
+		this.applicationVersionRepository = applicationVersionRepository;
 		this.releaseManager = releaseManager;
 	}
 
@@ -228,6 +231,32 @@ public class ReleaseService {
 	}
 
 	/**
+	 * Copies environment config from one application version to another for the same release version across all its environments that the release belongs to.
+	 * <p>
+	 * Does not copy if the destination application version environment config already exists.
+	 *
+	 * @param releaseVersionId           the release version id to copy for
+	 * @param sourceApplicationVersionId the source application version id to copy from
+	 * @param destApplicationVersionId   the destination application version id to copy to
+	 */
+	@Transactional
+	public void copyApplicationVersionEnvConfig(Long releaseVersionId, Long sourceApplicationVersionId, Long destApplicationVersionId) {
+		log.info("Copying environment config for release version: {} from source application version: {} to dest application version: {}", releaseVersionId, sourceApplicationVersionId, destApplicationVersionId);
+
+		ReleaseVersion releaseVersion = releaseVersionRepository.findById(releaseVersionId)
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find releaseVersion: " + releaseVersionId));
+		ApplicationVersion sourceApplicationVersion = applicationVersionRepository.findById(sourceApplicationVersionId)
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find sourceApplicationVersion: " + sourceApplicationVersionId));
+		ApplicationVersion destApplicationVersion = applicationVersionRepository.findById(destApplicationVersionId)
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find destApplicationVersion: " + destApplicationVersionId));
+
+		Iterable<EnvironmentRelease> environmentReleases = environmentReleaseRepository.findByRelease_Id_OrderByEnvironmentId(releaseVersion.getRelease().getId());
+		for (EnvironmentRelease environmentRelease : environmentReleases) {
+			copyEnvironmentConfig(environmentRelease, releaseVersion, sourceApplicationVersion, destApplicationVersion);
+		}
+	}
+
+	/**
 	 * Copies environment config from one release version to another for the same environment release.
 	 */
 	private void copyEnvironmentConfig(EnvironmentRelease environmentRelease, ReleaseVersion sourceReleaseVersion, ReleaseVersion destReleaseVersion) {
@@ -246,20 +275,32 @@ public class ReleaseService {
 	 */
 	private void copyEnvironmentConfig(EnvironmentRelease sourceEnvironmentRelease, ReleaseVersion sourceReleaseVersion, EnvironmentRelease destEnvironmentRelease, ReleaseVersion destReleaseVersion) {
 		for (ApplicationVersion applicationVersion : destReleaseVersion.getApplicationVersions()) {
-			Optional<ApplicationEnvironmentConfig> sourceConfig = environmentConfigProvider.environmentConfigFor(
-				sourceEnvironmentRelease, sourceReleaseVersion, applicationVersion);
+			copyEnvironmentConfig(sourceEnvironmentRelease, sourceReleaseVersion, applicationVersion, destEnvironmentRelease, destReleaseVersion, applicationVersion);
+		}
+	}
 
-			if (sourceConfig.isPresent()) {
-				Optional<ApplicationEnvironmentConfig> destConfig = environmentConfigProvider.environmentConfigFor(
-					destEnvironmentRelease, destReleaseVersion, applicationVersion);
+	/**
+	 * Copies environment config from one application version to another for the same release version and environment.
+	 */
+	private void copyEnvironmentConfig(EnvironmentRelease environmentRelease, ReleaseVersion releaseVersion, ApplicationVersion sourceApplicationVersion, ApplicationVersion destApplicationVersion) {
+		copyEnvironmentConfig(environmentRelease, releaseVersion, sourceApplicationVersion, environmentRelease, releaseVersion, destApplicationVersion);
+	}
 
-				if (destConfig.isEmpty()) {
-					ApplicationDeploymentId id = new ApplicationDeploymentId(
-						destEnvironmentRelease.getId(),
-						destReleaseVersion.getId(),
-						applicationVersion.getId());
-					applicationEnvironmentConfigRepository.save(new ApplicationEnvironmentConfig(id, sourceConfig.get()));
-				}
+	private void copyEnvironmentConfig(EnvironmentRelease sourceEnvironmentRelease, ReleaseVersion sourceReleaseVersion, ApplicationVersion sourceApplicationVersion,
+									   EnvironmentRelease destEnvironmentRelease, ReleaseVersion destReleaseVersion, ApplicationVersion destApplicationVersion) {
+		Optional<ApplicationEnvironmentConfig> sourceConfig = environmentConfigProvider.environmentConfigFor(
+			sourceEnvironmentRelease, sourceReleaseVersion, sourceApplicationVersion);
+
+		if (sourceConfig.isPresent()) {
+			Optional<ApplicationEnvironmentConfig> destConfig = environmentConfigProvider.environmentConfigFor(
+				destEnvironmentRelease, destReleaseVersion, destApplicationVersion);
+
+			if (destConfig.isEmpty()) {
+				ApplicationDeploymentId id = new ApplicationDeploymentId(
+					destEnvironmentRelease.getId(),
+					destReleaseVersion.getId(),
+					destApplicationVersion.getId());
+				applicationEnvironmentConfigRepository.save(new ApplicationEnvironmentConfig(id, sourceConfig.get()));
 			}
 		}
 	}

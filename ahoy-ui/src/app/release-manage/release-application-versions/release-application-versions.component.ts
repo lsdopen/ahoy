@@ -23,9 +23,10 @@ import {Confirmation} from '../../components/confirm-dialog/confirm';
 import {DialogUtilService} from '../../components/dialog-util.service';
 import {EnvironmentRelease} from '../../environment-release/environment-release';
 import {Environment} from '../../environments/environment';
-import {Release, ReleaseVersion} from '../../releases/release';
+import {Release, ReleaseVersion, UpgradeAppOptions} from '../../releases/release';
 import {ReleaseService} from '../../releases/release.service';
 import {AddApplicationDialogComponent} from '../add-application-dialog/add-application-dialog.component';
+import {ReleaseManageService} from '../release-manage.service';
 
 @Component({
   selector: 'app-release-application-versions',
@@ -39,11 +40,11 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
   @Output() applicationVersionsChanged = new EventEmitter();
   existingConfigs: Map<number, ApplicationEnvironmentConfig>;
 
-  constructor(
-    private releasesService: ReleaseService,
-    private applicationService: ApplicationService,
-    private dialogService: DialogService,
-    private dialogUtilService: DialogUtilService) {
+  constructor(private releaseService: ReleaseService,
+              private releaseManageService: ReleaseManageService,
+              private applicationService: ApplicationService,
+              private dialogService: DialogService,
+              private dialogUtilService: DialogUtilService) {
   }
 
   ngOnInit() {
@@ -60,7 +61,7 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
   }
 
   getReleaseVersion() {
-    this.releasesService.getVersion(this.releaseVersion.id)
+    this.releaseService.getVersion(this.releaseVersion.id)
       .subscribe(releaseVersion => {
         this.releaseVersion = releaseVersion;
         this.getConfigs();
@@ -104,7 +105,7 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
     dialogRef.onClose.pipe(
       filter((result) => result !== undefined) // cancelled
     ).subscribe((applicationVersion) => {
-      this.releasesService.associateApplication(this.releaseVersion.id, applicationVersion.id)
+      this.releaseService.associateApplication(this.releaseVersion.id, applicationVersion.id)
         .subscribe(() => {
           this.getReleaseVersion();
           this.applicationVersionsChanged.next();
@@ -120,7 +121,7 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
-      this.releasesService.removeAssociatedApplication(this.releaseVersion.id, applicationVersion.id)
+      this.releaseService.removeAssociatedApplication(this.releaseVersion.id, applicationVersion.id)
         .subscribe(() => {
             this.getReleaseVersion();
             this.applicationVersionsChanged.next();
@@ -141,11 +142,19 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
     const dialogRef = this.dialogService.open(AddApplicationDialogComponent, dialogConfig);
     dialogRef.onClose.pipe(
       filter((result) => result !== undefined) // cancelled
-    ).subscribe((applicationVersion) => {
-      this.releasesService.removeAssociatedApplication(this.releaseVersion.id, currentAppVersion.id)
+    ).subscribe((upgradeAppOptions: UpgradeAppOptions) => {
+      this.releaseService.removeAssociatedApplication(this.releaseVersion.id, currentAppVersion.id)
         .subscribe(() => {
-          this.releasesService.associateApplication(this.releaseVersion.id, applicationVersion.id)
-            .subscribe(() => this.getReleaseVersion());
+          this.releaseService.associateApplication(this.releaseVersion.id, upgradeAppOptions.applicationVersion.id)
+            .subscribe(() => {
+              if (upgradeAppOptions.copyEnvironmentConfig) {
+                this.releaseManageService.copyAppEnvConfig(this.releaseVersion.id, currentAppVersion.id, upgradeAppOptions.applicationVersion.id)
+                  .subscribe(() => this.getReleaseVersion());
+
+              } else {
+                this.getReleaseVersion();
+              }
+            });
         });
     });
   }
