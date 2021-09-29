@@ -66,6 +66,7 @@ export class EnvironmentReleasesComponent implements OnInit {
 
   private getReleases(environmentId) {
     this.log.debug('getting environment releases for environmentId=', environmentId);
+    // TODO nested subscribes
     this.environmentService.get(environmentId)
       .subscribe(env => {
         this.selectedEnvironment = env;

@@ -68,6 +68,7 @@ export class ReleasesComponent implements OnInit {
     dialogConfig.header = `Add ${release.name} to environment:`;
     dialogConfig.data = {release};
 
+    // TODO nested subscribes
     const dialogRef = this.dialogService.open(AddToEnvironmentDialogComponent, dialogConfig);
     dialogRef.onClose.pipe(
       filter((result) => result !== undefined), // cancelled
@@ -84,6 +85,7 @@ export class ReleasesComponent implements OnInit {
   }
 
   deleteRelease(event, release: Release) {
+    // TODO nested subscribes
     this.confirmationService.confirm({
       target: event.target,
       message: `Are you sure you want to delete ${release.name}?`,

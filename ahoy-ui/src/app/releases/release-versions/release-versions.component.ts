@@ -63,6 +63,7 @@ export class ReleaseVersionsComponent {
   }
 
   delete(event: Event, releaseVersion: ReleaseVersion) {
+    // TODO nested subscribes
     this.confirmationService.confirm({
       target: event.target,
       message: `Are you sure you want to delete version ${releaseVersion.version} from ${this.release.name}?`,

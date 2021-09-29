@@ -81,6 +81,7 @@ export class ApplicationDetailComponent implements OnInit {
   }
 
   save() {
+    // TODO nested subscribes
     if (!this.editMode) {
       this.applicationService.save(this.application)
         .subscribe((application) => {

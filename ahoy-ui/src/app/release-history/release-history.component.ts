@@ -44,7 +44,7 @@ export class ReleaseHistoryComponent implements OnInit {
 
   ngOnInit() {
     const releaseId = +this.route.snapshot.paramMap.get('releaseId');
-
+    // TODO nested subscribes
     this.releasesService.get(releaseId)
       .subscribe((release) => {
         this.release = release;

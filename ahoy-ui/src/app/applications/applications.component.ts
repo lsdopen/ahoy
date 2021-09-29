@@ -75,6 +75,7 @@ export class ApplicationsComponent implements OnInit {
     const confirmation = new Confirmation(`Are you sure you want to delete ${application.name}?`);
     confirmation.verify = true;
     confirmation.verifyText = application.name;
+    // TODO nested subscribes
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {

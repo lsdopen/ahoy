@@ -132,6 +132,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
 
   private subscribeToEnvironmentReleaseChanged() {
     if (!this.environmentReleaseChangedSubscription) {
+      // TODO nested subscribes
       this.environmentReleaseChangedSubscription = this.releaseManageService.environmentReleaseChanged()
         .subscribe((environmentRelease) => {
           if (EnvironmentReleaseService.environmentReleaseEquals(this.environmentRelease, environmentRelease)) {
@@ -166,6 +167,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     confirmation.title = 'Deploy';
     confirmation.requiresInput = true;
     confirmation.input = commitMessage;
+    // TODO nested subscribes
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
@@ -179,6 +181,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
       `${(this.environmentRelease.environment as Environment).name}?`);
     confirmation.verify = true;
     confirmation.verifyText = (this.environmentRelease.release as Release).name;
+    // TODO nested subscribes
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
@@ -301,6 +304,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     confirmation.title = 'Rollback';
     confirmation.requiresInput = true;
     confirmation.input = commitMessage;
+    // TODO nested subscribes
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {

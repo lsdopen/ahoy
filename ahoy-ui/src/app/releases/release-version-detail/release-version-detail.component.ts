@@ -41,7 +41,7 @@ export class ReleaseVersionDetailComponent implements OnInit {
   ngOnInit(): void {
     const releaseId = +this.route.snapshot.paramMap.get('releaseId');
     const releaseVersionId = this.route.snapshot.paramMap.get('releaseVersionId');
-
+    // TODO nested subscribes
     this.releaseService.getSummary(releaseId)
       .subscribe((release) => {
         this.release = release;
