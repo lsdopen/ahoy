@@ -99,9 +99,13 @@
                 <div class="p-field p-float-label">
                   <p-dropdown [options]="applicationVersion.servicePorts" [(ngModel)]="applicationVersion.healthEndpointPort"
                               [showClear]="true" name="applicationHealthEndpointPort"
+                              [editable]="true"
                               [autoDisplayFirst]="false"
                               required="{{healthChecksCategory}}"></p-dropdown>
                   <label>Health Endpoint Port</label>
+                  <small class="p-message p-message-warn p-p-1" *ngIf="applicationVersion.servicePorts.indexOf(applicationVersion.healthEndpointPort) === -1">
+                    Warn: port not configured
+                  </small>
                 </div>
 
                 <div class="p-field p-float-label">
