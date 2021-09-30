@@ -180,6 +180,7 @@ public class LocalRepoTest {
 		// given
 		// an initial working tree
 		try (LocalRepo.WorkingTree initialWorkingTree = localRepo.requestWorkingTree()) {
+			log.info("Created initial working tree...");
 		}
 
 		// a new remote repo

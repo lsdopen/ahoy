@@ -19,10 +19,7 @@ package za.co.lsd.ahoy.server.util;
 import org.springframework.lang.Nullable;
 
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
 public class FileUtils {
@@ -38,7 +35,11 @@ public class FileUtils {
 		Files.walkFileTree(root, new SimpleFileVisitor<>() {
 			@Override
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-				Files.deleteIfExists(file);
+				try {
+					Files.deleteIfExists(file);
+				} catch (NoSuchFileException e) {
+					// ignored; filed was probably in the process of being deleted
+				}
 				return FileVisitResult.CONTINUE;
 			}
 
