@@ -17,10 +17,10 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {AuthConfig, NullValidationHandler, OAuthService} from 'angular-oauth2-oidc';
-import {LoggerService} from './logger.service';
-import {Observable} from 'rxjs';
+import {EMPTY, Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
 import {AuthInfo} from './auth';
+import {LoggerService} from './logger.service';
 import {RestClientService} from './rest-client.service';
 
 @Injectable({
@@ -57,6 +57,11 @@ export class AuthService {
           this.router.navigate(['/']).then();
         });
       });
+    }, (error) => {
+      this.log.error('Error getting auth info', error);
+
+      this.router.navigate(['/error']).then();
+      return EMPTY;
     });
   }
 

@@ -95,6 +95,9 @@ import {EnvironmentDetailComponent} from './environments/environment-detail/envi
 import {EnvironmentNameUniqueValidatorDirective} from './environments/environment-name-unique-validator.directive';
 import {EnvironmentsComponent} from './environments/environments.component';
 import {NotificationsComponent} from './notifications/notifications.component';
+import {AppAccessDeniedComponent} from './pages/app-access-denied.component';
+import {AppErrorComponent} from './pages/app-error.component';
+import {AppNotFoundComponent} from './pages/app-not-found.component';
 import {ReleaseHistoryComponent} from './release-history/release-history.component';
 import {AddApplicationDialogComponent} from './release-manage/add-application-dialog/add-application-dialog.component';
 import {ApplicationAllowedValidatorDirective} from './release-manage/add-application-dialog/application-allowed.directive';
@@ -178,7 +181,10 @@ import {ErrorService} from './util/error.service';
     NameUniqueValidatorDirective,
     VersionUniqueValidatorDirective,
     ReleaseVersionsComponent,
-    ReleaseVersionDetailComponent
+    ReleaseVersionDetailComponent,
+    AppNotFoundComponent,
+    AppAccessDeniedComponent,
+    AppErrorComponent
   ],
   imports: [
     BrowserModule,

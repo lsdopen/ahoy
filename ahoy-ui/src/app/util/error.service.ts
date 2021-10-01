@@ -16,6 +16,7 @@
 
 import {HttpErrorResponse} from '@angular/common/http';
 import {ErrorHandler, Injectable, NgZone} from '@angular/core';
+import {Router} from '@angular/router';
 import {Notification} from '../notifications/notification';
 import {NotificationsService} from '../notifications/notifications.service';
 import {LoggerService} from './logger.service';
@@ -23,7 +24,8 @@ import {LoggerService} from './logger.service';
 @Injectable()
 export class ErrorService implements ErrorHandler {
 
-  constructor(private notificationsService: NotificationsService,
+  constructor(private router: Router,
+              private notificationsService: NotificationsService,
               private log: LoggerService,
               private zone: NgZone) {
   }
@@ -31,8 +33,23 @@ export class ErrorService implements ErrorHandler {
   handleError(error: any): void {
     this.log.error('Uncaught error', error);
 
-    if (error instanceof HttpErrorResponse && error.status !== 0) {
-      error = error.error;
+    if (error instanceof HttpErrorResponse) {
+
+      if (error.status === 404) {
+        this.zone.run(() => {
+          this.router.navigate(['/notfound']).then();
+        });
+
+      } else if (error.status === 403) {
+        this.zone.run(() => {
+          this.router.navigate(['/access']).then();
+        });
+
+      }
+
+      if (error.status === 500 && error.error) {
+        error = error.error;
+      }
     }
 
     const text = ('message' in error) ? error.message : `Unknown error:  ${error.toString()}`;

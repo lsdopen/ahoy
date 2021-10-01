@@ -30,9 +30,11 @@ export class Notification {
     this.error = error;
     this.time = new Date();
 
-    if (error instanceof HttpErrorResponse && error.status !== 0) {
+    if (error instanceof HttpErrorResponse && error.status === 500 && error.error) {
       error = error.error;
+    }
 
+    if (error) {
       this.errorMessage = ('message' in error) ? error.message : `Unknown error:  ${error.toString()}`;
       this.errorTrace = ('trace' in error) ? error.trace : undefined;
     }
