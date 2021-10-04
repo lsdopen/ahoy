@@ -19,7 +19,10 @@
 
     <div class="card" *ngIf="release">
       <div class="card-header">
-        <h5>History for {{release.name}}</h5>
+        <div class="p-d-flex p-flex-row p-ai-baseline">
+          <i class="pi pi-calendar p-mr-2 app-icon"></i>
+          <h5>History for {{release.name}}</h5>
+        </div>
       </div>
 
       <p-toolbar>

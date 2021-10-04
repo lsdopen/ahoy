@@ -22,7 +22,10 @@
 
     <div class="card" *ngIf="environments && environments.length === 0">
       <div class="card-header">
-        <h5>Releases</h5>
+        <div class="p-d-flex p-flex-row p-ai-baseline">
+          <i class="pi pi-folder-open p-mr-2 app-icon"></i>
+          <h5>Releases</h5>
+        </div>
       </div>
 
       <div class="p-field">
@@ -32,7 +35,10 @@
 
     <div class="card" *ngIf="selectedEnvironment">
       <div class="card-header">
-        <h5>Releases in {{selectedEnvironment.name}}</h5>
+        <div class="p-d-flex p-flex-row p-ai-baseline">
+          <i class="pi pi-folder-open p-mr-2 app-icon"></i>
+          <h5>Releases in {{selectedEnvironment.name}}</h5>
+        </div>
       </div>
 
       <p-toolbar>
