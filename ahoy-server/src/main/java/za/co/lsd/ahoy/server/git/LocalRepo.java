@@ -29,9 +29,9 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.*;
 import org.eclipse.jgit.util.FS;
 import org.springframework.stereotype.Component;
+import org.springframework.util.FileSystemUtils;
 import za.co.lsd.ahoy.server.AhoyServerProperties;
 import za.co.lsd.ahoy.server.settings.SettingsProvider;
-import za.co.lsd.ahoy.server.util.FileUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -78,7 +78,7 @@ public class LocalRepo {
 
 		} catch (Exception e) {
 			try {
-				FileUtils.deleteRecursively(localRepoPath);
+				FileSystemUtils.deleteRecursively(localRepoPath);
 			} catch (IOException ex) {
 				log.warn("Failed to cleanup local repo directory");
 			}
@@ -152,8 +152,10 @@ public class LocalRepo {
 	public void delete() {
 		try {
 			if (gitRepo != null) {
+				log.info("Closing local repo: {}", localRepoPath);
+				gitRepo.close();
 				log.info("Deleting local repo: {}", localRepoPath);
-				FileUtils.deleteRecursively(localRepoPath);
+				FileSystemUtils.deleteRecursively(localRepoPath);
 				gitRepo = null;
 			}
 		} catch (Exception e) {
@@ -291,8 +293,10 @@ public class LocalRepo {
 		public void close() throws Exception {
 			try {
 				if (Files.exists(workingTreePath)) {
+					log.info("Closing working tree: {}", workingTreePath);
+					gitWorkingTree.close();
 					log.info("Deleting working tree: {}", workingTreePath);
-					FileUtils.deleteRecursively(workingTreePath);
+					FileSystemUtils.deleteRecursively(workingTreePath);
 				}
 			} catch (Exception e) {
 				throw new LocalRepoException("Failed to delete working tree", e);
