@@ -66,6 +66,7 @@ export class EnvironmentReleasesComponent implements OnInit {
 
   private getReleases(environmentId) {
     this.log.debug('getting environment releases for environmentId=', environmentId);
+    // TODO nested subscribes
     this.environmentService.get(environmentId)
       .subscribe(env => {
         this.selectedEnvironment = env;
@@ -91,7 +92,7 @@ export class EnvironmentReleasesComponent implements OnInit {
 
   addRelease() {
     const dialogConfig = new DynamicDialogConfig();
-    dialogConfig.header = `Add release to ${this.selectedEnvironment.cluster.name}/${this.selectedEnvironment.name}`;
+    dialogConfig.header = `Add a release to ${this.selectedEnvironment.name}:`;
     dialogConfig.data = this.selectedEnvironment;
 
     const dialogRef = this.dialogService.open(AddReleaseDialogComponent, dialogConfig);

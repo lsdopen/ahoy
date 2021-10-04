@@ -65,10 +65,10 @@ export class ReleasesComponent implements OnInit {
 
   addToEnvironment(release: Release) {
     const dialogConfig = new DynamicDialogConfig();
-    dialogConfig.header = `Add ${release.name} to:`;
+    dialogConfig.header = `Add ${release.name} to environment:`;
     dialogConfig.data = {release};
-    dialogConfig.width = '25%';
 
+    // TODO nested subscribes
     const dialogRef = this.dialogService.open(AddToEnvironmentDialogComponent, dialogConfig);
     dialogRef.onClose.pipe(
       filter((result) => result !== undefined), // cancelled
@@ -84,16 +84,8 @@ export class ReleasesComponent implements OnInit {
     ).subscribe(() => this.getReleases());
   }
 
-  canEdit(release: Release) {
-    for (const environmentRelease of release.environmentReleases) {
-      if (environmentRelease.deployed) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   deleteRelease(event, release: Release) {
+    // TODO nested subscribes
     this.confirmationService.confirm({
       target: event.target,
       message: `Are you sure you want to delete ${release.name}?`,

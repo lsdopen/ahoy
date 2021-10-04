@@ -14,5 +14,8 @@
   ~    limitations under the License.
   -->
 
-<p-dropdown *ngIf="dockerRegistries" [options]="dockerRegistries" [(ngModel)]="applicationVersion.dockerRegistry"
-            placeholder="Docker Registry" optionLabel="name" [showClear]="true"></p-dropdown>
+<div class="p-field p-float-label">
+  <p-dropdown *ngIf="dockerRegistries" [options]="dockerRegistries" [(ngModel)]="applicationVersion.dockerRegistry"
+              dataKey="id" optionLabel="name" [showClear]="true" [autoDisplayFirst]="false"></p-dropdown>
+  <label>Docker Registry</label>
+</div>

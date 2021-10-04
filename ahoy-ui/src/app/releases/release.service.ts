@@ -71,6 +71,13 @@ export class ReleaseService {
     );
   }
 
+  getSummary(id: number): Observable<Release> {
+    const url = `/data/releases/${id}?projection=releaseSummary`;
+    return this.restClient.get<Release>(url).pipe(
+      tap((release) => this.log.debug('fetched release', release))
+    );
+  }
+
   getVersion(id: number): Observable<ReleaseVersion> {
     const url = `/data/releaseVersions/${id}?projection=releaseVersion`;
     return this.restClient.get<ReleaseVersion>(url).pipe(
@@ -93,15 +100,6 @@ export class ReleaseService {
     }
   }
 
-  delete(release: Release): Observable<Release> {
-    const id = release.id;
-    const url = `/data/releases/${id}`;
-
-    return this.restClient.delete<Release>(url).pipe(
-      tap(() => this.log.debug('deleted release', release))
-    );
-  }
-
   saveVersion(releaseVersion: ReleaseVersion): Observable<ReleaseVersion> {
     if (!releaseVersion.id) {
       this.log.debug('saving release version: ', releaseVersion);
@@ -116,6 +114,24 @@ export class ReleaseService {
         tap((relVersion) => this.log.debug('updated release version', relVersion))
       );
     }
+  }
+
+  delete(release: Release): Observable<Release> {
+    const id = release.id;
+    const url = `/data/releases/${id}`;
+
+    return this.restClient.delete<Release>(url).pipe(
+      tap(() => this.log.debug('deleted release', release))
+    );
+  }
+
+  deleteVersion(releaseVersion: ReleaseVersion): Observable<ReleaseVersion> {
+    const id = releaseVersion.id;
+    const url = `/data/releaseVersions/${id}`;
+
+    return this.restClient.delete<ReleaseVersion>(url).pipe(
+      tap(() => this.log.debug('deleted release version', releaseVersion))
+    );
   }
 
   associateApplication(releaseVersionId: number, applicationVersionId: number): Observable<string> {
@@ -135,6 +151,16 @@ export class ReleaseService {
     return this.restClient.delete(linkUrl).pipe(
       tap(() => this.log.debug(
         `removed association between release version id=${releaseVersionId} with application version id=${applicationVersionId}`))
+    );
+  }
+
+  removeAssociatedApplications(releaseVersionId: number): Observable<{}> {
+    const linkUrl = `/data/releaseVersions/${releaseVersionId}/applicationVersions`;
+    const headers = {'Content-Type': 'text/uri-list'};
+
+    return this.restClient.put(linkUrl, null, headers).pipe(
+      tap(() => this.log.debug(
+        `removed association between release version id=${releaseVersionId} with all applications`))
     );
   }
 

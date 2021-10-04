@@ -36,17 +36,15 @@
           <div class="p-field p-float-label">
             <input pInputText id="applicationVersion" [(ngModel)]="applicationVersion.version" name="applicationVersion"
                    required
-                   [appApplicationVersionUnique]="application.applicationVersions"
+                   [appVersionUnique]="application.applicationVersions"
                    [ignoreOwnId]="applicationVersion.id">
             <label for="applicationVersion">Version</label>
-            <small class="p-error" *ngIf="applicationVersionForm.form.controls.applicationVersion?.hasError('applicationVersionNotUnique')">
+            <small class="p-error" *ngIf="applicationVersionForm.form.controls.applicationVersion?.hasError('versionNotUnique')">
               Application version already exists
             </small>
           </div>
 
-          <div class="p-field">
-            <app-docker-registries [applicationVersion]="applicationVersion"></app-docker-registries>
-          </div>
+          <app-docker-registries [applicationVersion]="applicationVersion"></app-docker-registries>
 
           <div class="p-field p-float-label">
             <input pInputText id="applicationImage" [(ngModel)]="applicationVersion.image" name="applicationImage" required>
@@ -101,9 +99,13 @@
                 <div class="p-field p-float-label">
                   <p-dropdown [options]="applicationVersion.servicePorts" [(ngModel)]="applicationVersion.healthEndpointPort"
                               [showClear]="true" name="applicationHealthEndpointPort"
+                              [editable]="true"
                               [autoDisplayFirst]="false"
                               required="{{healthChecksCategory}}"></p-dropdown>
                   <label>Health Endpoint Port</label>
+                  <small class="p-message p-message-warn p-p-1" *ngIf="applicationVersion.servicePorts.indexOf(applicationVersion.healthEndpointPort) === -1">
+                    Warn: port not configured
+                  </small>
                 </div>
 
                 <div class="p-field p-float-label">
@@ -126,7 +128,9 @@
             <p-accordionTab header="Configuration Files" [(selected)]="configFilesCategory">
 
               <app-application-config-files
-                [applicationVersion]="applicationVersion" [configs]="applicationVersion.configs">
+                [parentForm]="applicationVersionForm"
+                [applicationVersion]="applicationVersion"
+                [configs]="applicationVersion.configs">
               </app-application-config-files>
 
             </p-accordionTab>
@@ -136,7 +140,12 @@
               <app-multi-tab [content]="volumeContent" [items]="applicationVersion.volumes" [itemFactory]="applicationVolumeFactory()">
 
                 <ng-template #volumeContent let-volume let-volumeIndex="index">
-                  <app-application-volume-detail [volume]="volume" [volumeIndex]="volumeIndex" [secrets]="applicationVersion.secrets">
+                  <app-application-volume-detail
+                    [parentForm]="applicationVersionForm"
+                    [volume]="volume"
+                    [volumeIndex]="volumeIndex"
+                    [secrets]="applicationVersion.secrets"
+                    [volumesForValidation]="applicationVersion.volumes">
                   </app-application-volume-detail>
                 </ng-template>
 

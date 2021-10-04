@@ -16,8 +16,8 @@
 
 import {Component, Input, OnInit} from '@angular/core';
 import {DockerRegistry} from '../../settings/docker-settings/docker-settings';
-import {ApplicationVersion} from '../application';
 import {DockerSettingsService} from '../../settings/docker-settings/docker-settings.service';
+import {ApplicationVersion} from '../application';
 
 @Component({
   selector: 'app-docker-registries',

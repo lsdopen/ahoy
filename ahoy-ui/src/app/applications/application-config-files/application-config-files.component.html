@@ -21,7 +21,9 @@
              [required]="configs.length > 0"
              [disabled]="!editPath">
       <label for="applicationConfigPath">Path</label>
-      <small *ngIf="!editPath">Application configuration file path; required for environment configuration file</small>
+      <small class="p-message p-message-warn p-p-1" *ngIf="!editPath && configs.length > 0 && ! applicationVersion.configPath">
+        Warn: Application configuration file path required for environment configuration files
+      </small>
     </div>
   </div>
 
@@ -31,8 +33,13 @@
       <div class="p-fluid p-col-12 p-md-5">
         <div class="p-field p-float-label">
           <input pInputText id="applicationConfigName{{configIndex}}" [(ngModel)]="config.name" name="applicationConfigName{{configIndex}}"
-                 required>
+                 required
+                 [appTabItemNameUnique]="configs"
+                 [selectedIndex]="configIndex">
           <label for="applicationConfigName{{configIndex}}">Name</label>
+          <small class="p-error" *ngIf="parentForm.form.controls['applicationConfigName' + configIndex]?.hasError('tabItemNameNotUnique')">
+            Config already exists
+          </small>
         </div>
 
         <div class="p-field p-float-label">

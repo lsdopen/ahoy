@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
  *    limitations under the License.
  */
 
-import {Release, ReleaseVersion} from '../releases/release';
 import {Environment} from '../environments/environment';
+import {Release, ReleaseVersion} from '../releases/release';
 
 export class EnvironmentRelease {
   id: EnvironmentReleaseId;
@@ -39,6 +39,10 @@ export class EnvironmentReleaseId {
     environmentReleaseId.releaseId = releaseId;
     return environmentReleaseId;
   }
+
+  static pathValue(id: EnvironmentReleaseId): string {
+    return `${id.environmentId}_${id.releaseId}`;
+  }
 }
 
 export class ReleaseStatusChangedEvent {
@@ -46,10 +50,12 @@ export class ReleaseStatusChangedEvent {
   releaseVersionId: number;
 }
 
-export class DeployDetails {
+export class DeployOptions {
+  releaseVersionId: number;
   commitMessage: string;
 
-  constructor(commitMessage: string) {
+  constructor(releaseVersionId: number, commitMessage: string) {
+    this.releaseVersionId = releaseVersionId;
     this.commitMessage = commitMessage;
   }
 }

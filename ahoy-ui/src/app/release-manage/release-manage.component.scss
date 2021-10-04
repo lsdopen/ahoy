@@ -56,10 +56,6 @@
         .p-datatable-tbody > tr {
           border-bottom: 1px solid var(--surface-d);
 
-          > td:last-child {
-            text-align: center;
-          }
-
           > td {
             text-align: left;
             display: block;

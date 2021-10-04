@@ -16,26 +16,38 @@
 
 import {Directive, Input} from '@angular/core';
 import {AbstractControl, NG_VALIDATORS, Validator, ValidatorFn} from '@angular/forms';
-import {ReleaseVersion} from './release';
 
 @Directive({
-  selector: '[appReleaseVersionUnique]',
-  providers: [{provide: NG_VALIDATORS, useExisting: ReleaseVersionUniqueValidatorDirective, multi: true}]
+  selector: '[appTabItemNameUnique]',
+  providers: [{provide: NG_VALIDATORS, useExisting: TabItemNameUniqueValidatorDirective, multi: true}]
 })
-export class ReleaseVersionUniqueValidatorDirective implements Validator {
-  @Input('appReleaseVersionUnique') releaseVersions: ReleaseVersion[];
-  @Input() ignoreOwnId: number;
+export class TabItemNameUniqueValidatorDirective implements Validator {
+  @Input('appTabItemNameUnique') nameables: Nameable[];
+  @Input() selectedIndex: number;
 
   validate(control: AbstractControl): { [key: string]: any } | null {
-    return this.releaseVersions ? this.checkReleaseVersionUnique(this.releaseVersions)(control) : null;
+    return this.nameables ? this.checkNameUnique(this.nameables)(control) : null;
   }
 
-  private checkReleaseVersionUnique(releaseVersions: ReleaseVersion[]): ValidatorFn {
+  private checkNameUnique(nameables: Nameable[]): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
-      const notUnique = releaseVersions
-        .filter(rel => rel.id !== this.ignoreOwnId)
-        .find(rel => rel.version === control.value);
-      return notUnique ? {releaseVersionNotUnique: {value: control.value}} : null;
+
+      let notUnique = false;
+      for (let i = 0; i < nameables.length; i++) {
+        if (i === this.selectedIndex || !control.value) {
+          continue;
+        }
+        if (nameables[i].name === control.value) {
+          notUnique = true;
+          break;
+        }
+      }
+
+      return notUnique ? {tabItemNameNotUnique: {value: control.value}} : null;
     };
   }
+}
+
+export declare interface Nameable {
+  name: string;
 }

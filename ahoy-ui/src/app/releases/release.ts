@@ -42,3 +42,8 @@ export class UpgradeOptions {
   version: string;
   copyEnvironmentConfig = true;
 }
+
+export class UpgradeAppOptions {
+  applicationVersion: ApplicationVersion;
+  copyEnvironmentConfig = true;
+}

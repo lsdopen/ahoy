@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
  */
 
 import {Injectable} from '@angular/core';
-import {Application, ApplicationEnvironmentConfig, ApplicationEnvironmentConfigId, ApplicationEnvironmentConfigIdUtil, ApplicationReleaseStatus, ApplicationVersion} from './application';
 import {Observable} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
-import {RestClientService} from '../util/rest-client.service';
-import {LoggerService} from '../util/logger.service';
 import {EnvironmentReleaseId} from '../environment-release/environment-release';
+import {LoggerService} from '../util/logger.service';
+import {RestClientService} from '../util/rest-client.service';
+import {Application, ApplicationEnvironmentConfig, ApplicationEnvironmentConfigId, ApplicationEnvironmentConfigIdUtil, ApplicationReleaseStatus, ApplicationVersion} from './application';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +37,14 @@ export class ApplicationService {
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.applications as Application[]),
       tap(apps => this.log.debug(`fetched ${apps.length} apps`))
+    );
+  }
+
+  getAllVersions(): Observable<ApplicationVersion[]> {
+    const url = `/data/applicationVersions?projection=applicationVersion`;
+    return this.restClient.get<any>(url).pipe(
+      map(response => response._embedded.applicationVersions as ApplicationVersion[]),
+      tap(applicationVersions => this.log.debug(`fetched ${applicationVersions.length} application versions`))
     );
   }
 

@@ -17,8 +17,10 @@
 import {Location} from '@angular/common';
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
+import {filter, map, mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../../app.breadcrumb.service';
 import {TabItemFactory} from '../../components/multi-tab/multi-tab.component';
+import {ReleaseManageService} from '../../release-manage/release-manage.service';
 import {ReleaseService} from '../../releases/release.service';
 import {Application, ApplicationConfig, ApplicationSecret, ApplicationVersion, ApplicationVolume} from '../application';
 import {ApplicationService} from '../application.service';
@@ -31,6 +33,7 @@ import {ApplicationService} from '../application.service';
 export class ApplicationVersionDetailComponent implements OnInit {
   private releaseVersionId: number;
   private applicationVersionId: number;
+  private copyEnvironmentConfig: boolean;
   application: Application;
   applicationVersion: ApplicationVersion;
   editMode: boolean;
@@ -45,7 +48,8 @@ export class ApplicationVersionDetailComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private applicationService: ApplicationService,
-              private releasesService: ReleaseService,
+              private releaseService: ReleaseService,
+              private releaseManageService: ReleaseManageService,
               private location: Location,
               private breadcrumbService: AppBreadcrumbService) {
   }
@@ -54,7 +58,9 @@ export class ApplicationVersionDetailComponent implements OnInit {
     const applicationId = +this.route.snapshot.paramMap.get('appId');
     this.releaseVersionId = +this.route.snapshot.queryParamMap.get('releaseVersionId');
     this.applicationVersionId = +this.route.snapshot.queryParamMap.get('applicationVersionId');
+    this.copyEnvironmentConfig = JSON.parse(this.route.snapshot.queryParamMap.get('copyEnvironmentConfig'));
 
+    // TODO nested subscribes
     this.applicationService.get(applicationId)
       .subscribe(application => {
         this.application = application;
@@ -158,18 +164,20 @@ export class ApplicationVersionDetailComponent implements OnInit {
 
   save() {
     this.applicationVersion.application = this.applicationService.link(this.application.id);
-    this.applicationService.saveVersion(this.applicationVersion)
-      .subscribe((applicationVersion) => {
-        if (this.releaseVersionId && this.applicationVersionId) {
-          this.releasesService.removeAssociatedApplication(this.releaseVersionId, this.applicationVersionId)
-            .subscribe(() => {
-              this.releasesService.associateApplication(this.releaseVersionId, applicationVersion.id)
-                .subscribe(() => this.location.back());
-            });
-        } else {
-          this.location.back();
-        }
-      });
+    let savedApplicationVersion;
+    this.applicationService.saveVersion(this.applicationVersion).pipe(
+      map((applicationVersion) => {
+        savedApplicationVersion = applicationVersion;
+        return applicationVersion;
+      }),
+      // are we upgrading the application version for a release version? therefore changing association from existing to new app version
+      filter(() => !!(this.releaseVersionId && this.applicationVersionId)),
+      mergeMap(() => this.releaseService.removeAssociatedApplication(this.releaseVersionId, this.applicationVersionId)),
+      mergeMap(() => this.releaseService.associateApplication(this.releaseVersionId, savedApplicationVersion.id)),
+      // copy environment config?
+      filter(() => this.copyEnvironmentConfig),
+      mergeMap(() => this.releaseManageService.copyAppEnvConfig(this.releaseVersionId, this.applicationVersionId, savedApplicationVersion.id)),
+    ).subscribe({complete: () => this.location.back()});
   }
 
   cancel() {

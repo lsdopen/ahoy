@@ -24,7 +24,7 @@ import {filter, mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Confirmation} from '../components/confirm-dialog/confirm';
 import {DialogUtilService} from '../components/dialog-util.service';
-import {DeployDetails, EnvironmentRelease} from '../environment-release/environment-release';
+import {DeployOptions, EnvironmentRelease} from '../environment-release/environment-release';
 import {EnvironmentReleaseService} from '../environment-release/environment-release.service';
 import {Environment} from '../environments/environment';
 import {EnvironmentService} from '../environments/environment.service';
@@ -132,6 +132,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
 
   private subscribeToEnvironmentReleaseChanged() {
     if (!this.environmentReleaseChangedSubscription) {
+      // TODO nested subscribes
       this.environmentReleaseChangedSubscription = this.releaseManageService.environmentReleaseChanged()
         .subscribe((environmentRelease) => {
           if (EnvironmentReleaseService.environmentReleaseEquals(this.environmentRelease, environmentRelease)) {
@@ -166,11 +167,12 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     confirmation.title = 'Deploy';
     confirmation.requiresInput = true;
     confirmation.input = commitMessage;
+    // TODO nested subscribes
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
-      const deployDetails = new DeployDetails(conf.input);
-      this.releaseManageService.deploy(this.environmentRelease, this.releaseVersion, deployDetails).subscribe();
+      const deployOptions = new DeployOptions(this.releaseVersion.id, conf.input);
+      this.releaseManageService.deploy(this.environmentRelease, deployOptions).subscribe();
     });
   }
 
@@ -179,6 +181,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
       `${(this.environmentRelease.environment as Environment).name}?`);
     confirmation.verify = true;
     confirmation.verifyText = (this.environmentRelease.release as Release).name;
+    // TODO nested subscribes
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
@@ -194,7 +197,6 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     const dialogConfig = new DynamicDialogConfig();
     dialogConfig.header = `Promote ${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} to:`;
     dialogConfig.data = {environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion};
-    dialogConfig.width = '25%';
 
     const dialogRef = this.dialogService.open(PromoteDialogComponent, dialogConfig);
     dialogRef.onClose.pipe(
@@ -213,7 +215,6 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     const dialogConfig = new DynamicDialogConfig();
     dialogConfig.header = `Upgrade ${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} to version:`;
     dialogConfig.data = {environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion};
-    dialogConfig.width = '25%';
 
     const dialogRef = this.dialogService.open(UpgradeDialogComponent, dialogConfig);
     dialogRef.onClose.pipe(
@@ -303,11 +304,12 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     confirmation.title = 'Rollback';
     confirmation.requiresInput = true;
     confirmation.input = commitMessage;
+    // TODO nested subscribes
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
-      const deployDetails = new DeployDetails(conf.input);
-      this.releaseManageService.deploy(this.environmentRelease, this.environmentRelease.previousReleaseVersion, deployDetails)
+      const deployOptions = new DeployOptions(this.environmentRelease.previousReleaseVersion.id, conf.input);
+      this.releaseManageService.deploy(this.environmentRelease, deployOptions)
         .subscribe(() => this.log.debug('rolled back release:', this.environmentRelease));
     });
   }

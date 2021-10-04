@@ -15,14 +15,14 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {Cluster} from './cluster';
 import {ActivatedRoute} from '@angular/router';
-import {ClusterService} from './cluster.service';
-import {LoggerService} from '../util/logger.service';
+import {filter} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Confirmation} from '../components/confirm-dialog/confirm';
-import {filter} from 'rxjs/operators';
 import {DialogUtilService} from '../components/dialog-util.service';
+import {LoggerService} from '../util/logger.service';
+import {Cluster} from './cluster';
+import {ClusterService} from './cluster.service';
 
 @Component({
   selector: 'app-clusters',
@@ -55,6 +55,7 @@ export class ClustersComponent implements OnInit {
     const confirmation = new Confirmation(`Are you sure you want to delete ${cluster.name}?`);
     confirmation.verify = true;
     confirmation.verifyText = cluster.name;
+    // TODO nested subscribes
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {

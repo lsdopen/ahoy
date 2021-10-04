@@ -96,7 +96,7 @@ public class EnvironmentService {
 			if (environmentRelease.hasCurrentReleaseVersion()) {
 				log.info("{} is currently deployed in {}, undeploying...", environmentRelease.getRelease().getName(), environment.getName());
 				try {
-					releaseService.undeploy(environmentRelease).get();
+					releaseService.undeploy(environmentRelease.getId()).get();
 				} catch (Exception e) {
 					throw new EnvironmentException("Failed to undeploy " + environmentRelease + " from " + environment, e);
 				}

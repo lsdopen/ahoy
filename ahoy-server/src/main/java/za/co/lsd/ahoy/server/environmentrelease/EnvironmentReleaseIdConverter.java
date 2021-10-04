@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,21 +16,22 @@
 
 package za.co.lsd.ahoy.server.environmentrelease;
 
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.rest.webmvc.spi.BackendIdConverter;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Component
-public class EnvironmentReleaseIdConverter implements BackendIdConverter {
+public class EnvironmentReleaseIdConverter implements BackendIdConverter, Converter<String, EnvironmentReleaseId> {
 
 	@Override
 	public Serializable fromRequestId(String id, Class<?> entityType) {
 		if (id == null)
 			return null;
 
-		String[] parts = id.split("_");
-		return new EnvironmentReleaseId(Long.parseLong(parts[0]), Long.parseLong(parts[1]));
+		return convert(id);
 	}
 
 	@Override
@@ -42,5 +43,11 @@ public class EnvironmentReleaseIdConverter implements BackendIdConverter {
 	@Override
 	public boolean supports(Class<?> type) {
 		return EnvironmentRelease.class.equals(type) || EnvironmentReleaseId.class.equals(type);
+	}
+
+	@Override
+	public EnvironmentReleaseId convert(@NotNull String source) {
+		String[] parts = source.split("_");
+		return new EnvironmentReleaseId(Long.parseLong(parts[0]), Long.parseLong(parts[1]));
 	}
 }

@@ -16,26 +16,30 @@
 
 import {Directive, Input} from '@angular/core';
 import {AbstractControl, NG_VALIDATORS, Validator, ValidatorFn} from '@angular/forms';
-import {Release} from './release';
 
 @Directive({
-  selector: '[appReleaseNameUnique]',
-  providers: [{provide: NG_VALIDATORS, useExisting: ReleaseNameUniqueValidatorDirective, multi: true}]
+  selector: '[appVersionUnique]',
+  providers: [{provide: NG_VALIDATORS, useExisting: VersionUniqueValidatorDirective, multi: true}]
 })
-export class ReleaseNameUniqueValidatorDirective implements Validator {
-  @Input('appReleaseNameUnique') releases: Release[];
+export class VersionUniqueValidatorDirective implements Validator {
+  @Input('appVersionUnique') versionables: Versionable[];
   @Input() ignoreOwnId: number;
 
   validate(control: AbstractControl): { [key: string]: any } | null {
-    return this.releases ? this.checkReleaseNameUnique(this.releases)(control) : null;
+    return this.versionables ? this.checkVersionUnique(this.versionables)(control) : null;
   }
 
-  private checkReleaseNameUnique(releases: Release[]): ValidatorFn {
+  private checkVersionUnique(versionables: Versionable[]): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
-      const notUnique = releases
-        .filter(rel => rel.id !== this.ignoreOwnId)
-        .find(rel => rel.name === control.value);
-      return notUnique ? {releaseNameNotUnique: {value: control.value}} : null;
+      const notUnique = versionables
+        .filter(versionable => versionable.id !== this.ignoreOwnId)
+        .find(versionable => versionable.version === control.value);
+      return notUnique ? {versionNotUnique: {value: control.value}} : null;
     };
   }
+}
+
+export declare interface Versionable {
+  id: number;
+  version: string;
 }

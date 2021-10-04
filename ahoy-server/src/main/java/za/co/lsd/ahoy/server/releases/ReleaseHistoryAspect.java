@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,8 +20,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
+import za.co.lsd.ahoy.server.DeployOptions;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
+import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
+import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.Future;
@@ -33,17 +37,26 @@ import static za.co.lsd.ahoy.server.releases.ReleaseHistoryStatus.*;
 @Aspect
 @Slf4j
 public class ReleaseHistoryAspect {
+	private final EnvironmentReleaseRepository environmentReleaseRepository;
+	private final ReleaseVersionRepository releaseVersionRepository;
 	private final ReleaseHistoryService releaseHistoryService;
 
-	public ReleaseHistoryAspect(ReleaseHistoryService releaseHistoryService) {
+	public ReleaseHistoryAspect(EnvironmentReleaseRepository environmentReleaseRepository, ReleaseVersionRepository releaseVersionRepository, ReleaseHistoryService releaseHistoryService) {
+		this.environmentReleaseRepository = environmentReleaseRepository;
+		this.releaseVersionRepository = releaseVersionRepository;
 		this.releaseHistoryService = releaseHistoryService;
 	}
 
 	@Around("execution(* *..ReleaseService.deploy(..))")
 	public Object deploy(ProceedingJoinPoint pjp) throws Throwable {
 		Object[] args = pjp.getArgs();
-		EnvironmentRelease environmentRelease = (EnvironmentRelease) args[0];
-		ReleaseVersion releaseVersion = (ReleaseVersion) args[1];
+		EnvironmentReleaseId environmentReleaseId = (EnvironmentReleaseId) args[0];
+		DeployOptions deployOptions = (DeployOptions) args[1];
+
+		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
+		ReleaseVersion releaseVersion = releaseVersionRepository.findById(deployOptions.getReleaseVersionId())
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find releaseVersion in release, releaseVersionId: " + deployOptions.getReleaseVersionId()));
 
 		ReleaseHistory.ReleaseHistoryBuilder historyBuilder = ReleaseHistory.builder()
 			.action(DEPLOY)
@@ -74,7 +87,11 @@ public class ReleaseHistoryAspect {
 	@Around("execution(* *..ReleaseService.undeploy(..))")
 	public Object undeploy(ProceedingJoinPoint pjp) throws Throwable {
 		Object[] args = pjp.getArgs();
-		EnvironmentRelease environmentRelease = (EnvironmentRelease) args[0];
+		EnvironmentReleaseId environmentReleaseId = (EnvironmentReleaseId) args[0];
+
+		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
+
 		ReleaseVersion releaseVersion = environmentRelease.getCurrentReleaseVersion();
 
 		ReleaseHistory.ReleaseHistoryBuilder historyBuilder = ReleaseHistory.builder()

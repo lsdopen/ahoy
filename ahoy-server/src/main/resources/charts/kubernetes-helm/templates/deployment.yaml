@@ -80,7 +80,7 @@ spec:
           resources: {}
           {{ if or .app.configs .app.volumes }}
           volumeMounts:
-            {{ if .app.configs}}
+            {{ if and .app.configPath .app.configs}}
             - name: application-config
               mountPath: {{ .app.configPath }}
             {{ end }}

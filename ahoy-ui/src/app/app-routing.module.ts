@@ -27,10 +27,14 @@ import {EnvironmentReleaseDetailComponent} from './environment-release/environme
 import {EnvironmentReleasesComponent} from './environment-release/environment-releases.component';
 import {EnvironmentDetailComponent} from './environments/environment-detail/environment-detail.component';
 import {EnvironmentsComponent} from './environments/environments.component';
+import {AppAccessDeniedComponent} from './pages/app-access-denied.component';
+import {AppErrorComponent} from './pages/app-error.component';
+import {AppNotFoundComponent} from './pages/app-not-found.component';
 import {ReleaseHistoryComponent} from './release-history/release-history.component';
 import {ReleaseApplicationEnvironmentConfigComponent} from './release-manage/release-application-environment-config/release-application-environment-config.component';
 import {ReleaseManageComponent} from './release-manage/release-manage.component';
 import {ReleaseDetailComponent} from './releases/release-detail/release-detail.component';
+import {ReleaseVersionDetailComponent} from './releases/release-version-detail/release-version-detail.component';
 import {ReleasesComponent} from './releases/releases.component';
 import {ArgoSettingsComponent} from './settings/argo-settings/argo-settings.component';
 import {DockerSettingsComponent} from './settings/docker-settings/docker-settings.component';
@@ -47,6 +51,7 @@ const routes: Routes = [
 
       {path: 'releases', component: ReleasesComponent, canActivate: [SettingsGuard]},
       {path: 'release/:releaseId', component: ReleaseDetailComponent},
+      {path: 'release/:releaseId/version/:releaseVersionId', component: ReleaseVersionDetailComponent},
 
       {path: 'release/:environmentId/:releaseId/version/:releaseVersionId', component: ReleaseManageComponent},
       {path: 'release/:environmentId/:releaseId/config/:relVersionId/:appVersionId', component: ReleaseApplicationEnvironmentConfigComponent},
@@ -75,9 +80,13 @@ const routes: Routes = [
           {path: 'argo', component: ArgoSettingsComponent},
           {path: 'docker', component: DockerSettingsComponent}
         ]
-      }
+      },
+      {path: 'access', component: AppAccessDeniedComponent},
+      {path: 'notfound', component: AppNotFoundComponent},
     ]
-  }
+  },
+  {path: 'error', component: AppErrorComponent},
+  {path: '**', redirectTo: '/notfound'}
 ];
 
 @NgModule({

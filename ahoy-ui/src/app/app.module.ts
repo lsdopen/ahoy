@@ -67,12 +67,9 @@ import {AppTopBarComponent} from './app.topbar.component';
 import {ApplicationConfigFilesComponent} from './applications/application-config-files/application-config-files.component';
 import {ApplicationDetailComponent} from './applications/application-detail/application-detail.component';
 import {ApplicationEnvVariablesComponent} from './applications/application-env-variables/application-env-variables.component';
-import {ApplicationNameUniqueValidatorDirective} from './applications/application-name-unique-validator.directive';
 import {ApplicationSecretDataComponent} from './applications/application-secret-data/application-secret-data.component';
 import {ApplicationSecretsComponent} from './applications/application-secrets/application-secrets.component';
-import {SecretNameUniqueValidatorDirective} from './applications/application-secrets/secret-name-unique-validator.directive';
 import {ApplicationVersionDetailComponent} from './applications/application-version-detail/application-version-detail.component';
-import {ApplicationVersionUniqueValidatorDirective} from './applications/application-version-unique-validator.directive';
 import {ApplicationVersionsComponent} from './applications/application-versions/application-versions.component';
 import {ApplicationVolumeDetailComponent} from './applications/application-volume-detail/application-volume-detail.component';
 import {ApplicationsComponent} from './applications/applications.component';
@@ -83,6 +80,9 @@ import {ConfirmDialogComponent} from './components/confirm-dialog/confirm-dialog
 import {VerifyValidatorDirective} from './components/confirm-dialog/verify-validator.directive';
 import {DescriptionDialogComponent} from './components/description-dialog/description-dialog.component';
 import {MultiTabComponent} from './components/multi-tab/multi-tab.component';
+import {TabItemNameUniqueValidatorDirective} from './components/multi-tab/tab-item-name-unique-validator.directive';
+import {NameUniqueValidatorDirective} from './components/name-unique-validator.directive';
+import {VersionUniqueValidatorDirective} from './components/version-unique-validator.directive';
 import {DashboardEnvironmentComponent} from './dashboard/dashboard-environment/dashboard-environment.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {AddReleaseDialogComponent} from './environment-release/add-release-dialog/add-release-dialog.component';
@@ -95,6 +95,9 @@ import {EnvironmentDetailComponent} from './environments/environment-detail/envi
 import {EnvironmentNameUniqueValidatorDirective} from './environments/environment-name-unique-validator.directive';
 import {EnvironmentsComponent} from './environments/environments.component';
 import {NotificationsComponent} from './notifications/notifications.component';
+import {AppAccessDeniedComponent} from './pages/app-access-denied.component';
+import {AppErrorComponent} from './pages/app-error.component';
+import {AppNotFoundComponent} from './pages/app-not-found.component';
 import {ReleaseHistoryComponent} from './release-history/release-history.component';
 import {AddApplicationDialogComponent} from './release-manage/add-application-dialog/add-application-dialog.component';
 import {ApplicationAllowedValidatorDirective} from './release-manage/add-application-dialog/application-allowed.directive';
@@ -107,8 +110,8 @@ import {ReleaseManageComponent} from './release-manage/release-manage.component'
 import {UpgradeDialogComponent} from './release-manage/upgrade-dialog/upgrade-dialog.component';
 import {AddToEnvironmentDialogComponent} from './releases/add-to-environment-dialog/add-to-environment-dialog.component';
 import {ReleaseDetailComponent} from './releases/release-detail/release-detail.component';
-import {ReleaseNameUniqueValidatorDirective} from './releases/release-name-unique-validator.directive';
-import {ReleaseVersionUniqueValidatorDirective} from './releases/release-version-unique-validator.directive';
+import {ReleaseVersionDetailComponent} from './releases/release-version-detail/release-version-detail.component';
+import {ReleaseVersionsComponent} from './releases/release-versions/release-versions.component';
 import {ReleasesComponent} from './releases/releases.component';
 import {ArgoSettingsComponent} from './settings/argo-settings/argo-settings.component';
 import {DockerSettingsComponent} from './settings/docker-settings/docker-settings.component';
@@ -145,14 +148,9 @@ import {ErrorService} from './util/error.service';
     ClusterDetailComponent,
     DashboardEnvironmentComponent,
     AddReleaseDialogComponent,
-    ReleaseNameUniqueValidatorDirective,
-    ReleaseVersionUniqueValidatorDirective,
     EnvironmentNameUniqueValidatorDirective,
     ApplicationVersionsComponent,
     ApplicationVersionDetailComponent,
-    ApplicationNameUniqueValidatorDirective,
-    SecretNameUniqueValidatorDirective,
-    ApplicationVersionUniqueValidatorDirective,
     ApplicationAllowedValidatorDirective,
     NotificationsComponent,
     TaskEventsListenerComponent,
@@ -178,7 +176,15 @@ import {ErrorService} from './util/error.service';
     EnvironmentReleasesComponent,
     ReleaseDetailComponent,
     AddToEnvironmentDialogComponent,
-    MultiTabComponent
+    MultiTabComponent,
+    TabItemNameUniqueValidatorDirective,
+    NameUniqueValidatorDirective,
+    VersionUniqueValidatorDirective,
+    ReleaseVersionsComponent,
+    ReleaseVersionDetailComponent,
+    AppNotFoundComponent,
+    AppAccessDeniedComponent,
+    AppErrorComponent
   ],
   imports: [
     BrowserModule,

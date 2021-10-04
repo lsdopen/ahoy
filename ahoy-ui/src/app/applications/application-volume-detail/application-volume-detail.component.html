@@ -20,9 +20,16 @@
     <div class="p-field p-float-label">
       <input pInputText id="volumeName{{volumeIndex}}" [(ngModel)]="volume.name" name="volumeName{{volumeIndex}}"
              required
-             pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$">
+             pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
+             [appTabItemNameUnique]="volumesForValidation"
+             [selectedIndex]="volumeIndex">
       <label for="volumeName{{volumeIndex}}">Name</label>
-      <small>Name should start with and use lower case letters and numbers</small>
+      <small class="p-error" *ngIf="parentForm.form.controls['volumeName' + volumeIndex]?.hasError('pattern')">
+        Name invalid: should start with and use lower case letters and numbers
+      </small>
+      <small class="p-error" *ngIf="parentForm.form.controls['volumeName' + volumeIndex]?.hasError('tabItemNameNotUnique')">
+        Volume already exists
+      </small>
     </div>
 
     <div class="p-field p-float-label">

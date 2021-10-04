@@ -94,12 +94,19 @@ export class EnvironmentReleaseDetailComponent implements OnInit {
   }
 
   private setBreadcrumb() {
-    this.breadcrumbService.setItems([
-      {label: this.environment.name, routerLink: '/environments'},
-      {label: this.release.name, routerLink: `/release/${this.environment.id}/${this.release.id}/version/${this.releaseVersion.id}`},
-      {label: this.releaseVersion.version},
-      {label: this.editMode ? 'edit' : 'new'}
-    ]);
+    if (this.editMode) {
+      this.breadcrumbService.setItems([
+        {label: this.environment.name, routerLink: '/environments'},
+        {label: this.release.name, routerLink: `/release/${this.environment.id}/${this.release.id}/version/${this.releaseVersion.id}`},
+        {label: this.releaseVersion.version},
+        {label: 'edit'}
+      ]);
+    } else {
+      this.breadcrumbService.setItems([
+        {label: this.environment.name, routerLink: '/environments'},
+        {label: 'new'}
+      ]);
+    }
   }
 
   save() {

@@ -25,7 +25,9 @@ import {ApplicationSecret, ApplicationVolume} from '../application';
   viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
 })
 export class ApplicationVolumeDetailComponent {
+  @Input() parentForm: NgForm;
   @Input() volume: ApplicationVolume;
+  @Input() volumesForValidation: ApplicationVolume[];
   @Input() volumeIndex: number;
   @Input() secrets: ApplicationSecret[];
 }

@@ -36,13 +36,13 @@
             <input pInputText id="applicationName" [(ngModel)]="application.name" name="applicationName"
                    required
                    pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
-                   [appApplicationNameUnique]="applicationsForValidation"
+                   [appNameUnique]="applicationsForValidation"
                    [ignoreOwnId]="application.id">
             <label for="applicationName">Name</label>
             <small class="p-error" *ngIf="applicationForm.form.controls.applicationName?.hasError('pattern')">
               Name invalid: should start with and use lower case letters and numbers
             </small>
-            <small class="p-error" *ngIf="applicationForm.form.controls.applicationName?.hasError('applicationNameNotUnique')">
+            <small class="p-error" *ngIf="applicationForm.form.controls.applicationName?.hasError('nameNotUnique')">
               Application already exists
             </small>
           </div>
@@ -53,9 +53,7 @@
             <label for="applicationVersion">Version</label>
           </div>
 
-          <div class="p-field">
-            <app-docker-registries *ngIf="!editMode" [applicationVersion]="applicationVersion"></app-docker-registries>
-          </div>
+          <app-docker-registries *ngIf="!editMode" [applicationVersion]="applicationVersion"></app-docker-registries>
 
           <div class="p-field p-float-label" *ngIf="!editMode">
             <input pInputText id="applicationImage" [(ngModel)]="applicationVersion.image" name="applicationImage"

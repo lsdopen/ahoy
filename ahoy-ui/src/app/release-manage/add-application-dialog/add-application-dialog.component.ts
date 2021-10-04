@@ -19,7 +19,7 @@ import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {Application, ApplicationVersion} from '../../applications/application';
 import {ApplicationService} from '../../applications/application.service';
 import {EnvironmentRelease} from '../../environment-release/environment-release';
-import {ReleaseVersion} from '../../releases/release';
+import {ReleaseVersion, UpgradeAppOptions} from '../../releases/release';
 
 @Component({
   selector: 'app-add-application',
@@ -33,9 +33,9 @@ export class AddApplicationDialogComponent implements OnInit {
   environmentRelease: EnvironmentRelease;
   releaseVersion: ReleaseVersion;
   applicationVersions: ApplicationVersion[];
-  selectedVersion: ApplicationVersion;
   applicationMode = false;
   linkedApplications: Application[];
+  upgradeAppOptions = new UpgradeAppOptions();
 
   constructor(private applicationService: ApplicationService,
               public ref: DynamicDialogRef,

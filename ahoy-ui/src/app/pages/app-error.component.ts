@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,17 +14,11 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server;
+import {Component} from '@angular/core';
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-public class DeployDetails {
-	private String commitMessage;
-
-	public DeployDetails(String commitMessage) {
-		this.commitMessage = commitMessage;
-	}
+@Component({
+  selector: 'app-error',
+  templateUrl: './app-error.component.html',
+})
+export class AppErrorComponent {
 }
