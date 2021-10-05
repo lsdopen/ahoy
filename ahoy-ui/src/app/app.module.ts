@@ -58,7 +58,6 @@ import {AppBreadcrumbService} from './app.breadcrumb.service';
 import {AppComponent} from './app.component';
 import {AppConfigComponent} from './app.config.component';
 import {AppFooterComponent} from './app.footer.component';
-import {AppInlineMenuComponent} from './app.inlinemenu.component';
 import {AppMainComponent} from './app.main.component';
 import {AppMenuComponent} from './app.menu.component';
 import {MenuService} from './app.menu.service';
@@ -126,7 +125,6 @@ import {ErrorService} from './util/error.service';
     AppTopBarComponent,
     AppMenuComponent,
     AppMenuitemComponent,
-    AppInlineMenuComponent,
     AppBreadcrumbComponent,
     AppFooterComponent,
     AppConfigComponent,
