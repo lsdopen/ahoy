@@ -41,14 +41,6 @@ export class EnvironmentService {
     );
   }
 
-  getAllEnvironmentsByCluster(clusterId: number): Observable<Environment[]> {
-    const url = `/data/clusters/${clusterId}/environments`;
-    return this.restClient.get<any>(url).pipe(
-      map(response => response._embedded.environments as Environment[]),
-      tap((envs) => this.log.debug(`fetched ${envs.length} environments for cluster=${clusterId}`))
-    );
-  }
-
   getAllForPromotion(releaseId: number): Observable<Environment[]> {
     const url = `/data/environments/search/forPromotion?releaseId=${releaseId}`;
     return this.restClient.get<any>(url).pipe(

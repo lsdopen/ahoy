@@ -55,15 +55,6 @@ export class ReleaseService {
     );
   }
 
-  // TODO: the url seems wrong, fix or delete method
-  getAllByEnvironment(environmentId: number): Observable<Release[]> {
-    const url = `/data/environments/${environmentId}/releases`;
-    return this.restClient.get<any>(url).pipe(
-      map(response => response._embedded.releases as Release[]),
-      tap((releases) => this.log.debug(`fetched ${releases.length} releases for environment=${environmentId}`))
-    );
-  }
-
   get(id: number): Observable<Release> {
     const url = `/data/releases/${id}`;
     return this.restClient.get<Release>(url).pipe(
