@@ -20,42 +20,23 @@
     <p-confirmPopup></p-confirmPopup>
     <app-task-events-listener (taskEventEmitter)="taskEventOccurred($event)"></app-task-events-listener>
 
-    <div class="card" *ngIf="environments && environments.length === 0">
+    <div class="card" *ngIf="environment">
       <div class="card-header">
         <div class="p-d-flex p-flex-row p-ai-baseline">
           <i class="pi pi-folder-open p-mr-2 app-icon"></i>
-          <h5>Releases</h5>
-        </div>
-      </div>
-
-      <div class="p-field">
-        There are no environments setup, click <a routerLink="/environments">here</a> to manage environments..
-      </div>
-    </div>
-
-    <div class="card" *ngIf="selectedEnvironment">
-      <div class="card-header">
-        <div class="p-d-flex p-flex-row p-ai-baseline">
-          <i class="pi pi-folder-open p-mr-2 app-icon"></i>
-          <h5>Releases in {{selectedEnvironment.name}}</h5>
+          <h5>Releases in {{environment.name}}</h5>
         </div>
       </div>
 
       <p-toolbar>
         <ng-template pTemplate="left">
-          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/release/new" [queryParams]="{environmentId: selectedEnvironment.id}"></button>
+          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/release/new" [queryParams]="{environmentId: environment.id}"></button>
           <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain p-mb-2" (click)="addRelease()"></button>
-        </ng-template>
-
-        <ng-template pTemplate="right">
-          <p-dropdown [options]="environments" [(ngModel)]="selectedEnvironment"
-                      placeholder="Environment" optionLabel="name"
-                      (onChange)="environmentChanged()"></p-dropdown>
         </ng-template>
       </p-toolbar>
 
       <div class="p-field" *ngIf="environmentReleases && (environmentReleases.length === 0)">
-        There are no releases in this environment, create a <a routerLink="/release/new" [queryParams]="{environmentId: selectedEnvironment.id}">new</a> release or <a [routerLink]="" (click)="addRelease()">add</a> a existing release..
+        There are no releases in this environment, create a <a routerLink="/release/new" [queryParams]="{environmentId: environment.id}">new</a> release or <a [routerLink]="" (click)="addRelease()">add</a> a existing release..
       </div>
 
       <p-table #dt [value]="environmentReleases" dataKey="id" selectionMode="single"
