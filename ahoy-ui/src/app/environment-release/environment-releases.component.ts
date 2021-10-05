@@ -54,8 +54,6 @@ export class EnvironmentReleasesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.setBreadcrumb();
-
     const environmentId = +this.route.snapshot.paramMap.get('environmentId');
 
     this.environmentService.getAll().subscribe((environments) => {

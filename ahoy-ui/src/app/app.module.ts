@@ -87,7 +87,6 @@ import {DashboardEnvironmentComponent} from './dashboard/dashboard-environment/d
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {AddReleaseDialogComponent} from './environment-release/add-release-dialog/add-release-dialog.component';
 import {EnvironmentReleaseDeploymentStatusComponent} from './environment-release/environment-release-deployment-status/environment-release-deployment-status.component';
-import {EnvironmentReleaseDetailComponent} from './environment-release/environment-release-detail/environment-release-detail.component';
 import {EnvironmentReleaseStatusComponent} from './environment-release/environment-release-status/environment-release-status.component';
 import {EnvironmentReleaseVersionsComponent} from './environment-release/environment-release-versions/environment-release-versions.component';
 import {EnvironmentReleasesComponent} from './environment-release/environment-releases.component';
@@ -135,7 +134,6 @@ import {ErrorService} from './util/error.service';
     ApplicationsComponent,
     ApplicationDetailComponent,
     ReleasesComponent,
-    EnvironmentReleaseDetailComponent,
     ReleaseManageComponent,
     EnvironmentsComponent,
     EnvironmentDetailComponent,

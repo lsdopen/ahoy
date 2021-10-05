@@ -106,10 +106,6 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   private setupMenuItems() {
     this.menuItems = [
       {
-        label: 'Edit', icon: 'pi pi-fw pi-pencil', disabled: !this.canEdit(),
-        routerLink: `/environmentrelease/edit/${this.environmentRelease.id.environmentId}/${this.environmentRelease.id.releaseId}/version/${this.releaseVersion.id}`
-      },
-      {
         label: 'History', icon: 'pi pi-fw pi-list',
         routerLink: `/releasehistory/${this.environmentRelease.id.releaseId}`
       },
@@ -223,10 +219,6 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
         return this.releaseManageService.upgrade(this.releaseVersion.id, upgradeOptions);
       })
     ).subscribe((newReleaseVersion: ReleaseVersion) => this.reload(this.environmentRelease.id.environmentId, newReleaseVersion.id));
-  }
-
-  canEdit() {
-    return !this.isCurrent();
   }
 
   canCopyEnvConfig() {

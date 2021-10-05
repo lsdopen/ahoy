@@ -21,7 +21,8 @@
 
     <div class="card p-mb-3">
       <div class="card-header">
-        <h5>{{editMode ? "Edit" : "New"}} release</h5>
+        <h5 *ngIf="!environment">{{editMode ? "Edit" : "New"}} release</h5>
+        <h5 *ngIf="environment">New release in {{environment.name}}</h5>
       </div>
 
       <p-toolbar>

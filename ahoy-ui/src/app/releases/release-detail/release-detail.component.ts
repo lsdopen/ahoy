@@ -21,7 +21,9 @@ import {of} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../../app.breadcrumb.service';
 import {ApplicationService} from '../../applications/application.service';
+import {EnvironmentRelease, EnvironmentReleaseId} from '../../environment-release/environment-release';
 import {EnvironmentReleaseService} from '../../environment-release/environment-release.service';
+import {Environment} from '../../environments/environment';
 import {EnvironmentService} from '../../environments/environment.service';
 import {Release, ReleaseVersion} from '../../releases/release';
 import {ReleaseService} from '../../releases/release.service';
@@ -38,6 +40,7 @@ export class ReleaseDetailComponent implements OnInit {
   releaseVersion: ReleaseVersion;
   releasesForValidation: Release[];
   editMode = false;
+  environment: Environment;
 
   constructor(
     private log: LoggerService,
@@ -53,11 +56,21 @@ export class ReleaseDetailComponent implements OnInit {
 
   ngOnInit() {
     const releaseId = this.route.snapshot.paramMap.get('releaseId');
+    const environmentId = +this.route.snapshot.queryParamMap.get('environmentId');
 
     if (releaseId === 'new') {
       this.release = new Release();
       this.releaseVersion = new ReleaseVersion();
-      this.setBreadcrumb();
+
+      if (environmentId) {
+        this.environmentService.get(environmentId)
+          .subscribe(env => {
+            this.environment = env;
+            this.setBreadcrumb();
+          });
+      } else {
+        this.setBreadcrumb();
+      }
 
     } else {
       this.editMode = true;
@@ -83,6 +96,11 @@ export class ReleaseDetailComponent implements OnInit {
         {label: this.release.name},
         {label: 'edit'}
       ]);
+    } else if (this.environment) {
+      this.breadcrumbService.setItems([
+        {label: this.environment.name, routerLink: '/environments'},
+        {label: 'new'}
+      ]);
     } else {
       this.breadcrumbService.setItems([
         {label: 'releases', routerLink: '/releases'},
@@ -101,6 +119,17 @@ export class ReleaseDetailComponent implements OnInit {
             return this.releaseService.saveVersion(this.releaseVersion);
           }
           return of(release);
+        }),
+        mergeMap(releaseVersion => {
+          if (this.environment) {
+            const environmentRelease = new EnvironmentRelease();
+            environmentRelease.id = new EnvironmentReleaseId();
+            environmentRelease.environment = this.environmentService.link(this.environment.id);
+            environmentRelease.release = this.releaseService.link(this.release.id);
+
+            return this.environmentReleaseService.save(environmentRelease);
+          }
+          return of(releaseVersion);
         })
       )
       .subscribe(() => this.location.back());
