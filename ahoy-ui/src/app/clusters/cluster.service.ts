@@ -15,8 +15,8 @@
  */
 
 import {Injectable} from '@angular/core';
-import {EMPTY, Observable, of} from 'rxjs';
-import {catchError, map, mergeMap, tap} from 'rxjs/operators';
+import {EMPTY, Observable} from 'rxjs';
+import {catchError, map, tap} from 'rxjs/operators';
 import {Notification} from '../notifications/notification';
 import {NotificationsService} from '../notifications/notifications.service';
 import {LoggerService} from '../util/logger.service';
@@ -27,13 +27,11 @@ import {Cluster} from './cluster';
   providedIn: 'root'
 })
 export class ClusterService {
-  private lastClusterId: number;
 
   constructor(
     private log: LoggerService,
     private restClient: RestClientService,
     private notificationsService: NotificationsService) {
-    this.lastClusterId = 0;
   }
 
   getAll(): Observable<Cluster[]> {
@@ -48,9 +46,6 @@ export class ClusterService {
     const url = `/data/clusters/${id}`;
     return this.restClient.get<Cluster>(url).pipe(
       tap((cluster) => {
-        if (cluster) {
-          this.lastClusterId = cluster.id;
-        }
         this.log.debug('fetched cluster', cluster);
       })
     );
@@ -62,7 +57,6 @@ export class ClusterService {
     if (!cluster.id) {
       return this.restClient.post<Cluster>('/data/clusters', cluster).pipe(
         tap((newCluster) => {
-          this.lastClusterId = newCluster.id;
           this.log.debug('saved new cluster', newCluster);
         })
       );
@@ -71,7 +65,6 @@ export class ClusterService {
       const url = `/data/clusters/${cluster.id}`;
       return this.restClient.put(url, cluster).pipe(
         tap((updatedCluster) => {
-          this.lastClusterId = updatedCluster.id;
           this.log.debug('updated cluster', updatedCluster);
         })
       );
@@ -121,20 +114,6 @@ export class ClusterService {
         return EMPTY;
       })
     );
-  }
-
-  getLastUsedId(): Observable<number> {
-    if (this.lastClusterId === 0) {
-      this.log.debug('no last used cluster found, finding first cluster...');
-      return this.getAll().pipe(
-        mergeMap((clusters) => {
-          this.lastClusterId = clusters.length > 0 ? clusters[0].id : 0;
-          return of(this.lastClusterId);
-        })
-      );
-    } else {
-      return of(this.lastClusterId);
-    }
   }
 
   link(id: number): string {

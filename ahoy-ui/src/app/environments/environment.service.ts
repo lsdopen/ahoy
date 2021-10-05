@@ -15,8 +15,8 @@
  */
 
 import {Injectable} from '@angular/core';
-import {EMPTY, Observable, of} from 'rxjs';
-import {catchError, map, mergeMap, tap} from 'rxjs/operators';
+import {EMPTY, Observable} from 'rxjs';
+import {catchError, map, tap} from 'rxjs/operators';
 import {Notification} from '../notifications/notification';
 import {NotificationsService} from '../notifications/notifications.service';
 import {LoggerService} from '../util/logger.service';
@@ -27,13 +27,11 @@ import {Environment} from './environment';
   providedIn: 'root'
 })
 export class EnvironmentService {
-  private lastEnvironmentId: number;
 
   constructor(
     private log: LoggerService,
     private notificationsService: NotificationsService,
     private restClient: RestClientService) {
-    this.lastEnvironmentId = 0;
   }
 
   getAll(): Observable<Environment[]> {
@@ -63,7 +61,6 @@ export class EnvironmentService {
     const url = `/data/environments/${id}?projection=environment`;
     return this.restClient.get<Environment>(url).pipe(
       tap((env) => {
-        this.lastEnvironmentId = env.id;
         this.log.debug('fetched environment', env);
       })
     );
@@ -125,20 +122,6 @@ export class EnvironmentService {
         return EMPTY;
       })
     );
-  }
-
-  getLastUsedId(): Observable<number> {
-    if (this.lastEnvironmentId === 0) {
-      this.log.debug('no last used environment found, finding first environment');
-      return this.getAll().pipe(
-        mergeMap(environments => {
-          this.lastEnvironmentId = environments.length > 0 ? environments[0].id : 0;
-          return of(this.lastEnvironmentId);
-        })
-      );
-    } else {
-      return of(this.lastEnvironmentId);
-    }
   }
 
   link(id: number): string {
