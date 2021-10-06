@@ -90,6 +90,11 @@ public class EnvironmentService {
 		return destEnvironment;
 	}
 
+	@Transactional
+	public void updateOrderIndex(Long environmentId, Double orderIndex) {
+		environmentRepository.updateOrderIndex(environmentId, orderIndex);
+	}
+
 	private void undeployReleasesFrom(Environment environment) {
 		log.info("Checking if there are deployed releases in {}", environment.getName());
 		environment.getEnvironmentReleases().forEach((environmentRelease) -> {

@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package za.co.lsd.ahoy.server.environments;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -26,6 +27,10 @@ import org.springframework.stereotype.Repository;
 public interface EnvironmentRepository extends PagingAndSortingRepository<Environment, Long> {
 
 	@RestResource(path = "forPromotion", rel = "forPromotion")
-	@Query("select e from Environment e where e.id not in (select er.id.environmentId FROM EnvironmentRelease er where er.id.releaseId = :releaseId) order by e.id")
+	@Query("select e from Environment e where e.id not in (select er.id.environmentId FROM EnvironmentRelease er where er.id.releaseId = :releaseId) order by e.orderIndex")
 	Iterable<Environment> findForPromotion(@Param("releaseId") long releaseId);
+
+	@Modifying
+	@Query("update Environment e set e.orderIndex = :orderIndex where e.id = :id")
+	void updateOrderIndex(@Param("id") long id, @Param("orderIndex") double orderIndex);
 }

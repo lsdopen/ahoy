@@ -276,7 +276,7 @@ public class ReleaseServiceTest {
 		ReleaseVersion resultReleaseVersion = new ReleaseVersion(2L, upgradeOptions.getVersion(), releaseVersion.getRelease(), new ArrayList<>(releaseVersion.getApplicationVersions()));
 		when(releaseVersionRepository.save(any(ReleaseVersion.class))).thenReturn(resultReleaseVersion);
 
-		when(environmentReleaseRepository.findByRelease_Id_OrderByEnvironmentId(release.getId())).thenReturn(Collections.singletonList(environmentRelease));
+		when(environmentReleaseRepository.findByRelease_Id_OrderByEnvironmentOrderIndex(release.getId())).thenReturn(Collections.singletonList(environmentRelease));
 
 		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
 		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion)).thenReturn(Optional.of(environmentConfig));
@@ -440,7 +440,7 @@ public class ReleaseServiceTest {
 		when(applicationVersionRepository.findById(1L)).thenReturn(Optional.of(applicationVersion1));
 		when(applicationVersionRepository.findById(2L)).thenReturn(Optional.of(applicationVersion2));
 
-		when(environmentReleaseRepository.findByRelease_Id_OrderByEnvironmentId(release.getId())).thenReturn(Collections.singletonList(environmentRelease));
+		when(environmentReleaseRepository.findByRelease_Id_OrderByEnvironmentOrderIndex(release.getId())).thenReturn(Collections.singletonList(environmentRelease));
 
 		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
 		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion1)).thenReturn(Optional.of(environmentConfig));
@@ -477,7 +477,7 @@ public class ReleaseServiceTest {
 		when(applicationVersionRepository.findById(1L)).thenReturn(Optional.of(applicationVersion1));
 		when(applicationVersionRepository.findById(2L)).thenReturn(Optional.of(applicationVersion2));
 
-		when(environmentReleaseRepository.findByRelease_Id_OrderByEnvironmentId(release.getId())).thenReturn(Collections.singletonList(environmentRelease));
+		when(environmentReleaseRepository.findByRelease_Id_OrderByEnvironmentOrderIndex(release.getId())).thenReturn(Collections.singletonList(environmentRelease));
 
 		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
 		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion1)).thenReturn(Optional.of(environmentConfig));

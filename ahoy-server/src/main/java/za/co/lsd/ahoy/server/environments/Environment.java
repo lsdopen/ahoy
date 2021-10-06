@@ -42,6 +42,8 @@ public class Environment implements Serializable {
 	@JoinColumn
 	private Cluster cluster;
 
+	private Double orderIndex;
+
 	@OneToMany(mappedBy = "environment", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	@ToString.Exclude
@@ -63,5 +65,6 @@ public class Environment implements Serializable {
 		this.id = dto.getId();
 		this.name = dto.getName();
 		this.cluster = new Cluster(dto.getCluster());
+		this.orderIndex = dto.getOrderIndex();
 	}
 }

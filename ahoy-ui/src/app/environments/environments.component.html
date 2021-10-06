@@ -51,7 +51,7 @@
       <p-table #dt [value]="environments" dataKey="id" selectionMode="single"
                styleClass="p-datatable-environments p-datatable-striped p-datatable-sm"
                [scrollable]="true" scrollHeight="600px" [filterDelay]="0" [globalFilterFields]="['name', 'cluster.name']"
-               *ngIf="environments && environments.length > 0">
+               *ngIf="environments && environments.length > 0" (onRowReorder)="rowReorder($event)">
         <ng-template pTemplate="caption">
           <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
             <span class="p-input-icon-left p-ml-auto">
@@ -62,6 +62,7 @@
         </ng-template>
         <ng-template pTemplate="header">
           <tr>
+            <th class="column-order"></th>
             <th pSortableColumn="name">Environment
               <p-sortIcon field="name"></p-sortIcon>
             </th>
@@ -71,8 +72,11 @@
             <th></th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-environment>
-          <tr>
+        <ng-template pTemplate="body" let-environment let-index="rowIndex">
+          <tr [pReorderableRow]="index">
+            <td class="column-order">
+              <span class="pi pi-bars" pReorderableRowHandle></span>
+            </td>
             <td>
               <span class="p-column-title">Environment</span>
               {{environment.name}}

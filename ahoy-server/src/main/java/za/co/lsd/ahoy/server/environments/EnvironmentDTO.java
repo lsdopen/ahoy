@@ -26,4 +26,5 @@ public class EnvironmentDTO {
 	private Long id;
 	private String name;
 	private ClusterDTO cluster;
+	private Double orderIndex;
 }

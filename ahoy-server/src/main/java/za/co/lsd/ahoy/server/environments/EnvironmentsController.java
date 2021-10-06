@@ -56,4 +56,12 @@ public class EnvironmentsController {
 
 		return new ResponseEntity<>(destEnvironment, new HttpHeaders(), HttpStatus.OK);
 	}
+
+	@PutMapping("/{environmentId}/updateOrderIndex")
+	public ResponseEntity<Environment> updateOrderIndex(@PathVariable Long environmentId,
+														@RequestParam Double orderIndex) {
+
+		environmentService.updateOrderIndex(environmentId, orderIndex);
+		return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.OK);
+	}
 }

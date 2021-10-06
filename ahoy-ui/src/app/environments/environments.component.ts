@@ -23,6 +23,7 @@ import {ClusterService} from '../clusters/cluster.service';
 import {Confirmation} from '../components/confirm-dialog/confirm';
 import {DialogUtilService} from '../components/dialog-util.service';
 import {LoggerService} from '../util/logger.service';
+import {OrderUtil} from '../util/order-util';
 import {Environment} from './environment';
 import {EnvironmentService} from './environment.service';
 
@@ -35,14 +36,13 @@ export class EnvironmentsComponent implements OnInit {
   environments: Environment[] = undefined;
   clusters: Cluster[] = undefined;
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private environmentService: EnvironmentService,
-    private clusterService: ClusterService,
-    private log: LoggerService,
-    private dialogUtilService: DialogUtilService,
-    private breadcrumbService: AppBreadcrumbService) {
+  constructor(private route: ActivatedRoute,
+              private router: Router,
+              private environmentService: EnvironmentService,
+              private clusterService: ClusterService,
+              private log: LoggerService,
+              private dialogUtilService: DialogUtilService,
+              private breadcrumbService: AppBreadcrumbService) {
   }
 
   ngOnInit() {
@@ -79,5 +79,12 @@ export class EnvironmentsComponent implements OnInit {
       this.environmentService.destroy(environment)
         .subscribe(() => this.getEnvironments());
     });
+  }
+
+  rowReorder(event: any) {
+    const dropIndex = event.dropIndex;
+    const environment = this.environments[dropIndex];
+    environment.orderIndex = OrderUtil.newIndex(dropIndex, this.environments);
+    this.environmentService.updateOrderIndex(environment).subscribe();
   }
 }

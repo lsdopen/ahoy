@@ -35,7 +35,7 @@ export class EnvironmentService {
   }
 
   getAll(): Observable<Environment[]> {
-    return this.restClient.get<any>('/data/environments?projection=environment&sort=id').pipe(
+    return this.restClient.get<any>('/data/environments?projection=environment&sort=orderIndex').pipe(
       map(response => response._embedded.environments as Environment[]),
       tap((envs) => this.log.debug(`fetched ${envs.length} environments`))
     );
@@ -110,6 +110,23 @@ export class EnvironmentService {
       }),
       catchError((error) => {
         const text = `Failed to duplicate environment ${destEnvironment.name} from environment: ${sourceEnvironment.name}`;
+        this.notificationsService.notification(new Notification(text, error));
+        return EMPTY;
+      })
+    );
+  }
+
+  updateOrderIndex(environment: Environment): Observable<Environment> {
+    this.log.debug('updating environment orderIndex: ', environment);
+
+    const url = `/data/environments/${environment.id}/updateOrderIndex?orderIndex=${environment.orderIndex}`;
+
+    return this.restClient.put<Environment>(url, null).pipe(
+      tap(() => {
+        this.log.debug('updated environment orderIndex', environment);
+      }),
+      catchError((error) => {
+        const text = `Failed to update environment ${environment.name} order`;
         this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })
