@@ -35,7 +35,7 @@ export class EnvironmentService {
   }
 
   getAll(): Observable<Environment[]> {
-    return this.restClient.get<any>('/data/environments?projection=environment&sort=orderIndex').pipe(
+    return this.restClient.get<any>('/data/environments?projection=environment&sort=orderIndex&sort=id').pipe(
       map(response => response._embedded.environments as Environment[]),
       tap((envs) => this.log.debug(`fetched ${envs.length} environments`))
     );

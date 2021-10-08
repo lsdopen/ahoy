@@ -27,7 +27,7 @@ import org.springframework.stereotype.Repository;
 public interface EnvironmentRepository extends PagingAndSortingRepository<Environment, Long> {
 
 	@RestResource(path = "forPromotion", rel = "forPromotion")
-	@Query("select e from Environment e where e.id not in (select er.id.environmentId FROM EnvironmentRelease er where er.id.releaseId = :releaseId) order by e.orderIndex")
+	@Query("select e from Environment e where e.id not in (select er.id.environmentId FROM EnvironmentRelease er where er.id.releaseId = :releaseId) order by e.orderIndex,e.id")
 	Iterable<Environment> findForPromotion(@Param("releaseId") long releaseId);
 
 	@Modifying

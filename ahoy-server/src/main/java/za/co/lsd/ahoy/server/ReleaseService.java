@@ -212,7 +212,7 @@ public class ReleaseService {
 		if (upgradeOptions.isCopyEnvironmentConfig()) {
 			log.info("Copy environment config selected, copying config to new version: {}", upgradedReleaseVersion);
 
-			Iterable<EnvironmentRelease> environmentReleases = environmentReleaseRepository.findByRelease_Id_OrderByEnvironmentOrderIndex(currentReleaseVersion.getRelease().getId());
+			Iterable<EnvironmentRelease> environmentReleases = environmentReleaseRepository.findByRelease(currentReleaseVersion.getRelease().getId());
 			for (EnvironmentRelease environmentRelease : environmentReleases) {
 				copyEnvironmentConfig(environmentRelease, currentReleaseVersion, upgradedReleaseVersion);
 			}
@@ -257,7 +257,7 @@ public class ReleaseService {
 		ApplicationVersion destApplicationVersion = applicationVersionRepository.findById(destApplicationVersionId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find destApplicationVersion: " + destApplicationVersionId));
 
-		Iterable<EnvironmentRelease> environmentReleases = environmentReleaseRepository.findByRelease_Id_OrderByEnvironmentOrderIndex(releaseVersion.getRelease().getId());
+		Iterable<EnvironmentRelease> environmentReleases = environmentReleaseRepository.findByRelease(releaseVersion.getRelease().getId());
 		for (EnvironmentRelease environmentRelease : environmentReleases) {
 			copyEnvironmentConfig(environmentRelease, releaseVersion, sourceApplicationVersion, destApplicationVersion);
 		}

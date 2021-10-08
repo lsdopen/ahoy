@@ -16,6 +16,7 @@
 
 package za.co.lsd.ahoy.server.environmentrelease;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RestResource;
@@ -27,7 +28,10 @@ import java.util.Optional;
 public interface EnvironmentReleaseRepository extends CrudRepository<EnvironmentRelease, EnvironmentReleaseId> {
 
 	@RestResource(path = "byRelease", rel = "byRelease")
-	Iterable<EnvironmentRelease> findByRelease_Id_OrderByEnvironmentOrderIndex(@Param("releaseId") long releaseId);
+	@Query("select e from EnvironmentRelease e where e.release.id = :releaseId order by e.environment.orderIndex,e.environment.id")
+	Iterable<EnvironmentRelease> findByRelease(@Param("releaseId") long releaseId);
 
 	Optional<EnvironmentRelease> findByArgoCdUid(String argoCdUid);
+
+
 }
