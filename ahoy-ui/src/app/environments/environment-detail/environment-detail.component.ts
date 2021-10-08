@@ -118,8 +118,8 @@ export class EnvironmentDetailComponent implements OnInit {
     if (!this.editMode) {
       this.environment.orderIndex = OrderUtil.appendIndex(this.environmentsForValidation);
 
-      this.environment.cluster = this.cluster;
-      this.environmentService.create(this.environment).pipe(
+      this.environment.cluster = this.clusterService.link(this.cluster.id);
+      this.environmentService.save(this.environment).pipe(
         mergeMap((environment: Environment) => {
           if (this.sourceEnvironment) {
             // we're duplicating a source environment

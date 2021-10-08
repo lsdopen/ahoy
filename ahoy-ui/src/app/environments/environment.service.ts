@@ -17,6 +17,7 @@
 import {Injectable} from '@angular/core';
 import {EMPTY, Observable} from 'rxjs';
 import {catchError, map, tap} from 'rxjs/operators';
+import {Cluster} from '../clusters/cluster';
 import {Notification} from '../notifications/notification';
 import {NotificationsService} from '../notifications/notifications.service';
 import {LoggerService} from '../util/logger.service';
@@ -58,23 +59,20 @@ export class EnvironmentService {
     );
   }
 
-  create(environment: Environment): Observable<Environment> {
-    this.log.debug('creating environment: ', environment);
+  save(environment: Environment): Observable<Environment> {
+    if (!environment.id) {
+      this.log.debug('saving environment: ', environment);
+      return this.restClient.post<Environment>('/data/environments', environment).pipe(
+        tap((env) => this.log.debug('saved new environment', env))
+      );
 
-    const url = `/data/environments/create`;
-
-    return this.restClient.post<Environment>(url, environment, true).pipe(
-      tap((createdEnvironment) => {
-        this.log.debug('created environment', createdEnvironment);
-        const text = `${createdEnvironment.name} ` + `was created in cluster ${createdEnvironment.cluster.name}`;
-        this.notificationsService.notification(new Notification(text));
-      }),
-      catchError((error) => {
-        const text = `Failed to create environment ${environment.name}`;
-        this.notificationsService.notification(new Notification(text, error));
-        return EMPTY;
-      })
-    );
+    } else {
+      this.log.debug('updating environment: ', environment);
+      const url = `/data/environments/${environment.id}`;
+      return this.restClient.put(url, environment).pipe(
+        tap((env) => this.log.debug('updated environment', env))
+      );
+    }
   }
 
   destroy(environment: Environment): Observable<Environment> {
@@ -86,7 +84,7 @@ export class EnvironmentService {
     return this.restClient.delete<Environment>(url, true).pipe(
       tap((destroyedEnvironment) => {
         this.log.debug('destroyed environment', environment);
-        const text = `${destroyedEnvironment.name} ` + `was destroyed from cluster ${destroyedEnvironment.cluster.name}`;
+        const text = `${destroyedEnvironment.name} ` + `was destroyed from cluster ${(destroyedEnvironment.cluster as Cluster).name}`;
         this.notificationsService.notification(new Notification(text));
       }),
       catchError((error) => {
@@ -105,7 +103,7 @@ export class EnvironmentService {
     return this.restClient.post<Environment>(url, null, true).pipe(
       tap((duplicatedEnvironment) => {
         this.log.debug('duplicated environment', duplicatedEnvironment);
-        const text = `${duplicatedEnvironment.name} ` + `was duplicated in cluster ${duplicatedEnvironment.cluster.name}`;
+        const text = `${duplicatedEnvironment.name} ` + `was duplicated in cluster ${(duplicatedEnvironment.cluster as Cluster).name}`;
         this.notificationsService.notification(new Notification(text));
       }),
       catchError((error) => {

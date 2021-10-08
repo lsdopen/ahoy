@@ -43,13 +43,6 @@ public class EnvironmentService {
 	}
 
 	@Transactional
-	public Environment create(Environment environment) {
-		log.info("Creating environment: {}", environment);
-
-		return environmentRepository.save(environment);
-	}
-
-	@Transactional
 	public Environment destroy(Long environmentId) {
 		Environment environment = environmentRepository.findById(environmentId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment: " + environmentId));

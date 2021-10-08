@@ -21,6 +21,7 @@ import {mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../../app.breadcrumb.service';
 import {Application, ApplicationEnvironmentConfig, ApplicationEnvironmentConfigId, ApplicationSecret, ApplicationVersion, ApplicationVolume} from '../../applications/application';
 import {ApplicationService} from '../../applications/application.service';
+import {Cluster} from '../../clusters/cluster';
 import {TabItemFactory} from '../../components/multi-tab/multi-tab.component';
 import {EnvironmentRelease, EnvironmentReleaseId} from '../../environment-release/environment-release';
 import {EnvironmentReleaseService} from '../../environment-release/environment-release.service';
@@ -86,7 +87,7 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
         const releaseName = (this.environmentRelease.release as Release).name;
         const appName = (this.applicationVersion.application as Application).name;
         const envName = (this.environmentRelease.environment as Environment).name;
-        const clusterHost = (this.environmentRelease.environment as Environment).cluster.host;
+        const clusterHost = ((this.environmentRelease.environment as Environment).cluster as Cluster).host;
         this.exampleRouteHost = `${releaseName}-${appName}-${envName}.${clusterHost}`;
         this.setCategoriesExpanded();
         this.setBreadcrumb();

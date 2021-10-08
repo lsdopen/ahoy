@@ -33,14 +33,6 @@ public class EnvironmentsController {
 		this.environmentService = environmentService;
 	}
 
-	@PostMapping("/create")
-	public ResponseEntity<Environment> create(@RequestBody EnvironmentDTO environmentDTO) {
-
-		Environment newEnvironment = environmentService.create(new Environment(environmentDTO));
-
-		return new ResponseEntity<>(newEnvironment, new HttpHeaders(), HttpStatus.OK);
-	}
-
 	@DeleteMapping("/destroy/{environmentId}")
 	public ResponseEntity<Environment> destroy(@PathVariable Long environmentId) {
 
