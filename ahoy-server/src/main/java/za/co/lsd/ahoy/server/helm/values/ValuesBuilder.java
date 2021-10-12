@@ -96,10 +96,10 @@ public class ValuesBuilder {
 			}
 		}
 
-		Map<String, ApplicationConfigValues> configs = new LinkedHashMap<>();
-		if (spec.getConfigs() != null) {
-			for (ApplicationConfig applicationConfig : spec.getConfigs()) {
-				configs.put(configName(applicationConfig), new ApplicationConfigValues(applicationConfig));
+		Map<String, ApplicationConfigFileValues> configFiles = new LinkedHashMap<>();
+		if (spec.getConfigFiles() != null) {
+			for (ApplicationConfigFile applicationConfigFile : spec.getConfigFiles()) {
+				configFiles.put(configName(applicationConfigFile), new ApplicationConfigFileValues(applicationConfigFile));
 			}
 		}
 
@@ -126,9 +126,9 @@ public class ValuesBuilder {
 				}
 			}
 
-			if (environmentSpec.getConfigs() != null) {
-				for (ApplicationConfig applicationConfig : environmentSpec.getConfigs()) {
-					configs.put(configName(applicationConfig), new ApplicationConfigValues(applicationConfig));
+			if (environmentSpec.getConfigFiles() != null) {
+				for (ApplicationConfigFile applicationConfigFile : environmentSpec.getConfigFiles()) {
+					configFiles.put(configName(applicationConfigFile), new ApplicationConfigFileValues(applicationConfigFile));
 				}
 			}
 
@@ -158,16 +158,16 @@ public class ValuesBuilder {
 
 		builder
 			.environmentVariables(environmentVariables)
-			.configs(configs)
+			.configFiles(configFiles)
 			.volumes(volumes)
 			.secrets(secrets);
 
 		return builder.build();
 	}
 
-	private String configName(ApplicationConfig config) {
-		return "application-config-" + Hashing.crc32()
-			.hashString(config.getName(), StandardCharsets.UTF_8)
+	private String configName(ApplicationConfigFile configFile) {
+		return "application-config-file-" + Hashing.crc32()
+			.hashString(configFile.getName(), StandardCharsets.UTF_8)
 			.toString();
 	}
 

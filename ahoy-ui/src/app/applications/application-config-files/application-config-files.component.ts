@@ -17,7 +17,7 @@
 import {AfterContentChecked, ChangeDetectorRef, Component, Input} from '@angular/core';
 import {ControlContainer, NgForm} from '@angular/forms';
 import {TabItemFactory} from '../../components/multi-tab/multi-tab.component';
-import {ApplicationConfig, ApplicationVersion} from '../application';
+import {ApplicationConfigFile, ApplicationVersion} from '../application';
 
 @Component({
   selector: 'app-application-config-files',
@@ -28,7 +28,7 @@ import {ApplicationConfig, ApplicationVersion} from '../application';
 export class ApplicationConfigFilesComponent implements AfterContentChecked {
   @Input() parentForm: NgForm;
   @Input() applicationVersion: ApplicationVersion;
-  @Input() configs: ApplicationConfig[];
+  @Input() configFiles: ApplicationConfigFile[];
   @Input() editPath = true;
 
   constructor(private cd: ChangeDetectorRef) {
@@ -38,9 +38,9 @@ export class ApplicationConfigFilesComponent implements AfterContentChecked {
     this.cd.detectChanges();
   }
 
-  applicationConfigFactory(): TabItemFactory<ApplicationConfig> {
-    return (): ApplicationConfig => {
-      return new ApplicationConfig();
+  applicationConfigFileFactory(): TabItemFactory<ApplicationConfigFile> {
+    return (): ApplicationConfigFile => {
+      return new ApplicationConfigFile();
     };
   }
 }

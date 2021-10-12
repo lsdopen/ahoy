@@ -14,24 +14,22 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.applications;
+package za.co.lsd.ahoy.server.helm.values;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-import javax.validation.constraints.NotNull;
+import za.co.lsd.ahoy.server.applications.ApplicationConfigFile;
 
 @Data
 @NoArgsConstructor
-public class ApplicationConfig {
-	@NotNull
-	private String name;
-	@ToString.Exclude
-	private String config;
+@AllArgsConstructor
+public class ApplicationConfigFileValues {
+	public String name;
+	public String content;
 
-	public ApplicationConfig(@NotNull String name, String config) {
-		this.name = name;
-		this.config = config;
+	public ApplicationConfigFileValues(ApplicationConfigFile content) {
+		this.name = content.getName();
+		this.content = content.getContent();
 	}
 }

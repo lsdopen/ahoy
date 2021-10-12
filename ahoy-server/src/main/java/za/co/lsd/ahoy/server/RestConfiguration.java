@@ -46,7 +46,7 @@ public class RestConfiguration implements RepositoryRestConfigurer {
 			ReleaseHistory.class,
 			Application.class,
 			ApplicationVersion.class,
-			ApplicationConfig.class,
+			ApplicationConfigFile.class,
 			ApplicationEnvironmentConfig.class,
 			ApplicationReleaseStatus.class,
 			GitSettings.class,

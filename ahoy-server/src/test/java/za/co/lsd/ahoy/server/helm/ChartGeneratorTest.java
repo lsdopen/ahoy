@@ -120,7 +120,7 @@ public class ChartGeneratorTest {
 			.image("image")
 			.replicas(1)
 			.environmentVariables(new LinkedHashMap<>())
-			.configs(new LinkedHashMap<>())
+			.configFiles(new LinkedHashMap<>())
 			.volumes(new LinkedHashMap<>())
 			.secrets(new LinkedHashMap<>())
 			.build();
@@ -162,8 +162,8 @@ public class ChartGeneratorTest {
 		spec.setHealthEndpointPort(8080);
 		spec.setHealthEndpointScheme("HTTP");
 		spec.setConfigPath("/opt/config");
-		List<ApplicationConfig> appConfigs = Collections.singletonList(new ApplicationConfig("application.properties", "greeting=hello"));
-		spec.setConfigs(appConfigs);
+		List<ApplicationConfigFile> appConfigs = Collections.singletonList(new ApplicationConfigFile("application.properties", "greeting=hello"));
+		spec.setConfigFiles(appConfigs);
 		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion));
 
 		ApplicationEnvironmentSpec environmentSpec = new ApplicationEnvironmentSpec("myapp1-route", 8080);
@@ -171,8 +171,8 @@ public class ChartGeneratorTest {
 		environmentSpec.setReplicas(2);
 		environmentSpec.setTls(true);
 		environmentSpec.setTlsSecretName("my-tls-secret");
-		List<ApplicationConfig> appEnvConfigs = Collections.singletonList(new ApplicationConfig("application-dev.properties", "anothergreeting=hello"));
-		environmentSpec.setConfigs(appEnvConfigs);
+		List<ApplicationConfigFile> appEnvConfigs = Collections.singletonList(new ApplicationConfigFile("application-dev.properties", "anothergreeting=hello"));
+		environmentSpec.setConfigFiles(appEnvConfigs);
 
 		List<ApplicationVolume> appVolumes = Arrays.asList(
 			new ApplicationVolume("my-volume", "/opt/vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
@@ -239,9 +239,9 @@ public class ChartGeneratorTest {
 		expectedEnvironmentVariables.put("DEV_ENV", new EnvironmentVariableValues("DEV_ENV", "VAR"));
 		expectedEnvironmentVariables.put("SECRET_DEV_ENV", new EnvironmentVariableValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
 
-		Map<String, ApplicationConfigValues> configs = new LinkedHashMap<>();
-		configs.put("application-config-188deccf", new ApplicationConfigValues("application.properties", "greeting=hello"));
-		configs.put("application-config-c1fcd7e5", new ApplicationConfigValues("application-dev.properties", "anothergreeting=hello"));
+		Map<String, ApplicationConfigFileValues> configFiles = new LinkedHashMap<>();
+		configFiles.put("application-config-file-188deccf", new ApplicationConfigFileValues("application.properties", "greeting=hello"));
+		configFiles.put("application-config-file-c1fcd7e5", new ApplicationConfigFileValues("application-dev.properties", "anothergreeting=hello"));
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
 		volumes.put("my-volume", new ApplicationVolumeValues("my-volume", "/opt/vol", "standard", "ReadWriteOnce", "2Gi"));
@@ -270,7 +270,7 @@ public class ChartGeneratorTest {
 			.tlsSecretName("my-tls-secret")
 			.environmentVariables(expectedEnvironmentVariables)
 			.configPath("/opt/config")
-			.configs(configs)
+			.configFiles(configFiles)
 			.volumes(volumes)
 			.secrets(secrets)
 			.build();
@@ -313,8 +313,8 @@ public class ChartGeneratorTest {
 		environmentSpec.setReplicas(2);
 		environmentSpec.setTls(true);
 		environmentSpec.setTlsSecretName("my-tls-secret");
-		List<ApplicationConfig> appEnvConfigs = Collections.singletonList(new ApplicationConfig("application-dev.properties", "anothergreeting=hello"));
-		environmentSpec.setConfigs(appEnvConfigs);
+		List<ApplicationConfigFile> appEnvConfigs = Collections.singletonList(new ApplicationConfigFile("application-dev.properties", "anothergreeting=hello"));
+		environmentSpec.setConfigFiles(appEnvConfigs);
 
 		List<ApplicationEnvironmentVariable> environmentVariablesEnv = Arrays.asList(
 			new ApplicationEnvironmentVariable("DEV_ENV", "VAR"),
@@ -369,8 +369,8 @@ public class ChartGeneratorTest {
 		expectedEnvironmentVariables.put("DEV_ENV", new EnvironmentVariableValues("DEV_ENV", "VAR"));
 		expectedEnvironmentVariables.put("SECRET_DEV_ENV", new EnvironmentVariableValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
 
-		Map<String, ApplicationConfigValues> configs = new LinkedHashMap<>();
-		configs.put("application-config-c1fcd7e5", new ApplicationConfigValues("application-dev.properties", "anothergreeting=hello"));
+		Map<String, ApplicationConfigFileValues> configFiles = new LinkedHashMap<>();
+		configFiles.put("application-config-file-c1fcd7e5", new ApplicationConfigFileValues("application-dev.properties", "anothergreeting=hello"));
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
 		volumes.put("my-env-volume", new ApplicationVolumeValues("my-env-volume", "/opt/env-vol", "standard", "ReadWriteOnce", "2Gi"));
@@ -391,7 +391,7 @@ public class ChartGeneratorTest {
 			.tls(true)
 			.tlsSecretName("my-tls-secret")
 			.environmentVariables(expectedEnvironmentVariables)
-			.configs(configs)
+			.configFiles(configFiles)
 			.volumes(volumes)
 			.secrets(secrets)
 			.build();

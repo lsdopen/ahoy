@@ -43,7 +43,7 @@ export class ApplicationSpec {
   healthEndpointScheme = 'HTTP';
   environmentVariables: ApplicationEnvironmentVariable[] = [];
   configPath: string;
-  configs: ApplicationConfig[] = [];
+  configFiles: ApplicationConfigFile[] = [];
   volumes: ApplicationVolume[] = [];
   secrets: ApplicationSecret[] = [];
 }
@@ -73,9 +73,9 @@ export class ApplicationEnvironmentVariable {
   }
 }
 
-export class ApplicationConfig {
+export class ApplicationConfigFile {
   name: string;
-  config: string;
+  content: string;
 }
 
 export class ApplicationVolume {
@@ -107,7 +107,7 @@ export class ApplicationEnvironmentSpec {
   tls: boolean;
   tlsSecretName: string;
   environmentVariables: ApplicationEnvironmentVariable[] = [];
-  configs: ApplicationConfig[] = [];
+  configFiles: ApplicationConfigFile[] = [];
   volumes: ApplicationVolume[] = [];
   secrets: ApplicationSecret[] = [];
 }

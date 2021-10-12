@@ -31,7 +31,7 @@ public class ApplicationSpec {
 	private List<ApplicationEnvironmentVariable> environmentVariables;
 
 	private String configPath;
-	private List<ApplicationConfig> configs;
+	private List<ApplicationConfigFile> configFiles;
 
 	private List<ApplicationVolume> volumes;
 

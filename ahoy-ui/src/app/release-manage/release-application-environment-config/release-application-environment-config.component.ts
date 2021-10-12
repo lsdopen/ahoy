@@ -117,7 +117,7 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
       this.environmentVariablesCategory = true;
     }
 
-    if (this.environmentConfig.spec.configs.length > 0) {
+    if (this.environmentConfig.spec.configFiles.length > 0) {
       this.configFileCategory = true;
     }
 

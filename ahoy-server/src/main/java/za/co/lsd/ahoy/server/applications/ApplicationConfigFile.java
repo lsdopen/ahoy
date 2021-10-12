@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,22 +14,24 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.helm.values;
+package za.co.lsd.ahoy.server.applications;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import za.co.lsd.ahoy.server.applications.ApplicationConfig;
+import lombok.ToString;
+
+import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class ApplicationConfigValues {
-	public String name;
-	public String config;
+public class ApplicationConfigFile {
+	@NotNull
+	private String name;
+	@ToString.Exclude
+	private String content;
 
-	public ApplicationConfigValues(ApplicationConfig config) {
-		this.name = config.getName();
-		this.config = config.getConfig();
+	public ApplicationConfigFile(@NotNull String name, String content) {
+		this.name = name;
+		this.content = content;
 	}
 }

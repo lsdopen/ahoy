@@ -46,7 +46,7 @@ public class ApplicationEnvironmentConfig {
 	}
 
 	public boolean hasConfigs() {
-		return spec != null && spec.getConfigs() != null && spec.getConfigs().size() > 0;
+		return spec != null && spec.getConfigFiles() != null && spec.getConfigFiles().size() > 0;
 	}
 
 	public boolean hasVolumes() {

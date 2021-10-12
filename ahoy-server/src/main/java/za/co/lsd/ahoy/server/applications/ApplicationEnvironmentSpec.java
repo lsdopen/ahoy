@@ -33,7 +33,7 @@ public class ApplicationEnvironmentSpec {
 
 	private List<ApplicationEnvironmentVariable> environmentVariables;
 
-	private List<ApplicationConfig> configs;
+	private List<ApplicationConfigFile> configFiles;
 
 	private List<ApplicationVolume> volumes;
 
