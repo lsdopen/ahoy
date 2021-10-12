@@ -104,8 +104,8 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
     const dialogRef = this.dialogService.open(AddApplicationDialogComponent, dialogConfig);
     dialogRef.onClose.pipe(
       filter((result) => result !== undefined) // cancelled
-    ).subscribe((applicationVersion) => {
-      this.releaseService.associateApplication(this.releaseVersion.id, applicationVersion.id)
+    ).subscribe((upgradeAppOptions: UpgradeAppOptions) => {
+      this.releaseService.associateApplication(this.releaseVersion.id, upgradeAppOptions.applicationVersion.id)
         .subscribe(() => {
           this.getReleaseVersion();
           this.applicationVersionsChanged.next();
