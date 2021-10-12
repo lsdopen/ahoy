@@ -38,7 +38,6 @@ export class MultiTabComponent implements OnInit, AfterContentChecked {
     for (const item of this.items) {
       this.indexes.push(this.indexCount++);
     }
-    console.log('>>>>>>> ', this.items);
   }
 
   ngAfterContentChecked(): void {
