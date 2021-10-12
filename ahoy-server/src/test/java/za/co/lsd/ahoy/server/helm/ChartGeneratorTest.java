@@ -150,53 +150,56 @@ public class ChartGeneratorTest {
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
 		applicationVersion.setDockerRegistry(new DockerRegistry("docker-registry", "docker-server", "username", "password"));
 		List<Integer> servicePorts = Collections.singletonList(8080);
-		applicationVersion.setServicePorts(servicePorts);
+		ApplicationSpec spec = new ApplicationSpec();
+		applicationVersion.setSpec(spec);
+		spec.setServicePorts(servicePorts);
 		List<ApplicationEnvironmentVariable> environmentVariables = Arrays.asList(
 			new ApplicationEnvironmentVariable("ENV", "VAR"),
 			new ApplicationEnvironmentVariable("SECRET_ENV", "my-secret", "secret-key")
 		);
-		applicationVersion.setEnvironmentVariables(environmentVariables);
-		applicationVersion.setHealthEndpointPath("/");
-		applicationVersion.setHealthEndpointPort(8080);
-		applicationVersion.setHealthEndpointScheme("HTTP");
-		applicationVersion.setConfigPath("/opt/config");
+		spec.setEnvironmentVariables(environmentVariables);
+		spec.setHealthEndpointPath("/");
+		spec.setHealthEndpointPort(8080);
+		spec.setHealthEndpointScheme("HTTP");
+		spec.setConfigPath("/opt/config");
 		List<ApplicationConfig> appConfigs = Collections.singletonList(new ApplicationConfig("application.properties", "greeting=hello"));
-		applicationVersion.setConfigs(appConfigs);
+		spec.setConfigs(appConfigs);
 		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion));
 
-		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
-		environmentConfig.setReplicas(2);
-		environmentConfig.setTls(true);
-		environmentConfig.setTlsSecretName("my-tls-secret");
+		ApplicationEnvironmentSpec environmentSpec = new ApplicationEnvironmentSpec("myapp1-route", 8080);
+		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig(environmentSpec);
+		environmentSpec.setReplicas(2);
+		environmentSpec.setTls(true);
+		environmentSpec.setTlsSecretName("my-tls-secret");
 		List<ApplicationConfig> appEnvConfigs = Collections.singletonList(new ApplicationConfig("application-dev.properties", "anothergreeting=hello"));
-		environmentConfig.setConfigs(appEnvConfigs);
+		environmentSpec.setConfigs(appEnvConfigs);
 
 		List<ApplicationVolume> appVolumes = Arrays.asList(
 			new ApplicationVolume("my-volume", "/opt/vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
 			new ApplicationVolume("my-secret-volume", "/opt/secret-vol", "my-secret")
 		);
-		applicationVersion.setVolumes(appVolumes);
+		spec.setVolumes(appVolumes);
 
 		List<ApplicationSecret> appSecrets = Arrays.asList(
 			new ApplicationSecret("my-secret", SecretType.Generic, Collections.singletonMap("secret-key", "secret-value")),
 			new ApplicationSecret("my-tls-secret", SecretType.Tls, Collections.singletonMap("cert", "my-cert"))
 		);
-		applicationVersion.setSecrets(appSecrets);
+		spec.setSecrets(appSecrets);
 
 		List<ApplicationEnvironmentVariable> environmentVariablesEnv = Arrays.asList(
 			new ApplicationEnvironmentVariable("DEV_ENV", "VAR"),
 			new ApplicationEnvironmentVariable("SECRET_DEV_ENV", "my-secret", "secret-key")
 		);
-		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
+		environmentSpec.setEnvironmentVariables(environmentVariablesEnv);
 
 		List<ApplicationVolume> envVolumes = Arrays.asList(
 			new ApplicationVolume("my-env-volume", "/opt/env-vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
 			new ApplicationVolume("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret")
 		);
-		environmentConfig.setVolumes(envVolumes);
+		environmentSpec.setVolumes(envVolumes);
 
 		List<ApplicationSecret> envSecrets = Collections.singletonList(new ApplicationSecret("my-env-secret", SecretType.Generic, Collections.singletonMap("env-secret-key", "env-secret-value")));
-		environmentConfig.setSecrets(envSecrets);
+		environmentSpec.setSecrets(envSecrets);
 
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.of(environmentConfig));
 
@@ -296,37 +299,40 @@ public class ChartGeneratorTest {
 
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ApplicationSpec spec = new ApplicationSpec();
+		applicationVersion.setSpec(spec);
 
 		// needed for route
 		List<Integer> servicePorts = Collections.singletonList(8080);
-		applicationVersion.setServicePorts(servicePorts);
+		spec.setServicePorts(servicePorts);
 
 		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion));
 
-		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
-		environmentConfig.setReplicas(2);
-		environmentConfig.setTls(true);
-		environmentConfig.setTlsSecretName("my-tls-secret");
+		ApplicationEnvironmentSpec environmentSpec = new ApplicationEnvironmentSpec("myapp1-route", 8080);
+		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig(environmentSpec);
+		environmentSpec.setReplicas(2);
+		environmentSpec.setTls(true);
+		environmentSpec.setTlsSecretName("my-tls-secret");
 		List<ApplicationConfig> appEnvConfigs = Collections.singletonList(new ApplicationConfig("application-dev.properties", "anothergreeting=hello"));
-		environmentConfig.setConfigs(appEnvConfigs);
+		environmentSpec.setConfigs(appEnvConfigs);
 
 		List<ApplicationEnvironmentVariable> environmentVariablesEnv = Arrays.asList(
 			new ApplicationEnvironmentVariable("DEV_ENV", "VAR"),
 			new ApplicationEnvironmentVariable("SECRET_DEV_ENV", "my-secret", "secret-key")
 		);
-		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
+		environmentSpec.setEnvironmentVariables(environmentVariablesEnv);
 
 		List<ApplicationVolume> envVolumes = Arrays.asList(
 			new ApplicationVolume("my-env-volume", "/opt/env-vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
 			new ApplicationVolume("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret")
 		);
-		environmentConfig.setVolumes(envVolumes);
+		environmentSpec.setVolumes(envVolumes);
 
 		List<ApplicationSecret> envSecrets = Arrays.asList(
 			new ApplicationSecret("my-env-secret", SecretType.Generic, Collections.singletonMap("env-secret-key", "env-secret-value")),
 			new ApplicationSecret("my-tls-secret", SecretType.Tls, Collections.singletonMap("cert", "my-cert"))
 		);
-		environmentConfig.setSecrets(envSecrets);
+		environmentSpec.setSecrets(envSecrets);
 
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.of(environmentConfig));
 

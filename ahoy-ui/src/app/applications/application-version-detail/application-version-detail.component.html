@@ -15,7 +15,7 @@
   -->
 
 <div class="p-grid">
-  <div class="p-col-12" *ngIf="application && applicationVersion">
+  <div class="p-col-12" *ngIf="application && applicationVersion && applicationVersion.spec">
 
     <div class="card">
       <div class="card-header">
@@ -68,7 +68,7 @@
               </div>
 
               <div class="p-md-2">
-                <p-table #dt [value]="applicationVersion.servicePorts" dataKey="id"
+                <p-table #dt [value]="applicationVersion.spec.servicePorts" dataKey="id"
                          styleClass="p-datatable-ports p-datatable-striped p-datatable-sm">
                   <ng-template pTemplate="body" let-port let-i="rowIndex">
                     <tr>
@@ -89,7 +89,7 @@
 
               <div class="p-fluid p-col-12 p-md-3">
                 <div class="p-field p-float-label">
-                  <input pInputText id="applicationHealthEndpointPath" [(ngModel)]="applicationVersion.healthEndpointPath" name="applicationHealthEndpointPath"
+                  <input pInputText id="applicationHealthEndpointPath" [(ngModel)]="applicationVersion.spec.healthEndpointPath" name="applicationHealthEndpointPath"
                          pattern="(/[^\s]*)"
                          required="{{healthChecksCategory}}">
                   <label for="applicationHealthEndpointPath">Health Endpoint Path</label>
@@ -97,19 +97,19 @@
                 </div>
 
                 <div class="p-field p-float-label">
-                  <p-dropdown [options]="applicationVersion.servicePorts" [(ngModel)]="applicationVersion.healthEndpointPort"
+                  <p-dropdown [options]="applicationVersion.spec.servicePorts" [(ngModel)]="applicationVersion.spec.healthEndpointPort"
                               [showClear]="true" name="applicationHealthEndpointPort"
                               [editable]="true"
                               [autoDisplayFirst]="false"
                               required="{{healthChecksCategory}}"></p-dropdown>
                   <label>Health Endpoint Port</label>
-                  <small class="p-message p-message-warn p-p-1" *ngIf="applicationVersion.servicePorts.indexOf(applicationVersion.healthEndpointPort) === -1">
+                  <small class="p-message p-message-warn p-p-1" *ngIf="applicationVersion.spec.servicePorts.indexOf(applicationVersion.spec.healthEndpointPort) === -1">
                     Warn: port not configured
                   </small>
                 </div>
 
                 <div class="p-field p-float-label">
-                  <p-dropdown [options]="['HTTP', 'HTTPS']" [(ngModel)]="applicationVersion.healthEndpointScheme"
+                  <p-dropdown [options]="['HTTP', 'HTTPS']" [(ngModel)]="applicationVersion.spec.healthEndpointScheme"
                               name="applicationHealthEndpointScheme"
                               required="{{healthChecksCategory}}"></p-dropdown>
                   <label>Health Endpoint Scheme</label>
@@ -120,7 +120,7 @@
             <p-accordionTab header="Environment Variables" [(selected)]="environmentVariablesCategory">
 
               <app-application-env-variables
-                [environmentVariables]="applicationVersion.environmentVariables" [secrets]="applicationVersion.secrets">
+                [environmentVariables]="applicationVersion.spec.environmentVariables" [secrets]="applicationVersion.spec.secrets">
               </app-application-env-variables>
 
             </p-accordionTab>
@@ -130,22 +130,22 @@
               <app-application-config-files
                 [parentForm]="applicationVersionForm"
                 [applicationVersion]="applicationVersion"
-                [configs]="applicationVersion.configs">
+                [configs]="applicationVersion.spec.configs">
               </app-application-config-files>
 
             </p-accordionTab>
 
             <p-accordionTab header="Volumes" [(selected)]="volumesCategory">
 
-              <app-multi-tab [content]="volumeContent" [items]="applicationVersion.volumes" [itemFactory]="applicationVolumeFactory()">
+              <app-multi-tab [content]="volumeContent" [items]="applicationVersion.spec.volumes" [itemFactory]="applicationVolumeFactory()">
 
                 <ng-template #volumeContent let-volume let-volumeIndex="index">
                   <app-application-volume-detail
                     [parentForm]="applicationVersionForm"
                     [volume]="volume"
                     [volumeIndex]="volumeIndex"
-                    [secrets]="applicationVersion.secrets"
-                    [volumesForValidation]="applicationVersion.volumes">
+                    [secrets]="applicationVersion.spec.secrets"
+                    [volumesForValidation]="applicationVersion.spec.volumes">
                   </app-application-volume-detail>
                 </ng-template>
 
@@ -155,7 +155,7 @@
 
             <p-accordionTab header="Secrets" [(selected)]="secretsCategory">
 
-              <app-multi-tab [content]="secretContent" [items]="applicationVersion.secrets" [itemFactory]="applicationSecretFactory()"
+              <app-multi-tab [content]="secretContent" [items]="applicationVersion.spec.secrets" [itemFactory]="applicationSecretFactory()"
                              [deleteDisabled]="secretInUse()" [deleteDisabledTooltip]="secretInUseTooltip()">
 
                 <ng-template #secretContent let-secret let-secretIndex="index">
@@ -164,7 +164,7 @@
                     [secret]="secret"
                     [secretIndex]="secretIndex"
                     [secretInUse]="secretInUse()"
-                    [secretsForValidation]="applicationVersion.secrets">
+                    [secretsForValidation]="applicationVersion.spec.secrets">
                   </app-application-secrets>
                 </ng-template>
 

@@ -18,20 +18,33 @@ package za.co.lsd.ahoy.server.applications;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
-import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class ApplicationConfig {
-	@NotNull
-	private String name;
-	@ToString.Exclude
-	private String config;
+public class ApplicationEnvironmentSpec {
+	private Integer replicas;
 
-	public ApplicationConfig(@NotNull String name, String config) {
-		this.name = name;
-		this.config = config;
+	private String routeHostname;
+	private Integer routeTargetPort;
+	private boolean tls;
+	private String tlsSecretName;
+
+	private List<ApplicationEnvironmentVariable> environmentVariables;
+
+	private List<ApplicationConfig> configs;
+
+	private List<ApplicationVolume> volumes;
+
+	private List<ApplicationSecret> secrets;
+
+	public ApplicationEnvironmentSpec(String routeHostname) {
+		this.routeHostname = routeHostname;
+	}
+
+	public ApplicationEnvironmentSpec(String routeHostname, Integer routeTargetPort) {
+		this.routeHostname = routeHostname;
+		this.routeTargetPort = routeTargetPort;
 	}
 }

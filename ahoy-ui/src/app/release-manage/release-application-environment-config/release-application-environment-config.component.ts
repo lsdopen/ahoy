@@ -109,23 +109,23 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   }
 
   private setCategoriesExpanded() {
-    if (this.environmentConfig.routeHostname) {
+    if (this.environmentConfig.spec.routeHostname) {
       this.routeCategory = true;
     }
 
-    if (this.environmentConfig.environmentVariables && Object.keys(this.environmentConfig.environmentVariables).length > 0) {
+    if (this.environmentConfig.spec.environmentVariables && Object.keys(this.environmentConfig.spec.environmentVariables).length > 0) {
       this.environmentVariablesCategory = true;
     }
 
-    if (this.environmentConfig.configs.length > 0) {
+    if (this.environmentConfig.spec.configs.length > 0) {
       this.configFileCategory = true;
     }
 
-    if (this.environmentConfig.volumes.length > 0) {
+    if (this.environmentConfig.spec.volumes.length > 0) {
       this.volumesCategory = true;
     }
 
-    if (this.environmentConfig.secrets.length > 0) {
+    if (this.environmentConfig.spec.secrets.length > 0) {
       this.secretsCategory = true;
     }
   }
@@ -140,14 +140,14 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   }
 
   routeSelectedChange() {
-    if (this.routeCategory && !this.environmentConfig.routeHostname) {
-      this.environmentConfig.routeHostname = this.exampleRouteHost;
+    if (this.routeCategory && !this.environmentConfig.spec.routeHostname) {
+      this.environmentConfig.spec.routeHostname = this.exampleRouteHost;
     }
   }
 
   tlsSecrets(): ApplicationSecret[] {
-    if (this.environmentConfig.secrets) {
-      return this.environmentConfig.secrets.filter(secret => secret.type === 'Tls');
+    if (this.environmentConfig.spec.secrets) {
+      return this.environmentConfig.spec.secrets.filter(secret => secret.type === 'Tls');
     }
     return [];
   }
@@ -170,12 +170,12 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   secretInUse() {
     return (secret: ApplicationSecret): boolean => {
       if (secret && secret.name) {
-        const inUseInVolumes = this.environmentConfig.volumes
+        const inUseInVolumes = this.environmentConfig.spec.volumes
           .filter(volume => volume.type === 'Secret' && volume.secretName === secret.name).length > 0;
-        const inUseInEnvironmentVariables = this.environmentConfig.environmentVariables
+        const inUseInEnvironmentVariables = this.environmentConfig.spec.environmentVariables
           .filter(envVar => envVar.type === 'Secret' && envVar.secretName === secret.name).length > 0;
         return inUseInVolumes || inUseInEnvironmentVariables ||
-          (this.environmentConfig.tlsSecretName !== undefined ? this.environmentConfig.tlsSecretName === secret.name : false);
+          (this.environmentConfig.spec.tlsSecretName !== undefined ? this.environmentConfig.spec.tlsSecretName === secret.name : false);
       }
       return false;
     };

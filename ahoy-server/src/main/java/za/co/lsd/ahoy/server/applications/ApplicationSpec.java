@@ -16,13 +16,24 @@
 
 package za.co.lsd.ahoy.server.applications;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.rest.core.config.Projection;
+import lombok.Data;
 
-@Projection(name = "applicationEnvironmentConfigLean", types = {ApplicationEnvironmentConfig.class})
-public interface ApplicationEnvironmentConfigLeanProjection {
-	ApplicationDeploymentId getId();
+import java.util.List;
 
-	@Value("#{target.leanSpec()}")
-	ApplicationEnvironmentSpec getSpec();
+@Data
+public class ApplicationSpec {
+	private List<Integer> servicePorts;
+
+	private String healthEndpointPath;
+	private Integer healthEndpointPort;
+	private String healthEndpointScheme;
+
+	private List<ApplicationEnvironmentVariable> environmentVariables;
+
+	private String configPath;
+	private List<ApplicationConfig> configs;
+
+	private List<ApplicationVolume> volumes;
+
+	private List<ApplicationSecret> secrets;
 }

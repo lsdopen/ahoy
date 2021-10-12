@@ -88,11 +88,11 @@ public class TemplateWriter {
 			if (dockerRegistry != null && dockerRegistry.getSecure()) {
 				addTemplate(application, "secret-dockerconfig", templatesPath, trackedTemplates);
 			}
-			if (applicationVersion.getServicePorts() != null &&
-				applicationVersion.getServicePorts().size() > 0) {
+			if (applicationVersion.getSpec().getServicePorts() != null &&
+				applicationVersion.getSpec().getServicePorts().size() > 0) {
 				addTemplate(application, "service", templatesPath, trackedTemplates);
 
-				if (applicationEnvironmentConfig != null && applicationEnvironmentConfig.getRouteHostname() != null && applicationEnvironmentConfig.getRouteTargetPort() != null) {
+				if (applicationEnvironmentConfig != null && applicationEnvironmentConfig.getSpec().getRouteHostname() != null && applicationEnvironmentConfig.getSpec().getRouteTargetPort() != null) {
 					addTemplate(application, "ingress", templatesPath, trackedTemplates);
 				}
 			}

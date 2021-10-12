@@ -22,7 +22,7 @@ import {AppBreadcrumbService} from '../../app.breadcrumb.service';
 import {TabItemFactory} from '../../components/multi-tab/multi-tab.component';
 import {ReleaseManageService} from '../../release-manage/release-manage.service';
 import {ReleaseService} from '../../releases/release.service';
-import {Application, ApplicationConfig, ApplicationSecret, ApplicationVersion, ApplicationVolume} from '../application';
+import {Application, ApplicationSecret, ApplicationSpec, ApplicationVersion, ApplicationVolume} from '../application';
 import {ApplicationService} from '../application.service';
 
 @Component({
@@ -69,12 +69,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
         if (versionId === 'new') {
           this.editMode = false;
           this.applicationVersion = new ApplicationVersion();
-          this.applicationVersion.configs = [];
-          this.applicationVersion.volumes = [];
-          this.applicationVersion.secrets = [];
-          this.applicationVersion.servicePorts = [];
-          this.applicationVersion.environmentVariables = [];
-          this.applicationVersion.healthEndpointScheme = 'HTTP';
 
           this.setBreadcrumb();
           // load previous version details for convenience
@@ -83,22 +77,13 @@ export class ApplicationVersionDetailComponent implements OnInit {
               .subscribe((applicationVersion) => {
                 this.applicationVersion.dockerRegistry = applicationVersion.dockerRegistry;
                 this.applicationVersion.image = applicationVersion.image;
-
-                this.applicationVersion.environmentVariables = applicationVersion.environmentVariables;
-
-                this.applicationVersion.servicePorts = applicationVersion.servicePorts;
-
-                this.applicationVersion.healthEndpointPath = applicationVersion.healthEndpointPath;
-                this.applicationVersion.healthEndpointPort = applicationVersion.healthEndpointPort;
-                this.applicationVersion.healthEndpointScheme = applicationVersion.healthEndpointScheme;
-
-                this.applicationVersion.configs = this.cloneConfigs(applicationVersion.configs);
-                this.applicationVersion.volumes = this.cloneVolumes(applicationVersion.volumes);
-                this.applicationVersion.secrets = this.cloneSecrets(applicationVersion.secrets);
-                this.applicationVersion.configPath = applicationVersion.configPath;
+                this.applicationVersion.spec = applicationVersion.spec;
 
                 this.setCategoriesExpanded();
               });
+
+          } else {
+            this.applicationVersion.spec = new ApplicationSpec();
           }
 
         } else {
@@ -108,8 +93,8 @@ export class ApplicationVersionDetailComponent implements OnInit {
               this.applicationVersion = applicationVersion;
               this.editingVersion = applicationVersion.version;
 
-              if (!this.applicationVersion.healthEndpointScheme) {
-                this.applicationVersion.healthEndpointScheme = 'HTTP';
+              if (!this.applicationVersion.spec.healthEndpointScheme) {
+                this.applicationVersion.spec.healthEndpointScheme = 'HTTP';
               }
 
               this.setCategoriesExpanded();
@@ -137,27 +122,27 @@ export class ApplicationVersionDetailComponent implements OnInit {
   }
 
   private setCategoriesExpanded() {
-    if (this.applicationVersion.servicePorts && this.applicationVersion.servicePorts.length > 0) {
+    if (this.applicationVersion.spec.servicePorts && this.applicationVersion.spec.servicePorts.length > 0) {
       this.portsCategory = true;
     }
 
-    if (this.applicationVersion.healthEndpointPath) {
+    if (this.applicationVersion.spec.healthEndpointPath) {
       this.healthChecksCategory = true;
     }
 
-    if (this.applicationVersion.environmentVariables && Object.keys(this.applicationVersion.environmentVariables).length > 0) {
+    if (this.applicationVersion.spec.environmentVariables && Object.keys(this.applicationVersion.spec.environmentVariables).length > 0) {
       this.environmentVariablesCategory = true;
     }
 
-    if (this.applicationVersion.configPath) {
+    if (this.applicationVersion.spec.configPath) {
       this.configFilesCategory = true;
     }
 
-    if (this.applicationVersion.volumes.length > 0) {
+    if (this.applicationVersion.spec.volumes.length > 0) {
       this.volumesCategory = true;
     }
 
-    if (this.applicationVersion.secrets.length > 0) {
+    if (this.applicationVersion.spec.secrets.length > 0) {
       this.secretsCategory = true;
     }
   }
@@ -184,46 +169,15 @@ export class ApplicationVersionDetailComponent implements OnInit {
     this.location.back();
   }
 
-  private cloneConfigs(configs: ApplicationConfig[]): ApplicationConfig[] {
-    return configs.map((applicationConfig) => {
-      const appConfig = new ApplicationConfig();
-      appConfig.name = applicationConfig.name;
-      appConfig.config = applicationConfig.config;
-      return appConfig;
-    });
-  }
-
   addServicePort() {
     if (this.newServicePort) {
-      this.applicationVersion.servicePorts.push(this.newServicePort);
+      this.applicationVersion.spec.servicePorts.push(this.newServicePort);
       this.newServicePort = null;
     }
   }
 
   removeServicePort(portIndex: number) {
-    this.applicationVersion.servicePorts.splice(portIndex, 1);
-  }
-
-  private cloneVolumes(volumes: ApplicationVolume[]): ApplicationVolume[] {
-    return volumes.map((applicationVolume) => {
-      const appVolume = new ApplicationVolume();
-      appVolume.name = applicationVolume.name;
-      appVolume.mountPath = applicationVolume.mountPath;
-      appVolume.storageClassName = applicationVolume.storageClassName;
-      appVolume.accessMode = applicationVolume.accessMode;
-      appVolume.size = applicationVolume.size;
-      appVolume.sizeStorageUnit = applicationVolume.sizeStorageUnit;
-      return appVolume;
-    });
-  }
-
-  private cloneSecrets(secrets: ApplicationSecret[]): ApplicationSecret[] {
-    return secrets.map((applicationSecret) => {
-      const appSecret = new ApplicationSecret();
-      appSecret.name = applicationSecret.name;
-      appSecret.data = applicationSecret.data;
-      return appSecret;
-    });
+    this.applicationVersion.spec.servicePorts.splice(portIndex, 1);
   }
 
   applicationVolumeFactory(): TabItemFactory<ApplicationVolume> {
@@ -244,9 +198,9 @@ export class ApplicationVersionDetailComponent implements OnInit {
   secretInUse() {
     return (secret: ApplicationSecret): boolean => {
       if (secret && secret.name) {
-        const inUseInVolumes = this.applicationVersion.volumes
+        const inUseInVolumes = this.applicationVersion.spec.volumes
           .filter(volume => volume.type === 'Secret' && volume.secretName === secret.name).length > 0;
-        const inUseInEnvironmentVariables = this.applicationVersion.environmentVariables
+        const inUseInEnvironmentVariables = this.applicationVersion.spec.environmentVariables
           .filter(envVar => envVar.type === 'Secret' && envVar.secretName === secret.name).length > 0;
         return inUseInVolumes || inUseInEnvironmentVariables;
       }

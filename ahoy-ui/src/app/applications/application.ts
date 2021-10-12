@@ -30,22 +30,25 @@ export class ApplicationVersion {
   dockerRegistry: DockerRegistry;
   image: string;
   version: string;
-  environmentVariables: ApplicationEnvironmentVariable[];
-  healthEndpointPath: string;
-  healthEndpointPort: number;
-  healthEndpointScheme: string;
-  servicePorts: number[];
+  spec: ApplicationSpec;
   application: Application | string;
-  configs: ApplicationConfig[];
-  volumes: ApplicationVolume[];
-  secrets: ApplicationSecret[];
-  configPath: string;
   status: ApplicationReleaseStatus;
   releaseVersions: ReleaseVersion[];
 }
 
+export class ApplicationSpec {
+  servicePorts: number[] = [];
+  healthEndpointPath: string;
+  healthEndpointPort: number;
+  healthEndpointScheme = 'HTTP';
+  environmentVariables: ApplicationEnvironmentVariable[] = [];
+  configPath: string;
+  configs: ApplicationConfig[] = [];
+  volumes: ApplicationVolume[] = [];
+  secrets: ApplicationSecret[] = [];
+}
+
 export class ApplicationEnvironmentVariable {
-  id: number;
   key: string;
   value: string;
   type: string;
@@ -71,13 +74,11 @@ export class ApplicationEnvironmentVariable {
 }
 
 export class ApplicationConfig {
-  id: number;
   name: string;
   config: string;
 }
 
 export class ApplicationVolume {
-  id: number;
   name: string;
   mountPath: string;
   type: string;
@@ -89,7 +90,6 @@ export class ApplicationVolume {
 }
 
 export class ApplicationSecret {
-  id: number;
   name: string;
   type: string;
   data: { [key: string]: string };
@@ -97,15 +97,19 @@ export class ApplicationSecret {
 
 export class ApplicationEnvironmentConfig {
   id: ApplicationEnvironmentConfigId;
-  replicas: number;
+  spec: ApplicationEnvironmentSpec;
+}
+
+export class ApplicationEnvironmentSpec {
+  replicas = 1;
   routeHostname: string;
   routeTargetPort: number;
   tls: boolean;
   tlsSecretName: string;
-  environmentVariables: ApplicationEnvironmentVariable[];
-  configs: ApplicationConfig[];
-  volumes: ApplicationVolume[];
-  secrets: ApplicationSecret[];
+  environmentVariables: ApplicationEnvironmentVariable[] = [];
+  configs: ApplicationConfig[] = [];
+  volumes: ApplicationVolume[] = [];
+  secrets: ApplicationSecret[] = [];
 }
 
 export class ApplicationEnvironmentConfigId {

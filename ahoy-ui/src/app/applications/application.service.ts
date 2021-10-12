@@ -20,7 +20,7 @@ import {map, tap} from 'rxjs/operators';
 import {EnvironmentReleaseId} from '../environment-release/environment-release';
 import {LoggerService} from '../util/logger.service';
 import {RestClientService} from '../util/rest-client.service';
-import {Application, ApplicationEnvironmentConfig, ApplicationEnvironmentConfigId, ApplicationEnvironmentConfigIdUtil, ApplicationReleaseStatus, ApplicationVersion} from './application';
+import {Application, ApplicationEnvironmentConfig, ApplicationEnvironmentConfigId, ApplicationEnvironmentConfigIdUtil, ApplicationEnvironmentSpec, ApplicationReleaseStatus, ApplicationVersion} from './application';
 
 @Injectable({
   providedIn: 'root'
@@ -141,11 +141,7 @@ export class ApplicationService {
     return this.restClient.get<ApplicationEnvironmentConfig>(url, false, () => {
       const defaultConfig = new ApplicationEnvironmentConfig();
       defaultConfig.id = id;
-      defaultConfig.replicas = 1;
-      defaultConfig.environmentVariables = [];
-      defaultConfig.configs = [];
-      defaultConfig.volumes = [];
-      defaultConfig.secrets = [];
+      defaultConfig.spec = new ApplicationEnvironmentSpec();
       return defaultConfig;
     }).pipe(
       tap((config) => this.log.debug('fetched application environment config', config))

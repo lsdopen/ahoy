@@ -278,7 +278,7 @@ public class ReleaseServiceTest {
 
 		when(environmentReleaseRepository.findByRelease(release.getId())).thenReturn(Collections.singletonList(environmentRelease));
 
-		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
+		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig(new ApplicationEnvironmentSpec("myapp1-route", 8080));
 		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion)).thenReturn(Optional.of(environmentConfig));
 		when(environmentConfigProvider.environmentConfigFor(environmentRelease, resultReleaseVersion, applicationVersion)).thenReturn(Optional.empty());
 
@@ -302,8 +302,8 @@ public class ReleaseServiceTest {
 		ApplicationEnvironmentConfig savedEnvironmentConfig = applicationEnvironmentConfigArgumentCaptor.getValue();
 		assertEquals(new ApplicationDeploymentId(environmentRelease.getId(), resultReleaseVersion.getId(), applicationVersion.getId()), savedEnvironmentConfig.getId(),
 			"Environment config deployment ID incorrect; this means the config is not related to the correct entity");
-		assertEquals("myapp1-route", savedEnvironmentConfig.getRouteHostname(), "Environment config route incorrect");
-		assertEquals(8080, savedEnvironmentConfig.getRouteTargetPort(), "Environment config port incorrect");
+		assertEquals("myapp1-route", savedEnvironmentConfig.getSpec().getRouteHostname(), "Environment config route incorrect");
+		assertEquals(8080, savedEnvironmentConfig.getSpec().getRouteTargetPort(), "Environment config port incorrect");
 	}
 
 	@Test
@@ -396,7 +396,7 @@ public class ReleaseServiceTest {
 		EnvironmentRelease resultEnvironmentRelease = new EnvironmentRelease(resultEnvironmentReleaseId, destEnvironment, release);
 		when(environmentReleaseRepository.save(any(EnvironmentRelease.class))).thenReturn(resultEnvironmentRelease);
 
-		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
+		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig(new ApplicationEnvironmentSpec("myapp1-route", 8080));
 		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion)).thenReturn(Optional.of(environmentConfig));
 		when(environmentConfigProvider.environmentConfigFor(resultEnvironmentRelease, releaseVersion, applicationVersion)).thenReturn(Optional.empty());
 
@@ -419,8 +419,8 @@ public class ReleaseServiceTest {
 		ApplicationEnvironmentConfig savedEnvironmentConfig = applicationEnvironmentConfigArgumentCaptor.getValue();
 		assertEquals(new ApplicationDeploymentId(resultEnvironmentRelease.getId(), releaseVersion.getId(), applicationVersion.getId()), savedEnvironmentConfig.getId(),
 			"Environment config deployment ID incorrect; this means the config is not related to the correct entity");
-		assertEquals("myapp1-route", savedEnvironmentConfig.getRouteHostname(), "Environment config route incorrect");
-		assertEquals(8080, savedEnvironmentConfig.getRouteTargetPort(), "Environment config port incorrect");
+		assertEquals("myapp1-route", savedEnvironmentConfig.getSpec().getRouteHostname(), "Environment config route incorrect");
+		assertEquals(8080, savedEnvironmentConfig.getSpec().getRouteTargetPort(), "Environment config port incorrect");
 	}
 
 	@Test
@@ -442,7 +442,7 @@ public class ReleaseServiceTest {
 
 		when(environmentReleaseRepository.findByRelease(release.getId())).thenReturn(Collections.singletonList(environmentRelease));
 
-		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
+		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig(new ApplicationEnvironmentSpec("myapp1-route", 8080));
 		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion1)).thenReturn(Optional.of(environmentConfig));
 		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion2)).thenReturn(Optional.empty());
 
@@ -456,8 +456,8 @@ public class ReleaseServiceTest {
 		ApplicationEnvironmentConfig savedEnvironmentConfig = applicationEnvironmentConfigArgumentCaptor.getValue();
 		assertEquals(new ApplicationDeploymentId(environmentRelease.getId(), releaseVersion.getId(), applicationVersion2.getId()), savedEnvironmentConfig.getId(),
 			"Environment config deployment ID incorrect; this means the config is not related to the correct entity");
-		assertEquals("myapp1-route", savedEnvironmentConfig.getRouteHostname(), "Environment config route incorrect");
-		assertEquals(8080, savedEnvironmentConfig.getRouteTargetPort(), "Environment config port incorrect");
+		assertEquals("myapp1-route", savedEnvironmentConfig.getSpec().getRouteHostname(), "Environment config route incorrect");
+		assertEquals(8080, savedEnvironmentConfig.getSpec().getRouteTargetPort(), "Environment config port incorrect");
 	}
 
 	@Test
@@ -479,7 +479,7 @@ public class ReleaseServiceTest {
 
 		when(environmentReleaseRepository.findByRelease(release.getId())).thenReturn(Collections.singletonList(environmentRelease));
 
-		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
+		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig(new ApplicationEnvironmentSpec("myapp1-route", 8080));
 		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion1)).thenReturn(Optional.of(environmentConfig));
 		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion2)).thenReturn(Optional.of(environmentConfig));
 

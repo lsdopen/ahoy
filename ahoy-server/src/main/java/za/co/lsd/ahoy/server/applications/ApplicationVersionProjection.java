@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ package za.co.lsd.ahoy.server.applications;
 import org.springframework.data.rest.core.config.Projection;
 import za.co.lsd.ahoy.server.docker.DockerRegistry;
 
-import java.util.List;
-
 @Projection(name = "applicationVersion", types = {ApplicationVersion.class})
 public interface ApplicationVersionProjection {
 	long getId();
@@ -31,23 +29,7 @@ public interface ApplicationVersionProjection {
 
 	String getVersion();
 
-	List<Integer> getServicePorts();
-
-	List<ApplicationEnvironmentVariable> getEnvironmentVariables();
-
-	String getHealthEndpointPath();
-
-	Integer getHealthEndpointPort();
-
-	String getHealthEndpointScheme();
-
-	List<ApplicationConfig> getConfigs();
-
-	List<ApplicationVolume> getVolumes();
-
-	List<ApplicationSecret> getSecrets();
-
-	String getConfigPath();
+	ApplicationSpec getSpec();
 
 	Application getApplication();
 }

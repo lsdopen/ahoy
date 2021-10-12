@@ -36,7 +36,7 @@
         <div class="p-fluid p-col-12 p-md-5">
 
           <div class="p-field p-float-label">
-            <p-inputNumber id="environmentConfigReplicas" name="environmentConfigReplicas" [(ngModel)]="environmentConfig.replicas"
+            <p-inputNumber id="environmentConfigReplicas" name="environmentConfigReplicas" [(ngModel)]="environmentConfig.spec.replicas"
                            mode="decimal" [showButtons]="true" [min]="0" [max]="100"
                            required>
             </p-inputNumber>
@@ -50,7 +50,7 @@
 
               <div class="p-fluid p-md-5">
                 <div class="p-field p-float-label">
-                  <input pInputText id="environmentConfigRouteHostname" name="environmentConfigRouteHostname" [(ngModel)]="environmentConfig.routeHostname"
+                  <input pInputText id="environmentConfigRouteHostname" name="environmentConfigRouteHostname" [(ngModel)]="environmentConfig.spec.routeHostname"
                          pattern="(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])"
                          required="{{routeCategory}}">
                   <label for="environmentConfigRouteHostname">Hostname</label>
@@ -58,20 +58,20 @@
                 </div>
 
                 <div class="p-field">
-                  <p-dropdown id="environmentConfigRouteTargetPort" name="environmentConfigRouteTargetPort" [options]="applicationVersion.servicePorts" [(ngModel)]="environmentConfig.routeTargetPort"
+                  <p-dropdown id="environmentConfigRouteTargetPort" name="environmentConfigRouteTargetPort" [options]="applicationVersion.spec.servicePorts" [(ngModel)]="environmentConfig.spec.routeTargetPort"
                               placeholder="Target Port" [showClear]="true" [editable]="true" required="{{routeCategory}}"></p-dropdown>
-                  <small class="p-message p-message-warn p-p-1" *ngIf="applicationVersion.servicePorts.indexOf(environmentConfig.routeTargetPort) === -1">
+                  <small class="p-message p-message-warn p-p-1" *ngIf="applicationVersion.spec.servicePorts.indexOf(environmentConfig.spec.routeTargetPort) === -1">
                     Warn: route port not configured in application configuration
                   </small>
                 </div>
 
                 <div class="p-field-checkbox">
-                  <p-checkbox id="environmentConfigTls" name="environmentConfigTls" [(ngModel)]="environmentConfig.tls" binary="true"></p-checkbox>
+                  <p-checkbox id="environmentConfigTls" name="environmentConfigTls" [(ngModel)]="environmentConfig.spec.tls" binary="true"></p-checkbox>
                   <label for="environmentConfigTls">Tls</label>
                 </div>
 
-                <div class="p-field" *ngIf="environmentConfig.tls">
-                  <p-dropdown id="environmentConfigTlsSecretName" name="environmentConfigTlsSecretName" [options]="tlsSecrets()" [(ngModel)]="environmentConfig.tlsSecretName"
+                <div class="p-field" *ngIf="environmentConfig.spec.tls">
+                  <p-dropdown id="environmentConfigTlsSecretName" name="environmentConfigTlsSecretName" [options]="tlsSecrets()" [(ngModel)]="environmentConfig.spec.tlsSecretName"
                               placeholder="Select Tls secret" optionLabel="name" optionValue="name" [showClear]="true" required></p-dropdown>
                 </div>
 
@@ -82,7 +82,7 @@
             <p-accordionTab header="Environment Variables" [(selected)]="environmentVariablesCategory">
 
               <app-application-env-variables
-                [environmentVariables]="environmentConfig.environmentVariables" [secrets]="environmentConfig.secrets">
+                [environmentVariables]="environmentConfig.spec.environmentVariables" [secrets]="environmentConfig.spec.secrets">
               </app-application-env-variables>
 
             </p-accordionTab>
@@ -92,7 +92,7 @@
               <app-application-config-files
                 [parentForm]="environmentConfigForm"
                 [applicationVersion]="applicationVersion"
-                [configs]="environmentConfig.configs"
+                [configs]="environmentConfig.spec.configs"
                 [editPath]="false">
               </app-application-config-files>
 
@@ -100,15 +100,15 @@
 
             <p-accordionTab header="Volumes" [(selected)]="volumesCategory">
 
-              <app-multi-tab [content]="volumeContent" [items]="environmentConfig.volumes" [itemFactory]="applicationVolumeFactory()">
+              <app-multi-tab [content]="volumeContent" [items]="environmentConfig.spec.volumes" [itemFactory]="applicationVolumeFactory()">
 
                 <ng-template #volumeContent let-volume let-volumeIndex="index">
                   <app-application-volume-detail
                     [parentForm]="environmentConfigForm"
                     [volume]="volume"
                     [volumeIndex]="volumeIndex"
-                    [secrets]="environmentConfig.secrets"
-                    [volumesForValidation]="environmentConfig.volumes">
+                    [secrets]="environmentConfig.spec.secrets"
+                    [volumesForValidation]="environmentConfig.spec.volumes">
                   </app-application-volume-detail>
                 </ng-template>
 
@@ -118,7 +118,7 @@
 
             <p-accordionTab header="Secrets" [(selected)]="secretsCategory">
 
-              <app-multi-tab [content]="secretContent" [items]="environmentConfig.secrets" [itemFactory]="applicationSecretFactory()"
+              <app-multi-tab [content]="secretContent" [items]="environmentConfig.spec.secrets" [itemFactory]="applicationSecretFactory()"
                              [deleteDisabled]="secretInUse()" [deleteDisabledTooltip]="secretInUseTooltip()">
 
                 <ng-template #secretContent let-secret let-secretIndex="index">
@@ -127,7 +127,7 @@
                     [secret]="secret"
                     [secretIndex]="secretIndex"
                     [secretInUse]="secretInUse()"
-                    [secretsForValidation]="environmentConfig.secrets">
+                    [secretsForValidation]="environmentConfig.spec.secrets">
                   </app-application-secrets>
                 </ng-template>
 
