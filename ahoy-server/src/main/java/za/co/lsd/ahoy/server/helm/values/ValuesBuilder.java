@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import za.co.lsd.ahoy.server.applications.*;
 import za.co.lsd.ahoy.server.cluster.Cluster;
 import za.co.lsd.ahoy.server.docker.DockerRegistry;
+import za.co.lsd.ahoy.server.docker.DockerRegistryProvider;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.helm.HelmUtils;
@@ -33,15 +34,21 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 @Slf4j
 public class ValuesBuilder {
+	private final DockerRegistryProvider dockerRegistryProvider;
 	private final ApplicationEnvironmentConfigProvider environmentConfigProvider;
 	private final DockerConfigSealedSecretProducer dockerConfigSealedSecretProducer;
 	private final SecretDataSealedSecretProducer secretDataSealedSecretProducer;
 
-	public ValuesBuilder(ApplicationEnvironmentConfigProvider environmentConfigProvider, DockerConfigSealedSecretProducer dockerConfigSealedSecretProducer, SecretDataSealedSecretProducer secretDataSealedSecretProducer) {
+	public ValuesBuilder(DockerRegistryProvider dockerRegistryProvider,
+						 ApplicationEnvironmentConfigProvider environmentConfigProvider,
+						 DockerConfigSealedSecretProducer dockerConfigSealedSecretProducer,
+						 SecretDataSealedSecretProducer secretDataSealedSecretProducer) {
+		this.dockerRegistryProvider = dockerRegistryProvider;
 		this.environmentConfigProvider = environmentConfigProvider;
 		this.dockerConfigSealedSecretProducer = dockerConfigSealedSecretProducer;
 		this.secretDataSealedSecretProducer = secretDataSealedSecretProducer;
@@ -76,17 +83,17 @@ public class ValuesBuilder {
 		ApplicationSpec spec = applicationVersion.getSpec();
 		ApplicationValues.ApplicationValuesBuilder builder = ApplicationValues.builder()
 			.name(applicationVersion.getApplication().getName())
-			.image(applicationVersion.getImage())
 			.version(applicationVersion.getVersion())
+			.image(spec.getImage())
 			.servicePorts(spec.getServicePorts())
 			.healthEndpointPath(spec.getHealthEndpointPath())
 			.healthEndpointPort(spec.getHealthEndpointPort())
 			.healthEndpointScheme(spec.getHealthEndpointScheme())
 			.configPath(spec.getConfigPath());
 
-		DockerRegistry dockerRegistry = applicationVersion.getDockerRegistry();
-		if (dockerRegistry != null && dockerRegistry.getSecure()) {
-			builder.dockerConfigJson(dockerConfigSealedSecretProducer.produce(dockerRegistry));
+		Optional<DockerRegistry> dockerRegistry = dockerRegistryProvider.dockerRegistryFor(spec.getDockerRegistryName());
+		if (dockerRegistry.isPresent() && dockerRegistry.get().getSecure()) {
+			builder.dockerConfigJson(dockerConfigSealedSecretProducer.produce(dockerRegistry.get()));
 		}
 
 		Map<String, EnvironmentVariableValues> environmentVariables = new LinkedHashMap<>();

@@ -16,6 +16,7 @@
 
 package za.co.lsd.ahoy.server.applications;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
 
 @Projection(name = "applicationVersionSimple", types = {ApplicationVersion.class})
@@ -24,5 +25,6 @@ public interface ApplicationVersionSimpleProjection {
 
 	String getVersion();
 
-	String getImage();
+	@Value("#{target.summarySpec()}")
+	ApplicationSpec getSpec();
 }

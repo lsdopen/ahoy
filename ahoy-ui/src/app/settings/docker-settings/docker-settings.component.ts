@@ -78,8 +78,8 @@ export class DockerSettingsComponent implements OnInit {
     return (registry: DockerRegistry): boolean => {
       if (this.applicationVersions) {
         return this.applicationVersions
-          .filter((version) => version.dockerRegistry)
-          .filter((version) => version.dockerRegistry.id === registry.id)
+          .filter((version) => version.spec.dockerRegistryName)
+          .filter((version) => version.spec.dockerRegistryName === registry.name)
           .length > 0;
       }
       return false;

@@ -19,7 +19,7 @@ package za.co.lsd.ahoy.server.applications;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import za.co.lsd.ahoy.server.docker.DockerRegistry;
+import lombok.ToString;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 
 import javax.persistence.*;
@@ -36,36 +36,31 @@ public class ApplicationVersion implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@NotNull
-	private String image;
-	@NotNull
 	private String version;
 	@NotNull
 	@Convert(converter = ApplicationSpecConverter.class)
 	@Lob
 	private ApplicationSpec spec;
 
-	@OneToOne
-	private DockerRegistry dockerRegistry;
-
 	@ManyToOne
+	@ToString.Exclude
 	private Application application;
 
 	@ManyToMany(mappedBy = "applicationVersions")
 	@JsonIgnore
 	@OrderBy("id")
+	@ToString.Exclude
 	private List<ReleaseVersion> releaseVersions;
 
-	public ApplicationVersion(@NotNull String version, @NotNull String image, Application application) {
+	public ApplicationVersion(@NotNull String version, Application application) {
 		this.version = version;
-		this.image = image;
 		this.application = application;
 		this.spec = new ApplicationSpec();
 	}
 
-	public ApplicationVersion(@NotNull Long id, @NotNull String version, @NotNull String image, Application application) {
+	public ApplicationVersion(@NotNull Long id, @NotNull String version, Application application) {
 		this.id = id;
 		this.version = version;
-		this.image = image;
 		this.application = application;
 		this.spec = new ApplicationSpec();
 	}
@@ -82,11 +77,7 @@ public class ApplicationVersion implements Serializable {
 		return spec != null && spec.getSecrets() != null && spec.getSecrets().size() > 0;
 	}
 
-	@Override
-	public String toString() {
-		return "ApplicationVersion{" + "id=" + id +
-			", image='" + image + '\'' +
-			", version='" + version + '\'' +
-			'}';
+	public ApplicationSpec summarySpec() {
+		return new ApplicationSpec(spec.getImage());
 	}
 }

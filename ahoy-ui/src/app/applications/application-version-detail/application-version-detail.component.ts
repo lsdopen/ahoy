@@ -75,8 +75,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
           if (this.applicationVersionId && this.applicationVersionId > 0) {
             this.applicationService.getVersion(this.applicationVersionId)
               .subscribe((applicationVersion) => {
-                this.applicationVersion.dockerRegistry = applicationVersion.dockerRegistry;
-                this.applicationVersion.image = applicationVersion.image;
                 this.applicationVersion.spec = applicationVersion.spec;
 
                 this.setCategoriesExpanded();

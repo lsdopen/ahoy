@@ -31,6 +31,7 @@ import za.co.lsd.ahoy.server.applications.*;
 import za.co.lsd.ahoy.server.cluster.Cluster;
 import za.co.lsd.ahoy.server.cluster.ClusterType;
 import za.co.lsd.ahoy.server.docker.DockerRegistry;
+import za.co.lsd.ahoy.server.docker.DockerRegistryProvider;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.helm.sealedsecrets.DockerConfigSealedSecretProducer;
@@ -53,6 +54,8 @@ import static org.mockito.Mockito.*;
 public class ChartGeneratorTest {
 	@Autowired
 	private ChartGenerator chartGenerator;
+	@MockBean
+	private DockerRegistryProvider dockerRegistryProvider;
 	@MockBean
 	private ApplicationEnvironmentConfigProvider environmentConfigProvider;
 	@MockBean
@@ -85,7 +88,10 @@ public class ChartGeneratorTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
+		ApplicationSpec spec = new ApplicationSpec("image");
+		applicationVersion.setSpec(spec);
+
 		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion));
 
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.empty());
@@ -147,10 +153,10 @@ public class ChartGeneratorTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
-		applicationVersion.setDockerRegistry(new DockerRegistry("docker-registry", "docker-server", "username", "password"));
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 		List<Integer> servicePorts = Collections.singletonList(8080);
-		ApplicationSpec spec = new ApplicationSpec();
+		ApplicationSpec spec = new ApplicationSpec("image");
+		spec.setDockerRegistryName("docker-registry");
 		applicationVersion.setSpec(spec);
 		spec.setServicePorts(servicePorts);
 		List<ApplicationEnvironmentVariable> environmentVariables = Arrays.asList(
@@ -201,6 +207,8 @@ public class ChartGeneratorTest {
 		List<ApplicationSecret> envSecrets = Collections.singletonList(new ApplicationSecret("my-env-secret", SecretType.Generic, Collections.singletonMap("env-secret-key", "env-secret-value")));
 		environmentSpec.setSecrets(envSecrets);
 
+		DockerRegistry dockerRegistry = new DockerRegistry("docker-registry", "docker-server", "username", "password");
+		when(dockerRegistryProvider.dockerRegistryFor(eq("docker-registry"))).thenReturn(Optional.of(dockerRegistry));
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.of(environmentConfig));
 
 		Path basePath = repoPath.resolve(cluster.getName()).resolve(environment.getName()).resolve(release.getName());
@@ -298,8 +306,8 @@ public class ChartGeneratorTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
-		ApplicationSpec spec = new ApplicationSpec();
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
+		ApplicationSpec spec = new ApplicationSpec("image");
 		applicationVersion.setSpec(spec);
 
 		// needed for route
@@ -418,7 +426,7 @@ public class ChartGeneratorTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion));
 
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.empty());

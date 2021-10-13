@@ -17,11 +17,16 @@
 package za.co.lsd.ahoy.server.applications;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 public class ApplicationSpec {
+	private String image;
+	private String dockerRegistryName;
+
 	private List<Integer> servicePorts;
 
 	private String healthEndpointPath;
@@ -36,4 +41,8 @@ public class ApplicationSpec {
 	private List<ApplicationVolume> volumes;
 
 	private List<ApplicationSecret> secrets;
+
+	public ApplicationSpec(String image) {
+		this.image = image;
+	}
 }

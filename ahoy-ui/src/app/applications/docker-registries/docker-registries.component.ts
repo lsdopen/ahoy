@@ -37,4 +37,9 @@ export class DockerRegistriesComponent implements OnInit {
         this.dockerRegistries = settings.dockerRegistries ? settings.dockerRegistries : [];
       });
   }
+
+  dockerRegistryExists(name: string) {
+    return this.dockerRegistries &&
+      this.dockerRegistries.find((dockerRegistry) => name === dockerRegistry.name);
+  }
 }

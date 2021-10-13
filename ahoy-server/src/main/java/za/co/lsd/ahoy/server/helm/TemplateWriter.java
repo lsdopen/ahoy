@@ -26,6 +26,7 @@ import za.co.lsd.ahoy.server.applications.ApplicationEnvironmentConfig;
 import za.co.lsd.ahoy.server.applications.ApplicationEnvironmentConfigProvider;
 import za.co.lsd.ahoy.server.applications.ApplicationVersion;
 import za.co.lsd.ahoy.server.docker.DockerRegistry;
+import za.co.lsd.ahoy.server.docker.DockerRegistryProvider;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 
@@ -36,6 +37,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static za.co.lsd.ahoy.server.helm.HelmUtils.*;
@@ -44,10 +46,12 @@ import static za.co.lsd.ahoy.server.helm.HelmUtils.*;
 @Slf4j
 public class TemplateWriter {
 	public static final String HELM_TEMPLATES = "/charts/kubernetes-helm/templates";
+	private final DockerRegistryProvider dockerRegistryProvider;
 	private final ApplicationEnvironmentConfigProvider environmentConfigProvider;
 	private ResourcePatternResolver resourceResolver;
 
-	public TemplateWriter(ApplicationEnvironmentConfigProvider environmentConfigProvider) {
+	public TemplateWriter(DockerRegistryProvider dockerRegistryProvider, ApplicationEnvironmentConfigProvider environmentConfigProvider) {
+		this.dockerRegistryProvider = dockerRegistryProvider;
 		this.environmentConfigProvider = environmentConfigProvider;
 	}
 
@@ -84,10 +88,11 @@ public class TemplateWriter {
 				addTemplate(application, "secret-generic", templatesPath, trackedTemplates);
 			}
 
-			DockerRegistry dockerRegistry = applicationVersion.getDockerRegistry();
-			if (dockerRegistry != null && dockerRegistry.getSecure()) {
+			Optional<DockerRegistry> dockerRegistry = dockerRegistryProvider.dockerRegistryFor(applicationVersion.getSpec().getDockerRegistryName());
+			if (dockerRegistry.isPresent() && dockerRegistry.get().getSecure()) {
 				addTemplate(application, "secret-dockerconfig", templatesPath, trackedTemplates);
 			}
+
 			if (applicationVersion.getSpec().getServicePorts() != null &&
 				applicationVersion.getSpec().getServicePorts().size() > 0) {
 				addTemplate(application, "service", templatesPath, trackedTemplates);

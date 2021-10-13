@@ -35,6 +35,8 @@
           <div class="p-fluid p-col-12 p-md-5">
             <div class="p-field p-float-label">
               <input pInputText id="dockerRegistryName{{i}}" [(ngModel)]="dockerRegistry.name" name="dockerRegistryName{{i}}" required
+                     [readOnly]="registryInUse()(dockerRegistry)"
+                     [pTooltip]="registryInUse()(dockerRegistry) ? 'Registry in use' : ''"
                      [appTabItemNameUnique]="dockerSettings.dockerRegistries"
                      [selectedIndex]="i">
               <label for="dockerRegistryName{{i}}">Name</label>

@@ -79,7 +79,7 @@ public class ReleaseServiceTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 		long releaseVersionId = 1L;
 		ReleaseVersion releaseVersion = new ReleaseVersion(releaseVersionId, "1.0.0", release, Collections.singletonList(applicationVersion));
 
@@ -117,7 +117,7 @@ public class ReleaseServiceTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
 
 		environmentRelease.setCurrentReleaseVersion(releaseVersion);
@@ -163,7 +163,7 @@ public class ReleaseServiceTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 		long releaseVersionId = 1L;
 		ReleaseVersion releaseVersion = new ReleaseVersion(releaseVersionId, "1.0.0", release, Collections.singletonList(applicationVersion));
 
@@ -203,7 +203,7 @@ public class ReleaseServiceTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
 
 		environmentRelease.setCurrentReleaseVersion(releaseVersion);
@@ -233,7 +233,7 @@ public class ReleaseServiceTest {
 		Release release = new Release(1L, "release1");
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
 
 		UpgradeOptions upgradeOptions = new UpgradeOptions("1.1.0", false);
@@ -267,7 +267,7 @@ public class ReleaseServiceTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(new EnvironmentReleaseId(1L, 1L), environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion(1L, "1.0.0", "image", application);
+		ApplicationVersion applicationVersion = new ApplicationVersion(1L, "1.0.0", application);
 		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
 
 		UpgradeOptions upgradeOptions = new UpgradeOptions("1.1.0", true);
@@ -380,7 +380,7 @@ public class ReleaseServiceTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
 		release.setReleaseVersions(Collections.singletonList(releaseVersion));
 
@@ -432,8 +432,8 @@ public class ReleaseServiceTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(new EnvironmentReleaseId(1L, 1L), environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion1 = new ApplicationVersion(1L, "1.0.0", "image", application);
-		ApplicationVersion applicationVersion2 = new ApplicationVersion(2L, "2.0.0", "image", application);
+		ApplicationVersion applicationVersion1 = new ApplicationVersion(1L, "1.0.0", application);
+		ApplicationVersion applicationVersion2 = new ApplicationVersion(2L, "2.0.0", application);
 		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion2));
 
 		when(releaseVersionRepository.findById(1L)).thenReturn(Optional.of(releaseVersion));
@@ -469,8 +469,8 @@ public class ReleaseServiceTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(new EnvironmentReleaseId(1L, 1L), environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion1 = new ApplicationVersion(1L, "1.0.0", "image", application);
-		ApplicationVersion applicationVersion2 = new ApplicationVersion(2L, "2.0.0", "image", application);
+		ApplicationVersion applicationVersion1 = new ApplicationVersion(1L, "1.0.0", application);
+		ApplicationVersion applicationVersion2 = new ApplicationVersion(2L, "2.0.0", application);
 		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion2));
 
 		when(releaseVersionRepository.findById(1L)).thenReturn(Optional.of(releaseVersion));

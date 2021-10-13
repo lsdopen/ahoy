@@ -17,15 +17,10 @@
 package za.co.lsd.ahoy.server.applications;
 
 import org.springframework.data.rest.core.config.Projection;
-import za.co.lsd.ahoy.server.docker.DockerRegistry;
 
 @Projection(name = "applicationVersion", types = {ApplicationVersion.class})
 public interface ApplicationVersionProjection {
 	long getId();
-
-	DockerRegistry getDockerRegistry();
-
-	String getImage();
 
 	String getVersion();
 

@@ -16,7 +16,6 @@
 
 import {EnvironmentReleaseId} from '../environment-release/environment-release';
 import {ReleaseVersion} from '../releases/release';
-import {DockerRegistry} from '../settings/docker-settings/docker-settings';
 
 export class Application {
   id: number;
@@ -27,8 +26,6 @@ export class Application {
 
 export class ApplicationVersion {
   id: number;
-  dockerRegistry: DockerRegistry;
-  image: string;
   version: string;
   spec: ApplicationSpec;
   application: Application | string;
@@ -37,6 +34,8 @@ export class ApplicationVersion {
 }
 
 export class ApplicationSpec {
+  image: string;
+  dockerRegistryName: string;
   servicePorts: number[] = [];
   healthEndpointPath: string;
   healthEndpointPort: number;
