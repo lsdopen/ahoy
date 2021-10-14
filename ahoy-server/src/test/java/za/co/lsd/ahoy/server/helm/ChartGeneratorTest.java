@@ -158,6 +158,8 @@ public class ChartGeneratorTest {
 		ApplicationSpec spec = new ApplicationSpec("image");
 		spec.setDockerRegistryName("docker-registry");
 		applicationVersion.setSpec(spec);
+		spec.setCommand("/bin/sh");
+		spec.setArgs(Arrays.asList("-c", "echo hello"));
 		spec.setServicePorts(servicePorts);
 		List<ApplicationEnvironmentVariable> environmentVariables = Arrays.asList(
 			new ApplicationEnvironmentVariable("ENV", "VAR"),
@@ -266,6 +268,8 @@ public class ChartGeneratorTest {
 			.name("app1")
 			.version("1.0.0")
 			.image("image")
+			.command("/bin/sh")
+			.args(Arrays.asList("-c", "echo hello"))
 			.dockerConfigJson("encrypted-docker-config")
 			.servicePorts(servicePorts)
 			.healthEndpointPath("/")

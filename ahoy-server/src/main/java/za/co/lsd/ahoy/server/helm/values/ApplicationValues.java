@@ -33,6 +33,8 @@ public class ApplicationValues {
 	public String image;
 	public String dockerConfigJson;
 	public String version;
+	public String command;
+	public List<String> args;
 	public List<Integer> servicePorts;
 	public Integer replicas;
 	public String routeHostname;

@@ -85,6 +85,8 @@ public class ValuesBuilder {
 			.name(applicationVersion.getApplication().getName())
 			.version(applicationVersion.getVersion())
 			.image(spec.getImage())
+			.command(spec.getCommand())
+			.args(spec.getArgs())
 			.servicePorts(spec.getServicePorts())
 			.healthEndpointPath(spec.getHealthEndpointPath())
 			.healthEndpointPort(spec.getHealthEndpointPort())

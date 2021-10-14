@@ -32,6 +32,15 @@ spec:
         - image: {{ .app.image }}
           imagePullPolicy: Always
           name: {{ .glob.releaseName }}-{{ .app.name }}
+          {{ if .app.command }}
+          command: ["{{ .app.command }}"]
+          {{ end }}
+          {{ if .app.args }}
+          args:
+            {{- range .app.args }}
+            - {{ . }}
+            {{- end}}
+          {{ end }}
           {{ if .app.environmentVariables }}
           env:
             {{- range $name, $envVariable := .app.environmentVariables }}

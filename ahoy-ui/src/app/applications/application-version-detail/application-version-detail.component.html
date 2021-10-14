@@ -55,6 +55,44 @@
 
         <div class="p-col-12">
           <p-accordion multiple="true">
+            <p-accordionTab header="Command & Args" [(selected)]="commandCategory">
+
+              <div class="p-fluid">
+                <div class="p-col-12 p-md-5">
+
+                  <div class="p-field p-float-label">
+                    <input pInputText id="command" name="command" [(ngModel)]="applicationVersion.spec.command">
+                    <label for="command">Command</label>
+                  </div>
+
+                  <div class="p-field p-float-label">
+                    <input pInputText id="newArg" name="newArg" [(ngModel)]="newArg">
+                    <label for="newArg">Arg</label>
+                  </div>
+
+                  <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-plain" (click)="addArg()"></button>
+
+                  <div class="p-field p-mt-2">
+                    <p-table #dt [value]="applicationVersion.spec.args" dataKey="id"
+                             styleClass="p-datatable-ports p-datatable-striped p-datatable-sm">
+                      <ng-template pTemplate="body" let-arg let-i="rowIndex">
+                        <tr>
+                          <td>
+                            <span class="p-column-title">Arg</span>{{arg}}
+                          </td>
+                          <td>
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="removeArg(i)"></button>
+                          </td>
+                        </tr>
+                      </ng-template>
+                    </p-table>
+                  </div>
+
+                </div>
+              </div>
+
+            </p-accordionTab>
+
             <p-accordionTab header="Ports" [(selected)]="portsCategory">
 
               <div class="p-formgroup-inline">
@@ -91,7 +129,7 @@
                 <div class="p-field p-float-label">
                   <input pInputText id="applicationHealthEndpointPath" [(ngModel)]="applicationVersion.spec.healthEndpointPath" name="applicationHealthEndpointPath"
                          pattern="(/[^\s]*)"
-                         required="{{healthChecksCategory}}">
+                         [required]="healthChecksCategory">
                   <label for="applicationHealthEndpointPath">Health Endpoint Path</label>
                   <small class="p-error" *ngIf="applicationVersionForm.form.controls.applicationHealthEndpointPath?.hasError('pattern')">invalid</small>
                 </div>

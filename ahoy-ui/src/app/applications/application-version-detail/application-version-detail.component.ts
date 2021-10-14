@@ -45,6 +45,8 @@ export class ApplicationVersionDetailComponent implements OnInit {
   configFilesCategory = false;
   volumesCategory = false;
   secretsCategory = false;
+  commandCategory = false;
+  newArg: string;
 
   constructor(private route: ActivatedRoute,
               private applicationService: ApplicationService,
@@ -143,6 +145,11 @@ export class ApplicationVersionDetailComponent implements OnInit {
     if (this.applicationVersion.spec.secrets.length > 0) {
       this.secretsCategory = true;
     }
+
+    if (this.applicationVersion.spec.command ||
+      (this.applicationVersion.spec.args && this.applicationVersion.spec.args.length > 0)) {
+      this.commandCategory = true;
+    }
   }
 
   save() {
@@ -210,5 +217,19 @@ export class ApplicationVersionDetailComponent implements OnInit {
     return (secret: ApplicationSecret): string => {
       return 'Secret in use';
     };
+  }
+
+  addArg() {
+    if (this.newArg) {
+      if (!this.applicationVersion.spec.args) {
+        this.applicationVersion.spec.args = [];
+      }
+      this.applicationVersion.spec.args.push(this.newArg);
+      this.newArg = null;
+    }
+  }
+
+  removeArg(argIndex: number) {
+    this.applicationVersion.spec.args.splice(argIndex, 1);
   }
 }

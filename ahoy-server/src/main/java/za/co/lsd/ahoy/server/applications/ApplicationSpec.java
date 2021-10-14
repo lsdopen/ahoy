@@ -27,6 +27,9 @@ public class ApplicationSpec {
 	private String image;
 	private String dockerRegistryName;
 
+	private String command;
+	private List<String> args;
+
 	private List<Integer> servicePorts;
 
 	private String healthEndpointPath;
