@@ -60,7 +60,7 @@
                 <div class="p-field">
                   <p-dropdown id="environmentConfigRouteTargetPort" name="environmentConfigRouteTargetPort" [options]="applicationVersion.spec.servicePorts" [(ngModel)]="environmentConfig.spec.routeTargetPort"
                               placeholder="Target Port" [showClear]="true" [editable]="true" required="{{routeCategory}}"></p-dropdown>
-                  <small class="p-message p-message-warn p-p-1" *ngIf="applicationVersion.spec.servicePorts.indexOf(environmentConfig.spec.routeTargetPort) === -1">
+                  <small class="p-message p-message-warn p-p-1" *ngIf="environmentConfig.spec.routeTargetPort && applicationVersion.spec.servicePorts.indexOf(environmentConfig.spec.routeTargetPort) === -1">
                     Warn: route port not configured in application configuration
                   </small>
                 </div>

@@ -141,7 +141,7 @@
                               [autoDisplayFirst]="false"
                               required="{{healthChecksCategory}}"></p-dropdown>
                   <label>Health Endpoint Port</label>
-                  <small class="p-message p-message-warn p-p-1" *ngIf="applicationVersion.spec.servicePorts.indexOf(applicationVersion.spec.healthEndpointPort) === -1">
+                  <small class="p-message p-message-warn p-p-1" *ngIf="applicationVersion.spec.healthEndpointPort && applicationVersion.spec.servicePorts.indexOf(applicationVersion.spec.healthEndpointPort) === -1">
                     Warn: port not configured
                   </small>
                 </div>
