@@ -33,7 +33,8 @@ spec:
           imagePullPolicy: Always
           name: {{ .glob.releaseName }}-{{ .app.name }}
           {{ if .app.command }}
-          command: ["{{ .app.command }}"]
+          command:
+            - {{ .app.command }}
           {{ end }}
           {{ if .app.args }}
           args:
