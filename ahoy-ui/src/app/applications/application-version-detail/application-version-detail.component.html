@@ -74,11 +74,22 @@
 
                   <div class="p-field p-mt-2">
                     <p-table #dt [value]="applicationVersion.spec.args" dataKey="id"
-                             styleClass="p-datatable-ports p-datatable-striped p-datatable-sm">
+                             styleClass="p-datatable-ports p-datatable-striped p-datatable-sm"
+                             (onEditInit)="editArgInit($event)" (onEditComplete)="editArgComplete($event)">
                       <ng-template pTemplate="body" let-arg let-i="rowIndex">
-                        <tr>
-                          <td>
-                            <span class="p-column-title">Arg</span>{{arg}}
+                        <tr [pReorderableRow]="i">
+                          <td style="width: 3rem; text-align: center">
+                            <span class="pi pi-bars" pReorderableRowHandle></span>
+                          </td>
+                          <td [pEditableColumn]="arg" [pEditableColumnRowIndex]="i">
+                            <p-cellEditor>
+                              <ng-template pTemplate="input">
+                                <input pInputText type="text" id="arg{{i}}" name="arg{{i}}" [(ngModel)]="editingArg" required>
+                              </ng-template>
+                              <ng-template pTemplate="output">
+                                <span class="p-column-title">Arg</span>{{arg}}
+                              </ng-template>
+                            </p-cellEditor>
                           </td>
                           <td>
                             <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="removeArg(i)"></button>

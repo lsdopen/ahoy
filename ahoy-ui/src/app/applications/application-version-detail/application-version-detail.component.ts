@@ -47,6 +47,7 @@ export class ApplicationVersionDetailComponent implements OnInit {
   secretsCategory = false;
   commandCategory = false;
   newArg: string;
+  editingArg: string;
 
   constructor(private route: ActivatedRoute,
               private applicationService: ApplicationService,
@@ -231,5 +232,15 @@ export class ApplicationVersionDetailComponent implements OnInit {
 
   removeArg(argIndex: number) {
     this.applicationVersion.spec.args.splice(argIndex, 1);
+  }
+
+  editArgInit($event: any) {
+    const index = $event.index;
+    this.editingArg = this.applicationVersion.spec.args[index];
+  }
+
+  editArgComplete($event: any) {
+    const index = $event.index;
+    this.applicationVersion.spec.args[index] = this.editingArg;
   }
 }
