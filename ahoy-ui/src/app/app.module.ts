@@ -117,6 +117,7 @@ import {GitSettingsComponent} from './settings/git-settings/git-settings.compone
 import {SettingsComponent} from './settings/settings.component';
 import {TaskEventsListenerComponent} from './taskevents/task-events-listener/task-events-listener.component';
 import {ErrorService} from './util/error.service';
+import {MoveDialogComponent} from './environments/move-dialog/move-dialog.component';
 
 @NgModule({
   declarations: [
@@ -139,6 +140,7 @@ import {ErrorService} from './util/error.service';
     AddApplicationDialogComponent,
     PromoteDialogComponent,
     UpgradeDialogComponent,
+    MoveDialogComponent,
     ConfirmDialogComponent,
     ClustersComponent,
     ClusterDetailComponent,

@@ -16,7 +16,7 @@
 
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {filter} from 'rxjs/operators';
+import {filter, mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Cluster} from '../clusters/cluster';
 import {ClusterService} from '../clusters/cluster.service';
@@ -24,8 +24,10 @@ import {Confirmation} from '../components/confirm-dialog/confirm';
 import {DialogUtilService} from '../components/dialog-util.service';
 import {LoggerService} from '../util/logger.service';
 import {OrderUtil} from '../util/order-util';
-import {Environment} from './environment';
+import {Environment, MoveOptions} from './environment';
 import {EnvironmentService} from './environment.service';
+import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
+import {MoveDialogComponent} from './move-dialog/move-dialog.component';
 
 @Component({
   selector: 'app-environments',
@@ -42,6 +44,7 @@ export class EnvironmentsComponent implements OnInit {
               private clusterService: ClusterService,
               private log: LoggerService,
               private dialogUtilService: DialogUtilService,
+              private dialogService: DialogService,
               private breadcrumbService: AppBreadcrumbService) {
   }
 
@@ -79,6 +82,21 @@ export class EnvironmentsComponent implements OnInit {
       this.environmentService.destroy(environment)
         .subscribe(() => this.getEnvironments());
     });
+  }
+
+  move(event: Event, environment: Environment) {
+    const dialogConfig = new DynamicDialogConfig();
+    dialogConfig.header = `Move ${(environment.name)} from cluster ${(environment.cluster as Cluster).name} to cluster:`;
+    dialogConfig.data = {selectedEnvironment: environment, clusters: this.clusters};
+
+    const dialogRef = this.dialogService.open(MoveDialogComponent, dialogConfig);
+    dialogRef.onClose.pipe(
+      filter((result) => result !== undefined), // cancelled
+      mergeMap((moveOptions: MoveOptions) => {
+        this.log.debug('moving environment to destination cluster', moveOptions);
+        return this.environmentService.move(environment, moveOptions);
+      })
+    ).subscribe(() => this.getEnvironments());
   }
 
   rowReorder(event: any) {

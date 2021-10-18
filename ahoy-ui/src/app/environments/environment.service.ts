@@ -22,7 +22,7 @@ import {Notification} from '../notifications/notification';
 import {NotificationsService} from '../notifications/notifications.service';
 import {LoggerService} from '../util/logger.service';
 import {RestClientService} from '../util/rest-client.service';
-import {Environment} from './environment';
+import {Environment, MoveOptions} from './environment';
 
 @Injectable({
   providedIn: 'root'
@@ -89,6 +89,25 @@ export class EnvironmentService {
       }),
       catchError((error) => {
         const text = `Failed to destroy environment ${environment.name}`;
+        this.notificationsService.notification(new Notification(text, error));
+        return EMPTY;
+      })
+    );
+  }
+
+  move(environment: Environment, moveOptions: MoveOptions): Observable<Environment> {
+    this.log.debug(`moving environment: ${environment.name} to cluster: ${moveOptions.destClusterId}`);
+
+    const url = `/data/environments/${environment.id}/move`;
+
+    return this.restClient.post<Environment>(url, moveOptions, true).pipe(
+      tap((movedEnvironment) => {
+        this.log.debug('moved environment', movedEnvironment);
+        const text = `${movedEnvironment.name} ` + `was moved to cluster ${(movedEnvironment.cluster as Cluster).name}`;
+        this.notificationsService.notification(new Notification(text));
+      }),
+      catchError((error) => {
+        const text = `Failed to move environment ${environment.name} to cluster`;
         this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })
