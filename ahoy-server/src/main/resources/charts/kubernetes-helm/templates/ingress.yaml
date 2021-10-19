@@ -1,5 +1,5 @@
 {{- define "ingress.app" -}}
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   labels:
@@ -19,7 +19,11 @@ spec:
   - host: {{ .app.routeHostname }}
     http:
       paths:
-      - backend:
-          serviceName: {{ .glob.releaseName }}-{{ .app.name }}
-          servicePort: {{ .app.routeTargetPort }}
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: {{ .glob.releaseName }}-{{ .app.name }}
+              port:
+                number: {{ .app.routeTargetPort }}
 {{- end -}}
