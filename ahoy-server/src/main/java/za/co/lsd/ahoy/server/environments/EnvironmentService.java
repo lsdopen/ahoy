@@ -124,7 +124,7 @@ public class EnvironmentService {
 		log.info("Checking if there are deployed releases in {}", environment.getName());
 		environment.getEnvironmentReleases().forEach((environmentRelease) -> {
 			if (environmentRelease.hasCurrentReleaseVersion()) {
-				log.info("{} is currently deployed in {}, undeploying...", environmentRelease.getRelease().getName(), environment.getName());
+				log.info("Release {} is currently deployed in {}, undeploying...", environmentRelease.getRelease().getName(), environment.getName());
 
 				previouslyDeployedReleases.put(environmentRelease.getId(), environmentRelease.getCurrentReleaseVersion());
 
@@ -144,13 +144,15 @@ public class EnvironmentService {
 			if (previouslyDeployedReleases.containsKey(environmentRelease.getId())) {
 				ReleaseVersion releaseVersion = previouslyDeployedReleases.get(environmentRelease.getId());
 
-				String message = String.format("Redeployed %s:%s to %s in %s after moving environment to new cluster",
-					environmentRelease.getRelease().getName(),
-					releaseVersion.getVersion(),
-					environment.getName(),
-					environment.getCluster().getName());
+				log.debug("Release {}:{} was previously deployed in {}, redeploying...", environmentRelease.getRelease().getName(), releaseVersion.getVersion(), environment.getName());
 
 				try {
+					String message = String.format("Redeployed %s:%s to %s in %s after moving environment to new cluster",
+						environmentRelease.getRelease().getName(),
+						releaseVersion.getVersion(),
+						environment.getName(),
+						environment.getCluster().getName());
+
 					DeployOptions deployOptions = new DeployOptions(releaseVersion.getId(), message);
 					releaseService.deploy(environmentRelease.getId(), deployOptions);
 					log.info(message);
