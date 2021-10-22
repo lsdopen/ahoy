@@ -30,6 +30,12 @@
     .p-datatable-thead > tr > th {
       text-align: left;
     }
+
+    .p-datatable-thead > tr > th.column-order,
+    .p-datatable-tbody > tr > td.column-order {
+      width: 3rem;
+      text-align: center;
+    }
   }
 
   .p-datatable.p-datatable-environments:not(.p-datatable-gridlines) {

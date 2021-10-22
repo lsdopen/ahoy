@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package za.co.lsd.ahoy.server.environmentrelease;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RestResource;
@@ -27,7 +28,10 @@ import java.util.Optional;
 public interface EnvironmentReleaseRepository extends CrudRepository<EnvironmentRelease, EnvironmentReleaseId> {
 
 	@RestResource(path = "byRelease", rel = "byRelease")
-	Iterable<EnvironmentRelease> findByRelease_Id_OrderByEnvironmentId(@Param("releaseId") long releaseId);
+	@Query("select e from EnvironmentRelease e where e.release.id = :releaseId order by e.environment.orderIndex,e.environment.id")
+	Iterable<EnvironmentRelease> findByRelease(@Param("releaseId") long releaseId);
 
 	Optional<EnvironmentRelease> findByArgoCdUid(String argoCdUid);
+
+
 }

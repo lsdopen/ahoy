@@ -43,7 +43,7 @@ export class PromoteDialogComponent implements OnInit {
     this.environmentRelease = data.environmentRelease;
     this.release = this.environmentRelease.release as Release;
     this.releaseVersion = data.releaseVersion;
-    this.cluster = (this.environmentRelease.environment as Environment).cluster;
+    this.cluster = ((this.environmentRelease.environment as Environment).cluster as Cluster);
   }
 
   ngOnInit() {

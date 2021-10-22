@@ -15,13 +15,12 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {ConfirmationService} from 'primeng/api';
 import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
+import {Observable, of} from 'rxjs';
 import {filter, mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
-import {EnvironmentRelease, EnvironmentReleaseId} from '../environment-release/environment-release';
-import {EnvironmentReleaseService} from '../environment-release/environment-release.service';
 import {Environment} from '../environments/environment';
 import {EnvironmentService} from '../environments/environment.service';
 import {ReleaseManageService} from '../release-manage/release-manage.service';
@@ -30,6 +29,8 @@ import {ReleaseService} from '../releases/release.service';
 import {TaskEvent} from '../taskevents/task-events';
 import {LoggerService} from '../util/logger.service';
 import {AddReleaseDialogComponent} from './add-release-dialog/add-release-dialog.component';
+import {EnvironmentRelease, EnvironmentReleaseId} from './environment-release';
+import {EnvironmentReleaseService} from './environment-release.service';
 
 @Component({
   selector: 'app-environment-releases',
@@ -37,12 +38,10 @@ import {AddReleaseDialogComponent} from './add-release-dialog/add-release-dialog
   styleUrls: ['./environment-releases.component.scss']
 })
 export class EnvironmentReleasesComponent implements OnInit {
-  environments: Environment[] = undefined;
   environmentReleases: EnvironmentRelease[] = undefined;
-  selectedEnvironment: Environment;
+  environment: Environment;
 
   constructor(private route: ActivatedRoute,
-              private router: Router,
               private environmentService: EnvironmentService,
               private environmentReleaseService: EnvironmentReleaseService,
               private releaseService: ReleaseService,
@@ -54,46 +53,38 @@ export class EnvironmentReleasesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.setBreadcrumb();
-
     const environmentId = +this.route.snapshot.paramMap.get('environmentId');
 
-    this.environmentService.getAll().subscribe((environments) => {
-      this.environments = environments;
-      this.getReleases(environmentId);
+    this.environmentService.get(environmentId).pipe(
+      mergeMap((env) => {
+        this.environment = env;
+        return this.loadReleasesForEnvironment();
+      })
+    ).subscribe(() => {
+      this.setBreadcrumb();
     });
   }
 
-  private getReleases(environmentId) {
-    this.log.debug('getting environment releases for environmentId=', environmentId);
-    // TODO nested subscribes
-    this.environmentService.get(environmentId)
-      .subscribe(env => {
-        this.selectedEnvironment = env;
-        this.environmentReleaseService.getReleasesByEnvironment(environmentId)
-          .subscribe(envReleases => {
-            this.environmentReleases = envReleases;
-            this.setBreadcrumb();
-          });
-      });
+  loadReleasesForEnvironment(): Observable<EnvironmentRelease[]> {
+    return this.environmentReleaseService.getReleasesByEnvironment(this.environment.id).pipe(
+      mergeMap((envReleases) => {
+        this.environmentReleases = envReleases;
+        return of(envReleases);
+      })
+    );
   }
 
   private setBreadcrumb() {
-    if (this.selectedEnvironment) {
-      this.breadcrumbService.setItems([
-        {label: this.selectedEnvironment.name, routerLink: '/environments'},
-        {label: 'releases'}
-      ]);
-
-    } else {
-      this.breadcrumbService.setItems([{label: 'releases'}]);
-    }
+    this.breadcrumbService.setItems([
+      {label: this.environment.name, routerLink: '/environments'},
+      {label: 'releases'}
+    ]);
   }
 
   addRelease() {
     const dialogConfig = new DynamicDialogConfig();
-    dialogConfig.header = `Add a release to ${this.selectedEnvironment.name}:`;
-    dialogConfig.data = this.selectedEnvironment;
+    dialogConfig.header = `Add a release to ${this.environment.name}:`;
+    dialogConfig.data = this.environment;
 
     const dialogRef = this.dialogService.open(AddReleaseDialogComponent, dialogConfig);
     dialogRef.onClose.pipe(
@@ -102,14 +93,13 @@ export class EnvironmentReleasesComponent implements OnInit {
         const environmentRelease = new EnvironmentRelease();
         environmentRelease.id = new EnvironmentReleaseId();
 
-        environmentRelease.environment = this.environmentService.link(this.selectedEnvironment.id);
+        environmentRelease.environment = this.environmentService.link(this.environment.id);
         environmentRelease.release = this.releaseService.link(release.id);
 
         return this.environmentReleaseService.save(environmentRelease);
-      })
-    ).subscribe(() => {
-      this.getReleases(this.selectedEnvironment.id);
-    });
+      }),
+      mergeMap(() => this.loadReleasesForEnvironment())
+    ).subscribe();
   }
 
   removeRelease(event: Event, environmentRelease: EnvironmentRelease) {
@@ -118,22 +108,19 @@ export class EnvironmentReleasesComponent implements OnInit {
       message: `Are you sure you want to remove ${(environmentRelease.release as Release).name} from ${(environmentRelease.environment as Environment).name}?`,
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.releaseManageService.remove(environmentRelease)
-          .subscribe(() => this.getReleases(this.selectedEnvironment.id));
+        this.releaseManageService.remove(environmentRelease).pipe(
+          mergeMap(() => this.loadReleasesForEnvironment())
+        ).subscribe();
       }
     });
-  }
-
-  environmentChanged() {
-    this.getReleases(this.selectedEnvironment.id);
   }
 
   taskEventOccurred(event: TaskEvent) {
     if (event.releaseStatusChangedEvent) {
       const statusChangedEvent = event.releaseStatusChangedEvent;
-      if (this.selectedEnvironment.id === statusChangedEvent.environmentReleaseId.environmentId) {
+      if (this.environment.id === statusChangedEvent.environmentReleaseId.environmentId) {
         setTimeout(() => {
-          this.getReleases(this.selectedEnvironment.id);
+          this.loadReleasesForEnvironment().subscribe();
         }, 1000);
       }
     }

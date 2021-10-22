@@ -104,8 +104,8 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
     const dialogRef = this.dialogService.open(AddApplicationDialogComponent, dialogConfig);
     dialogRef.onClose.pipe(
       filter((result) => result !== undefined) // cancelled
-    ).subscribe((applicationVersion) => {
-      this.releaseService.associateApplication(this.releaseVersion.id, applicationVersion.id)
+    ).subscribe((upgradeAppOptions: UpgradeAppOptions) => {
+      this.releaseService.associateApplication(this.releaseVersion.id, upgradeAppOptions.applicationVersion.id)
         .subscribe(() => {
           this.getReleaseVersion();
           this.applicationVersionsChanged.next();
@@ -155,11 +155,11 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
 
   hasRoute(applicationVersion: ApplicationVersion): boolean {
     const config = this.existingConfigs.get(applicationVersion.id);
-    return !!(config && config.routeHostname);
+    return !!(config && config.spec.routeHostname);
   }
 
   getRoute(applicationVersion: ApplicationVersion): string {
     const config = this.existingConfigs.get(applicationVersion.id);
-    return `http://${config.routeHostname}`;
+    return `http://${config.spec.routeHostname}`;
   }
 }

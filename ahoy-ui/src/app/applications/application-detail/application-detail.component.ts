@@ -19,7 +19,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {AppBreadcrumbService} from '../../app.breadcrumb.service';
 import {ReleaseService} from '../../releases/release.service';
-import {Application, ApplicationVersion} from '../application';
+import {Application, ApplicationSpec, ApplicationVersion} from '../application';
 import {ApplicationService} from '../application.service';
 
 @Component({
@@ -47,7 +47,7 @@ export class ApplicationDetailComponent implements OnInit {
     if (id === 'new') {
       this.application = new Application();
       this.applicationVersion = new ApplicationVersion();
-      this.applicationVersion.servicePorts = [];
+      this.applicationVersion.spec = new ApplicationSpec();
       this.setBreadcrumb();
 
     } else {

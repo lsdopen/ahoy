@@ -16,15 +16,22 @@
 
 package za.co.lsd.ahoy.server.applications;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.rest.core.config.Projection;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-@Projection(name = "applicationVersionSimple", types = {ApplicationVersion.class})
-public interface ApplicationVersionSimpleProjection {
-	long getId();
+import javax.validation.constraints.NotNull;
 
-	String getVersion();
+@Data
+@NoArgsConstructor
+public class ApplicationConfigFile {
+	@NotNull
+	private String name;
+	@ToString.Exclude
+	private String content;
 
-	@Value("#{target.summarySpec()}")
-	ApplicationSpec getSpec();
+	public ApplicationConfigFile(@NotNull String name, String content) {
+		this.name = name;
+		this.content = content;
+	}
 }

@@ -17,35 +17,35 @@
 <div class="p-fluid">
   <div class="p-col-12 p-md-5">
     <div class="p-field p-float-label">
-      <input pInputText id="applicationConfigPath" [(ngModel)]="applicationVersion.configPath" name="applicationConfigPath"
-             [required]="configs.length > 0"
+      <input pInputText id="applicationConfigPath" [(ngModel)]="applicationVersion.spec.configPath" name="applicationConfigPath"
+             [required]="configFiles.length > 0"
              [disabled]="!editPath">
       <label for="applicationConfigPath">Path</label>
-      <small class="p-message p-message-warn p-p-1" *ngIf="!editPath && configs.length > 0 && ! applicationVersion.configPath">
+      <small class="p-message p-message-warn p-p-1" *ngIf="!editPath && configFiles.length > 0 && !applicationVersion.spec.configPath">
         Warn: Application configuration file path required for environment configuration files
       </small>
     </div>
   </div>
 
-  <app-multi-tab [content]="configContent" [items]="configs" [itemFactory]="applicationConfigFactory()">
+  <app-multi-tab [content]="configContent" [items]="configFiles" [itemFactory]="applicationConfigFileFactory()">
 
-    <ng-template #configContent let-config let-configIndex="index">
+    <ng-template #configContent let-configFile let-configFileIndex="index">
       <div class="p-fluid p-col-12 p-md-5">
         <div class="p-field p-float-label">
-          <input pInputText id="applicationConfigName{{configIndex}}" [(ngModel)]="config.name" name="applicationConfigName{{configIndex}}"
+          <input pInputText id="applicationConfigName{{configFileIndex}}" [(ngModel)]="configFile.name" name="applicationConfigName{{configFileIndex}}"
                  required
-                 [appTabItemNameUnique]="configs"
-                 [selectedIndex]="configIndex">
-          <label for="applicationConfigName{{configIndex}}">Name</label>
-          <small class="p-error" *ngIf="parentForm.form.controls['applicationConfigName' + configIndex]?.hasError('tabItemNameNotUnique')">
+                 [appTabItemNameUnique]="configFiles"
+                 [selectedIndex]="configFileIndex">
+          <label for="applicationConfigName{{configFileIndex}}">Name</label>
+          <small class="p-error" *ngIf="parentForm.form.controls['applicationConfigName' + configFileIndex]?.hasError('tabItemNameNotUnique')">
             Config already exists
           </small>
         </div>
 
         <div class="p-field p-float-label">
-          <textarea rows="20" cols="60" pInputTextarea id="applicationConfig{{configIndex}}" [(ngModel)]="config.config" name="applicationConfig{{configIndex}}"
+          <textarea rows="20" cols="60" pInputTextarea id="applicationConfig{{configFileIndex}}" [(ngModel)]="configFile.content" name="applicationConfig{{configFileIndex}}"
                     required></textarea>
-          <label for="applicationConfig{{configIndex}}">Config</label>
+          <label for="applicationConfig{{configFileIndex}}">Config</label>
         </div>
       </div>
     </ng-template>

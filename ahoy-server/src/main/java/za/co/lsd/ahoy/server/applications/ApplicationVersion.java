@@ -17,12 +17,10 @@
 package za.co.lsd.ahoy.server.applications;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import za.co.lsd.ahoy.server.docker.DockerRegistry;
+import lombok.ToString;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
-import za.co.lsd.ahoy.server.util.IntegerListConverter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -37,82 +35,49 @@ public class ApplicationVersion implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@OneToOne
-	private DockerRegistry dockerRegistry;
-	@NotNull
-	private String image;
 	@NotNull
 	private String version;
-
 	@NotNull
-	@Convert(converter = IntegerListConverter.class)
-	private List<Integer> servicePorts;
-
-	private String healthEndpointPath;
-	private Integer healthEndpointPort;
-	private String healthEndpointScheme;
+	@Convert(converter = ApplicationSpecConverter.class)
+	@Lob
+	private ApplicationSpec spec;
 
 	@ManyToOne
+	@ToString.Exclude
 	private Application application;
-
-	private String configPath;
-
-	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonManagedReference("applicationVersionReference")
-	@OrderBy("id")
-	private List<ApplicationEnvironmentVariable> environmentVariables;
-
-	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonManagedReference("applicationVersionReference")
-	@OrderBy("id")
-	private List<ApplicationConfig> configs;
-
-	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonManagedReference("applicationVersionReference")
-	@OrderBy("id")
-	private List<ApplicationVolume> volumes;
-
-	@OneToMany(mappedBy = "applicationVersion", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonManagedReference("applicationVersionReference")
-	@OrderBy("id")
-	private List<ApplicationSecret> secrets;
 
 	@ManyToMany(mappedBy = "applicationVersions")
 	@JsonIgnore
 	@OrderBy("id")
+	@ToString.Exclude
 	private List<ReleaseVersion> releaseVersions;
 
-	public ApplicationVersion(@NotNull String version, @NotNull String image, Application application) {
+	public ApplicationVersion(@NotNull String version, Application application) {
 		this.version = version;
-		this.image = image;
 		this.application = application;
+		this.spec = new ApplicationSpec();
 	}
 
-	public ApplicationVersion(@NotNull Long id, @NotNull String version, @NotNull String image, Application application) {
+	public ApplicationVersion(@NotNull Long id, @NotNull String version, Application application) {
 		this.id = id;
 		this.version = version;
-		this.image = image;
 		this.application = application;
+		this.spec = new ApplicationSpec();
 	}
 
 	public boolean hasConfigs() {
-		return configs != null && configs.size() > 0;
+		return spec != null && spec.getConfigFiles() != null && spec.getConfigFiles().size() > 0;
 	}
 
 	public boolean hasVolumes() {
-		return volumes != null && volumes.size() > 0;
+		return spec != null && spec.getVolumes() != null && spec.getVolumes().size() > 0;
 	}
 
 	public boolean hasSecrets() {
-		return secrets != null && secrets.size() > 0;
+		return spec != null && spec.getSecrets() != null && spec.getSecrets().size() > 0;
 	}
 
-	@Override
-	public String toString() {
-		return "ApplicationVersion{" + "id=" + id +
-			", image='" + image + '\'' +
-			", version='" + version + '\'' +
-			", configPath='" + configPath + '\'' +
-			'}';
+	public ApplicationSpec summarySpec() {
+		return new ApplicationSpec(spec.getImage());
 	}
 }

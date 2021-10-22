@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import za.co.lsd.ahoy.server.applications.*;
 import za.co.lsd.ahoy.server.cluster.Cluster;
 import za.co.lsd.ahoy.server.docker.DockerRegistry;
+import za.co.lsd.ahoy.server.docker.DockerRegistryProvider;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.helm.HelmUtils;
@@ -33,15 +34,21 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 @Slf4j
 public class ValuesBuilder {
+	private final DockerRegistryProvider dockerRegistryProvider;
 	private final ApplicationEnvironmentConfigProvider environmentConfigProvider;
 	private final DockerConfigSealedSecretProducer dockerConfigSealedSecretProducer;
 	private final SecretDataSealedSecretProducer secretDataSealedSecretProducer;
 
-	public ValuesBuilder(ApplicationEnvironmentConfigProvider environmentConfigProvider, DockerConfigSealedSecretProducer dockerConfigSealedSecretProducer, SecretDataSealedSecretProducer secretDataSealedSecretProducer) {
+	public ValuesBuilder(DockerRegistryProvider dockerRegistryProvider,
+						 ApplicationEnvironmentConfigProvider environmentConfigProvider,
+						 DockerConfigSealedSecretProducer dockerConfigSealedSecretProducer,
+						 SecretDataSealedSecretProducer secretDataSealedSecretProducer) {
+		this.dockerRegistryProvider = dockerRegistryProvider;
 		this.environmentConfigProvider = environmentConfigProvider;
 		this.dockerConfigSealedSecretProducer = dockerConfigSealedSecretProducer;
 		this.secretDataSealedSecretProducer = secretDataSealedSecretProducer;
@@ -73,82 +80,86 @@ public class ValuesBuilder {
 	}
 
 	public ApplicationValues buildApplication(ApplicationVersion applicationVersion, ApplicationEnvironmentConfig environmentConfig) throws IOException {
+		ApplicationSpec spec = applicationVersion.getSpec();
 		ApplicationValues.ApplicationValuesBuilder builder = ApplicationValues.builder()
 			.name(applicationVersion.getApplication().getName())
-			.image(applicationVersion.getImage())
 			.version(applicationVersion.getVersion())
-			.servicePorts(applicationVersion.getServicePorts())
-			.healthEndpointPath(applicationVersion.getHealthEndpointPath())
-			.healthEndpointPort(applicationVersion.getHealthEndpointPort())
-			.healthEndpointScheme(applicationVersion.getHealthEndpointScheme())
-			.configPath(applicationVersion.getConfigPath());
+			.image(spec.getImage())
+			.command(spec.getCommand())
+			.args(spec.getArgs())
+			.servicePorts(spec.getServicePorts())
+			.healthEndpointPath(spec.getHealthEndpointPath())
+			.healthEndpointPort(spec.getHealthEndpointPort())
+			.healthEndpointScheme(spec.getHealthEndpointScheme())
+			.configPath(spec.getConfigPath());
 
-		DockerRegistry dockerRegistry = applicationVersion.getDockerRegistry();
-		if (dockerRegistry != null && dockerRegistry.getSecure()) {
-			builder.dockerConfigJson(dockerConfigSealedSecretProducer.produce(dockerRegistry));
+		Optional<DockerRegistry> dockerRegistry = dockerRegistryProvider.dockerRegistryFor(spec.getDockerRegistryName());
+		if (dockerRegistry.isPresent() && dockerRegistry.get().getSecure()) {
+			builder.dockerConfigJson(dockerConfigSealedSecretProducer.produce(dockerRegistry.get()));
 		}
 
 		Map<String, EnvironmentVariableValues> environmentVariables = new LinkedHashMap<>();
-		if (applicationVersion.getEnvironmentVariables() != null) {
-			for (ApplicationEnvironmentVariable environmentVariable : applicationVersion.getEnvironmentVariables()) {
+		if (spec.getEnvironmentVariables() != null) {
+			for (ApplicationEnvironmentVariable environmentVariable : spec.getEnvironmentVariables()) {
 				environmentVariables.put(environmentVariable.getKey(), new EnvironmentVariableValues(environmentVariable));
 			}
 		}
 
-		Map<String, ApplicationConfigValues> configs = new LinkedHashMap<>();
-		if (applicationVersion.getConfigs() != null) {
-			for (ApplicationConfig applicationConfig : applicationVersion.getConfigs()) {
-				configs.put(configName(applicationConfig), new ApplicationConfigValues(applicationConfig));
+		Map<String, ApplicationConfigFileValues> configFiles = new LinkedHashMap<>();
+		if (spec.getConfigFiles() != null) {
+			for (ApplicationConfigFile applicationConfigFile : spec.getConfigFiles()) {
+				configFiles.put(configName(applicationConfigFile), new ApplicationConfigFileValues(applicationConfigFile));
 			}
 		}
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
-		if (applicationVersion.getVolumes() != null) {
-			for (ApplicationVolume applicationVolume : applicationVersion.getVolumes()) {
+		if (spec.getVolumes() != null) {
+			for (ApplicationVolume applicationVolume : spec.getVolumes()) {
 				volumes.put(applicationVolume.getName(), new ApplicationVolumeValues(applicationVolume));
 			}
 		}
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
-		if (applicationVersion.getSecrets() != null) {
-			for (ApplicationSecret applicationSecret : applicationVersion.getSecrets()) {
+		if (spec.getSecrets() != null) {
+			for (ApplicationSecret applicationSecret : spec.getSecrets()) {
 				Map<String, String> encryptedData = secretDataSealedSecretProducer.produce(applicationSecret);
 				secrets.put(applicationSecret.getName(), new ApplicationSecretValues(applicationSecret.getName(), secretType(applicationSecret), encryptedData));
 			}
 		}
 
 		if (environmentConfig != null) {
-			if (environmentConfig.getEnvironmentVariables() != null) {
-				for (ApplicationEnvironmentVariable environmentVariable : environmentConfig.getEnvironmentVariables()) {
+			ApplicationEnvironmentSpec environmentSpec = environmentConfig.getSpec();
+			if (environmentSpec.getEnvironmentVariables() != null) {
+				for (ApplicationEnvironmentVariable environmentVariable : environmentSpec.getEnvironmentVariables()) {
 					environmentVariables.put(environmentVariable.getKey(), new EnvironmentVariableValues(environmentVariable));
 				}
 			}
 
-			if (environmentConfig.getConfigs() != null) {
-				for (ApplicationConfig applicationConfig : environmentConfig.getConfigs()) {
-					configs.put(configName(applicationConfig), new ApplicationConfigValues(applicationConfig));
+			if (environmentSpec.getConfigFiles() != null) {
+				for (ApplicationConfigFile applicationConfigFile : environmentSpec.getConfigFiles()) {
+					configFiles.put(configName(applicationConfigFile), new ApplicationConfigFileValues(applicationConfigFile));
 				}
 			}
 
-			if (environmentConfig.getVolumes() != null) {
-				for (ApplicationVolume applicationVolume : environmentConfig.getVolumes()) {
+			if (environmentSpec.getVolumes() != null) {
+				for (ApplicationVolume applicationVolume : environmentSpec.getVolumes()) {
 					volumes.put(applicationVolume.getName(), new ApplicationVolumeValues(applicationVolume));
 				}
 			}
 
-			if (environmentConfig.getSecrets() != null) {
-				for (ApplicationSecret applicationSecret : environmentConfig.getSecrets()) {
+			if (environmentSpec.getSecrets() != null) {
+				for (ApplicationSecret applicationSecret : environmentSpec.getSecrets()) {
 					Map<String, String> encryptedData = secretDataSealedSecretProducer.produce(applicationSecret);
 					secrets.put(applicationSecret.getName(), new ApplicationSecretValues(applicationSecret.getName(), secretType(applicationSecret), encryptedData));
 				}
 			}
 
 			builder
-				.replicas(environmentConfig.getReplicas() != null ? environmentConfig.getReplicas() : 1)
-				.routeHostname(environmentConfig.getRouteHostname())
-				.routeTargetPort(environmentConfig.getRouteTargetPort())
-				.tls(environmentConfig.isTls())
-				.tlsSecretName(environmentConfig.getTlsSecretName());
+				.replicas(environmentSpec.getReplicas() != null ? environmentSpec.getReplicas() : 1)
+				.routeHostname(environmentSpec.getRouteHostname())
+				.routeTargetPort(environmentSpec.getRouteTargetPort())
+				.tls(environmentSpec.isTls())
+				.tlsSecretName(environmentSpec.getTlsSecretName());
 
 		} else {
 			builder.replicas(1);
@@ -156,16 +167,16 @@ public class ValuesBuilder {
 
 		builder
 			.environmentVariables(environmentVariables)
-			.configs(configs)
+			.configFiles(configFiles)
 			.volumes(volumes)
 			.secrets(secrets);
 
 		return builder.build();
 	}
 
-	private String configName(ApplicationConfig config) {
-		return "application-config-" + Hashing.crc32()
-			.hashString(config.getName(), StandardCharsets.UTF_8)
+	private String configName(ApplicationConfigFile configFile) {
+		return "application-config-file-" + Hashing.crc32()
+			.hashString(configFile.getName(), StandardCharsets.UTF_8)
 			.toString();
 	}
 

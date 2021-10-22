@@ -16,15 +16,36 @@
 
 package za.co.lsd.ahoy.server.applications;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.rest.core.config.Projection;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Projection(name = "applicationVersionSimple", types = {ApplicationVersion.class})
-public interface ApplicationVersionSimpleProjection {
-	long getId();
+import java.util.List;
 
-	String getVersion();
+@Data
+@NoArgsConstructor
+public class ApplicationSpec {
+	private String image;
+	private String dockerRegistryName;
 
-	@Value("#{target.summarySpec()}")
-	ApplicationSpec getSpec();
+	private String command;
+	private List<String> args;
+
+	private List<Integer> servicePorts;
+
+	private String healthEndpointPath;
+	private Integer healthEndpointPort;
+	private String healthEndpointScheme;
+
+	private List<ApplicationEnvironmentVariable> environmentVariables;
+
+	private String configPath;
+	private List<ApplicationConfigFile> configFiles;
+
+	private List<ApplicationVolume> volumes;
+
+	private List<ApplicationSecret> secrets;
+
+	public ApplicationSpec(String image) {
+		this.image = image;
+	}
 }

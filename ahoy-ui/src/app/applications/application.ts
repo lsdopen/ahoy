@@ -16,7 +16,6 @@
 
 import {EnvironmentReleaseId} from '../environment-release/environment-release';
 import {ReleaseVersion} from '../releases/release';
-import {DockerRegistry} from '../settings/docker-settings/docker-settings';
 
 export class Application {
   id: number;
@@ -27,25 +26,30 @@ export class Application {
 
 export class ApplicationVersion {
   id: number;
-  dockerRegistry: DockerRegistry;
-  image: string;
   version: string;
-  environmentVariables: ApplicationEnvironmentVariable[];
-  healthEndpointPath: string;
-  healthEndpointPort: number;
-  healthEndpointScheme: string;
-  servicePorts: number[];
+  spec: ApplicationSpec;
   application: Application | string;
-  configs: ApplicationConfig[];
-  volumes: ApplicationVolume[];
-  secrets: ApplicationSecret[];
-  configPath: string;
   status: ApplicationReleaseStatus;
   releaseVersions: ReleaseVersion[];
 }
 
+export class ApplicationSpec {
+  image: string;
+  dockerRegistryName: string;
+  command: string;
+  args: string[] = [];
+  servicePorts: number[] = [];
+  healthEndpointPath: string;
+  healthEndpointPort: number;
+  healthEndpointScheme = 'HTTP';
+  environmentVariables: ApplicationEnvironmentVariable[] = [];
+  configPath: string;
+  configFiles: ApplicationConfigFile[] = [];
+  volumes: ApplicationVolume[] = [];
+  secrets: ApplicationSecret[] = [];
+}
+
 export class ApplicationEnvironmentVariable {
-  id: number;
   key: string;
   value: string;
   type: string;
@@ -70,14 +74,12 @@ export class ApplicationEnvironmentVariable {
   }
 }
 
-export class ApplicationConfig {
-  id: number;
+export class ApplicationConfigFile {
   name: string;
-  config: string;
+  content: string;
 }
 
 export class ApplicationVolume {
-  id: number;
   name: string;
   mountPath: string;
   type: string;
@@ -89,7 +91,6 @@ export class ApplicationVolume {
 }
 
 export class ApplicationSecret {
-  id: number;
   name: string;
   type: string;
   data: { [key: string]: string };
@@ -97,15 +98,19 @@ export class ApplicationSecret {
 
 export class ApplicationEnvironmentConfig {
   id: ApplicationEnvironmentConfigId;
-  replicas: number;
+  spec: ApplicationEnvironmentSpec;
+}
+
+export class ApplicationEnvironmentSpec {
+  replicas = 1;
   routeHostname: string;
   routeTargetPort: number;
   tls: boolean;
   tlsSecretName: string;
-  environmentVariables: ApplicationEnvironmentVariable[];
-  configs: ApplicationConfig[];
-  volumes: ApplicationVolume[];
-  secrets: ApplicationSecret[];
+  environmentVariables: ApplicationEnvironmentVariable[] = [];
+  configFiles: ApplicationConfigFile[] = [];
+  volumes: ApplicationVolume[] = [];
+  secrets: ApplicationSecret[] = [];
 }
 
 export class ApplicationEnvironmentConfigId {

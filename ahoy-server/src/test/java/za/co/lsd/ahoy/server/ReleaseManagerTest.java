@@ -74,7 +74,7 @@ public class ReleaseManagerTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion));
 
 		LocalRepo.WorkingTree workingTree = mock(LocalRepo.WorkingTree.class);
@@ -132,7 +132,7 @@ public class ReleaseManagerTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion));
 
 		LocalRepo.WorkingTree workingTree = mock(LocalRepo.WorkingTree.class);

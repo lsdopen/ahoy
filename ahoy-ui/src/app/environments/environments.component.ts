@@ -16,15 +16,18 @@
 
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {filter} from 'rxjs/operators';
+import {filter, mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Cluster} from '../clusters/cluster';
 import {ClusterService} from '../clusters/cluster.service';
 import {Confirmation} from '../components/confirm-dialog/confirm';
 import {DialogUtilService} from '../components/dialog-util.service';
 import {LoggerService} from '../util/logger.service';
-import {Environment} from './environment';
+import {OrderUtil} from '../util/order-util';
+import {Environment, MoveOptions} from './environment';
 import {EnvironmentService} from './environment.service';
+import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
+import {MoveDialogComponent} from './move-dialog/move-dialog.component';
 
 @Component({
   selector: 'app-environments',
@@ -35,14 +38,14 @@ export class EnvironmentsComponent implements OnInit {
   environments: Environment[] = undefined;
   clusters: Cluster[] = undefined;
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private environmentService: EnvironmentService,
-    private clusterService: ClusterService,
-    private log: LoggerService,
-    private dialogUtilService: DialogUtilService,
-    private breadcrumbService: AppBreadcrumbService) {
+  constructor(private route: ActivatedRoute,
+              private router: Router,
+              private environmentService: EnvironmentService,
+              private clusterService: ClusterService,
+              private log: LoggerService,
+              private dialogUtilService: DialogUtilService,
+              private dialogService: DialogService,
+              private breadcrumbService: AppBreadcrumbService) {
   }
 
   ngOnInit() {
@@ -79,5 +82,27 @@ export class EnvironmentsComponent implements OnInit {
       this.environmentService.destroy(environment)
         .subscribe(() => this.getEnvironments());
     });
+  }
+
+  move(event: Event, environment: Environment) {
+    const dialogConfig = new DynamicDialogConfig();
+    dialogConfig.header = `Move ${(environment.name)} from cluster ${(environment.cluster as Cluster).name} to cluster:`;
+    dialogConfig.data = {selectedEnvironment: environment, clusters: this.clusters};
+
+    const dialogRef = this.dialogService.open(MoveDialogComponent, dialogConfig);
+    dialogRef.onClose.pipe(
+      filter((result) => result !== undefined), // cancelled
+      mergeMap((moveOptions: MoveOptions) => {
+        this.log.debug('moving environment to destination cluster', moveOptions);
+        return this.environmentService.move(environment, moveOptions);
+      })
+    ).subscribe(() => this.getEnvironments());
+  }
+
+  rowReorder(event: any) {
+    const dropIndex = event.dropIndex;
+    const environment = this.environments[dropIndex];
+    environment.orderIndex = OrderUtil.newIndex(dropIndex, this.environments);
+    this.environmentService.updateOrderIndex(environment).subscribe();
   }
 }

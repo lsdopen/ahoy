@@ -56,7 +56,7 @@
           <app-docker-registries *ngIf="!editMode" [applicationVersion]="applicationVersion"></app-docker-registries>
 
           <div class="p-field p-float-label" *ngIf="!editMode">
-            <input pInputText id="applicationImage" [(ngModel)]="applicationVersion.image" name="applicationImage"
+            <input pInputText id="applicationImage" [(ngModel)]="applicationVersion.spec.image" name="applicationImage"
                    required>
             <label for="applicationImage">Image</label>
           </div>

@@ -16,6 +16,7 @@
 
 package za.co.lsd.ahoy.server.applications;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
 import za.co.lsd.ahoy.server.releases.ReleaseVersionSummaryProjection;
 
@@ -27,7 +28,8 @@ public interface ApplicationVersionSummaryProjection {
 
 	String getVersion();
 
-	String getImage();
+	@Value("#{target.summarySpec()}")
+	ApplicationSpec getSpec();
 
 	List<ReleaseVersionSummaryProjection> getReleaseVersions();
 }

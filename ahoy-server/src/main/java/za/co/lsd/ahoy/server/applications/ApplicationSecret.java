@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,42 +16,23 @@
 
 package za.co.lsd.ahoy.server.applications;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
-@Entity
 @Data
 @NoArgsConstructor
 public class ApplicationSecret {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 	@NotNull
 	private String name;
 	@NotNull
-	@Enumerated(EnumType.STRING)
 	private SecretType type;
 
-	@ElementCollection
-	@Column(columnDefinition = "TEXT")
 	@ToString.Exclude
 	private Map<String, String> data;
-
-	@ManyToOne
-	@JsonBackReference("applicationVersionReference")
-	@ToString.Exclude
-	private ApplicationVersion applicationVersion;
-
-	@ManyToOne
-	@JsonBackReference("applicationEnvironmentConfigReference")
-	@ToString.Exclude
-	private ApplicationEnvironmentConfig applicationEnvironmentConfig;
 
 	public ApplicationSecret(String name, SecretType type, Map<String, String> data) {
 		this.name = name;

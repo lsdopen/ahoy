@@ -14,17 +14,16 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.applications;
+package za.co.lsd.ahoy.server.environments;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.rest.core.config.Projection;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Projection(name = "applicationVersionSimple", types = {ApplicationVersion.class})
-public interface ApplicationVersionSimpleProjection {
-	long getId();
-
-	String getVersion();
-
-	@Value("#{target.summarySpec()}")
-	ApplicationSpec getSpec();
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class MoveOptions {
+	private Long destClusterId;
+	private boolean redeployReleases;
 }

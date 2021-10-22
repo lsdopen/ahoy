@@ -15,39 +15,30 @@
  */
 
 import {Injectable} from '@angular/core';
-import {EMPTY, Observable, of} from 'rxjs';
-import {catchError, map, mergeMap, tap} from 'rxjs/operators';
+import {EMPTY, Observable} from 'rxjs';
+import {catchError, map, tap} from 'rxjs/operators';
+import {Cluster} from '../clusters/cluster';
 import {Notification} from '../notifications/notification';
 import {NotificationsService} from '../notifications/notifications.service';
 import {LoggerService} from '../util/logger.service';
 import {RestClientService} from '../util/rest-client.service';
-import {Environment} from './environment';
+import {Environment, MoveOptions} from './environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EnvironmentService {
-  private lastEnvironmentId: number;
 
   constructor(
     private log: LoggerService,
     private notificationsService: NotificationsService,
     private restClient: RestClientService) {
-    this.lastEnvironmentId = 0;
   }
 
   getAll(): Observable<Environment[]> {
-    return this.restClient.get<any>('/data/environments?projection=environment&sort=id').pipe(
+    return this.restClient.get<any>('/data/environments?projection=environment&sort=orderIndex&sort=id').pipe(
       map(response => response._embedded.environments as Environment[]),
       tap((envs) => this.log.debug(`fetched ${envs.length} environments`))
-    );
-  }
-
-  getAllEnvironmentsByCluster(clusterId: number): Observable<Environment[]> {
-    const url = `/data/clusters/${clusterId}/environments`;
-    return this.restClient.get<any>(url).pipe(
-      map(response => response._embedded.environments as Environment[]),
-      tap((envs) => this.log.debug(`fetched ${envs.length} environments for cluster=${clusterId}`))
     );
   }
 
@@ -63,29 +54,25 @@ export class EnvironmentService {
     const url = `/data/environments/${id}?projection=environment`;
     return this.restClient.get<Environment>(url).pipe(
       tap((env) => {
-        this.lastEnvironmentId = env.id;
         this.log.debug('fetched environment', env);
       })
     );
   }
 
-  create(environment: Environment): Observable<Environment> {
-    this.log.debug('creating environment: ', environment);
+  save(environment: Environment): Observable<Environment> {
+    if (!environment.id) {
+      this.log.debug('saving environment: ', environment);
+      return this.restClient.post<Environment>('/data/environments', environment).pipe(
+        tap((env) => this.log.debug('saved new environment', env))
+      );
 
-    const url = `/data/environments/create`;
-
-    return this.restClient.post<Environment>(url, environment, true).pipe(
-      tap((createdEnvironment) => {
-        this.log.debug('created environment', createdEnvironment);
-        const text = `${createdEnvironment.name} ` + `was created in cluster ${createdEnvironment.cluster.name}`;
-        this.notificationsService.notification(new Notification(text));
-      }),
-      catchError((error) => {
-        const text = `Failed to create environment ${environment.name}`;
-        this.notificationsService.notification(new Notification(text, error));
-        return EMPTY;
-      })
-    );
+    } else {
+      this.log.debug('updating environment: ', environment);
+      const url = `/data/environments/${environment.id}`;
+      return this.restClient.put(url, environment).pipe(
+        tap((env) => this.log.debug('updated environment', env))
+      );
+    }
   }
 
   destroy(environment: Environment): Observable<Environment> {
@@ -97,11 +84,30 @@ export class EnvironmentService {
     return this.restClient.delete<Environment>(url, true).pipe(
       tap((destroyedEnvironment) => {
         this.log.debug('destroyed environment', environment);
-        const text = `${destroyedEnvironment.name} ` + `was destroyed from cluster ${destroyedEnvironment.cluster.name}`;
+        const text = `${destroyedEnvironment.name} ` + `was destroyed from cluster ${(destroyedEnvironment.cluster as Cluster).name}`;
         this.notificationsService.notification(new Notification(text));
       }),
       catchError((error) => {
         const text = `Failed to destroy environment ${environment.name}`;
+        this.notificationsService.notification(new Notification(text, error));
+        return EMPTY;
+      })
+    );
+  }
+
+  move(environment: Environment, moveOptions: MoveOptions): Observable<Environment> {
+    this.log.debug(`moving environment: ${environment.name} to cluster: ${moveOptions.destClusterId}`);
+
+    const url = `/data/environments/${environment.id}/move`;
+
+    return this.restClient.post<Environment>(url, moveOptions, true).pipe(
+      tap((movedEnvironment) => {
+        this.log.debug('moved environment', movedEnvironment);
+        const text = `${movedEnvironment.name} ` + `was moved to cluster ${(movedEnvironment.cluster as Cluster).name}`;
+        this.notificationsService.notification(new Notification(text));
+      }),
+      catchError((error) => {
+        const text = `Failed to move environment ${environment.name} to cluster`;
         this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })
@@ -116,7 +122,7 @@ export class EnvironmentService {
     return this.restClient.post<Environment>(url, null, true).pipe(
       tap((duplicatedEnvironment) => {
         this.log.debug('duplicated environment', duplicatedEnvironment);
-        const text = `${duplicatedEnvironment.name} ` + `was duplicated in cluster ${duplicatedEnvironment.cluster.name}`;
+        const text = `${duplicatedEnvironment.name} ` + `was duplicated in cluster ${(duplicatedEnvironment.cluster as Cluster).name}`;
         this.notificationsService.notification(new Notification(text));
       }),
       catchError((error) => {
@@ -127,18 +133,21 @@ export class EnvironmentService {
     );
   }
 
-  getLastUsedId(): Observable<number> {
-    if (this.lastEnvironmentId === 0) {
-      this.log.debug('no last used environment found, finding first environment');
-      return this.getAll().pipe(
-        mergeMap(environments => {
-          this.lastEnvironmentId = environments.length > 0 ? environments[0].id : 0;
-          return of(this.lastEnvironmentId);
-        })
-      );
-    } else {
-      return of(this.lastEnvironmentId);
-    }
+  updateOrderIndex(environment: Environment): Observable<Environment> {
+    this.log.debug('updating environment orderIndex: ', environment);
+
+    const url = `/data/environments/${environment.id}/updateOrderIndex?orderIndex=${environment.orderIndex}`;
+
+    return this.restClient.put<Environment>(url, null).pipe(
+      tap(() => {
+        this.log.debug('updated environment orderIndex', environment);
+      }),
+      catchError((error) => {
+        const text = `Failed to update environment ${environment.name} order`;
+        this.notificationsService.notification(new Notification(text, error));
+        return EMPTY;
+      })
+    );
   }
 
   link(id: number): string {

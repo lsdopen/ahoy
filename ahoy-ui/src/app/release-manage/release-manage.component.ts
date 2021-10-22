@@ -22,6 +22,7 @@ import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
 import {Observable, of, Subscription} from 'rxjs';
 import {filter, mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
+import {Cluster} from '../clusters/cluster';
 import {Confirmation} from '../components/confirm-dialog/confirm';
 import {DialogUtilService} from '../components/dialog-util.service';
 import {DeployOptions, EnvironmentRelease} from '../environment-release/environment-release';
@@ -106,10 +107,6 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   private setupMenuItems() {
     this.menuItems = [
       {
-        label: 'Edit', icon: 'pi pi-fw pi-pencil', disabled: !this.canEdit(),
-        routerLink: `/environmentrelease/edit/${this.environmentRelease.id.environmentId}/${this.environmentRelease.id.releaseId}/version/${this.releaseVersion.id}`
-      },
-      {
         label: 'History', icon: 'pi pi-fw pi-list',
         routerLink: `/releasehistory/${this.environmentRelease.id.releaseId}`
       },
@@ -161,7 +158,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     const commitMessage = `Deployed ` +
       `${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} to ` +
       `${(this.environmentRelease.environment as Environment).name} in ` +
-      `${(this.environmentRelease.environment as Environment).cluster.name}`;
+      `${((this.environmentRelease.environment as Environment).cluster as Cluster).name}`;
 
     const confirmation = new Confirmation('Please enter a commit message:');
     confirmation.title = 'Deploy';
@@ -223,10 +220,6 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
         return this.releaseManageService.upgrade(this.releaseVersion.id, upgradeOptions);
       })
     ).subscribe((newReleaseVersion: ReleaseVersion) => this.reload(this.environmentRelease.id.environmentId, newReleaseVersion.id));
-  }
-
-  canEdit() {
-    return !this.isCurrent();
   }
 
   canCopyEnvConfig() {
@@ -298,7 +291,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
       `${(this.environmentRelease.release as Release).name}:${this.environmentRelease.currentReleaseVersion.version} to ` +
       `${(this.environmentRelease.release as Release).name}:${this.environmentRelease.previousReleaseVersion.version} in ` +
       `${(this.environmentRelease.environment as Environment).name} in ` +
-      `${(this.environmentRelease.environment as Environment).cluster.name}`;
+      `${((this.environmentRelease.environment as Environment).cluster as Cluster).name}`;
 
     const confirmation = new Confirmation('Please enter a commit message:');
     confirmation.title = 'Rollback';

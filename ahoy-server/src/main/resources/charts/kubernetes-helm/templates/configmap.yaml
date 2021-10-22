@@ -9,8 +9,8 @@ metadata:
     environment: {{ .glob.environment }}
   name: {{ .glob.releaseName }}-{{ .app.name }}
 data:
-  {{- range .app.configs }}
+  {{- range .app.configFiles }}
   {{ .name }}: |-
-    {{ .config }}
+    {{ .content }}
   {{- end }}
 {{- end -}}

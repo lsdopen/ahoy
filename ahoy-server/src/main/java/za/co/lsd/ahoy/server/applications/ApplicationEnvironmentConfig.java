@@ -16,13 +16,14 @@
 
 package za.co.lsd.ahoy.server.applications;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.Convert;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Lob;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Data
@@ -30,63 +31,33 @@ import java.util.List;
 public class ApplicationEnvironmentConfig {
 	@EmbeddedId
 	private ApplicationDeploymentId id;
-
-	private Integer replicas;
-
-	private String routeHostname;
-	private Integer routeTargetPort;
-	private boolean tls;
-	private String tlsSecretName;
-
-	@OneToMany(mappedBy = "applicationEnvironmentConfig", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonManagedReference("applicationEnvironmentConfigReference")
-	@OrderBy("id")
-	private List<ApplicationEnvironmentVariable> environmentVariables;
-
-	@OneToMany(mappedBy = "applicationEnvironmentConfig", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonManagedReference("applicationEnvironmentConfigReference")
-	@OrderBy("id")
-	private List<ApplicationConfig> configs;
-
-	@OneToMany(mappedBy = "applicationEnvironmentConfig", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonManagedReference("applicationEnvironmentConfigReference")
-	@OrderBy("id")
-	private List<ApplicationVolume> volumes;
-
-	@OneToMany(mappedBy = "applicationEnvironmentConfig", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonManagedReference("applicationEnvironmentConfigReference")
-	@OrderBy("id")
-	private List<ApplicationSecret> secrets;
+	@NotNull
+	@Convert(converter = ApplicationEnvironmentSpecConverter.class)
+	@Lob
+	private ApplicationEnvironmentSpec spec;
 
 	public ApplicationEnvironmentConfig(ApplicationDeploymentId id, ApplicationEnvironmentConfig applicationEnvironmentConfig) {
 		this.id = id;
-		this.replicas = applicationEnvironmentConfig.getReplicas();
-		this.routeHostname = applicationEnvironmentConfig.getRouteHostname();
-		this.routeTargetPort = applicationEnvironmentConfig.getRouteTargetPort();
-		this.environmentVariables = applicationEnvironmentConfig.getEnvironmentVariables() != null ?
-			new ArrayList<>(applicationEnvironmentConfig.getEnvironmentVariables()) : null;
-		this.configs = applicationEnvironmentConfig.getConfigs() != null ?
-			new ArrayList<>(applicationEnvironmentConfig.getConfigs()) : null;
-		this.volumes = applicationEnvironmentConfig.getVolumes() != null ?
-			new ArrayList<>(applicationEnvironmentConfig.getVolumes()) : null;
-		this.secrets = applicationEnvironmentConfig.getSecrets() != null ?
-			new ArrayList<>(applicationEnvironmentConfig.getSecrets()) : null;
+		this.spec = applicationEnvironmentConfig.spec;
 	}
 
-	public ApplicationEnvironmentConfig(String routeHostname, Integer routeTargetPort) {
-		this.routeHostname = routeHostname;
-		this.routeTargetPort = routeTargetPort;
+	public ApplicationEnvironmentConfig(ApplicationEnvironmentSpec spec) {
+		this.spec = spec;
 	}
 
 	public boolean hasConfigs() {
-		return configs != null && configs.size() > 0;
+		return spec != null && spec.getConfigFiles() != null && spec.getConfigFiles().size() > 0;
 	}
 
 	public boolean hasVolumes() {
-		return volumes != null && volumes.size() > 0;
+		return spec != null && spec.getVolumes() != null && spec.getVolumes().size() > 0;
 	}
 
 	public boolean hasSecrets() {
-		return secrets != null && secrets.size() > 0;
+		return spec != null && spec.getSecrets() != null && spec.getSecrets().size() > 0;
+	}
+
+	public ApplicationEnvironmentSpec leanSpec() {
+		return new ApplicationEnvironmentSpec(spec.getRouteHostname());
 	}
 }

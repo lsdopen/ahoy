@@ -58,7 +58,6 @@ import {AppBreadcrumbService} from './app.breadcrumb.service';
 import {AppComponent} from './app.component';
 import {AppConfigComponent} from './app.config.component';
 import {AppFooterComponent} from './app.footer.component';
-import {AppInlineMenuComponent} from './app.inlinemenu.component';
 import {AppMainComponent} from './app.main.component';
 import {AppMenuComponent} from './app.menu.component';
 import {MenuService} from './app.menu.service';
@@ -87,7 +86,6 @@ import {DashboardEnvironmentComponent} from './dashboard/dashboard-environment/d
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {AddReleaseDialogComponent} from './environment-release/add-release-dialog/add-release-dialog.component';
 import {EnvironmentReleaseDeploymentStatusComponent} from './environment-release/environment-release-deployment-status/environment-release-deployment-status.component';
-import {EnvironmentReleaseDetailComponent} from './environment-release/environment-release-detail/environment-release-detail.component';
 import {EnvironmentReleaseStatusComponent} from './environment-release/environment-release-status/environment-release-status.component';
 import {EnvironmentReleaseVersionsComponent} from './environment-release/environment-release-versions/environment-release-versions.component';
 import {EnvironmentReleasesComponent} from './environment-release/environment-releases.component';
@@ -119,6 +117,7 @@ import {GitSettingsComponent} from './settings/git-settings/git-settings.compone
 import {SettingsComponent} from './settings/settings.component';
 import {TaskEventsListenerComponent} from './taskevents/task-events-listener/task-events-listener.component';
 import {ErrorService} from './util/error.service';
+import {MoveDialogComponent} from './environments/move-dialog/move-dialog.component';
 
 @NgModule({
   declarations: [
@@ -127,7 +126,6 @@ import {ErrorService} from './util/error.service';
     AppTopBarComponent,
     AppMenuComponent,
     AppMenuitemComponent,
-    AppInlineMenuComponent,
     AppBreadcrumbComponent,
     AppFooterComponent,
     AppConfigComponent,
@@ -135,7 +133,6 @@ import {ErrorService} from './util/error.service';
     ApplicationsComponent,
     ApplicationDetailComponent,
     ReleasesComponent,
-    EnvironmentReleaseDetailComponent,
     ReleaseManageComponent,
     EnvironmentsComponent,
     EnvironmentDetailComponent,
@@ -143,6 +140,7 @@ import {ErrorService} from './util/error.service';
     AddApplicationDialogComponent,
     PromoteDialogComponent,
     UpgradeDialogComponent,
+    MoveDialogComponent,
     ConfirmDialogComponent,
     ClustersComponent,
     ClusterDetailComponent,

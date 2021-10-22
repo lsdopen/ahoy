@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,50 +16,29 @@
 
 package za.co.lsd.ahoy.server.applications;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-@Entity
 @Data
 @NoArgsConstructor
 public class ApplicationVolume {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 	@NotNull
 	private String name;
 	@NotNull
 	private String mountPath;
 	@NotNull
-	@Enumerated(EnumType.STRING)
 	private VolumeType type;
 
 	// PersistentVolume
 	private String storageClassName;
-	@Enumerated(EnumType.STRING)
 	private VolumeAccessMode accessMode;
 	private Long size;
-	@Enumerated(EnumType.STRING)
 	private StorageUnit sizeStorageUnit;
 
 	// Secret
 	private String secretName;
-
-	@ManyToOne
-	@JsonBackReference("applicationVersionReference")
-	@ToString.Exclude
-	private ApplicationVersion applicationVersion;
-
-	@ManyToOne
-	@JsonBackReference("applicationEnvironmentConfigReference")
-	@ToString.Exclude
-	private ApplicationEnvironmentConfig applicationEnvironmentConfig;
 
 	public ApplicationVolume(String name, String mountPath, String storageClassName, VolumeAccessMode accessMode, Long size, StorageUnit sizeStorageUnit) {
 		this.name = name;

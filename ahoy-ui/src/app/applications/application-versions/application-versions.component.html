@@ -59,7 +59,7 @@
               {{applicationVersion.version}}
             </td>
             <td><span class="p-column-title">Image</span>
-              {{applicationVersion.image}}
+              {{applicationVersion.spec.image}}
             </td>
             <td><span class="p-column-title">Releases</span>
               <span *ngFor="let releaseName of usedByReleaseVersions(applicationVersion)">

@@ -31,6 +31,7 @@ import za.co.lsd.ahoy.server.applications.*;
 import za.co.lsd.ahoy.server.cluster.Cluster;
 import za.co.lsd.ahoy.server.cluster.ClusterType;
 import za.co.lsd.ahoy.server.docker.DockerRegistry;
+import za.co.lsd.ahoy.server.docker.DockerRegistryProvider;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.helm.sealedsecrets.DockerConfigSealedSecretProducer;
@@ -53,6 +54,8 @@ import static org.mockito.Mockito.*;
 public class ChartGeneratorTest {
 	@Autowired
 	private ChartGenerator chartGenerator;
+	@MockBean
+	private DockerRegistryProvider dockerRegistryProvider;
 	@MockBean
 	private ApplicationEnvironmentConfigProvider environmentConfigProvider;
 	@MockBean
@@ -85,7 +88,10 @@ public class ChartGeneratorTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
+		ApplicationSpec spec = new ApplicationSpec("image");
+		applicationVersion.setSpec(spec);
+
 		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion));
 
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.empty());
@@ -120,7 +126,7 @@ public class ChartGeneratorTest {
 			.image("image")
 			.replicas(1)
 			.environmentVariables(new LinkedHashMap<>())
-			.configs(new LinkedHashMap<>())
+			.configFiles(new LinkedHashMap<>())
 			.volumes(new LinkedHashMap<>())
 			.secrets(new LinkedHashMap<>())
 			.build();
@@ -147,57 +153,64 @@ public class ChartGeneratorTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
-		applicationVersion.setDockerRegistry(new DockerRegistry("docker-registry", "docker-server", "username", "password"));
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 		List<Integer> servicePorts = Collections.singletonList(8080);
-		applicationVersion.setServicePorts(servicePorts);
+		ApplicationSpec spec = new ApplicationSpec("image");
+		spec.setDockerRegistryName("docker-registry");
+		applicationVersion.setSpec(spec);
+		spec.setCommand("/bin/sh");
+		spec.setArgs(Arrays.asList("-c", "echo hello"));
+		spec.setServicePorts(servicePorts);
 		List<ApplicationEnvironmentVariable> environmentVariables = Arrays.asList(
 			new ApplicationEnvironmentVariable("ENV", "VAR"),
 			new ApplicationEnvironmentVariable("SECRET_ENV", "my-secret", "secret-key")
 		);
-		applicationVersion.setEnvironmentVariables(environmentVariables);
-		applicationVersion.setHealthEndpointPath("/");
-		applicationVersion.setHealthEndpointPort(8080);
-		applicationVersion.setHealthEndpointScheme("HTTP");
-		applicationVersion.setConfigPath("/opt/config");
-		List<ApplicationConfig> appConfigs = Collections.singletonList(new ApplicationConfig("application.properties", "greeting=hello"));
-		applicationVersion.setConfigs(appConfigs);
+		spec.setEnvironmentVariables(environmentVariables);
+		spec.setHealthEndpointPath("/");
+		spec.setHealthEndpointPort(8080);
+		spec.setHealthEndpointScheme("HTTP");
+		spec.setConfigPath("/opt/config");
+		List<ApplicationConfigFile> appConfigs = Collections.singletonList(new ApplicationConfigFile("application.properties", "greeting=hello"));
+		spec.setConfigFiles(appConfigs);
 		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion));
 
-		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
-		environmentConfig.setReplicas(2);
-		environmentConfig.setTls(true);
-		environmentConfig.setTlsSecretName("my-tls-secret");
-		List<ApplicationConfig> appEnvConfigs = Collections.singletonList(new ApplicationConfig("application-dev.properties", "anothergreeting=hello"));
-		environmentConfig.setConfigs(appEnvConfigs);
+		ApplicationEnvironmentSpec environmentSpec = new ApplicationEnvironmentSpec("myapp1-route", 8080);
+		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig(environmentSpec);
+		environmentSpec.setReplicas(2);
+		environmentSpec.setTls(true);
+		environmentSpec.setTlsSecretName("my-tls-secret");
+		List<ApplicationConfigFile> appEnvConfigs = Collections.singletonList(new ApplicationConfigFile("application-dev.properties", "anothergreeting=hello"));
+		environmentSpec.setConfigFiles(appEnvConfigs);
 
 		List<ApplicationVolume> appVolumes = Arrays.asList(
 			new ApplicationVolume("my-volume", "/opt/vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
 			new ApplicationVolume("my-secret-volume", "/opt/secret-vol", "my-secret")
 		);
-		applicationVersion.setVolumes(appVolumes);
+		spec.setVolumes(appVolumes);
 
 		List<ApplicationSecret> appSecrets = Arrays.asList(
 			new ApplicationSecret("my-secret", SecretType.Generic, Collections.singletonMap("secret-key", "secret-value")),
 			new ApplicationSecret("my-tls-secret", SecretType.Tls, Collections.singletonMap("cert", "my-cert"))
 		);
-		applicationVersion.setSecrets(appSecrets);
+		spec.setSecrets(appSecrets);
 
 		List<ApplicationEnvironmentVariable> environmentVariablesEnv = Arrays.asList(
 			new ApplicationEnvironmentVariable("DEV_ENV", "VAR"),
 			new ApplicationEnvironmentVariable("SECRET_DEV_ENV", "my-secret", "secret-key")
 		);
-		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
+		environmentSpec.setEnvironmentVariables(environmentVariablesEnv);
 
 		List<ApplicationVolume> envVolumes = Arrays.asList(
 			new ApplicationVolume("my-env-volume", "/opt/env-vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
 			new ApplicationVolume("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret")
 		);
-		environmentConfig.setVolumes(envVolumes);
+		environmentSpec.setVolumes(envVolumes);
 
 		List<ApplicationSecret> envSecrets = Collections.singletonList(new ApplicationSecret("my-env-secret", SecretType.Generic, Collections.singletonMap("env-secret-key", "env-secret-value")));
-		environmentConfig.setSecrets(envSecrets);
+		environmentSpec.setSecrets(envSecrets);
 
+		DockerRegistry dockerRegistry = new DockerRegistry("docker-registry", "docker-server", "username", "password");
+		when(dockerRegistryProvider.dockerRegistryFor(eq("docker-registry"))).thenReturn(Optional.of(dockerRegistry));
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.of(environmentConfig));
 
 		Path basePath = repoPath.resolve(cluster.getName()).resolve(environment.getName()).resolve(release.getName());
@@ -236,9 +249,9 @@ public class ChartGeneratorTest {
 		expectedEnvironmentVariables.put("DEV_ENV", new EnvironmentVariableValues("DEV_ENV", "VAR"));
 		expectedEnvironmentVariables.put("SECRET_DEV_ENV", new EnvironmentVariableValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
 
-		Map<String, ApplicationConfigValues> configs = new LinkedHashMap<>();
-		configs.put("application-config-188deccf", new ApplicationConfigValues("application.properties", "greeting=hello"));
-		configs.put("application-config-c1fcd7e5", new ApplicationConfigValues("application-dev.properties", "anothergreeting=hello"));
+		Map<String, ApplicationConfigFileValues> configFiles = new LinkedHashMap<>();
+		configFiles.put("application-config-file-188deccf", new ApplicationConfigFileValues("application.properties", "greeting=hello"));
+		configFiles.put("application-config-file-c1fcd7e5", new ApplicationConfigFileValues("application-dev.properties", "anothergreeting=hello"));
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
 		volumes.put("my-volume", new ApplicationVolumeValues("my-volume", "/opt/vol", "standard", "ReadWriteOnce", "2Gi"));
@@ -255,6 +268,8 @@ public class ChartGeneratorTest {
 			.name("app1")
 			.version("1.0.0")
 			.image("image")
+			.command("/bin/sh")
+			.args(Arrays.asList("-c", "echo hello"))
 			.dockerConfigJson("encrypted-docker-config")
 			.servicePorts(servicePorts)
 			.healthEndpointPath("/")
@@ -267,7 +282,7 @@ public class ChartGeneratorTest {
 			.tlsSecretName("my-tls-secret")
 			.environmentVariables(expectedEnvironmentVariables)
 			.configPath("/opt/config")
-			.configs(configs)
+			.configFiles(configFiles)
 			.volumes(volumes)
 			.secrets(secrets)
 			.build();
@@ -295,38 +310,41 @@ public class ChartGeneratorTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
+		ApplicationSpec spec = new ApplicationSpec("image");
+		applicationVersion.setSpec(spec);
 
 		// needed for route
 		List<Integer> servicePorts = Collections.singletonList(8080);
-		applicationVersion.setServicePorts(servicePorts);
+		spec.setServicePorts(servicePorts);
 
 		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion));
 
-		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
-		environmentConfig.setReplicas(2);
-		environmentConfig.setTls(true);
-		environmentConfig.setTlsSecretName("my-tls-secret");
-		List<ApplicationConfig> appEnvConfigs = Collections.singletonList(new ApplicationConfig("application-dev.properties", "anothergreeting=hello"));
-		environmentConfig.setConfigs(appEnvConfigs);
+		ApplicationEnvironmentSpec environmentSpec = new ApplicationEnvironmentSpec("myapp1-route", 8080);
+		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig(environmentSpec);
+		environmentSpec.setReplicas(2);
+		environmentSpec.setTls(true);
+		environmentSpec.setTlsSecretName("my-tls-secret");
+		List<ApplicationConfigFile> appEnvConfigs = Collections.singletonList(new ApplicationConfigFile("application-dev.properties", "anothergreeting=hello"));
+		environmentSpec.setConfigFiles(appEnvConfigs);
 
 		List<ApplicationEnvironmentVariable> environmentVariablesEnv = Arrays.asList(
 			new ApplicationEnvironmentVariable("DEV_ENV", "VAR"),
 			new ApplicationEnvironmentVariable("SECRET_DEV_ENV", "my-secret", "secret-key")
 		);
-		environmentConfig.setEnvironmentVariables(environmentVariablesEnv);
+		environmentSpec.setEnvironmentVariables(environmentVariablesEnv);
 
 		List<ApplicationVolume> envVolumes = Arrays.asList(
 			new ApplicationVolume("my-env-volume", "/opt/env-vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
 			new ApplicationVolume("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret")
 		);
-		environmentConfig.setVolumes(envVolumes);
+		environmentSpec.setVolumes(envVolumes);
 
 		List<ApplicationSecret> envSecrets = Arrays.asList(
 			new ApplicationSecret("my-env-secret", SecretType.Generic, Collections.singletonMap("env-secret-key", "env-secret-value")),
 			new ApplicationSecret("my-tls-secret", SecretType.Tls, Collections.singletonMap("cert", "my-cert"))
 		);
-		environmentConfig.setSecrets(envSecrets);
+		environmentSpec.setSecrets(envSecrets);
 
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.of(environmentConfig));
 
@@ -363,8 +381,8 @@ public class ChartGeneratorTest {
 		expectedEnvironmentVariables.put("DEV_ENV", new EnvironmentVariableValues("DEV_ENV", "VAR"));
 		expectedEnvironmentVariables.put("SECRET_DEV_ENV", new EnvironmentVariableValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
 
-		Map<String, ApplicationConfigValues> configs = new LinkedHashMap<>();
-		configs.put("application-config-c1fcd7e5", new ApplicationConfigValues("application-dev.properties", "anothergreeting=hello"));
+		Map<String, ApplicationConfigFileValues> configFiles = new LinkedHashMap<>();
+		configFiles.put("application-config-file-c1fcd7e5", new ApplicationConfigFileValues("application-dev.properties", "anothergreeting=hello"));
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
 		volumes.put("my-env-volume", new ApplicationVolumeValues("my-env-volume", "/opt/env-vol", "standard", "ReadWriteOnce", "2Gi"));
@@ -385,7 +403,7 @@ public class ChartGeneratorTest {
 			.tls(true)
 			.tlsSecretName("my-tls-secret")
 			.environmentVariables(expectedEnvironmentVariables)
-			.configs(configs)
+			.configFiles(configFiles)
 			.volumes(volumes)
 			.secrets(secrets)
 			.build();
@@ -412,7 +430,7 @@ public class ChartGeneratorTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion));
 
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.empty());

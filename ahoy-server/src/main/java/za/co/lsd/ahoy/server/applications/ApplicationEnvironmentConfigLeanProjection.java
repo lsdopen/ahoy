@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,11 +16,13 @@
 
 package za.co.lsd.ahoy.server.applications;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
 
 @Projection(name = "applicationEnvironmentConfigLean", types = {ApplicationEnvironmentConfig.class})
 public interface ApplicationEnvironmentConfigLeanProjection {
 	ApplicationDeploymentId getId();
 
-	String getRouteHostname();
+	@Value("#{target.leanSpec()}")
+	ApplicationEnvironmentSpec getSpec();
 }

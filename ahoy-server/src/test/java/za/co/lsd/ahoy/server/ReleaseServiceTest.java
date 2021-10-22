@@ -79,7 +79,7 @@ public class ReleaseServiceTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 		long releaseVersionId = 1L;
 		ReleaseVersion releaseVersion = new ReleaseVersion(releaseVersionId, "1.0.0", release, Collections.singletonList(applicationVersion));
 
@@ -117,7 +117,7 @@ public class ReleaseServiceTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
 
 		environmentRelease.setCurrentReleaseVersion(releaseVersion);
@@ -163,7 +163,7 @@ public class ReleaseServiceTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 		long releaseVersionId = 1L;
 		ReleaseVersion releaseVersion = new ReleaseVersion(releaseVersionId, "1.0.0", release, Collections.singletonList(applicationVersion));
 
@@ -203,7 +203,7 @@ public class ReleaseServiceTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
 
 		environmentRelease.setCurrentReleaseVersion(releaseVersion);
@@ -233,7 +233,7 @@ public class ReleaseServiceTest {
 		Release release = new Release(1L, "release1");
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
 
 		UpgradeOptions upgradeOptions = new UpgradeOptions("1.1.0", false);
@@ -267,7 +267,7 @@ public class ReleaseServiceTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(new EnvironmentReleaseId(1L, 1L), environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion(1L, "1.0.0", "image", application);
+		ApplicationVersion applicationVersion = new ApplicationVersion(1L, "1.0.0", application);
 		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
 
 		UpgradeOptions upgradeOptions = new UpgradeOptions("1.1.0", true);
@@ -276,9 +276,9 @@ public class ReleaseServiceTest {
 		ReleaseVersion resultReleaseVersion = new ReleaseVersion(2L, upgradeOptions.getVersion(), releaseVersion.getRelease(), new ArrayList<>(releaseVersion.getApplicationVersions()));
 		when(releaseVersionRepository.save(any(ReleaseVersion.class))).thenReturn(resultReleaseVersion);
 
-		when(environmentReleaseRepository.findByRelease_Id_OrderByEnvironmentId(release.getId())).thenReturn(Collections.singletonList(environmentRelease));
+		when(environmentReleaseRepository.findByRelease(release.getId())).thenReturn(Collections.singletonList(environmentRelease));
 
-		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
+		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig(new ApplicationEnvironmentSpec("myapp1-route", 8080));
 		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion)).thenReturn(Optional.of(environmentConfig));
 		when(environmentConfigProvider.environmentConfigFor(environmentRelease, resultReleaseVersion, applicationVersion)).thenReturn(Optional.empty());
 
@@ -302,8 +302,8 @@ public class ReleaseServiceTest {
 		ApplicationEnvironmentConfig savedEnvironmentConfig = applicationEnvironmentConfigArgumentCaptor.getValue();
 		assertEquals(new ApplicationDeploymentId(environmentRelease.getId(), resultReleaseVersion.getId(), applicationVersion.getId()), savedEnvironmentConfig.getId(),
 			"Environment config deployment ID incorrect; this means the config is not related to the correct entity");
-		assertEquals("myapp1-route", savedEnvironmentConfig.getRouteHostname(), "Environment config route incorrect");
-		assertEquals(8080, savedEnvironmentConfig.getRouteTargetPort(), "Environment config port incorrect");
+		assertEquals("myapp1-route", savedEnvironmentConfig.getSpec().getRouteHostname(), "Environment config route incorrect");
+		assertEquals(8080, savedEnvironmentConfig.getSpec().getRouteTargetPort(), "Environment config port incorrect");
 	}
 
 	@Test
@@ -380,7 +380,7 @@ public class ReleaseServiceTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", "image", application);
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
 		release.setReleaseVersions(Collections.singletonList(releaseVersion));
 
@@ -396,7 +396,7 @@ public class ReleaseServiceTest {
 		EnvironmentRelease resultEnvironmentRelease = new EnvironmentRelease(resultEnvironmentReleaseId, destEnvironment, release);
 		when(environmentReleaseRepository.save(any(EnvironmentRelease.class))).thenReturn(resultEnvironmentRelease);
 
-		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
+		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig(new ApplicationEnvironmentSpec("myapp1-route", 8080));
 		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion)).thenReturn(Optional.of(environmentConfig));
 		when(environmentConfigProvider.environmentConfigFor(resultEnvironmentRelease, releaseVersion, applicationVersion)).thenReturn(Optional.empty());
 
@@ -419,8 +419,8 @@ public class ReleaseServiceTest {
 		ApplicationEnvironmentConfig savedEnvironmentConfig = applicationEnvironmentConfigArgumentCaptor.getValue();
 		assertEquals(new ApplicationDeploymentId(resultEnvironmentRelease.getId(), releaseVersion.getId(), applicationVersion.getId()), savedEnvironmentConfig.getId(),
 			"Environment config deployment ID incorrect; this means the config is not related to the correct entity");
-		assertEquals("myapp1-route", savedEnvironmentConfig.getRouteHostname(), "Environment config route incorrect");
-		assertEquals(8080, savedEnvironmentConfig.getRouteTargetPort(), "Environment config port incorrect");
+		assertEquals("myapp1-route", savedEnvironmentConfig.getSpec().getRouteHostname(), "Environment config route incorrect");
+		assertEquals(8080, savedEnvironmentConfig.getSpec().getRouteTargetPort(), "Environment config port incorrect");
 	}
 
 	@Test
@@ -432,17 +432,17 @@ public class ReleaseServiceTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(new EnvironmentReleaseId(1L, 1L), environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion1 = new ApplicationVersion(1L, "1.0.0", "image", application);
-		ApplicationVersion applicationVersion2 = new ApplicationVersion(2L, "2.0.0", "image", application);
+		ApplicationVersion applicationVersion1 = new ApplicationVersion(1L, "1.0.0", application);
+		ApplicationVersion applicationVersion2 = new ApplicationVersion(2L, "2.0.0", application);
 		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion2));
 
 		when(releaseVersionRepository.findById(1L)).thenReturn(Optional.of(releaseVersion));
 		when(applicationVersionRepository.findById(1L)).thenReturn(Optional.of(applicationVersion1));
 		when(applicationVersionRepository.findById(2L)).thenReturn(Optional.of(applicationVersion2));
 
-		when(environmentReleaseRepository.findByRelease_Id_OrderByEnvironmentId(release.getId())).thenReturn(Collections.singletonList(environmentRelease));
+		when(environmentReleaseRepository.findByRelease(release.getId())).thenReturn(Collections.singletonList(environmentRelease));
 
-		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
+		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig(new ApplicationEnvironmentSpec("myapp1-route", 8080));
 		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion1)).thenReturn(Optional.of(environmentConfig));
 		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion2)).thenReturn(Optional.empty());
 
@@ -456,8 +456,8 @@ public class ReleaseServiceTest {
 		ApplicationEnvironmentConfig savedEnvironmentConfig = applicationEnvironmentConfigArgumentCaptor.getValue();
 		assertEquals(new ApplicationDeploymentId(environmentRelease.getId(), releaseVersion.getId(), applicationVersion2.getId()), savedEnvironmentConfig.getId(),
 			"Environment config deployment ID incorrect; this means the config is not related to the correct entity");
-		assertEquals("myapp1-route", savedEnvironmentConfig.getRouteHostname(), "Environment config route incorrect");
-		assertEquals(8080, savedEnvironmentConfig.getRouteTargetPort(), "Environment config port incorrect");
+		assertEquals("myapp1-route", savedEnvironmentConfig.getSpec().getRouteHostname(), "Environment config route incorrect");
+		assertEquals(8080, savedEnvironmentConfig.getSpec().getRouteTargetPort(), "Environment config port incorrect");
 	}
 
 	@Test
@@ -469,17 +469,17 @@ public class ReleaseServiceTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(new EnvironmentReleaseId(1L, 1L), environment, release);
 
 		Application application = new Application("app1");
-		ApplicationVersion applicationVersion1 = new ApplicationVersion(1L, "1.0.0", "image", application);
-		ApplicationVersion applicationVersion2 = new ApplicationVersion(2L, "2.0.0", "image", application);
+		ApplicationVersion applicationVersion1 = new ApplicationVersion(1L, "1.0.0", application);
+		ApplicationVersion applicationVersion2 = new ApplicationVersion(2L, "2.0.0", application);
 		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion2));
 
 		when(releaseVersionRepository.findById(1L)).thenReturn(Optional.of(releaseVersion));
 		when(applicationVersionRepository.findById(1L)).thenReturn(Optional.of(applicationVersion1));
 		when(applicationVersionRepository.findById(2L)).thenReturn(Optional.of(applicationVersion2));
 
-		when(environmentReleaseRepository.findByRelease_Id_OrderByEnvironmentId(release.getId())).thenReturn(Collections.singletonList(environmentRelease));
+		when(environmentReleaseRepository.findByRelease(release.getId())).thenReturn(Collections.singletonList(environmentRelease));
 
-		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig("myapp1-route", 8080);
+		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig(new ApplicationEnvironmentSpec("myapp1-route", 8080));
 		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion1)).thenReturn(Optional.of(environmentConfig));
 		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion2)).thenReturn(Optional.of(environmentConfig));
 

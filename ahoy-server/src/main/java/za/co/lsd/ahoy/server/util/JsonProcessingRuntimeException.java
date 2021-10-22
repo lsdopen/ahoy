@@ -14,17 +14,16 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.applications;
+package za.co.lsd.ahoy.server.util;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.rest.core.config.Projection;
+/**
+ * Runtime exception to wrap JsonProcessingException.
+ *
+ * @see com.fasterxml.jackson.core.JsonProcessingException
+ */
+public class JsonProcessingRuntimeException extends RuntimeException {
 
-@Projection(name = "applicationVersionSimple", types = {ApplicationVersion.class})
-public interface ApplicationVersionSimpleProjection {
-	long getId();
-
-	String getVersion();
-
-	@Value("#{target.summarySpec()}")
-	ApplicationSpec getSpec();
+	public JsonProcessingRuntimeException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

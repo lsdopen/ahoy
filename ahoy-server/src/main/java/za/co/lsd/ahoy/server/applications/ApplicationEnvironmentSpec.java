@@ -14,17 +14,37 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.environments;
+package za.co.lsd.ahoy.server.applications;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import za.co.lsd.ahoy.server.cluster.ClusterDTO;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class EnvironmentDTO {
-	private Long id;
-	private String name;
-	private ClusterDTO cluster;
-	private Double orderIndex;
+public class ApplicationEnvironmentSpec {
+	private Integer replicas;
+
+	private String routeHostname;
+	private Integer routeTargetPort;
+	private boolean tls;
+	private String tlsSecretName;
+
+	private List<ApplicationEnvironmentVariable> environmentVariables;
+
+	private List<ApplicationConfigFile> configFiles;
+
+	private List<ApplicationVolume> volumes;
+
+	private List<ApplicationSecret> secrets;
+
+	public ApplicationEnvironmentSpec(String routeHostname) {
+		this.routeHostname = routeHostname;
+	}
+
+	public ApplicationEnvironmentSpec(String routeHostname, Integer routeTargetPort) {
+		this.routeHostname = routeHostname;
+		this.routeTargetPort = routeTargetPort;
+	}
 }
