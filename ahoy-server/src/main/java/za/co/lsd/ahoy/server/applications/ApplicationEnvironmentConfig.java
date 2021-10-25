@@ -19,10 +19,10 @@ package za.co.lsd.ahoy.server.applications;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -33,7 +33,7 @@ public class ApplicationEnvironmentConfig {
 	private ApplicationDeploymentId id;
 	@NotNull
 	@Convert(converter = ApplicationEnvironmentSpecConverter.class)
-	@Lob
+	@Column(length = 10485760)
 	private ApplicationEnvironmentSpec spec;
 
 	public ApplicationEnvironmentConfig(ApplicationDeploymentId id, ApplicationEnvironmentConfig applicationEnvironmentConfig) {
