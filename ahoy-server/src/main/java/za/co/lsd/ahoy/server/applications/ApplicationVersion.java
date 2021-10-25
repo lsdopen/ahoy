@@ -39,7 +39,7 @@ public class ApplicationVersion implements Serializable {
 	private String version;
 	@NotNull
 	@Convert(converter = ApplicationSpecConverter.class)
-	@Lob
+	@Column(length = 10485760)
 	private ApplicationSpec spec;
 
 	@ManyToOne
