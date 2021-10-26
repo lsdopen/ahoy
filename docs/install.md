@@ -31,7 +31,7 @@ Hint: to create a self-signed certificate if you don't already have a certificat
 openssl req -newkey rsa:2048 -nodes -keyout ahoy.key -x509 -days 365 -out ahoy.crt
 ```
 
-Similarly, if you are installing keycloak in gke, you will need to create a secret for keycloak as well:
+Similarly, if you are installing keycloak in GKE, you will need to create a secret for keycloak as well:
 
 kubectl create secret tls keycloak-tls -n ahoy --cert keycloak.crt --key keycloak.key
 
