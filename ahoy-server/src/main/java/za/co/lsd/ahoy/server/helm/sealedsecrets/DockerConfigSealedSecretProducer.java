@@ -49,8 +49,8 @@ public class DockerConfigSealedSecretProducer {
 					"--docker-password=" + dockerRegistry.getPassword(),
 					"--dry-run", "-o", "json"),
 				new ProcessBuilder("kubeseal", "-o", "json", "--scope", "cluster-wide",
-					"--controller-name=" + serverProperties.getReleaseName() + "-sealed-secrets",
-					"--controller-namespace=" + serverProperties.getReleaseNamespace())
+					"--controller-name=" + serverProperties.getSealedSecrets().getControllerName(),
+					"--controller-namespace=" + serverProperties.getSealedSecrets().getControllerNamespace())
 			));
 
 			Process sealedSecretProcess = processes.get(processes.size() - 1);

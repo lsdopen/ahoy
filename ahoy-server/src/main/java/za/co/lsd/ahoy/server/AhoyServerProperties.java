@@ -34,6 +34,7 @@ public class AhoyServerProperties {
 	private String clusterType = "kubernetes";
 	private String repoPath;
 	private Auth auth;
+	private SealedSecrets sealedSecrets = new SealedSecrets();
 
 	@PostConstruct
 	public void logSummary() {
@@ -45,5 +46,11 @@ public class AhoyServerProperties {
 		private String clientId;
 		private String issuer;
 		private String jwkSetUri;
+	}
+
+	@Data
+	public static class SealedSecrets {
+		private String controllerName = "ahoy-sealed-secrets";
+		private String controllerNamespace = "ahoy";
 	}
 }

@@ -60,8 +60,8 @@ public class SecretDataSealedSecretProducer {
 			String secretInput = SerializationUtils.dumpAsYaml(secret);
 
 			ProcessBuilder processBuilder = new ProcessBuilder("kubeseal", "-o", "json", "--scope", "cluster-wide",
-				"--controller-name=" + serverProperties.getReleaseName() + "-sealed-secrets",
-				"--controller-namespace=" + serverProperties.getReleaseNamespace());
+				"--controller-name=" + serverProperties.getSealedSecrets().getControllerName(),
+				"--controller-namespace=" + serverProperties.getSealedSecrets().getControllerNamespace());
 			Process sealedSecretProcess = processBuilder.start();
 			inputTo(secretInput, sealedSecretProcess);
 
