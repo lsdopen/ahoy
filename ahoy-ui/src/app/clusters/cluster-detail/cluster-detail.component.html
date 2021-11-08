@@ -40,8 +40,12 @@
           </div>
 
           <div class="p-field p-float-label">
-            <input pInputText id="clusterName" [(ngModel)]="cluster.name" name="clusterName" required>
+            <input pInputText id="clusterName" [(ngModel)]="cluster.name" name="clusterName" required
+                   pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$">
             <label for="clusterName">Name</label>
+            <small class="p-error" *ngIf="clusterForm.form.controls.clusterName?.hasError('pattern')">
+              Name invalid: should start with and use lower case letters and numbers
+            </small>
           </div>
 
           <div class="p-field p-float-label">

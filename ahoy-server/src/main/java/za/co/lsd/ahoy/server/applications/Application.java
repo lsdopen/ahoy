@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @Entity
@@ -33,6 +34,8 @@ public class Application {
 	private Long id;
 	@Column(unique = true)
 	@NotNull
+	@Pattern(regexp = "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
+		message = "Name invalid: should start with and use lower case letters and numbers")
 	private String name;
 
 	@OneToMany(mappedBy = "application", cascade = CascadeType.REMOVE)

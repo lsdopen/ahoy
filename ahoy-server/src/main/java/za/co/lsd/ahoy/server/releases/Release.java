@@ -23,6 +23,7 @@ import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.List;
 
@@ -35,6 +36,8 @@ public class Release implements Serializable {
 	private Long id;
 	@Column(unique = true)
 	@NotNull
+	@Pattern(regexp = "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
+		message = "Name invalid: should start with and use lower case letters and numbers")
 	private String name;
 
 	@OneToMany(mappedBy = "release")
