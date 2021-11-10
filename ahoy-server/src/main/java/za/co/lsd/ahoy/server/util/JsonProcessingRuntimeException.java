@@ -23,6 +23,10 @@ package za.co.lsd.ahoy.server.util;
  */
 public class JsonProcessingRuntimeException extends RuntimeException {
 
+	public JsonProcessingRuntimeException(String message) {
+		super(message);
+	}
+
 	public JsonProcessingRuntimeException(String message, Throwable cause) {
 		super(message, cause);
 	}

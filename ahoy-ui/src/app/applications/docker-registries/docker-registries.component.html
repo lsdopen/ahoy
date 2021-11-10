@@ -16,7 +16,7 @@
 
 <div class="p-field p-float-label">
   <p-dropdown *ngIf="dockerRegistries" [options]="dockerRegistries" [(ngModel)]="applicationVersion.spec.dockerRegistryName"
-              dataKey="id" optionLabel="name" optionValue="name" [showClear]="true" [editable]="true" [autoDisplayFirst]="false"></p-dropdown>
+              optionLabel="name" optionValue="name" [showClear]="true" [editable]="true" [autoDisplayFirst]="false"></p-dropdown>
   <label>Docker Registry</label>
   <small class="p-message p-message-warn p-p-1" *ngIf="applicationVersion.spec.dockerRegistryName && !dockerRegistryExists(applicationVersion.spec.dockerRegistryName)">
     Warn: docker registry not configured in application settings

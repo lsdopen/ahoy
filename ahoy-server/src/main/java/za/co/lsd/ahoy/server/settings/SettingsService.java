@@ -16,37 +16,47 @@
 
 package za.co.lsd.ahoy.server.settings;
 
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import za.co.lsd.ahoy.server.argocd.ArgoSettings;
 import za.co.lsd.ahoy.server.docker.DockerSettings;
 import za.co.lsd.ahoy.server.git.GitSettings;
 
-@Component
-public class DbSettingsProvider implements SettingsProvider {
+import java.util.Optional;
+
+@Service
+@Slf4j
+public class SettingsService {
 	private final SettingsRepository settingsRepository;
 
-	public DbSettingsProvider(SettingsRepository settingsRepository) {
+	public SettingsService(SettingsRepository settingsRepository) {
 		this.settingsRepository = settingsRepository;
 	}
 
-	@Override
-	public GitSettings getGitSettings() {
+	public void saveGitSettings(GitSettings gitSettings) {
+		settingsRepository.save(new Settings(gitSettings));
+	}
+
+	public Optional<GitSettings> getGitSettings() {
 		return settingsRepository.findById(Settings.Type.GIT)
-			.map(settings -> (GitSettings) settings.getSettings())
-			.orElse(new GitSettings());
+			.map(settings -> (GitSettings) settings.getSettings());
 	}
 
-	@Override
-	public ArgoSettings getArgoSettings() {
+	public void saveArgoSettings(ArgoSettings argoSettings) {
+		settingsRepository.save(new Settings(argoSettings));
+	}
+
+	public Optional<ArgoSettings> getArgoSettings() {
 		return settingsRepository.findById(Settings.Type.ARGO)
-			.map(settings -> (ArgoSettings) settings.getSettings())
-			.orElse(new ArgoSettings());
+			.map(settings -> (ArgoSettings) settings.getSettings());
 	}
 
-	@Override
-	public DockerSettings getDockerSettings() {
+	public void saveDockerSettings(DockerSettings dockerSettings) {
+		settingsRepository.save(new Settings(dockerSettings));
+	}
+
+	public Optional<DockerSettings> getDockerSettings() {
 		return settingsRepository.findById(Settings.Type.DOCKER)
-			.map(settings -> (DockerSettings) settings.getSettings())
-			.orElse(new DockerSettings());
+			.map(settings -> (DockerSettings) settings.getSettings());
 	}
 }

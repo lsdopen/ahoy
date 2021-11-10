@@ -16,37 +16,28 @@
 
 package za.co.lsd.ahoy.server.argocd;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.Type;
 import org.springframework.util.StringUtils;
+import za.co.lsd.ahoy.server.settings.BaseSettings;
+import za.co.lsd.ahoy.server.settings.Settings;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-
-@Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class ArgoSettings {
-	@Id
-	private Long id;
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode(callSuper = false)
+public class ArgoSettings extends BaseSettings {
 	private String argoServer;
-	@Lob
-	@Type(type = "org.hibernate.type.TextType")
 	@ToString.Exclude
 	private String argoToken;
 
-	public ArgoSettings(ArgoSettingsDTO dto) {
-		this.id = dto.getId();
-		this.argoServer = dto.getArgoServer();
-		this.argoToken = dto.getArgoToken();
+	public ArgoSettings() {
+		super(Settings.Type.ARGO);
 	}
 
 	public boolean configured() {
-		return !StringUtils.isEmpty(argoServer);
+		return StringUtils.hasText(argoServer);
 	}
 }

@@ -21,8 +21,8 @@ import {ApplicationService} from '../../applications/application.service';
 import {TabItemFactory} from '../../components/multi-tab/multi-tab.component';
 import {Notification} from '../../notifications/notification';
 import {NotificationsService} from '../../notifications/notifications.service';
+import {SettingsService} from '../settings.service';
 import {DockerRegistry, DockerSettings} from './docker-settings';
-import {DockerSettingsService} from './docker-settings.service';
 
 @Component({
   selector: 'app-docker-settings',
@@ -35,7 +35,7 @@ export class DockerSettingsComponent implements OnInit {
   selectedIndex: number;
   applicationVersions: ApplicationVersion[];
 
-  constructor(private dockerSettingsService: DockerSettingsService,
+  constructor(private settingsService: SettingsService,
               private applicationService: ApplicationService,
               private notificationsService: NotificationsService,
               private breadcrumbService: AppBreadcrumbService) {
@@ -46,7 +46,7 @@ export class DockerSettingsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dockerSettingsService.get()
+    this.settingsService.getDockerSettings()
       .subscribe((dockerSettings) => {
         this.dockerSettings = dockerSettings;
         if (!this.dockerSettings.dockerRegistries) {
@@ -64,7 +64,7 @@ export class DockerSettingsComponent implements OnInit {
 
   save() {
     const notification = new Notification('Saved docker settings');
-    this.dockerSettingsService.save(this.dockerSettings)
+    this.settingsService.saveDockerSettings(this.dockerSettings)
       .subscribe(() => this.notificationsService.notification(notification));
   }
 

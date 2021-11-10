@@ -17,16 +17,18 @@
 import {Injectable} from '@angular/core';
 import {EMPTY, Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
-import {Notification} from '../../notifications/notification';
-import {NotificationsService} from '../../notifications/notifications.service';
-import {LoggerService} from '../../util/logger.service';
-import {RestClientService} from '../../util/rest-client.service';
-import {GitSettings} from './git-settings';
+import {Notification} from '../notifications/notification';
+import {NotificationsService} from '../notifications/notifications.service';
+import {LoggerService} from '../util/logger.service';
+import {RestClientService} from '../util/rest-client.service';
+import {ArgoSettings} from './argo-settings/argo-settings';
+import {DockerSettings} from './docker-settings/docker-settings';
+import {GitSettings} from './git-settings/git-settings';
 
 @Injectable({
   providedIn: 'root'
 })
-export class GitSettingsService {
+export class SettingsService {
   private defaultKnownHosts =
     'bitbucket.org ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAubiN81eDcafrgMeLzaFPsw2kNvEcqTKl/VqLat/MaB33pZy0y3rJZtnqwR2qOOvbwKZYKiEO1O6VqNEBxKvJJelCq0dTXWT5pbO2gDXC6h6QDXCaHo6pOHGPUy+YBaGQRGuSusMEASYiWunYN0vCAI8QaXnWMXNMdFP3jHAJH0eDsoiGnLPBlBp4TNm6rYI74nMzgz3B9IikW4WVK+dc8KZJZWYjAuORU3jc1c/NPskD2ASinf8v3xnfXeukU0sJ5N6m5E8VLjObPEO+mN2t/FZTMZLiFqPWc/ALSqnMnnhwrNi2rbfg/rd/IpL8Le3pSBne8+seeFVBoGqzHM9yXw==\n' +
     'github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==\n' +
@@ -42,10 +44,10 @@ export class GitSettingsService {
     private notificationsService: NotificationsService) {
   }
 
-  get(): Observable<GitSettings> {
-    const url = `/data/gitSettings/1`;
+  getGitSettings(): Observable<GitSettings> {
+    const url = `/api/settings/git`;
     return this.restClient.get<GitSettings>(url, false, () => {
-      const gitSettings = new GitSettings(1);
+      const gitSettings = new GitSettings();
       gitSettings.sshKnownHosts = this.defaultKnownHosts;
       return gitSettings;
     }).pipe(
@@ -55,8 +57,8 @@ export class GitSettingsService {
     );
   }
 
-  exists(): Observable<boolean> {
-    const url = `/data/gitSettings/1`;
+  gitSettingsExists(): Observable<boolean> {
+    const url = `/api/settings/git`;
     return this.restClient.exists(url, false).pipe(
       tap((exists) => {
         this.log.debug('checked git settings exists: ', exists);
@@ -64,16 +66,16 @@ export class GitSettingsService {
     );
   }
 
-  save(gitSettings: GitSettings): Observable<GitSettings> {
+  saveGitSettings(gitSettings: GitSettings): Observable<GitSettings> {
     this.log.debug('saving git settings: ', gitSettings);
 
-    return this.restClient.post<GitSettings>('/data/gitSettings', gitSettings, true).pipe(
+    return this.restClient.post<GitSettings>('/api/settings/git', gitSettings, true).pipe(
       tap((savedSettings) => this.log.debug('saved git settings', savedSettings))
     );
   }
 
-  testConnection(gitSettings: GitSettings): Observable<GitSettings> {
-    const url = `/data/gitSettings/test`;
+  testGitConnection(gitSettings: GitSettings): Observable<GitSettings> {
+    const url = `/api/settings/git/test`;
     return this.restClient.post<null>(url, gitSettings, true).pipe(
       tap(() => {
         this.log.debug('tested connection to git repo', gitSettings);
@@ -85,6 +87,78 @@ export class GitSettingsService {
         this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })
+    );
+  }
+
+  getArgoSettings(): Observable<ArgoSettings> {
+    const url = `/api/settings/argo`;
+    return this.restClient.get<ArgoSettings>(url, false, () => {
+      return new ArgoSettings();
+    }).pipe(
+      tap((settings) => {
+        this.log.debug('fetched argo settings', settings);
+      })
+    );
+  }
+
+  argoSettingsExists(): Observable<boolean> {
+    const url = `/api/settings/argo`;
+    return this.restClient.exists(url, false).pipe(
+      tap((exists) => {
+        this.log.debug('checked argo settings exists: ', exists);
+      })
+    );
+  }
+
+  saveArgoSettings(argoSettings: ArgoSettings): Observable<ArgoSettings> {
+    this.log.debug('saving argo settings: ', argoSettings);
+
+    return this.restClient.post<ArgoSettings>('/api/settings/argo', argoSettings, true).pipe(
+      tap((savedSettings) => this.log.debug('saved argo settings', savedSettings))
+    );
+  }
+
+  testArgoConnection(argoSettings: ArgoSettings): Observable<ArgoSettings> {
+    const url = `/api/settings/argo/test`;
+    return this.restClient.post<null>(url, argoSettings, true).pipe(
+      tap(() => {
+        this.log.debug('tested connection to argocd', argoSettings);
+        const text = `Successfully connected to argocd '${argoSettings.argoServer}'`;
+        this.notificationsService.notification(new Notification(text));
+      }),
+      catchError((error) => {
+        const text = `Failed to connect to argocd ${argoSettings.argoServer}`;
+        this.notificationsService.notification(new Notification(text, error));
+        return EMPTY;
+      })
+    );
+  }
+
+  getDockerSettings(): Observable<DockerSettings> {
+    const url = `/api/settings/docker`;
+    return this.restClient.get<DockerSettings>(url, false, () => {
+      return new DockerSettings();
+    }).pipe(
+      tap((settings) => {
+        this.log.debug('fetched docker settings', settings);
+      })
+    );
+  }
+
+  dockerSesstingsExists(): Observable<boolean> {
+    const url = `/api/settings/docker`;
+    return this.restClient.exists(url, false).pipe(
+      tap((exists) => {
+        this.log.debug('checked docker settings exists: ', exists);
+      })
+    );
+  }
+
+  saveDockerSettings(dockerSettings: DockerSettings): Observable<DockerSettings> {
+    this.log.debug('saving docker settings: ', dockerSettings);
+
+    return this.restClient.post<DockerSettings>('/api/settings/docker', dockerSettings, true).pipe(
+      tap((savedSettings) => this.log.debug('saved docker settings', savedSettings))
     );
   }
 }

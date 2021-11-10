@@ -16,51 +16,37 @@
 
 package za.co.lsd.ahoy.server.git;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.Type;
+import za.co.lsd.ahoy.server.settings.BaseSettings;
+import za.co.lsd.ahoy.server.settings.Settings;
 
-import javax.persistence.*;
-
-@Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class GitSettings {
-	@Id
-	private Long id;
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode(callSuper = false)
+public class GitSettings extends BaseSettings {
 	private String remoteRepoUri;
 	private String branch = "master";
-	@Enumerated(EnumType.STRING)
 	private Credentials credentials;
 	@ToString.Exclude
 	private String httpsUsername;
 	@ToString.Exclude
 	private String httpsPassword;
-	@Lob
-	@Type(type = "org.hibernate.type.TextType")
 	@ToString.Exclude
 	private String privateKey;
-	@Lob
-	@Type(type = "org.hibernate.type.TextType")
 	@ToString.Exclude
 	private String sshKnownHosts;
 
-	public GitSettings(String remoteRepoUri) {
-		this.remoteRepoUri = remoteRepoUri;
+	public GitSettings() {
+		super(Settings.Type.GIT);
 	}
 
-	public GitSettings(GitSettingsDTO dto) {
-		this.id = dto.getId();
-		this.remoteRepoUri = dto.getRemoteRepoUri();
-		this.branch = dto.getBranch();
-		this.credentials = dto.getCredentials();
-		this.httpsUsername = dto.getHttpsUsername();
-		this.httpsPassword = dto.getHttpsPassword();
-		this.privateKey = dto.getPrivateKey();
-		this.sshKnownHosts = dto.getSshKnownHosts();
+	public GitSettings(String remoteRepoUri) {
+		super(Settings.Type.GIT);
+		this.remoteRepoUri = remoteRepoUri;
 	}
 
 	public enum Credentials {

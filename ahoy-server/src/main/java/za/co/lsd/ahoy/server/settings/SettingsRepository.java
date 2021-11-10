@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.git;
+package za.co.lsd.ahoy.server.settings;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@RepositoryRestResource(collectionResourceRel = "gitSettings", path = "gitSettings")
-public interface GitSettingsRepository extends CrudRepository<GitSettings, Long> {
+@RepositoryRestResource(collectionResourceRel = "settings", path = "settings")
+public interface SettingsRepository extends CrudRepository<Settings, Settings.Type> {
 }
