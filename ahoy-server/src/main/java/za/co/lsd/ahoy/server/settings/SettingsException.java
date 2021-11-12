@@ -14,25 +14,15 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.docker;
+package za.co.lsd.ahoy.server.settings;
 
-import org.springframework.stereotype.Component;
-import za.co.lsd.ahoy.server.settings.SettingsService;
+public class SettingsException extends RuntimeException {
 
-import java.util.Optional;
-
-@Component
-public class DockerRegistryProvider {
-	private final SettingsService settingsService;
-
-	public DockerRegistryProvider(SettingsService settingsService) {
-		this.settingsService = settingsService;
+	public SettingsException(String message) {
+		super(message);
 	}
 
-	public Optional<DockerRegistry> dockerRegistryFor(String name) {
-		return settingsService.getDockerSettings().stream()
-			.flatMap(dockerSettings -> dockerSettings.getDockerRegistries().stream())
-			.filter(dockerRegistry -> dockerRegistry.getName().equals(name))
-			.findFirst();
+	public SettingsException(String message, Throwable cause) {
+		super(message, cause);
 	}
 }
