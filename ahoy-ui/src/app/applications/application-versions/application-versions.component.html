@@ -32,7 +32,8 @@
 
       <p-table #dt [value]="application.applicationVersions" dataKey="id" selectionMode="single"
                styleClass="p-datatable-applicationVersions p-datatable-striped p-datatable-sm"
-               [scrollable]="true" scrollHeight="600px" [filterDelay]="0" [globalFilterFields]="['version', 'image']">
+               [scrollable]="true" scrollHeight="600px" [filterDelay]="0" [globalFilterFields]="['version', 'image']"
+               sortField="version" [sortOrder]="1">
         <ng-template pTemplate="caption">
           <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
               <span class="p-input-icon-left p-ml-auto">
