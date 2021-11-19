@@ -85,6 +85,7 @@ import {VersionUniqueValidatorDirective} from './components/version-unique-valid
 import {DashboardEnvironmentComponent} from './dashboard/dashboard-environment/dashboard-environment.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {AddReleaseDialogComponent} from './environment-release/add-release-dialog/add-release-dialog.component';
+import {EnvironmentReleaseApplicationsStatusComponent} from './environment-release/environment-release-applications-status/environment-release-applications-status.component';
 import {EnvironmentReleaseDeploymentStatusComponent} from './environment-release/environment-release-deployment-status/environment-release-deployment-status.component';
 import {EnvironmentReleaseStatusComponent} from './environment-release/environment-release-status/environment-release-status.component';
 import {EnvironmentReleaseVersionsComponent} from './environment-release/environment-release-versions/environment-release-versions.component';
@@ -92,6 +93,7 @@ import {EnvironmentReleasesComponent} from './environment-release/environment-re
 import {EnvironmentDetailComponent} from './environments/environment-detail/environment-detail.component';
 import {EnvironmentNameUniqueValidatorDirective} from './environments/environment-name-unique-validator.directive';
 import {EnvironmentsComponent} from './environments/environments.component';
+import {MoveDialogComponent} from './environments/move-dialog/move-dialog.component';
 import {NotificationsComponent} from './notifications/notifications.component';
 import {AppAccessDeniedComponent} from './pages/app-access-denied.component';
 import {AppErrorComponent} from './pages/app-error.component';
@@ -117,7 +119,6 @@ import {GitSettingsComponent} from './settings/git-settings/git-settings.compone
 import {SettingsComponent} from './settings/settings.component';
 import {TaskEventsListenerComponent} from './taskevents/task-events-listener/task-events-listener.component';
 import {ErrorService} from './util/error.service';
-import {MoveDialogComponent} from './environments/move-dialog/move-dialog.component';
 
 @NgModule({
   declarations: [
@@ -159,6 +160,7 @@ import {MoveDialogComponent} from './environments/move-dialog/move-dialog.compon
     DescriptionDialogComponent,
     EnvironmentReleaseVersionsComponent,
     EnvironmentReleaseStatusComponent,
+    EnvironmentReleaseApplicationsStatusComponent,
     ReleaseApplicationVersionStatusComponent,
     SettingsComponent,
     DockerRegistriesComponent,
