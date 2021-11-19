@@ -14,40 +14,66 @@
  *    limitations under the License.
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Subscription} from 'rxjs';
 import {AppComponent} from './app.component';
+import {RecentRelease, RecentReleasesService} from './release-manage/recent-releases.service';
 
 @Component({
-    selector: 'app-menu',
-    template: `
-        <ul class="layout-menu">
-            <li app-menuitem *ngFor="let item of model; let i = index;" [item]="item" [index]="i" [root]="true"></li>
-        </ul>
-    `
+  selector: 'app-menu',
+  template: `
+    <ul class="layout-menu">
+      <li app-menuitem *ngFor="let item of model; let i = index;" [item]="item" [index]="i" [root]="true"></li>
+    </ul>
+  `
 })
-export class AppMenuComponent implements OnInit {
+export class AppMenuComponent implements OnInit, OnDestroy {
 
-    model: any[];
+  model: any[];
+  private recentReleasesChangedSubscription: Subscription;
 
-    constructor(public app: AppComponent) {}
+  constructor(public app: AppComponent,
+              private recentReleasesService: RecentReleasesService) {
+  }
 
-    ngOnInit() {
-        this.model = [
-            {
-                label: 'Favorites', icon: 'pi pi-fw pi-home',
-                items: [
-                    {label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/']},
-                ]
-            },
-            {
-                label: 'Manage', icon: 'pi pi-fw pi-star', routerLink: ['/manage'],
-                items: [
-                    {label: 'Releases', icon: 'pi pi-fw pi-forward', routerLink: ['/releases']},
-                    {label: 'Environments', icon: 'pi pi-fw pi-folder', routerLink: ['/environments']},
-                    {label: 'Applications', icon: 'pi pi-fw pi-image', routerLink: ['/applications']},
-                    {label: 'Clusters', icon: 'pi pi-fw pi-table', routerLink: ['/clusters']},
-                ]
-            }
-        ];
+  ngOnInit() {
+    this.model = [
+      {
+        label: 'Favorites', icon: 'pi pi-fw pi-home',
+        items: [
+          {label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/']},
+        ]
+      },
+      {
+        label: 'Recent'
+      },
+      {
+        label: 'Manage', icon: 'pi pi-fw pi-star', routerLink: ['/manage'],
+        items: [
+          {label: 'Releases', icon: 'pi pi-fw pi-forward', routerLink: ['/releases']},
+          {label: 'Environments', icon: 'pi pi-fw pi-folder', routerLink: ['/environments']},
+          {label: 'Applications', icon: 'pi pi-fw pi-image', routerLink: ['/applications']},
+          {label: 'Clusters', icon: 'pi pi-fw pi-table', routerLink: ['/clusters']},
+        ]
+      }
+    ];
+    this.recentReleasesChanged(this.recentReleasesService.getRecentReleases());
+    this.recentReleasesChangedSubscription = this.recentReleasesService.recentReleasesChanged()
+      .subscribe((recentReleases) => this.recentReleasesChanged(recentReleases));
+  }
+
+  ngOnDestroy(): void {
+    if (this.recentReleasesChangedSubscription) {
+      this.recentReleasesChangedSubscription.unsubscribe();
     }
+  }
+
+  private recentReleasesChanged(recentReleases: RecentRelease[]) {
+    const menuRecentReleases = [];
+    for (const release of recentReleases) {
+      const url = `release/${release.environmentId}/${release.releaseId}/version/${release.releaseVersionId}`;
+      menuRecentReleases.push({label: release.name, icon: 'pi pi-fw pi-play', routerLink: [url]});
+    }
+    this.model[1] = {label: 'Recent', items: menuRecentReleases};
+  }
 }
