@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,20 +14,26 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.git;
+.status-badge {
+  border-radius: 2px;
+  padding: .25em .5rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: .3px;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+  &.status-success {
+    background: #C8E6C9;
+    color: #256029;
+  }
 
-@Data
-@NoArgsConstructor
-public class GitSettingsDTO {
-	private Long id;
-	private String remoteRepoUri;
-	private String branch;
-	private GitSettings.Credentials credentials;
-	private String httpsUsername;
-	private String httpsPassword;
-	private String privateKey;
-	private String sshKnownHosts;
+  &.status-warn {
+    background: #FEEDAF;
+    color: #8A5340;
+  }
+
+  &.status-error {
+    background: #FFCDD2;
+    color: #C63737;
+  }
 }

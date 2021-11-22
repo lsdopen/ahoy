@@ -18,8 +18,7 @@ import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
 import {Observable, of} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
-import {GitSettingsService} from './git-settings/git-settings.service';
-import {ArgoSettingsService} from './argo-settings/argo-settings.service';
+import {SettingsService} from './settings.service';
 
 @Injectable({
   providedIn: 'root'
@@ -27,21 +26,20 @@ import {ArgoSettingsService} from './argo-settings/argo-settings.service';
 export class SettingsGuard implements CanActivate {
   private settingsConfigured = false;
 
-  constructor(private gitSettingsService: GitSettingsService,
-              private argoSettingsService: ArgoSettingsService,
+  constructor(private settingsService: SettingsService,
               private router: Router) {
   }
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
     if (!this.settingsConfigured) {
-      return this.gitSettingsService.exists()
+      return this.settingsService.gitSettingsExists()
         .pipe(
           mergeMap((exists: boolean) => {
             if (!exists) {
               this.router.navigate(['/settings/git'], {queryParams: {setup: 'true'}});
             } else {
-              return this.argoSettingsService.exists();
+              return this.settingsService.argoSettingsExists();
             }
             return of(exists);
           }),

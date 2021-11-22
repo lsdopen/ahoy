@@ -14,16 +14,29 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.argocd;
+import {Injectable} from '@angular/core';
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+@Injectable({
+  providedIn: 'root'
+})
+export class LocalStorageService {
 
+  constructor() {
+  }
 
-@Data
-@NoArgsConstructor
-public class ArgoSettingsDTO {
-	private Long id;
-	private String argoServer;
-	private String argoToken;
+  public setItem(key: string, value: string) {
+    localStorage.setItem(key, value);
+  }
+
+  public getItem(key: string): string {
+    return localStorage.getItem(key);
+  }
+
+  public removeItem(key: string) {
+    localStorage.removeItem(key);
+  }
+
+  public clear() {
+    localStorage.clear();
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,15 +16,31 @@
 
 package za.co.lsd.ahoy.server.settings;
 
+import org.springframework.stereotype.Component;
 import za.co.lsd.ahoy.server.argocd.ArgoSettings;
 import za.co.lsd.ahoy.server.docker.DockerSettings;
 import za.co.lsd.ahoy.server.git.GitSettings;
 
-public interface SettingsProvider {
+@Component
+public class SettingsProvider {
+	private final SettingsService settingsService;
 
-	GitSettings getGitSettings();
+	public SettingsProvider(SettingsService settingsService) {
+		this.settingsService = settingsService;
+	}
 
-	ArgoSettings getArgoSettings();
+	public GitSettings getGitSettings() {
+		return settingsService.getGitSettings()
+			.orElseThrow(() -> new SettingsException("Git settings have not been configured"));
+	}
 
-	DockerSettings getDockerSettings();
+	public ArgoSettings getArgoSettings() {
+		return settingsService.getArgoSettings()
+			.orElseThrow(() -> new SettingsException("Argo settings have not been configured"));
+	}
+
+	public DockerSettings getDockerSettings() {
+		return settingsService.getDockerSettings()
+			.orElseThrow(() -> new SettingsException("Docker settings have not been configured"));
+	}
 }

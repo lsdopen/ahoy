@@ -14,7 +14,38 @@
  *    limitations under the License.
  */
 
-export class ArgoSettings {
-  argoServer: string;
-  argoToken: string;
+package za.co.lsd.ahoy.server.settings;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Settings {
+	@Id
+	@Enumerated(EnumType.STRING)
+	private Type type;
+	@NotNull
+	@Convert(converter = SettingsConverter.class)
+	@Column(length = 10485760)
+	private BaseSettings settings;
+
+	public Settings(BaseSettings settings) {
+		this.type = settings.getType();
+		this.settings = settings;
+	}
+
+	@Getter
+	public enum Type {
+		GIT,
+		ARGO,
+		DOCKER;
+	}
 }

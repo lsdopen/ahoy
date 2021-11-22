@@ -16,7 +16,7 @@
 
 import {Component, Input, OnInit} from '@angular/core';
 import {DockerRegistry} from '../../settings/docker-settings/docker-settings';
-import {DockerSettingsService} from '../../settings/docker-settings/docker-settings.service';
+import {SettingsService} from '../../settings/settings.service';
 import {ApplicationVersion} from '../application';
 
 @Component({
@@ -28,11 +28,11 @@ export class DockerRegistriesComponent implements OnInit {
   @Input() applicationVersion: ApplicationVersion;
   dockerRegistries: DockerRegistry[];
 
-  constructor(private settingsService: DockerSettingsService) {
+  constructor(private settingsService: SettingsService) {
   }
 
   ngOnInit(): void {
-    this.settingsService.get()
+    this.settingsService.getDockerSettings()
       .subscribe((settings) => {
         this.dockerRegistries = settings.dockerRegistries ? settings.dockerRegistries : [];
       });

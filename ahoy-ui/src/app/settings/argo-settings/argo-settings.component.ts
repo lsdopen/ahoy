@@ -15,11 +15,11 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {ArgoSettings} from './argo-settings';
-import {ArgoSettingsService} from './argo-settings.service';
-import {NotificationsService} from '../../notifications/notifications.service';
-import {Notification} from '../../notifications/notification';
 import {AppBreadcrumbService} from '../../app.breadcrumb.service';
+import {Notification} from '../../notifications/notification';
+import {NotificationsService} from '../../notifications/notifications.service';
+import {SettingsService} from '../settings.service';
+import {ArgoSettings} from './argo-settings';
 
 @Component({
   selector: 'app-argo-settings',
@@ -30,7 +30,7 @@ export class ArgoSettingsComponent implements OnInit {
   argoSettings: ArgoSettings;
   hideArgoToken = true;
 
-  constructor(private argoSettingsService: ArgoSettingsService,
+  constructor(private settingsService: SettingsService,
               private notificationsService: NotificationsService,
               private breadcrumbService: AppBreadcrumbService) {
     this.breadcrumbService.setItems([
@@ -40,7 +40,7 @@ export class ArgoSettingsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.argoSettingsService.get()
+    this.settingsService.getArgoSettings()
       .subscribe((argoSettings) => {
         this.argoSettings = argoSettings;
       });
@@ -48,11 +48,11 @@ export class ArgoSettingsComponent implements OnInit {
 
   save() {
     const notification = new Notification('Saved argocd settings');
-    this.argoSettingsService.save(this.argoSettings)
+    this.settingsService.saveArgoSettings(this.argoSettings)
       .subscribe(() => this.notificationsService.notification(notification));
   }
 
   test() {
-    this.argoSettingsService.testConnection(this.argoSettings).subscribe();
+    this.settingsService.testArgoConnection(this.argoSettings).subscribe();
   }
 }

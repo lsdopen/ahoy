@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,11 +14,15 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.argocd;
+package za.co.lsd.ahoy.server.settings;
 
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+public class SettingsException extends RuntimeException {
 
-@RepositoryRestResource(collectionResourceRel = "argoSettings", path = "argoSettings")
-public interface ArgoSettingsRepository extends CrudRepository<ArgoSettings, Long> {
+	public SettingsException(String message) {
+		super(message);
+	}
+
+	public SettingsException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

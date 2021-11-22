@@ -16,7 +16,7 @@
 
 import {Location} from '@angular/common';
 import {Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {MenuItem} from 'primeng/api';
 import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
 import {Observable, of, Subscription} from 'rxjs';
@@ -34,6 +34,7 @@ import {TaskEvent} from '../taskevents/task-events';
 import {LoggerService} from '../util/logger.service';
 import {CopyEnvironmentConfigDialogComponent} from './copy-environment-config-dialog/copy-environment-config-dialog.component';
 import {PromoteDialogComponent} from './promote-dialog/promote-dialog.component';
+import {RecentReleasesService} from './recent-releases.service';
 import {ReleaseManageService} from './release-manage.service';
 import {UpgradeDialogComponent} from './upgrade-dialog/upgrade-dialog.component';
 
@@ -50,6 +51,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   selectedEnvironmentRelease: EnvironmentRelease;
   releaseVersion: ReleaseVersion;
   menuItems: MenuItem[];
+  private navigationSubscription: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -61,7 +63,8 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     private location: Location,
     private dialogUtilService: DialogUtilService,
     private dialogService: DialogService,
-    private breadcrumbService: AppBreadcrumbService) {
+    private breadcrumbService: AppBreadcrumbService,
+    private recentReleasesService: RecentReleasesService) {
   }
 
   ngOnInit() {
@@ -71,17 +74,28 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     this.getEnvironmentRelease(environmentId, releaseId, releaseVersionId).subscribe((environmentRelease) => {
       this.subscribeToEnvironmentReleaseChanged();
     });
+
+    this.navigationSubscription = this.router.events.subscribe((e: any) => {
+      if (e instanceof NavigationEnd) {
+        this.reloadOnNavigation();
+      }
+    });
   }
 
   ngOnDestroy(): void {
     if (this.environmentReleaseChangedSubscription) {
       this.environmentReleaseChangedSubscription.unsubscribe();
     }
+    if (this.navigationSubscription) {
+      this.navigationSubscription.unsubscribe();
+    }
   }
 
   private getEnvironmentRelease(environmentId: number, releaseId: number, releaseVersionId: number): Observable<EnvironmentRelease> {
     return this.environmentReleaseService.get(environmentId, releaseId).pipe(
       mergeMap(environmentRelease => {
+        this.recentReleasesService.recent(environmentRelease, releaseVersionId);
+
         this.environmentRelease = environmentRelease;
         this.selectedEnvironmentRelease = environmentRelease;
 
@@ -140,6 +154,27 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
           }
         });
     }
+  }
+
+  private reloadOnNavigation() {
+    const environmentId = +this.route.snapshot.paramMap.get('environmentId');
+    const releaseId = +this.route.snapshot.paramMap.get('releaseId');
+    const releaseVersionId = +this.route.snapshot.paramMap.get('releaseVersionId');
+
+    this.getEnvironmentRelease(environmentId, releaseId, releaseVersionId)
+      .subscribe(() => {
+        this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
+      });
+  }
+
+  reloadCurrent() {
+    if (this.selectedEnvironmentRelease) {
+      this.reload(this.selectedEnvironmentRelease.id.environmentId, this.releaseVersion.id);
+    }
+  }
+
+  reload(environmentId: number, releaseVersionId: number) {
+    this.router.navigate(['/release', environmentId, this.environmentRelease.id.releaseId, 'version', releaseVersionId]);
   }
 
   canDeploy(): boolean {
@@ -241,28 +276,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   }
 
   releaseVersionChanged() {
-    this.router.navigate(
-      ['/release', this.environmentRelease.id.environmentId, this.environmentRelease.id.releaseId, 'version', this.releaseVersion.id])
-      .then(() => this.setBreadcrumb());
-    this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
-    this.setupMenuItems();
-  }
-
-  reloadCurrent() {
-    if (this.selectedEnvironmentRelease) {
-      this.reload(this.selectedEnvironmentRelease.id.environmentId, this.releaseVersion.id);
-    }
-  }
-
-  reload(environmentId: number, releaseVersionId: number) {
-    this.router.navigate(
-      ['/release', environmentId, this.environmentRelease.id.releaseId, 'version', releaseVersionId])
-      .then(() => {
-        this.getEnvironmentRelease(environmentId, this.environmentRelease.id.releaseId, releaseVersionId)
-          .subscribe(() => {
-            this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
-          });
-      });
+    this.router.navigate(['/release', this.environmentRelease.id.environmentId, this.environmentRelease.id.releaseId, 'version', this.releaseVersion.id]);
   }
 
   private isCurrent() {

@@ -14,7 +14,8 @@
   ~    limitations under the License.
   -->
 
-<span *ngIf="environmentRelease"
-      [class]="'status-badge ' + style()">
-  {{environmentRelease.status}}
+<span *ngIf="environmentRelease.currentReleaseVersion"
+      [class]="'status-badge ' + style()"
+      pTooltip="{{applicationsReady}} out of {{applicationsTotal}} applications ready">
+  {{applicationsReady}} / {{applicationsTotal}}
 </span>

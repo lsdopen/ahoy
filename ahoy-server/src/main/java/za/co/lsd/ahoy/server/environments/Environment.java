@@ -25,6 +25,7 @@ import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.List;
 
@@ -36,6 +37,8 @@ public class Environment implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@NotNull
+	@Pattern(regexp = "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
+		message = "Name invalid: should start with and use lower case letters and numbers")
 	private String name;
 
 	@ManyToOne

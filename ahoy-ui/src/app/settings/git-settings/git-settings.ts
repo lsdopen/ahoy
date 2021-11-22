@@ -15,7 +15,6 @@
  */
 
 export class GitSettings {
-  id: number;
   remoteRepoUri: string;
   branch: string;
   httpsUsername: string;
@@ -23,8 +22,4 @@ export class GitSettings {
   credentials = 'NONE';
   privateKey: string;
   sshKnownHosts: string;
-
-  constructor(id: number) {
-    this.id = id;
-  }
 }

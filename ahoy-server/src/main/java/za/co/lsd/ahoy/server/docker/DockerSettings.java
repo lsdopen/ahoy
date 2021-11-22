@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,25 +16,23 @@
 
 package za.co.lsd.ahoy.server.docker;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import za.co.lsd.ahoy.server.settings.BaseSettings;
+import za.co.lsd.ahoy.server.settings.Settings;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import java.util.List;
 
-@Entity
-@Data
-@NoArgsConstructor
-public class DockerSettings {
-	@Id
-	private Long id;
-	@OneToMany(mappedBy = "dockerSettings", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonManagedReference
-	@OrderBy("id")
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode(callSuper = false)
+public class DockerSettings extends BaseSettings {
 	private List<DockerRegistry> dockerRegistries;
+
+	public DockerSettings() {
+		super(Settings.Type.DOCKER);
+	}
 }

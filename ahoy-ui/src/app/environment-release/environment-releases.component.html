@@ -59,6 +59,9 @@
             <th pSortableColumn="deployed">State
               <p-sortIcon field="deployed"></p-sortIcon>
             </th>
+            <th pSortableColumn="status">Status
+              <p-sortIcon field="status"></p-sortIcon>
+            </th>
             <th pSortableColumn="applicationsTotal">Applications
               <p-sortIcon field="applicationsTotal"></p-sortIcon>
             </th>
@@ -76,8 +79,11 @@
             <td><span class="p-column-title">State</span>
               <app-environment-release-deployment-status [environmentRelease]="er"></app-environment-release-deployment-status>
             </td>
-            <td><span class="p-column-title">Applications</span>
+            <td><span class="p-column-title">Status</span>
               <app-environment-release-status [environmentRelease]="er"></app-environment-release-status>
+            </td>
+            <td><span class="p-column-title">Applications</span>
+              <app-environment-release-applications-status [environmentRelease]="er"></app-environment-release-applications-status>
             </td>
             <td><span class="p-column-title">Version</span>
               <app-environment-release-versions [environmentRelease]="er"></app-environment-release-versions>

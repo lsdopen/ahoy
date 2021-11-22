@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {EnvironmentRelease} from '../environment-release';
 
 @Component({
@@ -22,27 +22,20 @@ import {EnvironmentRelease} from '../environment-release';
   templateUrl: './environment-release-status.component.html',
   styleUrls: ['./environment-release-status.component.scss']
 })
-export class EnvironmentReleaseStatusComponent implements OnInit {
+export class EnvironmentReleaseStatusComponent {
   @Input() environmentRelease: EnvironmentRelease;
-  private applicationsReady: number;
-  private applicationsTotal: number;
-
-  ngOnInit() {
-    this.applicationsReady = this.environmentRelease.applicationsReady ?
-      this.environmentRelease.applicationsReady : 0;
-    this.applicationsTotal = this.environmentRelease.currentReleaseVersion ?
-      this.environmentRelease.currentReleaseVersion.applicationVersions.length : 0;
-  }
 
   style(): string {
-    if (this.applicationsReady === 0 && this.applicationsTotal > 0) {
-      return 'status-error';
-
-    } else if (this.applicationsReady < this.applicationsTotal) {
-      return 'status-warn';
-
-    } else {
-      return 'status-success';
+    switch (this.environmentRelease.status) {
+      case 'Healthy':
+        return 'status-success';
+      case 'Progressing':
+        return 'status-warn';
+      case 'Missing':
+        return 'status-warn';
+      case 'Unknown':
+        return 'status-error';
     }
+    return '';
   }
 }

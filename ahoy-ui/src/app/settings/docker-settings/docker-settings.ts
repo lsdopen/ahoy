@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,16 +15,10 @@
  */
 
 export class DockerSettings {
-  id: number;
   dockerRegistries: DockerRegistry[];
-
-  constructor(id: number) {
-    this.id = id;
-  }
 }
 
 export class DockerRegistry {
-  id: number;
   name: string;
   server: string;
   username: string;

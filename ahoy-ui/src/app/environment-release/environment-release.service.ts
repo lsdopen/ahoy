@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,17 +15,18 @@
  */
 
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
-import {RestClientService} from '../util/rest-client.service';
-import {LoggerService} from '../util/logger.service';
-import {EnvironmentRelease, EnvironmentReleaseId} from './environment-release';
 import {NotificationsService} from '../notifications/notifications.service';
+import {LoggerService} from '../util/logger.service';
+import {RestClientService} from '../util/rest-client.service';
+import {EnvironmentRelease, EnvironmentReleaseId} from './environment-release';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EnvironmentReleaseService {
+  private environmentReleasesRefreshedSubject = new Subject<{environmentId: number, environmentReleases: EnvironmentRelease[]}>();
 
   public static environmentReleaseEquals(er1: EnvironmentRelease, er2: EnvironmentRelease): boolean {
     return this.environmentReleaseIdEquals(er1.id, er2.id);
@@ -40,11 +41,14 @@ export class EnvironmentReleaseService {
               private log: LoggerService) {
   }
 
-  getReleasesByEnvironment(environmentId: number): Observable<EnvironmentRelease[]> {
-    const url = `/data/environments/${environmentId}/environmentReleases?projection=environmentRelease`;
+  getReleasesByEnvironment(envId: number): Observable<EnvironmentRelease[]> {
+    const url = `/data/environments/${envId}/environmentReleases?projection=environmentRelease`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.environmentReleases as EnvironmentRelease[]),
-      tap((envReleases) => this.log.debug(`fetched ${envReleases.length} environment releases for environment=${environmentId}`))
+      tap((envReleases) => {
+        this.log.debug(`fetched ${envReleases.length} environment releases for environment=${envId}`);
+        this.environmentReleasesRefreshedSubject.next({environmentId: envId, environmentReleases: envReleases});
+      })
     );
   }
 
@@ -68,5 +72,9 @@ export class EnvironmentReleaseService {
     return this.restClient.post<EnvironmentRelease>('/data/environmentReleases', environmentRelease).pipe(
       tap((envRelease) => this.log.debug('saved new environment release in environment', envRelease))
     );
+  }
+
+  public environmentReleasesRefreshed(): Observable<{environmentId: number, environmentReleases: EnvironmentRelease[]}> {
+    return this.environmentReleasesRefreshedSubject.asObservable();
   }
 }

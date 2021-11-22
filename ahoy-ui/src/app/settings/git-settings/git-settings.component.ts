@@ -15,11 +15,11 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {GitSettings} from './git-settings';
-import {GitSettingsService} from './git-settings.service';
+import {AppBreadcrumbService} from '../../app.breadcrumb.service';
 import {Notification} from '../../notifications/notification';
 import {NotificationsService} from '../../notifications/notifications.service';
-import {AppBreadcrumbService} from '../../app.breadcrumb.service';
+import {SettingsService} from '../settings.service';
+import {GitSettings} from './git-settings';
 
 @Component({
   selector: 'app-git-settings',
@@ -30,7 +30,7 @@ export class GitSettingsComponent implements OnInit {
   gitSettings: GitSettings;
   hideGitPassword = true;
 
-  constructor(private gitSettingsService: GitSettingsService,
+  constructor(private settingsService: SettingsService,
               private notificationsService: NotificationsService,
               private breadcrumbService: AppBreadcrumbService) {
     this.breadcrumbService.setItems([
@@ -40,7 +40,7 @@ export class GitSettingsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.gitSettingsService.get()
+    this.settingsService.getGitSettings()
       .subscribe((gitSettings) => {
         this.gitSettings = gitSettings;
       });
@@ -48,11 +48,11 @@ export class GitSettingsComponent implements OnInit {
 
   save() {
     const notification = new Notification('Saved git settings');
-    this.gitSettingsService.save(this.gitSettings)
+    this.settingsService.saveGitSettings(this.gitSettings)
       .subscribe(() => this.notificationsService.notification(notification));
   }
 
   test() {
-    this.gitSettingsService.testConnection(this.gitSettings).subscribe();
+    this.settingsService.testGitConnection(this.gitSettings).subscribe();
   }
 }

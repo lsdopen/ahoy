@@ -17,19 +17,20 @@
 package za.co.lsd.ahoy.server.docker;
 
 import org.springframework.stereotype.Component;
+import za.co.lsd.ahoy.server.settings.SettingsService;
 
 import java.util.Optional;
 
 @Component
 public class DockerRegistryProvider {
-	private final DockerSettingsRepository dockerSettingsRepository;
+	private final SettingsService settingsService;
 
-	public DockerRegistryProvider(DockerSettingsRepository dockerSettingsRepository) {
-		this.dockerSettingsRepository = dockerSettingsRepository;
+	public DockerRegistryProvider(SettingsService settingsService) {
+		this.settingsService = settingsService;
 	}
 
 	public Optional<DockerRegistry> dockerRegistryFor(String name) {
-		return dockerSettingsRepository.findById(1L).stream()
+		return settingsService.getDockerSettings().stream()
 			.flatMap(dockerSettings -> dockerSettings.getDockerRegistries().stream())
 			.filter(dockerRegistry -> dockerRegistry.getName().equals(name))
 			.findFirst();

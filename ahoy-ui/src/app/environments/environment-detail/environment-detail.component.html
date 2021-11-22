@@ -35,9 +35,13 @@
 
           <div class="p-field p-float-label">
             <input pInputText id="environmentName" [(ngModel)]="environment.name" name="environmentName" required
+                   pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
                    [appEnvironmentNameUnique]="environmentsForValidation"
                    [ignoreOwnId]="environment.id">
             <label for="environmentName">Name</label>
+            <small class="p-error" *ngIf="environmentForm.form.controls.environmentName?.hasError('pattern')">
+              Name invalid: should start with and use lower case letters and numbers
+            </small>
             <small class="p-error" *ngIf="environmentForm.form.controls.environmentName?.hasError('environmentNameNotUnique')">
               Environment already exists
             </small>

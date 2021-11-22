@@ -27,7 +27,7 @@
 
 	<groupId>za.co.lsd.ahoy</groupId>
 	<artifactId>ahoy</artifactId>
-	<version>0.5.1</version>
+	<version>0.6.0</version>
 	<packaging>pom</packaging>
 
 	<name>ahoy</name>
