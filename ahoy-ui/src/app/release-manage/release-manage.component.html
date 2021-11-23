@@ -35,12 +35,14 @@
                         placeholder="Version" optionLabel="version" class="p-mr-2 p-mb-2"
                         (onChange)="releaseVersionChanged()">
             </p-dropdown>
-            <button pButton pRipple label="Deploy" icon="pi pi-sign-in" class="p-button-plain p-mr-2 p-mb-2" *ngIf="canDeploy()" (click)="deploy()"></button>
-            <button pButton pRipple label="Redeploy" icon="pi pi-refresh" class="p-button-plain p-mr-2 p-mb-2" *ngIf="canRedeploy()" (click)="deploy()"></button>
-            <button pButton pRipple label="Undeploy" icon="pi pi-sign-out" class="p-button-warning p-mr-2 p-mb-2" *ngIf="canUndeploy()" (click)="undeploy()"></button>
-            <button pButton pRipple label="Rollback" icon="pi pi-undo" class="p-button-warning p-mr-2 p-mb-2" *ngIf="canRollback()" (click)="rollback()"></button>
-            <button pButton pRipple label="Promote" icon="pi pi-folder" class="p-button-info p-mr-2 p-mb-2" *ngIf="canPromote()" (click)="promote()"></button>
-            <button pButton pRipple label="Upgrade" icon="pi pi-upload" class="p-button-info p-mr-2 p-mb-2" *ngIf="canUpgrade()" (click)="upgrade()"></button>
+            <div *appUserRole="[Role.admin]">
+              <button pButton pRipple label="Deploy" icon="pi pi-sign-in" class="p-button-plain p-mr-2 p-mb-2" *ngIf="canDeploy()" (click)="deploy()"></button>
+              <button pButton pRipple label="Redeploy" icon="pi pi-refresh" class="p-button-plain p-mr-2 p-mb-2" *ngIf="canRedeploy()" (click)="deploy()"></button>
+              <button pButton pRipple label="Undeploy" icon="pi pi-sign-out" class="p-button-warning p-mr-2 p-mb-2" *ngIf="canUndeploy()" (click)="undeploy()"></button>
+              <button pButton pRipple label="Rollback" icon="pi pi-undo" class="p-button-warning p-mr-2 p-mb-2" *ngIf="canRollback()" (click)="rollback()"></button>
+              <button pButton pRipple label="Promote" icon="pi pi-folder" class="p-button-info p-mr-2 p-mb-2" *ngIf="canPromote()" (click)="promote()"></button>
+              <button pButton pRipple label="Upgrade" icon="pi pi-upload" class="p-button-info p-mr-2 p-mb-2" *ngIf="canUpgrade()" (click)="upgrade()"></button>
+            </div>
           </ng-template>
 
           <ng-template pTemplate="right">

@@ -21,11 +21,13 @@ import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 @RepositoryRestController
 @RequestMapping("/clusters")
 @Slf4j
+@Secured({"ROLE_admin"})
 public class ClustersController {
 	private final ClusterService clusterService;
 

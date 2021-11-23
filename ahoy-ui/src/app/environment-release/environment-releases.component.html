@@ -30,8 +30,8 @@
 
       <p-toolbar>
         <ng-template pTemplate="left">
-          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/release/new" [queryParams]="{environmentId: environment.id}"></button>
-          <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain p-mb-2" (click)="addRelease()"></button>
+          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/release/new" [queryParams]="{environmentId: environment.id}" *appUserRole="[Role.admin]"></button>
+          <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain p-mb-2" (click)="addRelease()" *appUserRole="[Role.admin]"></button>
         </ng-template>
       </p-toolbar>
 
@@ -94,7 +94,8 @@
                       pTooltip="Manage release"></button>
               <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
                       (click)="removeRelease($event, er)"
-                      pTooltip="Remove release from environment"></button>
+                      pTooltip="Remove release from environment"
+                      *appUserRole="[Role.admin]"></button>
             </td>
           </tr>
         </ng-template>

@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import reactor.util.retry.Retry;
 import za.co.lsd.ahoy.server.ReleaseService;
 import za.co.lsd.ahoy.server.argocd.model.ArgoApplication;
 import za.co.lsd.ahoy.server.argocd.model.ArgoApplicationWatchEvent;
+import za.co.lsd.ahoy.server.security.RunAsRole;
 import za.co.lsd.ahoy.server.settings.SettingsProvider;
 
 import javax.annotation.PreDestroy;
@@ -86,6 +87,7 @@ public class ArgoStatusListener {
 	}
 
 	@Scheduled(initialDelay = 10000, fixedDelay = 3000)
+	@RunAsRole("ROLE_admin")
 	public void checkSubscription() {
 		if (eventStreamSubscription == null) {
 			connect();

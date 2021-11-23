@@ -17,6 +17,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
 import {filter, map, mergeMap, take} from 'rxjs/operators';
+import {Role} from 'src/app/util/auth';
 import {Application, ApplicationEnvironmentConfig, ApplicationVersion} from '../../applications/application';
 import {ApplicationService} from '../../applications/application.service';
 import {Confirmation} from '../../components/confirm-dialog/confirm';
@@ -34,6 +35,7 @@ import {ReleaseManageService} from '../release-manage.service';
   styleUrls: ['./release-application-versions.component.scss']
 })
 export class ReleaseApplicationVersionsComponent implements OnInit {
+  Role = Role;
   @Input() environmentRelease: EnvironmentRelease;
   @Input() releaseVersion: ReleaseVersion;
   @Input() releaseChanged: EventEmitter<{ environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion }>;

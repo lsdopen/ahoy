@@ -14,13 +14,13 @@
  *    limitations under the License.
  */
 
+import {animate, state, style, transition, trigger} from '@angular/animations';
 import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
-import {animate, state, style, transition, trigger} from '@angular/animations';
 import {Subscription} from 'rxjs';
 import {filter} from 'rxjs/operators';
-import {MenuService} from './app.menu.service';
 import {AppMainComponent} from './app.main.component';
+import {MenuService} from './app.menu.service';
 
 @Component({
     /* tslint:disable:component-selector */
@@ -50,7 +50,7 @@ import {AppMainComponent} from './app.main.component';
             </a>
             <ul *ngIf="(item.items && root) || (item.items && active)" [@children]="root ? 'visible' : active ? 'visibleAnimated' : 'hiddenAnimated'">
                 <ng-template ngFor let-child let-i="index" [ngForOf]="item.items">
-                    <li app-menuitem [item]="child" [index]="i" [parentKey]="key" [class]="child.badgeClass"></li>
+                    <li app-menuitem [item]="child" [index]="i" [parentKey]="key" [class]="child.badgeClass" *appUserRole="child.roles"></li>
                 </ng-template>
             </ul>
         </ng-container>

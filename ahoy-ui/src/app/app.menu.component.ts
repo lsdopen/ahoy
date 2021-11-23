@@ -18,6 +18,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from 'rxjs';
 import {AppComponent} from './app.component';
 import {RecentRelease, RecentReleasesService} from './release-manage/recent-releases.service';
+import {Role} from './util/auth';
 
 @Component({
   selector: 'app-menu',
@@ -41,7 +42,7 @@ export class AppMenuComponent implements OnInit, OnDestroy {
       {
         label: 'Favorites', icon: 'pi pi-fw pi-home',
         items: [
-          {label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/']},
+          {label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'], roles: [Role.admin]},
         ]
       },
       {
@@ -50,10 +51,10 @@ export class AppMenuComponent implements OnInit, OnDestroy {
       {
         label: 'Manage', icon: 'pi pi-fw pi-star', routerLink: ['/manage'],
         items: [
-          {label: 'Releases', icon: 'pi pi-fw pi-forward', routerLink: ['/releases']},
-          {label: 'Environments', icon: 'pi pi-fw pi-folder', routerLink: ['/environments']},
-          {label: 'Applications', icon: 'pi pi-fw pi-image', routerLink: ['/applications']},
-          {label: 'Clusters', icon: 'pi pi-fw pi-table', routerLink: ['/clusters']},
+          {label: 'Releases', icon: 'pi pi-fw pi-forward', routerLink: ['/releases'], roles: [Role.admin]},
+          {label: 'Environments', icon: 'pi pi-fw pi-folder', routerLink: ['/environments'], roles: [Role.admin]},
+          {label: 'Applications', icon: 'pi pi-fw pi-image', routerLink: ['/applications'], roles: [Role.admin]},
+          {label: 'Clusters', icon: 'pi pi-fw pi-table', routerLink: ['/clusters'], roles: [Role.admin]},
         ]
       }
     ];
@@ -72,7 +73,7 @@ export class AppMenuComponent implements OnInit, OnDestroy {
     const menuRecentReleases = [];
     for (const release of recentReleases) {
       const url = `release/${release.environmentId}/${release.releaseId}/version/${release.releaseVersionId}`;
-      menuRecentReleases.push({label: release.name, icon: 'pi pi-fw pi-play', routerLink: [url]});
+      menuRecentReleases.push({label: release.name, icon: 'pi pi-fw pi-play', routerLink: [url], roles: [Role.admin]});
     }
     this.model[1] = {label: 'Recent', items: menuRecentReleases};
   }

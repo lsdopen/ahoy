@@ -20,3 +20,10 @@ export class AuthInfo {
   accountUri: string;
   rolesTokenPath: string;
 }
+
+export enum Role {
+  user = 'user',
+  admin = 'admin',
+  releasemanager = 'releasemanager',
+  developer = 'developer'
+}

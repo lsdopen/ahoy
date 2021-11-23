@@ -40,7 +40,7 @@
 
       <p-toolbar>
         <ng-template pTemplate="left">
-          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/environment/new"></button>
+          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/environment/new" *appUserRole="[Role.admin]"></button>
         </ng-template>
       </p-toolbar>
 
@@ -91,13 +91,16 @@
                       pTooltip="Manage environment"></button>
               <button pButton pRipple icon="pi pi-copy" class="p-button-rounded p-button-plain p-mr-2"
                       routerLink="/environment/new" [queryParams]="{sourceEnvironmentId: environment.id}"
-                      pTooltip="Duplicate environment to a new environment"></button>
+                      pTooltip="Duplicate environment to a new environment"
+                      *appUserRole="[Role.admin]"></button>
               <button pButton pRipple icon="pi pi-arrow-right" class="p-button-rounded p-button-plain p-mr-2"
                       (click)="move($event, environment)"
-                      pTooltip="Move environment"></button>
+                      pTooltip="Move environment"
+                      *appUserRole="[Role.admin]"></button>
               <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
                       (click)="delete($event, environment)"
-                      pTooltip="Delete environment"></button>
+                      pTooltip="Delete environment"
+                      *appUserRole="[Role.admin]"></button>
             </td>
           </tr>
         </ng-template>

@@ -20,11 +20,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
+@Secured({"ROLE_admin"})
 public interface EnvironmentReleaseRepository extends CrudRepository<EnvironmentRelease, EnvironmentReleaseId> {
 
 	@RestResource(path = "byRelease", rel = "byRelease")
@@ -32,6 +34,4 @@ public interface EnvironmentReleaseRepository extends CrudRepository<Environment
 	Iterable<EnvironmentRelease> findByRelease(@Param("releaseId") long releaseId);
 
 	Optional<EnvironmentRelease> findByArgoCdUid(String argoCdUid);
-
-
 }

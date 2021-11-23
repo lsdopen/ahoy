@@ -31,6 +31,8 @@ import {Environment} from '../environments/environment';
 import {EnvironmentService} from '../environments/environment.service';
 import {PromoteOptions, Release, ReleaseVersion, UpgradeOptions} from '../releases/release';
 import {TaskEvent} from '../taskevents/task-events';
+import {Role} from '../util/auth';
+import {AuthService} from '../util/auth.service';
 import {LoggerService} from '../util/logger.service';
 import {CopyEnvironmentConfigDialogComponent} from './copy-environment-config-dialog/copy-environment-config-dialog.component';
 import {PromoteDialogComponent} from './promote-dialog/promote-dialog.component';
@@ -44,6 +46,7 @@ import {UpgradeDialogComponent} from './upgrade-dialog/upgrade-dialog.component'
   styleUrls: ['./release-manage.component.scss']
 })
 export class ReleaseManageComponent implements OnInit, OnDestroy {
+  Role = Role;
   private environmentReleaseChangedSubscription: Subscription;
   environmentReleases: EnvironmentRelease[];
   releaseChanged = new EventEmitter<{ environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion }>();
@@ -53,18 +56,18 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   menuItems: MenuItem[];
   private navigationSubscription: Subscription;
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private releaseManageService: ReleaseManageService,
-    private environmentService: EnvironmentService,
-    private environmentReleaseService: EnvironmentReleaseService,
-    private log: LoggerService,
-    private location: Location,
-    private dialogUtilService: DialogUtilService,
-    private dialogService: DialogService,
-    private breadcrumbService: AppBreadcrumbService,
-    private recentReleasesService: RecentReleasesService) {
+  constructor(private route: ActivatedRoute,
+              private router: Router,
+              private releaseManageService: ReleaseManageService,
+              private environmentService: EnvironmentService,
+              private environmentReleaseService: EnvironmentReleaseService,
+              private log: LoggerService,
+              private location: Location,
+              private dialogUtilService: DialogUtilService,
+              private dialogService: DialogService,
+              private breadcrumbService: AppBreadcrumbService,
+              private recentReleasesService: RecentReleasesService,
+              private authService: AuthService) {
   }
 
   ngOnInit() {
@@ -125,7 +128,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
         routerLink: `/releasehistory/${this.environmentRelease.id.releaseId}`
       },
       {
-        label: 'Copy environment config', icon: 'pi pi-fw pi-copy', disabled: !this.canCopyEnvConfig(),
+        label: 'Copy environment config', icon: 'pi pi-fw pi-copy', disabled: !this.canCopyEnvConfig(), visible: this.authService.hasOneOfRole([Role.admin]),
         command: () => this.copyEnvConfig()
       }
     ];

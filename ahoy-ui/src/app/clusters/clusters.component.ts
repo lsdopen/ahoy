@@ -20,6 +20,7 @@ import {filter} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Confirmation} from '../components/confirm-dialog/confirm';
 import {DialogUtilService} from '../components/dialog-util.service';
+import {Role} from '../util/auth';
 import {LoggerService} from '../util/logger.service';
 import {Cluster} from './cluster';
 import {ClusterService} from './cluster.service';
@@ -30,6 +31,7 @@ import {ClusterService} from './cluster.service';
   styleUrls: ['./clusters.component.scss']
 })
 export class ClustersComponent implements OnInit {
+  Role = Role;
   clusters: Cluster[] = undefined;
 
   constructor(private route: ActivatedRoute,

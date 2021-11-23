@@ -16,17 +16,18 @@
 
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
+import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
 import {filter, mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Cluster} from '../clusters/cluster';
 import {ClusterService} from '../clusters/cluster.service';
 import {Confirmation} from '../components/confirm-dialog/confirm';
 import {DialogUtilService} from '../components/dialog-util.service';
+import {Role} from '../util/auth';
 import {LoggerService} from '../util/logger.service';
 import {OrderUtil} from '../util/order-util';
 import {Environment, MoveOptions} from './environment';
 import {EnvironmentService} from './environment.service';
-import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
 import {MoveDialogComponent} from './move-dialog/move-dialog.component';
 
 @Component({
@@ -35,6 +36,7 @@ import {MoveDialogComponent} from './move-dialog/move-dialog.component';
   styleUrls: ['./environments.component.scss']
 })
 export class EnvironmentsComponent implements OnInit {
+  Role = Role;
   environments: Environment[] = undefined;
   clusters: Cluster[] = undefined;
 

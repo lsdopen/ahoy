@@ -18,7 +18,9 @@ package za.co.lsd.ahoy.server.settings;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.security.access.annotation.Secured;
 
 @RepositoryRestResource(collectionResourceRel = "settings", path = "settings")
+@Secured({"ROLE_admin"})
 public interface SettingsRepository extends CrudRepository<Settings, Settings.Type> {
 }

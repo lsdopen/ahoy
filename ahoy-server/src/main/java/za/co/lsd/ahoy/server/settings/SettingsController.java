@@ -18,6 +18,7 @@ package za.co.lsd.ahoy.server.settings;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import za.co.lsd.ahoy.server.argocd.ArgoSettings;
@@ -29,6 +30,7 @@ import za.co.lsd.ahoy.server.git.GitSettingsService;
 @RestController
 @RequestMapping("/api/settings")
 @Slf4j
+@Secured({"ROLE_admin"})
 public class SettingsController {
 	private final SettingsService settingsService;
 	private final GitSettingsService gitSettingsService;

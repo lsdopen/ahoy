@@ -20,7 +20,7 @@ import {AuthConfig, NullValidationHandler, OAuthService} from 'angular-oauth2-oi
 import jwtDecode from 'jwt-decode';
 import {EMPTY, Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
-import {AuthInfo} from './auth';
+import {AuthInfo, Role} from './auth';
 import {LoggerService} from './logger.service';
 import {RestClientService} from './rest-client.service';
 
@@ -40,7 +40,7 @@ export class AuthService {
     showDebugInformation: true
   };
   private authInfo: AuthInfo;
-  private roles: string[];
+  private roles: Role[];
 
   constructor(private router: Router,
               private oAuthService: OAuthService,
@@ -117,13 +117,18 @@ export class AuthService {
     );
   }
 
-  public hasRole(role: string) {
+  public hasRole(role: Role) {
     return this.roles.includes(role);
+  }
+
+  public hasOneOfRole(roles: Role[]) {
+    return roles.some(r => this.hasRole(r));
   }
 
   private loadRoles() {
     try {
-      this.roles = [''];
+      this.log.debug('Loading roles...');
+      this.roles = [];
 
       const rolesTokenPath = this.authInfo.rolesTokenPath;
       if (!rolesTokenPath) {
@@ -140,7 +145,14 @@ export class AuthService {
         }
       }
 
-      this.roles = context;
+      for (const roleStr of context) {
+        const role = Role[roleStr as keyof typeof Role];
+        if (role) {
+          this.roles.push(role);
+        } else {
+          this.log.warn('Role no found: ', roleStr);
+        }
+      }
       this.log.debug('Loaded roles: ', this.roles);
 
     } catch (error) {

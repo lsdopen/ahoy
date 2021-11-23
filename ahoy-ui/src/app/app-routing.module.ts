@@ -40,37 +40,84 @@ import {DockerSettingsComponent} from './settings/docker-settings/docker-setting
 import {GitSettingsComponent} from './settings/git-settings/git-settings.component';
 import {SettingsComponent} from './settings/settings.component';
 import {SettingsGuard} from './settings/settings.guard';
+import {Role} from './util/auth';
 import {AuthGuard} from './util/auth.guard';
 
 const routes: Routes = [
   {
     path: '', component: AppMainComponent, canActivate: [AuthGuard],
     children: [
-      {path: '', component: DashboardComponent, canActivate: [SettingsGuard]},
+      {
+        path: '', component: DashboardComponent,
+        canActivate: [AuthGuard, SettingsGuard], data: {roles: [Role.admin]}
+      },
 
-      {path: 'releases', component: ReleasesComponent, canActivate: [SettingsGuard]},
-      {path: 'release/:releaseId', component: ReleaseDetailComponent},
-      {path: 'release/:releaseId/version/:releaseVersionId', component: ReleaseVersionDetailComponent},
+      {
+        path: 'releases', component: ReleasesComponent,
+        canActivate: [AuthGuard, SettingsGuard], data: {roles: [Role.admin]}
+      },
+      {
+        path: 'release/:releaseId', component: ReleaseDetailComponent,
+        canActivate: [AuthGuard], data: {roles: [Role.admin]}
+      },
+      {
+        path: 'release/:releaseId/version/:releaseVersionId', component: ReleaseVersionDetailComponent,
+        canActivate: [AuthGuard], data: {roles: [Role.admin]}
+      },
 
-      {path: 'release/:environmentId/:releaseId/version/:releaseVersionId', component: ReleaseManageComponent},
-      {path: 'release/:environmentId/:releaseId/config/:relVersionId/:appVersionId', component: ReleaseApplicationEnvironmentConfigComponent},
+      {
+        path: 'release/:environmentId/:releaseId/version/:releaseVersionId', component: ReleaseManageComponent,
+        canActivate: [AuthGuard], data: {roles: [Role.admin]}
+      },
+      {
+        path: 'release/:environmentId/:releaseId/config/:relVersionId/:appVersionId', component: ReleaseApplicationEnvironmentConfigComponent,
+        canActivate: [AuthGuard], data: {roles: [Role.admin]}
+      },
 
-      {path: 'releasehistory/:releaseId', component: ReleaseHistoryComponent},
+      {
+        path: 'releasehistory/:releaseId', component: ReleaseHistoryComponent,
+        canActivate: [AuthGuard], data: {roles: [Role.admin]}
+      },
 
-      {path: 'environmentreleases/:environmentId', component: EnvironmentReleasesComponent},
+      {
+        path: 'environmentreleases/:environmentId', component: EnvironmentReleasesComponent,
+        canActivate: [AuthGuard], data: {roles: [Role.admin]}
+      },
 
-      {path: 'environments', component: EnvironmentsComponent, canActivate: [SettingsGuard]},
-      {path: 'environment/:id', component: EnvironmentDetailComponent},
+      {
+        path: 'environments', component: EnvironmentsComponent,
+        canActivate: [AuthGuard, SettingsGuard], data: {roles: [Role.admin]}
+      },
+      {
+        path: 'environment/:id', component: EnvironmentDetailComponent,
+        canActivate: [AuthGuard], data: {roles: [Role.admin]}
+      },
 
-      {path: 'applications', component: ApplicationsComponent, canActivate: [SettingsGuard]},
-      {path: 'application/:id', component: ApplicationDetailComponent},
-      {path: 'application/:appId/version/:versionId', component: ApplicationVersionDetailComponent},
+      {
+        path: 'applications', component: ApplicationsComponent,
+        canActivate: [AuthGuard, SettingsGuard], data: {roles: [Role.admin]}
+      },
+      {
+        path: 'application/:id', component: ApplicationDetailComponent,
+        canActivate: [AuthGuard], data: {roles: [Role.admin]}
+      },
+      {
+        path: 'application/:appId/version/:versionId', component: ApplicationVersionDetailComponent,
+        canActivate: [AuthGuard], data: {roles: [Role.admin]}
+      },
 
-      {path: 'clusters', component: ClustersComponent, canActivate: [SettingsGuard]},
-      {path: 'cluster/:id', component: ClusterDetailComponent},
+      {
+        path: 'clusters', component: ClustersComponent,
+        canActivate: [AuthGuard, SettingsGuard], data: {roles: [Role.admin]}
+      },
+      {
+        path: 'cluster/:id', component: ClusterDetailComponent,
+        canActivate: [AuthGuard], data: {roles: [Role.admin]}
+      },
 
       {
         path: 'settings', component: SettingsComponent,
+        canActivate: [AuthGuard], data: {roles: [Role.admin]},
         children: [
           {path: '', redirectTo: '/settings/git', pathMatch: 'full'},
           {path: 'git', component: GitSettingsComponent},

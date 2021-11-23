@@ -119,6 +119,7 @@ import {GitSettingsComponent} from './settings/git-settings/git-settings.compone
 import {SettingsComponent} from './settings/settings.component';
 import {TaskEventsListenerComponent} from './taskevents/task-events-listener/task-events-listener.component';
 import {ErrorService} from './util/error.service';
+import {UserRoleDirective} from './util/user-role.directive';
 
 @NgModule({
   declarations: [
@@ -184,7 +185,8 @@ import {ErrorService} from './util/error.service';
     ReleaseVersionDetailComponent,
     AppNotFoundComponent,
     AppAccessDeniedComponent,
-    AppErrorComponent
+    AppErrorComponent,
+    UserRoleDirective
   ],
   imports: [
     BrowserModule,

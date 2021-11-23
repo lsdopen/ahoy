@@ -26,7 +26,7 @@
 
       <p-toolbar>
         <ng-template pTemplate="left">
-          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/application/new"></button>
+          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/application/new" *appUserRole="[Role.admin]"></button>
         </ng-template>
       </p-toolbar>
 
@@ -75,12 +75,14 @@
             <td>
               <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
                       routerLink="/application/{{application.id}}"
-                      pTooltip="Edit application"></button>
+                      pTooltip="Edit application"
+                      *appUserRole="[Role.admin]"></button>
               <span pTooltip="{{!canDelete(application) ? 'In order to delete application, remove application from all release versions or delete these releases' : ''}}">
                 <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
                         [disabled]="!canDelete(application)"
                         (click)="delete($event, application)"
-                        pTooltip="Delete application"></button>
+                        pTooltip="Delete application"
+                        *appUserRole="[Role.admin]"></button>
               </span>
             </td>
           </tr>

@@ -27,7 +27,7 @@
 
       <p-toolbar>
         <ng-template pTemplate="left">
-          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/cluster/new"></button>
+          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/cluster/new" *appUserRole="[Role.admin]"></button>
         </ng-template>
       </p-toolbar>
 
@@ -65,11 +65,13 @@
             <td>
               <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
                       routerLink="/cluster/{{cluster.id}}"
-                      pTooltip="Edit cluster"></button>
+                      pTooltip="Edit cluster"
+                      *appUserRole="[Role.admin]"></button>
               <span pTooltip="{{cluster.inCluster ? 'May not delete built-in cluster' : ''}}">
                 <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
                         (click)="delete($event, cluster)" [disabled]="cluster.inCluster"
-                        pTooltip="Delete cluster"></button>
+                        pTooltip="Delete cluster"
+                        *appUserRole="[Role.admin]"></button>
               </span>
             </td>
           </tr>

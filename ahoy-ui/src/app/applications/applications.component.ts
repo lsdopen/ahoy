@@ -20,6 +20,7 @@ import {filter} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Confirmation} from '../components/confirm-dialog/confirm';
 import {DialogUtilService} from '../components/dialog-util.service';
+import {Role} from '../util/auth';
 import {LoggerService} from '../util/logger.service';
 import {Application} from './application';
 import {ApplicationService} from './application.service';
@@ -30,6 +31,7 @@ import {ApplicationService} from './application.service';
   styleUrls: ['./applications.component.scss']
 })
 export class ApplicationsComponent implements OnInit {
+  Role = Role;
   applications: Application[] = undefined;
 
   constructor(

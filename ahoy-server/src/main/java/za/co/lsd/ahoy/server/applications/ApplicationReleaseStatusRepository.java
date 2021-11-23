@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,9 +20,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@Secured({"ROLE_admin"})
 public interface ApplicationReleaseStatusRepository extends CrudRepository<ApplicationReleaseStatus, ApplicationDeploymentId> {
 
 	@RestResource(path = "byReleaseVersion", rel = "byReleaseVersion")

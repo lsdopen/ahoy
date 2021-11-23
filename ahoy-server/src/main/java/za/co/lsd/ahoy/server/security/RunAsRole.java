@@ -14,13 +14,15 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.applications;
+package za.co.lsd.ahoy.server.security;
 
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.stereotype.Repository;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Repository
-@Secured({"ROLE_admin"})
-public interface ApplicationVersionRepository extends CrudRepository<ApplicationVersion, Long> {
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface RunAsRole {
+	String value();
 }
