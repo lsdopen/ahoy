@@ -16,11 +16,41 @@
 
 package za.co.lsd.ahoy.server.cluster;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Repository;
+import za.co.lsd.ahoy.server.security.Role;
+
+import java.util.Optional;
 
 @Repository
-@Secured({"ROLE_admin"})
+@Secured({Role.admin})
 public interface ClusterRepository extends PagingAndSortingRepository<Cluster, Long> {
+
+	@Override
+	@Secured({Role.user})
+	long count();
+
+	@Override
+	@Secured({Role.admin, Role.releasemanager})
+	Iterable<Cluster> findAll(Sort sort);
+
+	@Override
+	@Secured({Role.admin, Role.releasemanager})
+	Page<Cluster> findAll(Pageable pageable);
+
+	@Override
+	@Secured({Role.admin, Role.releasemanager})
+	Iterable<Cluster> findAll();
+
+	@Override
+	@Secured({Role.admin, Role.releasemanager})
+	Iterable<Cluster> findAllById(Iterable<Long> longs);
+
+	@Override
+	@Secured({Role.admin, Role.releasemanager})
+	Optional<Cluster> findById(Long aLong);
 }

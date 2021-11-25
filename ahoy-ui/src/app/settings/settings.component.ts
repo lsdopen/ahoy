@@ -17,6 +17,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {MenuItem, Message} from 'primeng/api';
+import {Role} from '../util/auth';
+import {AuthService} from '../util/auth.service';
 
 @Component({
   selector: 'app-settings',
@@ -27,7 +29,8 @@ export class SettingsComponent implements OnInit {
   items: MenuItem[];
   msgs: Message[] = [];
 
-  constructor(private route: ActivatedRoute) {
+  constructor(private route: ActivatedRoute,
+              private authService: AuthService) {
   }
 
   ngOnInit(): void {
@@ -35,9 +38,9 @@ export class SettingsComponent implements OnInit {
       {
         label: 'Settings',
         items: [
-          {label: 'Git', icon: 'pi pi-fw pi-github', routerLink: ['/settings/git']},
-          {label: 'Argo', icon: 'pi pi-fw pi-sitemap', routerLink: ['/settings/argo']},
-          {label: 'Docker', icon: 'pi pi-fw pi-th-large', routerLink: ['/settings/docker']}
+          {label: 'Git', icon: 'pi pi-fw pi-github', routerLink: ['/settings/git'], disabled: !this.authService.hasOneOfRole([Role.admin])},
+          {label: 'Argo', icon: 'pi pi-fw pi-sitemap', routerLink: ['/settings/argo'], disabled: !this.authService.hasOneOfRole([Role.admin])},
+          {label: 'Docker', icon: 'pi pi-fw pi-th-large', routerLink: ['/settings/docker'], disabled: !this.authService.hasOneOfRole([Role.admin, Role.releasemanager])}
         ]
       }
     ];

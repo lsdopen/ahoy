@@ -39,6 +39,7 @@ import za.co.lsd.ahoy.server.releases.PromoteOptions;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 import za.co.lsd.ahoy.server.releases.ReleaseVersionRepository;
 import za.co.lsd.ahoy.server.releases.UpgradeOptions;
+import za.co.lsd.ahoy.server.security.Role;
 import za.co.lsd.ahoy.server.security.RunAsRole;
 
 import java.util.ArrayList;
@@ -315,7 +316,7 @@ public class ReleaseService {
 
 	@Async("deploymentTaskExecutor")
 	@Transactional
-	@RunAsRole("ROLE_admin")
+	@RunAsRole(Role.admin)
 	public void updateStatus(ArgoApplication application) {
 		Objects.requireNonNull(application, "application is required");
 

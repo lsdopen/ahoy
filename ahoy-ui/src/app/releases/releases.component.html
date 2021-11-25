@@ -30,7 +30,7 @@
 
       <p-toolbar>
         <ng-template pTemplate="left">
-          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/release/new" *appUserRole="[Role.admin]"></button>
+          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/release/new" *appUserRole="[Role.admin, Role.releasemanager]"></button>
         </ng-template>
       </p-toolbar>
 
@@ -82,17 +82,17 @@
               <button pButton pRipple icon="pi pi-folder" class="p-button-rounded p-button-plain p-mr-2"
                       (click)="addToEnvironment(release)"
                       pTooltip="Add to environment"
-                      *appUserRole="[Role.admin]"></button>
+                      *appUserRole="[Role.admin, Role.releasemanager]"></button>
               <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
                       routerLink="/release/{{release.id}}"
                       pTooltip="Edit release"
-                      *appUserRole="[Role.admin]"></button>
+                      *appUserRole="[Role.admin, Role.releasemanager]"></button>
               <span pTooltip="{{release.environmentReleases && release.environmentReleases.length > 0 ? 'In order to delete release, remove release from all environments' : ''}}">
                 <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
                         [disabled]="release.environmentReleases && release.environmentReleases.length > 0"
                         (click)="deleteRelease($event, release)"
                         pTooltip="Delete release"
-                        *appUserRole="[Role.admin]"></button>
+                        *appUserRole="[Role.admin, Role.releasemanager]"></button>
               </span>
             </td>
           </tr>

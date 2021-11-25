@@ -17,7 +17,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
-import {Cluster} from '../clusters/cluster';
 import {ClusterService} from '../clusters/cluster.service';
 import {Environment} from '../environments/environment';
 import {EnvironmentService} from '../environments/environment.service';
@@ -30,7 +29,7 @@ import {LoggerService} from '../util/logger.service';
 })
 export class DashboardComponent implements OnInit {
   environments: Environment[] = [];
-  clusters: Cluster[] = [];
+  clusterCount = 0;
 
   constructor(private route: ActivatedRoute,
               private environmentService: EnvironmentService,
@@ -41,8 +40,8 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.clusterService.getAll().subscribe((clusters) => {
-      this.clusters = clusters;
+    this.clusterService.count().subscribe((count) => {
+      this.clusterCount = count;
     });
 
     this.getEnvironments();

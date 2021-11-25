@@ -26,6 +26,7 @@ import reactor.util.retry.Retry;
 import za.co.lsd.ahoy.server.ReleaseService;
 import za.co.lsd.ahoy.server.argocd.model.ArgoApplication;
 import za.co.lsd.ahoy.server.argocd.model.ArgoApplicationWatchEvent;
+import za.co.lsd.ahoy.server.security.Role;
 import za.co.lsd.ahoy.server.security.RunAsRole;
 import za.co.lsd.ahoy.server.settings.SettingsProvider;
 
@@ -87,7 +88,7 @@ public class ArgoStatusListener {
 	}
 
 	@Scheduled(initialDelay = 10000, fixedDelay = 3000)
-	@RunAsRole("ROLE_admin")
+	@RunAsRole(Role.admin)
 	public void checkSubscription() {
 		if (eventStreamSubscription == null) {
 			connect();

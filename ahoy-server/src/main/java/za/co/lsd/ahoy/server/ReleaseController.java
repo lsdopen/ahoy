@@ -27,6 +27,7 @@ import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
 import za.co.lsd.ahoy.server.releases.PromoteOptions;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 import za.co.lsd.ahoy.server.releases.UpgradeOptions;
+import za.co.lsd.ahoy.server.security.Role;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -34,7 +35,7 @@ import java.util.concurrent.Future;
 @RestController
 @RequestMapping("/api")
 @Slf4j
-@Secured({"ROLE_admin"})
+@Secured({Role.admin, Role.releasemanager})
 public class ReleaseController {
 	private final ReleaseService releaseService;
 

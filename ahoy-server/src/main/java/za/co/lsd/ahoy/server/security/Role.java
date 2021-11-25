@@ -14,14 +14,14 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.releases;
+package za.co.lsd.ahoy.server.security;
 
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.stereotype.Repository;
-import za.co.lsd.ahoy.server.security.Role;
+public final class Role {
+	public static final String admin = "ROLE_admin";
+	public static final String releasemanager = "ROLE_releasemanager";
+	public static final String developer = "ROLE_developer";
+	public static final String user = "ROLE_user";
 
-@Repository
-@Secured({Role.admin, Role.releasemanager})
-public interface ReleaseVersionRepository extends CrudRepository<ReleaseVersion, Long> {
+	private Role() {
+	}
 }

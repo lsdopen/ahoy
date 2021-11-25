@@ -35,7 +35,7 @@
                         placeholder="Version" optionLabel="version" class="p-mr-2 p-mb-2"
                         (onChange)="releaseVersionChanged()">
             </p-dropdown>
-            <div *appUserRole="[Role.admin]">
+            <div *appUserRole="[Role.admin, Role.releasemanager]">
               <button pButton pRipple label="Deploy" icon="pi pi-sign-in" class="p-button-plain p-mr-2 p-mb-2" *ngIf="canDeploy()" (click)="deploy()"></button>
               <button pButton pRipple label="Redeploy" icon="pi pi-refresh" class="p-button-plain p-mr-2 p-mb-2" *ngIf="canRedeploy()" (click)="deploy()"></button>
               <button pButton pRipple label="Undeploy" icon="pi pi-sign-out" class="p-button-warning p-mr-2 p-mb-2" *ngIf="canUndeploy()" (click)="undeploy()"></button>

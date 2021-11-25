@@ -24,7 +24,7 @@
 
       <p-toolbar>
         <ng-template pTemplate="left">
-          <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain p-mr-2 p-mb-2" (click)="addApplication()" *appUserRole="[Role.admin]"></button>
+          <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain p-mr-2 p-mb-2" (click)="addApplication()" *appUserRole="[Role.admin, Role.releasemanager]"></button>
         </ng-template>
       </p-toolbar>
 
@@ -86,19 +86,19 @@
               <button pButton pRipple icon="pi pi-upload" class="p-button-rounded p-button-info p-mr-2"
                       (click)="upgradeApplication(av)"
                       pTooltip="Upgrade version"
-                      *appUserRole="[Role.admin]"></button>
+                      *appUserRole="[Role.admin, Role.releasemanager]"></button>
               <button pButton pRipple icon="pi pi-folder" class="p-button-rounded {{hasConfig(av.id) ? 'p-button-plain' : 'p-button-outlined'}} p-mr-2"
                       routerLink="/release/{{environmentRelease.id.environmentId}}/{{environmentRelease.id.releaseId}}/config/{{releaseVersion.id}}/{{av.id}}"
                       pTooltip="Edit environment config"
-                      *appUserRole="[Role.admin]"></button>
+                      *appUserRole="[Role.admin, Role.releasemanager]"></button>
               <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
                       routerLink="/application/{{av.application.id}}/version/{{av.id}}"
                       pTooltip="Edit application version"
-                      *appUserRole="[Role.admin]"></button>
+                      *appUserRole="[Role.admin, Role.releasemanager]"></button>
               <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
                       (click)="removeApplication(av)"
                       pTooltip="Remove application from release"
-                      *appUserRole="[Role.admin]"></button>
+                      *appUserRole="[Role.admin, Role.releasemanager]"></button>
             </td>
           </tr>
         </ng-template>

@@ -38,7 +38,7 @@ import {MoveDialogComponent} from './move-dialog/move-dialog.component';
 export class EnvironmentsComponent implements OnInit {
   Role = Role;
   environments: Environment[] = undefined;
-  clusters: Cluster[] = undefined;
+  clusterCount = 0;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -53,8 +53,8 @@ export class EnvironmentsComponent implements OnInit {
   ngOnInit() {
     this.setBreadcrumb();
 
-    this.clusterService.getAll().subscribe((clusters) => {
-      this.clusters = clusters;
+    this.clusterService.count().subscribe((count) => {
+      this.clusterCount = count;
     });
 
     this.getEnvironments();
@@ -89,7 +89,7 @@ export class EnvironmentsComponent implements OnInit {
   move(event: Event, environment: Environment) {
     const dialogConfig = new DynamicDialogConfig();
     dialogConfig.header = `Move ${(environment.name)} from cluster ${(environment.cluster as Cluster).name} to cluster:`;
-    dialogConfig.data = {selectedEnvironment: environment, clusters: this.clusters};
+    dialogConfig.data = {selectedEnvironment: environment};
 
     const dialogRef = this.dialogService.open(MoveDialogComponent, dialogConfig);
     dialogRef.onClose.pipe(

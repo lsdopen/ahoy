@@ -14,14 +14,17 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.releases;
+package za.co.lsd.ahoy.server.cluster;
 
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.stereotype.Repository;
-import za.co.lsd.ahoy.server.security.Role;
+import org.springframework.data.rest.core.config.Projection;
 
-@Repository
-@Secured({Role.admin, Role.releasemanager})
-public interface ReleaseVersionRepository extends CrudRepository<ReleaseVersion, Long> {
+@Projection(name = "clusterSimple", types = {Cluster.class})
+public interface ClusterSimpleProjection {
+	long getId();
+
+	String getName();
+
+	String getMasterUrl();
+
+	String getHost();
 }

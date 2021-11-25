@@ -22,11 +22,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Repository;
+import za.co.lsd.ahoy.server.security.Role;
 
 import java.util.Optional;
 
 @Repository
-@Secured({"ROLE_admin"})
+@Secured({Role.admin, Role.releasemanager})
 public interface EnvironmentReleaseRepository extends CrudRepository<EnvironmentRelease, EnvironmentReleaseId> {
 
 	@RestResource(path = "byRelease", rel = "byRelease")

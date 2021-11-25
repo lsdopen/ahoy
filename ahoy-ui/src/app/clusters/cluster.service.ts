@@ -35,7 +35,7 @@ export class ClusterService {
   }
 
   getAll(): Observable<Cluster[]> {
-    const url = `/data/clusters?sort=id`;
+    const url = `/data/clusters?projection=clusterSimple&sort=id`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.clusters as Cluster[]),
       tap(apps => this.log.debug(`fetched ${apps.length} clusters`))
@@ -77,6 +77,15 @@ export class ClusterService {
 
     return this.restClient.delete<Cluster>(url).pipe(
       tap(() => this.log.debug('deleted cluster', cluster))
+    );
+  }
+
+  count(): Observable<number> {
+    const url = `/data/clusters/count`;
+    return this.restClient.get<number>(url).pipe(
+      tap((count) => {
+        this.log.debug('fetched cluster count', count);
+      })
     );
   }
 

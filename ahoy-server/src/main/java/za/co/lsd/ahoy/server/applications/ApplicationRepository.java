@@ -19,8 +19,9 @@ package za.co.lsd.ahoy.server.applications;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Repository;
+import za.co.lsd.ahoy.server.security.Role;
 
 @Repository
-@Secured({"ROLE_admin"})
+@Secured({Role.admin, Role.releasemanager})
 public interface ApplicationRepository extends PagingAndSortingRepository<Application, Long> {
 }

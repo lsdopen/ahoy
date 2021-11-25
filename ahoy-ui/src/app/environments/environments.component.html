@@ -17,7 +17,7 @@
 <div class="p-grid">
   <div class="p-col-12">
 
-    <div class="card" *ngIf="clusters && clusters.length === 0">
+    <div class="card" *ngIf="clusterCount === 0">
       <div class="card-header">
         <div class="p-d-flex p-flex-row p-ai-baseline">
           <i class="pi pi-folder p-mr-2 app-icon"></i>
@@ -40,7 +40,7 @@
 
       <p-toolbar>
         <ng-template pTemplate="left">
-          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/environment/new" *appUserRole="[Role.admin]"></button>
+          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/environment/new" *appUserRole="[Role.admin, Role.releasemanager]"></button>
         </ng-template>
       </p-toolbar>
 
@@ -92,15 +92,15 @@
               <button pButton pRipple icon="pi pi-copy" class="p-button-rounded p-button-plain p-mr-2"
                       routerLink="/environment/new" [queryParams]="{sourceEnvironmentId: environment.id}"
                       pTooltip="Duplicate environment to a new environment"
-                      *appUserRole="[Role.admin]"></button>
+                      *appUserRole="[Role.admin, Role.releasemanager]"></button>
               <button pButton pRipple icon="pi pi-arrow-right" class="p-button-rounded p-button-plain p-mr-2"
                       (click)="move($event, environment)"
                       pTooltip="Move environment"
-                      *appUserRole="[Role.admin]"></button>
+                      *appUserRole="[Role.admin, Role.releasemanager]"></button>
               <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
                       (click)="delete($event, environment)"
                       pTooltip="Delete environment"
-                      *appUserRole="[Role.admin]"></button>
+                      *appUserRole="[Role.admin, Role.releasemanager]"></button>
             </td>
           </tr>
         </ng-template>

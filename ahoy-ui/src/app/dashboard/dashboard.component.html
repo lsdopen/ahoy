@@ -25,11 +25,11 @@
         </div>
       </div>
 
-      <div class="p-field" *ngIf="clusters.length === 0">
+      <div class="p-field" *ngIf="clusterCount === 0">
         There are no clusters setup, <a routerLink="/cluster/new">create</a> a new cluster..
       </div>
 
-      <div class="p-field" *ngIf="clusters.length > 0 && environments.length === 0">
+      <div class="p-field" *ngIf="clusterCount > 0 && environments.length === 0">
         There are no environments, <a routerLink="/environment/new">create</a> an environment..
       </div>
 

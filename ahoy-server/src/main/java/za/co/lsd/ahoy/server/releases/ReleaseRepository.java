@@ -22,9 +22,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Repository;
+import za.co.lsd.ahoy.server.security.Role;
 
 @Repository
-@Secured({"ROLE_admin"})
+@Secured({Role.admin, Role.releasemanager})
 public interface ReleaseRepository extends PagingAndSortingRepository<Release, Long> {
 
 	@RestResource(path = "forAdd", rel = "forAdd")

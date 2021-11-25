@@ -58,7 +58,7 @@ export class SettingsService {
   }
 
   gitSettingsExists(): Observable<boolean> {
-    const url = `/api/settings/git`;
+    const url = `/api/settings/git/exists`;
     return this.restClient.exists(url, false).pipe(
       tap((exists) => {
         this.log.debug('checked git settings exists: ', exists);
@@ -102,7 +102,7 @@ export class SettingsService {
   }
 
   argoSettingsExists(): Observable<boolean> {
-    const url = `/api/settings/argo`;
+    const url = `/api/settings/argo/exists`;
     return this.restClient.exists(url, false).pipe(
       tap((exists) => {
         this.log.debug('checked argo settings exists: ', exists);

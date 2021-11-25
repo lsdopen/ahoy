@@ -24,20 +24,19 @@ import java.util.List;
 
 public final class AuthUtility {
 	public static final String SYSTEM_PRINCIPAL = "system";
-	public static final String ROLE_ADMIN = "ROLE_admin";
 
 	private AuthUtility() {
 	}
 
 	public static void runAsSystemUser() {
-		runAsSystemUser(ROLE_ADMIN);
+		runAsSystemUser(Role.admin);
 	}
 
 	public static void runAsSystemUser(String role) {
 		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
 			SYSTEM_PRINCIPAL,
 			null,
-			List.of(new SimpleGrantedAuthority(role)));
+			List.of(new SimpleGrantedAuthority(role), new SimpleGrantedAuthority(Role.user)));
 		SecurityContextHolder.getContext().setAuthentication(auth);
 	}
 }

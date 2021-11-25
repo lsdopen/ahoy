@@ -14,27 +14,33 @@
  *    limitations under the License.
  */
 
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
-import {Environment, MoveOptions} from '../environment';
 import {Cluster} from '../../clusters/cluster';
+import {ClusterService} from '../../clusters/cluster.service';
+import {Environment, MoveOptions} from '../environment';
 
 @Component({
   selector: 'app-move-dialog',
   templateUrl: './move-dialog.component.html',
   styleUrls: ['./move-dialog.component.scss']
 })
-export class MoveDialogComponent {
+export class MoveDialogComponent implements OnInit {
   selectedEnvironment: Environment;
   clusters: Cluster[];
   moveOptions = new MoveOptions();
 
   constructor(public ref: DynamicDialogRef,
-              public config: DynamicDialogConfig) {
+              public config: DynamicDialogConfig,
+              private clusterService: ClusterService) {
     const data = config.data;
     this.selectedEnvironment = data.selectedEnvironment;
-    this.clusters = data.clusters
-      .filter(c => c.id !== (this.selectedEnvironment.cluster as Cluster).id);
+  }
+
+  ngOnInit(): void {
+    this.clusterService.getAll().subscribe((clusters) => {
+      this.clusters = clusters.filter(c => c.id !== (this.selectedEnvironment.cluster as Cluster).id);
+    });
   }
 
   close(result: any) {

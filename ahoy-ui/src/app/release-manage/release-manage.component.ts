@@ -128,7 +128,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
         routerLink: `/releasehistory/${this.environmentRelease.id.releaseId}`
       },
       {
-        label: 'Copy environment config', icon: 'pi pi-fw pi-copy', disabled: !this.canCopyEnvConfig(), visible: this.authService.hasOneOfRole([Role.admin]),
+        label: 'Copy environment config', icon: 'pi pi-fw pi-copy', disabled: !this.canCopyEnvConfig(), visible: this.authService.hasOneOfRole([Role.admin, Role.releasemanager]),
         command: () => this.copyEnvConfig()
       }
     ];

@@ -36,16 +36,18 @@ export class AuthGuard implements CanActivate {
     this.log.debug('user authenticated: ', authenticated);
 
     if (!authenticated) {
-      this.log.debug('user not authenticated, starting login flow');
+      this.log.warn('user not authenticated, starting login flow');
       this.authService.login();
       return false;
     }
 
     const roles = next.data.roles as Role[];
     if (roles && !this.authService.hasOneOfRole(roles)) {
+      this.log.warn('user does not have one of the required roles: [' + roles + '] to navigate to: \'' + state.url + '\'');
       this.router.navigate(['/access']).then();
       return false;
     }
+    this.log.debug('user has valid role');
 
     return true;
   }
