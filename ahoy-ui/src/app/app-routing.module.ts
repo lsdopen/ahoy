@@ -55,7 +55,7 @@ const routes: Routes = [
       // Releases
       {
         path: 'releases', component: ReleasesComponent,
-        canActivate: [AuthGuard, SettingsGuard], data: {roles: [Role.admin, Role.releasemanager, Role.developer]}
+        canActivate: [AuthGuard, SettingsGuard], data: {roles: [Role.user]}
       },
       {
         path: 'release/:releaseId', component: ReleaseDetailComponent,
@@ -69,7 +69,7 @@ const routes: Routes = [
       // Release Manage
       {
         path: 'release/:environmentId/:releaseId/version/:releaseVersionId', component: ReleaseManageComponent,
-        canActivate: [AuthGuard], data: {roles: [Role.admin, Role.releasemanager, Role.developer]}
+        canActivate: [AuthGuard], data: {roles: [Role.user]}
       },
       {
         path: 'release/:environmentId/:releaseId/config/:relVersionId/:appVersionId', component: ReleaseApplicationEnvironmentConfigComponent,

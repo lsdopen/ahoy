@@ -37,6 +37,7 @@ public interface ApplicationEnvironmentConfigRepository extends CrudRepository<A
 
 	@RestResource(path = "existingConfigs", rel = "existingConfigs")
 	@Query("select c from ApplicationEnvironmentConfig c where c.id.environmentReleaseId.environmentId = :environmentId and c.id.environmentReleaseId.releaseId = :releaseId and c.id.releaseVersionId = :releaseVersionId")
+	@Secured({Role.user})
 	Iterable<ApplicationEnvironmentConfig> getExistingConfigs(@Param("environmentId") long environmentId,
 															  @Param("releaseId") long releaseId,
 															  @Param("releaseVersionId") long releaseVersionId);

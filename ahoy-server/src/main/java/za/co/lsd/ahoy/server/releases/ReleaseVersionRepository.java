@@ -21,9 +21,15 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Repository;
 import za.co.lsd.ahoy.server.security.Role;
 
+import java.util.Optional;
+
 @Repository
 @Secured({Role.admin, Role.releasemanager, Role.developer})
 public interface ReleaseVersionRepository extends CrudRepository<ReleaseVersion, Long> {
+
+	@Override
+	@Secured({Role.user})
+	Optional<ReleaseVersion> findById(Long aLong);
 
 	@Override
 	@Secured({Role.admin, Role.releasemanager})

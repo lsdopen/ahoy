@@ -51,7 +51,7 @@ export class AppMenuComponent implements OnInit, OnDestroy {
       {
         label: 'Manage', icon: 'pi pi-fw pi-star', routerLink: ['/manage'],
         items: [
-          {label: 'Releases', icon: 'pi pi-fw pi-forward', routerLink: ['/releases'], roles: [Role.admin, Role.releasemanager, Role.developer]},
+          {label: 'Releases', icon: 'pi pi-fw pi-forward', routerLink: ['/releases'], roles: [Role.user]},
           {label: 'Environments', icon: 'pi pi-fw pi-folder', routerLink: ['/environments'], roles: [Role.admin, Role.releasemanager]},
           {label: 'Applications', icon: 'pi pi-fw pi-image', routerLink: ['/applications'], roles: [Role.admin, Role.releasemanager, Role.developer]},
           {label: 'Clusters', icon: 'pi pi-fw pi-table', routerLink: ['/clusters'], roles: [Role.admin]},
@@ -73,7 +73,7 @@ export class AppMenuComponent implements OnInit, OnDestroy {
     const menuRecentReleases = [];
     for (const release of recentReleases) {
       const url = `release/${release.environmentId}/${release.releaseId}/version/${release.releaseVersionId}`;
-      menuRecentReleases.push({label: release.name, icon: 'pi pi-fw pi-play', routerLink: [url], roles: [Role.admin, Role.releasemanager, Role.developer]});
+      menuRecentReleases.push({label: release.name, icon: 'pi pi-fw pi-play', routerLink: [url], roles: [Role.user]});
     }
     this.model[1] = {label: 'Recent', items: menuRecentReleases};
   }
