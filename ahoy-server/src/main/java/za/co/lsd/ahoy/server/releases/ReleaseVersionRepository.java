@@ -22,6 +22,22 @@ import org.springframework.stereotype.Repository;
 import za.co.lsd.ahoy.server.security.Role;
 
 @Repository
-@Secured({Role.admin, Role.releasemanager})
+@Secured({Role.admin, Role.releasemanager, Role.developer})
 public interface ReleaseVersionRepository extends CrudRepository<ReleaseVersion, Long> {
+
+	@Override
+	@Secured({Role.admin, Role.releasemanager})
+	void deleteById(Long aLong);
+
+	@Override
+	@Secured({Role.admin, Role.releasemanager})
+	void delete(ReleaseVersion entity);
+
+	@Override
+	@Secured({Role.admin, Role.releasemanager})
+	void deleteAll(Iterable<? extends ReleaseVersion> entities);
+
+	@Override
+	@Secured({Role.admin, Role.releasemanager})
+	void deleteAll();
 }

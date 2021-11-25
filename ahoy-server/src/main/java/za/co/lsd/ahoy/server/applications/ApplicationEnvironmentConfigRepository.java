@@ -25,7 +25,7 @@ import org.springframework.stereotype.Repository;
 import za.co.lsd.ahoy.server.security.Role;
 
 @Repository
-@Secured({Role.admin, Role.releasemanager})
+@Secured({Role.admin, Role.releasemanager, Role.developer})
 public interface ApplicationEnvironmentConfigRepository extends CrudRepository<ApplicationEnvironmentConfig, ApplicationDeploymentId> {
 
 	@RestResource(path = "exists", rel = "exists")

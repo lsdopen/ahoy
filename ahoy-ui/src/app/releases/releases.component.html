@@ -30,7 +30,7 @@
 
       <p-toolbar>
         <ng-template pTemplate="left">
-          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/release/new" *appUserRole="[Role.admin, Role.releasemanager]"></button>
+          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/release/new" *appUserRole="[Role.admin, Role.releasemanager, Role.developer]"></button>
         </ng-template>
       </p-toolbar>
 
@@ -86,7 +86,7 @@
               <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
                       routerLink="/release/{{release.id}}"
                       pTooltip="Edit release"
-                      *appUserRole="[Role.admin, Role.releasemanager]"></button>
+                      *appUserRole="[Role.admin, Role.releasemanager, Role.developer]"></button>
               <span pTooltip="{{release.environmentReleases && release.environmentReleases.length > 0 ? 'In order to delete release, remove release from all environments' : ''}}">
                 <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
                         [disabled]="release.environmentReleases && release.environmentReleases.length > 0"

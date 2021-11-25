@@ -25,10 +25,26 @@ import org.springframework.stereotype.Repository;
 import za.co.lsd.ahoy.server.security.Role;
 
 @Repository
-@Secured({Role.admin, Role.releasemanager})
+@Secured({Role.admin, Role.releasemanager, Role.developer})
 public interface ReleaseRepository extends PagingAndSortingRepository<Release, Long> {
 
 	@RestResource(path = "forAdd", rel = "forAdd")
 	@Query("select r from Release r where r.id not in (select er.id.releaseId from EnvironmentRelease er where er.id.environmentId = :environmentId) order by r.id")
 	Iterable<Release> findForAdd(@Param("environmentId") long environmentId);
+
+	@Override
+	@Secured({Role.admin, Role.releasemanager})
+	void deleteById(Long aLong);
+
+	@Override
+	@Secured({Role.admin, Role.releasemanager})
+	void delete(Release entity);
+
+	@Override
+	@Secured({Role.admin, Role.releasemanager})
+	void deleteAll(Iterable<? extends Release> entities);
+
+	@Override
+	@Secured({Role.admin, Role.releasemanager})
+	void deleteAll();
 }

@@ -40,7 +40,7 @@ export class SettingsComponent implements OnInit {
         items: [
           {label: 'Git', icon: 'pi pi-fw pi-github', routerLink: ['/settings/git'], disabled: !this.authService.hasOneOfRole([Role.admin])},
           {label: 'Argo', icon: 'pi pi-fw pi-sitemap', routerLink: ['/settings/argo'], disabled: !this.authService.hasOneOfRole([Role.admin])},
-          {label: 'Docker', icon: 'pi pi-fw pi-th-large', routerLink: ['/settings/docker'], disabled: !this.authService.hasOneOfRole([Role.admin, Role.releasemanager])}
+          {label: 'Docker', icon: 'pi pi-fw pi-th-large', routerLink: ['/settings/docker'], disabled: !this.authService.hasOneOfRole([Role.admin, Role.releasemanager, Role.developer])}
         ]
       }
     ];

@@ -30,6 +30,7 @@ public interface ApplicationReleaseStatusRepository extends CrudRepository<Appli
 
 	@RestResource(path = "byReleaseVersion", rel = "byReleaseVersion")
 	@Query("select s from ApplicationReleaseStatus s where s.id.environmentReleaseId.environmentId = :environmentId and s.id.environmentReleaseId.releaseId = :releaseId and s.id.releaseVersionId = :releaseVersionId")
+	@Secured({Role.admin, Role.releasemanager, Role.developer})
 	Iterable<ApplicationReleaseStatus> byReleaseVersion(@Param("environmentId") long environmentId,
 	                                                          @Param("releaseId") long releaseId,
 	                                                          @Param("releaseVersionId") long releaseVersionId);

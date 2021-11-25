@@ -32,7 +32,12 @@ public interface EnvironmentReleaseRepository extends CrudRepository<Environment
 
 	@RestResource(path = "byRelease", rel = "byRelease")
 	@Query("select e from EnvironmentRelease e where e.release.id = :releaseId order by e.environment.orderIndex,e.environment.id")
+	@Secured({Role.admin, Role.releasemanager, Role.developer})
 	Iterable<EnvironmentRelease> findByRelease(@Param("releaseId") long releaseId);
 
 	Optional<EnvironmentRelease> findByArgoCdUid(String argoCdUid);
+
+	@Override
+	@Secured({Role.admin, Role.releasemanager, Role.developer})
+	Optional<EnvironmentRelease> findById(EnvironmentReleaseId environmentReleaseId);
 }

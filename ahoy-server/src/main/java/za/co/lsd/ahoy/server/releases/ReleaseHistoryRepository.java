@@ -27,5 +27,6 @@ import za.co.lsd.ahoy.server.security.Role;
 public interface ReleaseHistoryRepository extends CrudRepository<ReleaseHistory, Long> {
 
 	@RestResource(path = "findByReleaseId", rel = "findByReleaseId")
+	@Secured({Role.user})
 	Iterable<ReleaseHistory> findTop50ByEnvironmentReleaseReleaseIdOrderByTimeDesc(long releaseId);
 }

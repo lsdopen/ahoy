@@ -100,13 +100,13 @@ public class SettingsController {
 
 	@PostMapping("/docker")
 	@ResponseStatus(value = HttpStatus.OK)
-	@Secured({Role.admin, Role.releasemanager})
+	@Secured({Role.admin, Role.releasemanager, Role.developer})
 	public void saveDockerSettings(@RequestBody DockerSettings dockerSettings) {
 		settingsService.saveDockerSettings(dockerSettings);
 	}
 
 	@GetMapping("/docker")
-	@Secured({Role.admin, Role.releasemanager})
+	@Secured({Role.admin, Role.releasemanager, Role.developer})
 	public DockerSettings getDockerSettings() {
 		return settingsService.getDockerSettings()
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find docker settings"));
