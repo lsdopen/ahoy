@@ -74,6 +74,7 @@ public class ReleaseHistoryAspect {
 
 			return deployedEnvironmentRelease;
 		} catch (Throwable t) {
+			log.error("Failed to save report history item", t);
 
 			releaseHistoryService.save(historyBuilder
 				.status(FAILED)

@@ -14,24 +14,23 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.applications;
+package za.co.lsd.ahoy.server.environments;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
-import za.co.lsd.ahoy.server.releases.ReleaseVersionSummaryProjection;
+import za.co.lsd.ahoy.server.cluster.ClusterSimpleProjection;
+import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseSimpleProjection;
 
 import java.util.List;
 
-@Projection(name = "applicationVersionSummary", types = {ApplicationVersion.class})
-public interface ApplicationVersionSummaryProjection {
+@Projection(name = "environmentSummary", types = {Environment.class})
+public interface EnvironmentSummaryProjection {
 	long getId();
 
-	String getVersion();
+	String getName();
 
-	@Value("#{target.summarySpec()}")
-	ApplicationSpec getSpec();
+	Double getOrderIndex();
 
-	ApplicationSimpleProjection getApplication();
+	ClusterSimpleProjection getCluster();
 
-	List<ReleaseVersionSummaryProjection> getReleaseVersions();
+	List<EnvironmentReleaseSimpleProjection> getEnvironmentReleases();
 }

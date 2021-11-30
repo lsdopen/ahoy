@@ -50,7 +50,9 @@ public class EnvironmentRelease implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private HealthStatus.StatusCode status;
 
+	@JsonIgnore
 	private String argoCdName;
+	@JsonIgnore
 	private String argoCdUid;
 
 	private Integer applicationsReady;
@@ -64,8 +66,8 @@ public class EnvironmentRelease implements Serializable {
 	private ReleaseVersion previousReleaseVersion;
 
 	@OneToMany(mappedBy = "environmentRelease", cascade = CascadeType.REMOVE)
-	@JsonIgnore
 	@OrderBy("id")
+	@JsonIgnore
 	private List<ReleaseHistory> releaseHistories;
 
 	public EnvironmentRelease(Environment environment, Release release) {

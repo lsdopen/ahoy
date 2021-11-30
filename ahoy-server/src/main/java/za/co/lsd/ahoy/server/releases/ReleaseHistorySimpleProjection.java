@@ -14,15 +14,26 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.applications;
+package za.co.lsd.ahoy.server.releases;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
+import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseSimpleProjection;
 
-@Projection(name = "applicationEnvironmentConfigLean", types = {ApplicationEnvironmentConfig.class})
-public interface ApplicationEnvironmentConfigLeanProjection {
-	ApplicationDeploymentId getId();
+import java.time.LocalDateTime;
 
-	@Value("#{target.leanSpec()}")
-	ApplicationEnvironmentSpec getSpec();
+@Projection(name = "releaseHistorySimple", types = {ReleaseHistory.class})
+public interface ReleaseHistorySimpleProjection {
+	long getId();
+
+	EnvironmentReleaseSimpleProjection getEnvironmentRelease();
+
+	ReleaseVersionSimpleProjection getReleaseVersion();
+
+	ReleaseHistoryAction getAction();
+
+	ReleaseHistoryStatus getStatus();
+
+	LocalDateTime getTime();
+
+	String getDescription();
 }

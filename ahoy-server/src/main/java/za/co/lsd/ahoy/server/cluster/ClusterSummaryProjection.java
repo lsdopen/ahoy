@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,22 +14,25 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.releases;
+package za.co.lsd.ahoy.server.cluster;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
-import za.co.lsd.ahoy.server.applications.ApplicationVersionProjection;
+import za.co.lsd.ahoy.server.environments.EnvironmentSimpleProjection;
 
 import java.util.List;
 
-@Projection(name = "releaseVersion", types = {ReleaseVersion.class})
-public interface ReleaseVersionProjection {
-	@Value("#{target.id}")
+@Projection(name = "clusterSummary", types = {Cluster.class})
+public interface ClusterSummaryProjection {
+
 	long getId();
 
-	@Value("#{target.version}")
-	String getVersion();
+	String getName();
 
-	@Value("#{target.applicationVersions}")
-	List<ApplicationVersionProjection> getApplicationVersions();
+	String getHost();
+
+	boolean getInCluster();
+
+	ClusterType getType();
+
+	List<EnvironmentSimpleProjection> getEnvironments();
 }

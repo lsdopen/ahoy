@@ -16,17 +16,18 @@
 
 package za.co.lsd.ahoy.server.releases;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
+import za.co.lsd.ahoy.server.applications.ApplicationVersionSimpleProjection;
+
+import java.util.List;
 
 @Projection(name = "releaseVersionSummary", types = {ReleaseVersion.class})
 public interface ReleaseVersionSummaryProjection {
-	@Value("#{target.id}")
 	long getId();
 
-	@Value("#{target.version}")
 	String getVersion();
 
-	@Value("#{target.release.name}")
-	String getReleaseName();
+	ReleaseSimpleProjection getRelease();
+
+	List<ApplicationVersionSimpleProjection> getApplicationVersions();
 }

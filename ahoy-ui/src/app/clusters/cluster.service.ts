@@ -43,7 +43,7 @@ export class ClusterService {
   }
 
   get(id: number): Observable<Cluster> {
-    const url = `/data/clusters/${id}`;
+    const url = `/data/clusters/${id}?projection=clusterFull`;
     return this.restClient.get<Cluster>(url).pipe(
       tap((cluster) => {
         this.log.debug('fetched cluster', cluster);

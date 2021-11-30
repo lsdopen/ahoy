@@ -28,14 +28,14 @@
         </ng-template>
       </p-toolbar>
 
-      <div class="p-field" *ngIf="releaseVersion.applicationVersions && (releaseVersion.applicationVersions.length === 0)">
+      <div class="p-field" *ngIf="applicationVersions && (applicationVersions.length === 0)">
         There are no applications in this release, <a [routerLink]="" (click)="addApplication()">here</a> to add an application..
       </div>
 
-      <p-table #dt [value]="releaseVersion.applicationVersions" dataKey="id" selectionMode="single"
+      <p-table #dt [value]="applicationVersions" dataKey="id" selectionMode="single"
                styleClass="p-datatable-applicationVersions p-datatable-striped p-datatable-sm"
                [scrollable]="true" scrollHeight="400px" [filterDelay]="0" [globalFilterFields]="['application.name', 'version', 'image']"
-               *ngIf="releaseVersion.applicationVersions && releaseVersion.applicationVersions.length > 0"
+               *ngIf="applicationVersions && applicationVersions.length > 0"
                sortField="application.name" [sortOrder]="1">
         <ng-template pTemplate="caption">
           <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">

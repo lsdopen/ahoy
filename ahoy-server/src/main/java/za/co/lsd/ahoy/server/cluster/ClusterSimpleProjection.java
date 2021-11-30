@@ -20,11 +20,14 @@ import org.springframework.data.rest.core.config.Projection;
 
 @Projection(name = "clusterSimple", types = {Cluster.class})
 public interface ClusterSimpleProjection {
+
 	long getId();
 
 	String getName();
 
-	String getMasterUrl();
-
 	String getHost();
+
+	boolean getInCluster();
+
+	ClusterType getType();
 }

@@ -17,6 +17,7 @@
 package za.co.lsd.ahoy.server.applications;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -26,6 +27,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
+
+import static com.fasterxml.jackson.annotation.JsonProperty.Access.*;
 
 @Entity
 @Data
@@ -40,15 +43,17 @@ public class ApplicationVersion implements Serializable {
 	@NotNull
 	@Convert(converter = ApplicationSpecConverter.class)
 	@Column(length = 10485760)
+	@JsonProperty(access = WRITE_ONLY)
 	private ApplicationSpec spec;
 
 	@ManyToOne
+	@JsonProperty(access = WRITE_ONLY)
 	@ToString.Exclude
 	private Application application;
 
 	@ManyToMany(mappedBy = "applicationVersions")
-	@JsonIgnore
 	@OrderBy("id")
+	@JsonIgnore
 	@ToString.Exclude
 	private List<ReleaseVersion> releaseVersions;
 

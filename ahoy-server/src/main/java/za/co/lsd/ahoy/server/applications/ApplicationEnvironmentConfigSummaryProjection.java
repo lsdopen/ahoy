@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,24 +14,15 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.releases;
+package za.co.lsd.ahoy.server.applications;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
 
-import java.util.List;
+@Projection(name = "applicationEnvironmentConfigSummary", types = {ApplicationEnvironmentConfig.class})
+public interface ApplicationEnvironmentConfigSummaryProjection {
+	ApplicationDeploymentId getId();
 
-@Projection(name = "release", types = {Release.class})
-public interface ReleaseProjection {
-	@Value("#{target.id}")
-	long getId();
-
-	@Value("#{target.name}")
-	String getName();
-
-	@Value("#{target.releaseVersions}")
-	List<ReleaseVersionProjection> getReleaseVersions();
-
-	@Value("#{target.latestReleaseVersion()}")
-	ReleaseVersionSummaryProjection getLatestReleaseVersion();
+	@Value("#{target.summarySpec()}")
+	ApplicationEnvironmentSpec getSpec();
 }

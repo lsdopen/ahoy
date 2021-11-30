@@ -21,15 +21,12 @@ import org.springframework.data.rest.core.config.Projection;
 
 import java.util.List;
 
-@Projection(name = "application", types = {Application.class})
-public interface ApplicationProjection {
-	@Value("#{target.id}")
+@Projection(name = "applicationSummary", types = {Application.class})
+public interface ApplicationSummaryProjection {
 	long getId();
 
-	@Value("#{target.name}")
 	String getName();
 
-	@Value("#{target.applicationVersions}")
 	List<ApplicationVersionSummaryProjection> getApplicationVersions();
 
 	@Value("#{target.latestApplicationVersion()}")

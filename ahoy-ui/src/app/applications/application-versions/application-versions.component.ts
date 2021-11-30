@@ -16,6 +16,7 @@
 
 import {Component, Input} from '@angular/core';
 import {ConfirmationService} from 'primeng/api';
+import {Release} from '../../releases/release';
 import {Application, ApplicationVersion} from '../application';
 import {ApplicationService} from '../application.service';
 
@@ -38,7 +39,7 @@ export class ApplicationVersionsComponent {
   usedByReleaseVersions(applicationVersion: ApplicationVersion): string[] {
     const usedBy = new Set<string>();
     for (const releaseVersion of applicationVersion.releaseVersions) {
-      usedBy.add(`${releaseVersion.releaseName}`);
+      usedBy.add(`${(releaseVersion.release as Release).name}`);
     }
     return Array.from(usedBy.values()).sort();
   }

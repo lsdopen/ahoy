@@ -20,6 +20,7 @@ import {filter} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Confirmation} from '../components/confirm-dialog/confirm';
 import {DialogUtilService} from '../components/dialog-util.service';
+import {Release} from '../releases/release';
 import {Role} from '../util/auth';
 import {LoggerService} from '../util/logger.service';
 import {Application} from './application';
@@ -50,7 +51,7 @@ export class ApplicationsComponent implements OnInit {
 
   private getApplications() {
     this.log.debug('Getting all applications');
-    this.applicationService.getAll()
+    this.applicationService.getAllSummary()
       .subscribe(applications => this.applications = applications);
   }
 
@@ -67,7 +68,7 @@ export class ApplicationsComponent implements OnInit {
     const usedBy = new Set<string>();
     for (const applicationVersion of application.applicationVersions) {
       for (const releaseVersion of applicationVersion.releaseVersions) {
-        usedBy.add(releaseVersion.releaseName);
+        usedBy.add((releaseVersion.release as Release).name);
       }
     }
     return Array.from(usedBy.values()).sort();

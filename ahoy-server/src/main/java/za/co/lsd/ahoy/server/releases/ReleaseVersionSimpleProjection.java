@@ -14,13 +14,15 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.applications;
+package za.co.lsd.ahoy.server.releases;
 
 import org.springframework.data.rest.core.config.Projection;
 
-@Projection(name = "applicationEnvironmentConfig", types = {ApplicationEnvironmentConfig.class})
-public interface ApplicationEnvironmentConfigProjection {
-	ApplicationDeploymentId getId();
+@Projection(name = "releaseVersionSimple", types = {ReleaseVersion.class})
+public interface ReleaseVersionSimpleProjection {
+	long getId();
 
-	ApplicationEnvironmentSpec getSpec();
+	String getVersion();
+
+	ReleaseSimpleProjection getRelease();
 }

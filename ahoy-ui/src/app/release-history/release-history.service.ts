@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  */
 
 import {Injectable} from '@angular/core';
-import {LoggerService} from '../util/logger.service';
-import {RestClientService} from '../util/rest-client.service';
 import {Observable} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
+import {LoggerService} from '../util/logger.service';
+import {RestClientService} from '../util/rest-client.service';
 import {ReleaseHistory} from './release-history';
 
 @Injectable({
@@ -31,16 +31,8 @@ export class ReleaseHistoryService {
     private restClient: RestClientService) {
   }
 
-  getAll(): Observable<ReleaseHistory[]> {
-    const url = `/data/releaseHistories`;
-    return this.restClient.get<any>(url).pipe(
-      map(response => response._embedded.releases as ReleaseHistory[]),
-      tap((relHistories) => this.log.debug(`fetched ${relHistories.length} release history items`))
-    );
-  }
-
   getAllByReleaseId(releaseId: number): Observable<ReleaseHistory[]> {
-    const url = `/data/releaseHistories/search/findByReleaseId?releaseId=${releaseId}&projection=releaseHistory`;
+    const url = `/data/releaseHistories/search/findByReleaseId?releaseId=${releaseId}&projection=releaseHistorySimple`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.releaseHistories as ReleaseHistory[]),
       tap((relHistories) => this.log.debug(`fetched ${relHistories.length} release history items`))

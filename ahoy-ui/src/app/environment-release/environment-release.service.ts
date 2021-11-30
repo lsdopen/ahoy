@@ -42,7 +42,7 @@ export class EnvironmentReleaseService {
   }
 
   getReleasesByEnvironment(envId: number): Observable<EnvironmentRelease[]> {
-    const url = `/data/environments/${envId}/environmentReleases?projection=environmentRelease`;
+    const url = `/data/environments/${envId}/environmentReleases?projection=environmentReleaseSummary`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.environmentReleases as EnvironmentRelease[]),
       tap((envReleases) => {
@@ -53,7 +53,7 @@ export class EnvironmentReleaseService {
   }
 
   getReleasesByRelease(releaseId: number): Observable<EnvironmentRelease[]> {
-    const url = `/data/environmentReleases/search/byRelease?releaseId=${releaseId}&projection=environmentRelease`;
+    const url = `/data/environmentReleases/search/byRelease?releaseId=${releaseId}&projection=environmentReleaseSummary`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.environmentReleases as EnvironmentRelease[]),
       tap((envReleases) => this.log.debug(`fetched ${envReleases.length} environment releases for release=${releaseId}`))
@@ -61,7 +61,7 @@ export class EnvironmentReleaseService {
   }
 
   get(environmentId: number, releaseId: number): Observable<EnvironmentRelease> {
-    const url = `/data/environmentReleases/${environmentId}_${releaseId}?projection=environmentRelease`;
+    const url = `/data/environmentReleases/${environmentId}_${releaseId}?projection=environmentReleaseSummary`;
     return this.restClient.get<EnvironmentRelease>(url).pipe(
       tap((envRelease) => this.log.debug('fetched environment release', envRelease))
     );

@@ -18,7 +18,7 @@ package za.co.lsd.ahoy.server.releases;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
-import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseSummaryProjection;
+import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseSimpleProjection;
 
 import java.util.List;
 
@@ -28,10 +28,10 @@ public interface ReleaseSummaryProjection {
 
 	String getName();
 
-	List<EnvironmentReleaseSummaryProjection> getEnvironmentReleases();
+	List<EnvironmentReleaseSimpleProjection> getEnvironmentReleases();
 
-	List<ReleaseVersionSummaryProjection> getReleaseVersions();
+	List<ReleaseVersionSimpleProjection> getReleaseVersions();
 
 	@Value("#{target.latestReleaseVersion()}")
-	ReleaseVersionSummaryProjection getLatestReleaseVersion();
+	ReleaseVersionSimpleProjection getLatestReleaseVersion();
 }

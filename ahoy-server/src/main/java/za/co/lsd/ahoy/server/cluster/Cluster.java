@@ -17,6 +17,7 @@
 package za.co.lsd.ahoy.server.cluster;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -28,6 +29,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.List;
+
+import static com.fasterxml.jackson.annotation.JsonProperty.Access.*;
 
 @Entity
 @Data
@@ -41,15 +44,18 @@ public class Cluster implements Serializable {
 		message = "Name invalid: should start with and use lower case letters and numbers")
 	private String name;
 	@NotNull
+	@JsonProperty(access = WRITE_ONLY)
 	private String masterUrl;
 	@NotNull
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
+	@JsonProperty(access = WRITE_ONLY)
 	@ToString.Exclude
 	private String token;
 	@NotNull
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
+	@JsonProperty(access = WRITE_ONLY)
 	@ToString.Exclude
 	private String caCertData;
 	@NotNull
@@ -61,9 +67,9 @@ public class Cluster implements Serializable {
 	private ClusterType type;
 
 	@OneToMany(mappedBy = "cluster", cascade = CascadeType.REMOVE)
+	@OrderBy("id")
 	@JsonIgnore
 	@ToString.Exclude
-	@OrderBy("id")
 	private List<Environment> environments;
 
 	public Cluster(@NotNull String name, @NotNull String masterUrl, @NotNull ClusterType type) {

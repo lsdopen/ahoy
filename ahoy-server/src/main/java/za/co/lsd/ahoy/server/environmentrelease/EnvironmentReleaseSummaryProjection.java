@@ -18,7 +18,10 @@ package za.co.lsd.ahoy.server.environmentrelease;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
-import za.co.lsd.ahoy.server.environments.EnvironmentSimpleProjection;
+import za.co.lsd.ahoy.server.argocd.model.HealthStatus;
+import za.co.lsd.ahoy.server.environments.EnvironmentSummaryProjection;
+import za.co.lsd.ahoy.server.releases.ReleaseSummaryProjection;
+import za.co.lsd.ahoy.server.releases.ReleaseVersionSimpleProjection;
 import za.co.lsd.ahoy.server.releases.ReleaseVersionSummaryProjection;
 
 @Projection(name = "environmentReleaseSummary", types = {EnvironmentRelease.class})
@@ -26,10 +29,21 @@ public interface EnvironmentReleaseSummaryProjection {
 
 	EnvironmentReleaseId getId();
 
-	EnvironmentSimpleProjection getEnvironment();
+	ReleaseSummaryProjection getRelease();
+
+	EnvironmentSummaryProjection getEnvironment();
 
 	ReleaseVersionSummaryProjection getCurrentReleaseVersion();
 
+	ReleaseVersionSummaryProjection getPreviousReleaseVersion();
+
+	@Value("#{target.latestReleaseVersion()}")
+	ReleaseVersionSimpleProjection getLatestReleaseVersion();
+
 	@Value("#{target.hasCurrentReleaseVersion()}")
 	Boolean getDeployed();
+
+	HealthStatus.StatusCode getStatus();
+
+	Integer getApplicationsReady();
 }

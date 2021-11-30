@@ -16,8 +16,10 @@
 
 package za.co.lsd.ahoy.server.applications;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
+import za.co.lsd.ahoy.server.releases.ReleaseVersionSimpleProjection;
+
+import java.util.List;
 
 @Projection(name = "applicationVersionSimple", types = {ApplicationVersion.class})
 public interface ApplicationVersionSimpleProjection {
@@ -25,6 +27,5 @@ public interface ApplicationVersionSimpleProjection {
 
 	String getVersion();
 
-	@Value("#{target.summarySpec()}")
-	ApplicationSpec getSpec();
+	List<ReleaseVersionSimpleProjection> getReleaseVersions();
 }

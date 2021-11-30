@@ -71,7 +71,7 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
       .pipe(
         mergeMap((environmentRelease) => {
           this.environmentRelease = environmentRelease;
-          return this.releasesService.getVersion(releaseVersionId);
+          return this.releasesService.getVersionSummary(releaseVersionId);
         }),
         mergeMap((releaseVersion: ReleaseVersion) => {
           this.releaseVersion = releaseVersion;

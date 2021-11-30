@@ -32,7 +32,7 @@ export class ReleaseService {
   }
 
   getAll(): Observable<Release[]> {
-    const url = `/data/releases?sort=id`;
+    const url = `/data/releases?projection=releaseSimple&sort=id`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.releases as Release[]),
       tap((releases) => this.log.debug(`fetched ${releases.length} releases`))
@@ -48,7 +48,7 @@ export class ReleaseService {
   }
 
   getAllForAdd(environmentIdToIgnore: number): Observable<Release[]> {
-    const url = `/data/releases/search/forAdd?environmentId=${environmentIdToIgnore}&projection=release`;
+    const url = `/data/releases/search/forAdd?environmentId=${environmentIdToIgnore}&projection=releaseSimple`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.releases as Release[]),
       tap((releases) => this.log.debug(`fetched ${releases.length} releases for add`))
@@ -70,7 +70,14 @@ export class ReleaseService {
   }
 
   getVersion(id: number): Observable<ReleaseVersion> {
-    const url = `/data/releaseVersions/${id}?projection=releaseVersion`;
+    const url = `/data/releaseVersions/${id}`;
+    return this.restClient.get<ReleaseVersion>(url).pipe(
+      tap((releaseVersion) => this.log.debug('fetched release version', releaseVersion))
+    );
+  }
+
+  getVersionSummary(id: number): Observable<ReleaseVersion> {
+    const url = `/data/releaseVersions/${id}?projection=releaseVersionSummary`;
     return this.restClient.get<ReleaseVersion>(url).pipe(
       tap((releaseVersion) => this.log.debug('fetched release version', releaseVersion))
     );
@@ -157,10 +164,6 @@ export class ReleaseService {
 
   link(id: number): string {
     return this.restClient.getLink('/data/releases', id);
-  }
-
-  linkVersion(id: number): string {
-    return this.restClient.getLink('/data/releaseVersions', id);
   }
 
   linkApplication(id: number): string {

@@ -14,24 +14,13 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.applications;
+package za.co.lsd.ahoy.server.releases;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
-import za.co.lsd.ahoy.server.releases.ReleaseVersionSummaryProjection;
 
-import java.util.List;
-
-@Projection(name = "applicationVersionSummary", types = {ApplicationVersion.class})
-public interface ApplicationVersionSummaryProjection {
+@Projection(name = "releaseSimple", types = {Release.class})
+public interface ReleaseSimpleProjection {
 	long getId();
 
-	String getVersion();
-
-	@Value("#{target.summarySpec()}")
-	ApplicationSpec getSpec();
-
-	ApplicationSimpleProjection getApplication();
-
-	List<ReleaseVersionSummaryProjection> getReleaseVersions();
+	String getName();
 }
