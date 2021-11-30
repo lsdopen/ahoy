@@ -89,7 +89,7 @@ public class ChartGeneratorTest {
 
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
-		ApplicationSpec spec = new ApplicationSpec("image");
+		ApplicationSpec spec = new ApplicationSpec("image", "docker-registry");
 		applicationVersion.setSpec(spec);
 
 		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion));
@@ -155,7 +155,7 @@ public class ChartGeneratorTest {
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 		List<Integer> servicePorts = Collections.singletonList(8080);
-		ApplicationSpec spec = new ApplicationSpec("image");
+		ApplicationSpec spec = new ApplicationSpec("image", "docker-registry");
 		spec.setDockerRegistryName("docker-registry");
 		applicationVersion.setSpec(spec);
 		spec.setCommand("/bin/sh");
@@ -311,7 +311,7 @@ public class ChartGeneratorTest {
 
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
-		ApplicationSpec spec = new ApplicationSpec("image");
+		ApplicationSpec spec = new ApplicationSpec("image", "docker-registry");
 		applicationVersion.setSpec(spec);
 
 		// needed for route

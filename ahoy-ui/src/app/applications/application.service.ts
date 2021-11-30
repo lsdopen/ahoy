@@ -48,16 +48,8 @@ export class ApplicationService {
     );
   }
 
-  getAllVersions(): Observable<ApplicationVersion[]> {
-    const url = `/data/applicationVersions?projection=applicationVersionSimple`;
-    return this.restClient.get<any>(url).pipe(
-      map(response => response._embedded.applicationVersions as ApplicationVersion[]),
-      tap(applicationVersions => this.log.debug(`fetched ${applicationVersions.length} application versions`))
-    );
-  }
-
-  getAllVersionsFull(): Observable<ApplicationVersion[]> {
-    const url = `/data/applicationVersions?projection=applicationVersionFull`;
+  getAllVersionsSummary(): Observable<ApplicationVersion[]> {
+    const url = `/data/applicationVersions?projection=applicationVersionSummary`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.applicationVersions as ApplicationVersion[]),
       tap(applicationVersions => this.log.debug(`fetched ${applicationVersions.length} application versions`))

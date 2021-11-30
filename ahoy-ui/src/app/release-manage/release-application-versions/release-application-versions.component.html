@@ -94,7 +94,7 @@
               <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
                       routerLink="/application/{{av.application.id}}/version/{{av.id}}"
                       pTooltip="Edit application version"
-                      *appUserRole="[Role.admin, Role.releasemanager]"></button>
+                      *appUserRole="[Role.admin, Role.releasemanager, Role.developer]"></button>
               <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
                       (click)="removeApplication(av)"
                       pTooltip="Remove application from release"

@@ -83,6 +83,6 @@ public class ApplicationVersion implements Serializable {
 	}
 
 	public ApplicationSpec summarySpec() {
-		return new ApplicationSpec(spec.getImage());
+		return new ApplicationSpec(spec.getImage(), spec.getDockerRegistryName());
 	}
 }

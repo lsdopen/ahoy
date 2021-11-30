@@ -56,7 +56,7 @@ export class DockerSettingsComponent implements OnInit {
         }
       });
 
-    this.applicationService.getAllVersionsFull()
+    this.applicationService.getAllVersionsSummary()
       .subscribe((applicationVersions) => {
         this.applicationVersions = applicationVersions;
       });
