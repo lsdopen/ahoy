@@ -29,7 +29,7 @@
       </p-toolbar>
 
       <div class="p-field" *ngIf="applicationVersions && (applicationVersions.length === 0)">
-        There are no applications in this release, <a [routerLink]="" (click)="addApplication()">here</a> to add an application..
+        There are no applications in this release<span *appUserRole="[Role.admin, Role.releasemanager, Role.developer]">, <a [routerLink]="" (click)="addApplication()">here</a> to add an application..</span>
       </div>
 
       <p-table #dt [value]="applicationVersions" dataKey="id" selectionMode="single"

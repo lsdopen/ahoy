@@ -79,7 +79,7 @@
       </p-table>
 
       <div class="p-field" *ngIf="clusters && clusters.length === 0">
-        There are no clusters setup, click <a routerLink="/cluster/new">here</a> to configure a cluster..
+        There are no clusters setup<span *appUserRole="[Role.admin]">, click <a routerLink="/cluster/new">here</a> to configure a cluster..</span>
       </div>
 
     </div>

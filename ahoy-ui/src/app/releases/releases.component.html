@@ -35,7 +35,7 @@
       </p-toolbar>
 
       <div class="p-field" *ngIf="releases && (releases.length === 0)">
-        There are no releases, create a <a routerLink="/release/new">new</a> release..
+        There are no releases<span *appUserRole="[Role.admin, Role.releasemanager, Role.developer]">, create a <a routerLink="/release/new">new</a> release..</span>
       </div>
 
       <p-table #dt [value]="releases" dataKey="id" selectionMode="single"

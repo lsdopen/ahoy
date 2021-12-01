@@ -26,7 +26,7 @@
       </div>
 
       <div class="p-field">
-        There are no clusters setup, click <a routerLink="/cluster/new">here</a> to configure a cluster..
+        There are no clusters setup<span *appUserRole="[Role.admin]">, click <a routerLink="/cluster/new">here</a> to configure a cluster..</span>
       </div>
     </div>
 
@@ -45,7 +45,7 @@
       </p-toolbar>
 
       <div class="p-field" *ngIf="environments && (environments.length === 0)">
-        There are no environments, click <a routerLink="/environment/new">here</a> to create an environment..
+        There are no environments setup<span *appUserRole="[Role.admin, Role.releasemanager]">, click <a routerLink="/environment/new">here</a> to create an environment..</span>
       </div>
 
       <p-table #dt [value]="environments" dataKey="id" selectionMode="single"

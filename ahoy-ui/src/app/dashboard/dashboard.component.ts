@@ -20,6 +20,7 @@ import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {ClusterService} from '../clusters/cluster.service';
 import {Environment} from '../environments/environment';
 import {EnvironmentService} from '../environments/environment.service';
+import {Role} from '../util/auth';
 import {LoggerService} from '../util/logger.service';
 
 @Component({
@@ -28,6 +29,7 @@ import {LoggerService} from '../util/logger.service';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
+  Role = Role;
   environments: Environment[] = [];
   clusterCount = 0;
 

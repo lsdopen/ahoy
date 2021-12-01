@@ -26,11 +26,11 @@
       </div>
 
       <div class="p-field" *ngIf="clusterCount === 0">
-        There are no clusters setup, <a routerLink="/cluster/new">create</a> a new cluster..
+        There are no clusters setup<span *appUserRole="[Role.admin]">, <a routerLink="/cluster/new">create</a> a new cluster..</span>
       </div>
 
       <div class="p-field" *ngIf="clusterCount > 0 && environments.length === 0">
-        There are no environments, <a routerLink="/environment/new">create</a> an environment..
+        There are no environments setup<span *appUserRole="[Role.admin, Role.releasemanager]">, <a routerLink="/environment/new">create</a> an environment..</span>
       </div>
 
     </div>

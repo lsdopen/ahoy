@@ -31,7 +31,7 @@
       </p-toolbar>
 
       <div class="p-field" *ngIf="applications && applications.length === 0">
-        There are no applications setup, create a <a routerLink="/application/new">new</a> application..
+        There are no applications setup<span *appUserRole="[Role.admin, Role.releasemanager, Role.developer]">, create a <a routerLink="/application/new">new</a> application..</span>
       </div>
 
       <p-table #dt [value]="applications" dataKey="id" selectionMode="single"

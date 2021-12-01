@@ -26,7 +26,7 @@
     </div>
 
     <div class="p-field" *ngIf="environmentReleases && environmentReleases.length === 0">
-      There are no releases in this environment, <a routerLink="/environmentreleases/{{environment.id}}">create or add</a> a release..
+      There are no releases in this environment<span *appUserRole="[Role.admin, Role.releasemanager]">, <a routerLink="/environmentreleases/{{environment.id}}">create or add</a> a release..</span>
     </div>
 
     <p-table #dt [value]="environmentReleases" dataKey="id" selectionMode="single"
