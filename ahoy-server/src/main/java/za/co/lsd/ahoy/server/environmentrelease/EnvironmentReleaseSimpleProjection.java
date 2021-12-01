@@ -16,6 +16,7 @@
 
 package za.co.lsd.ahoy.server.environmentrelease;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
 import za.co.lsd.ahoy.server.argocd.model.HealthStatus;
 import za.co.lsd.ahoy.server.environments.EnvironmentSimpleProjection;
@@ -34,6 +35,9 @@ public interface EnvironmentReleaseSimpleProjection {
 	ReleaseVersionSimpleProjection getCurrentReleaseVersion();
 
 	ReleaseVersionSimpleProjection getPreviousReleaseVersion();
+
+	@Value("#{target.hasCurrentReleaseVersion()}")
+	Boolean getDeployed();
 
 	HealthStatus.StatusCode getStatus();
 
