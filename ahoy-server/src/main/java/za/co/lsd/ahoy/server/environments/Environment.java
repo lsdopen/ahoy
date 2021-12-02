@@ -44,6 +44,7 @@ public class Environment implements Serializable {
 
 	private Double orderIndex;
 
+	@NotNull
 	@ManyToOne
 	@JoinColumn
 	private Cluster cluster;

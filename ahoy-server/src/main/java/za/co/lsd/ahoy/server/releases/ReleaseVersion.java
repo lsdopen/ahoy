@@ -41,6 +41,7 @@ public class ReleaseVersion implements Serializable {
 	@NotNull
 	private String version;
 
+	@NotNull
 	@ManyToOne
 	@JsonProperty(access = WRITE_ONLY)
 	private Release release;

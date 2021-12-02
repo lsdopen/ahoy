@@ -46,6 +46,7 @@ public class ApplicationVersion implements Serializable {
 	@JsonProperty(access = WRITE_ONLY)
 	private ApplicationSpec spec;
 
+	@NotNull
 	@ManyToOne
 	@JsonProperty(access = WRITE_ONLY)
 	@ToString.Exclude
