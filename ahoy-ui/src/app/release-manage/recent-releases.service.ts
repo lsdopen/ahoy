@@ -42,9 +42,6 @@ export class RecentReleasesService {
         this.recentReleases.set(rr.name, rr);
       }
     }
-
-    environmentReleaseService.environmentReleasesRefreshed()
-      .subscribe(({environmentId, environmentReleases}) => this.deleteMissing(environmentId, environmentReleases));
   }
 
   public recent(environmentRelease: EnvironmentRelease, releaseVersionId: number) {
@@ -52,12 +49,6 @@ export class RecentReleasesService {
     this.recentReleases.set(name, new RecentRelease(name, environmentRelease, releaseVersionId));
     this.deleteOldest();
     this.recentReleasesUpdated();
-  }
-
-  private recentReleasesUpdated() {
-    const recentReleasesArr = this.getRecentReleases();
-    this.localStorageService.setItem(this.KEY, JSON.stringify(recentReleasesArr));
-    this.recentReleasesSubject.next(recentReleasesArr);
   }
 
   public recentReleasesChanged(): Observable<RecentRelease[]> {
@@ -69,31 +60,37 @@ export class RecentReleasesService {
       .sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  private deleteMissing(environmentId: number, environmentReleases: EnvironmentRelease[]) {
-    let updated = false;
-    for (const releaseName of this.recentReleases.keys()) {
-      const recentRelease = this.recentReleases.get(releaseName);
-      if (recentRelease.environmentId !== environmentId) {
-        continue;
-      }
+  public refresh() {
+    this.environmentReleaseService.getAll()
+      .subscribe((environmentReleases) => {
 
-      const releaseFound = environmentReleases.find((environmentRelease) => {
-        const releaseVersions = (environmentRelease.release as Release).releaseVersions;
-        return environmentRelease.id.environmentId === recentRelease.environmentId &&
-          environmentRelease.id.releaseId === recentRelease.releaseId &&
-          environmentRelease.id.environmentId === recentRelease.environmentId &&
-          releaseVersions.find((releaseVersion) => releaseVersion.id === recentRelease.releaseVersionId);
+        let updated = false;
+        for (const releaseName of this.recentReleases.keys()) {
+          const recentRelease = this.recentReleases.get(releaseName);
+          const releaseFound = environmentReleases.find((environmentRelease) => {
+            const releaseVersions = (environmentRelease.release as Release).releaseVersions;
+            return environmentRelease.id.environmentId === recentRelease.environmentId &&
+              environmentRelease.id.releaseId === recentRelease.releaseId &&
+              environmentRelease.id.environmentId === recentRelease.environmentId &&
+              releaseVersions.find((releaseVersion) => releaseVersion.id === recentRelease.releaseVersionId);
+          });
+
+          if (!releaseFound) {
+            updated = true;
+            this.recentReleases.delete(releaseName);
+          }
+        }
+
+        if (updated) {
+          this.recentReleasesUpdated();
+        }
       });
+  }
 
-      if (!releaseFound) {
-        updated = true;
-        this.recentReleases.delete(releaseName);
-      }
-    }
-
-    if (updated) {
-      this.recentReleasesUpdated();
-    }
+  private recentReleasesUpdated() {
+    const recentReleasesArr = this.getRecentReleases();
+    this.localStorageService.setItem(this.KEY, JSON.stringify(recentReleasesArr));
+    this.recentReleasesSubject.next(recentReleasesArr);
   }
 
   private deleteOldest() {

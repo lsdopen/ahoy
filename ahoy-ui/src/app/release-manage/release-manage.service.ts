@@ -24,6 +24,7 @@ import {NotificationsService} from '../notifications/notifications.service';
 import {PromoteOptions, Release, ReleaseVersion, UpgradeOptions} from '../releases/release';
 import {LoggerService} from '../util/logger.service';
 import {RestClientService} from '../util/rest-client.service';
+import {RecentReleasesService} from './recent-releases.service';
 
 @Injectable({
   providedIn: 'root'
@@ -33,6 +34,7 @@ export class ReleaseManageService {
 
   constructor(private restClient: RestClientService,
               private notificationsService: NotificationsService,
+              private recentReleasesService: RecentReleasesService,
               private log: LoggerService) {
   }
 
@@ -85,6 +87,7 @@ export class ReleaseManageService {
         const text = `${(removedEnvironmentRelease.release as Release).name} `
           + `was removed from environment ${(removedEnvironmentRelease.environment as Environment).name}`;
         this.notificationsService.notification(new Notification(text));
+        this.recentReleasesService.refresh();
       }),
       catchError((error) => {
         const text = `Failed to remove ${(environmentRelease.release as Release).name} `

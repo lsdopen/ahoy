@@ -20,6 +20,7 @@ import {catchError, map, tap} from 'rxjs/operators';
 import {Cluster} from '../clusters/cluster';
 import {Notification} from '../notifications/notification';
 import {NotificationsService} from '../notifications/notifications.service';
+import {RecentReleasesService} from '../release-manage/recent-releases.service';
 import {LoggerService} from '../util/logger.service';
 import {RestClientService} from '../util/rest-client.service';
 import {Environment, MoveOptions} from './environment';
@@ -32,6 +33,7 @@ export class EnvironmentService {
   constructor(
     private log: LoggerService,
     private notificationsService: NotificationsService,
+    private recentReleasesService: RecentReleasesService,
     private restClient: RestClientService) {
   }
 
@@ -86,6 +88,7 @@ export class EnvironmentService {
         this.log.debug('destroyed environment', environment);
         const text = `${destroyedEnvironment.name} ` + `was destroyed from cluster ${(destroyedEnvironment.cluster as Cluster).name}`;
         this.notificationsService.notification(new Notification(text));
+        this.recentReleasesService.refresh();
       }),
       catchError((error) => {
         const text = `Failed to destroy environment ${environment.name}`;
