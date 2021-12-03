@@ -18,7 +18,7 @@ Ahoy ships with some default users and roles.
 | admin				| An Administrator is able to perform all functions 												|
 | releasemanager 	| A Release Manager is able to perform all application, release and environment functions 			|
 | developer 		| A Developer is able to define new releases and applications, as well as configure applications 	|
-| user 				| The Ahoy user is able to view the status of releases but in unable to perform any functions		|
+| user 				| The Ahoy user is able to view the status of releases but is unable to perform any functions		|
 
 ## Role matrix
 
