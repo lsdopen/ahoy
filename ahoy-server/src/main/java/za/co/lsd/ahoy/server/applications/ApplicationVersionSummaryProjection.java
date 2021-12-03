@@ -31,5 +31,7 @@ public interface ApplicationVersionSummaryProjection {
 	@Value("#{target.summarySpec()}")
 	ApplicationSpec getSpec();
 
+	ApplicationSimpleProjection getApplication();
+
 	List<ReleaseVersionSummaryProjection> getReleaseVersions();
 }

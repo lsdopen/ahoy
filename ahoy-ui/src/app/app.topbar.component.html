@@ -49,7 +49,7 @@
               <span class="fs-normal">{{identityClaim().name}}</span>
             </li>
             <p-divider layout="horizontal"></p-divider>
-            <li class="layout-topbar-action-item" routerLink="/settings" pRipple>
+            <li class="layout-topbar-action-item" routerLink="/settings" pRipple *appUserRole="[Role.admin, Role.releasemanager, Role.developer]">
               <div class="p-d-flex p-flex-row p-ai-center">
                 <i class="pi pi-cog" [ngClass]="{'p-mr-2': !app.isRTL, 'p-ml-2': app.isRTL}"></i>
                 <span>Settings</span>

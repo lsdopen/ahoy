@@ -14,17 +14,25 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.applications;
+package za.co.lsd.ahoy.server.cluster;
 
 import org.springframework.data.rest.core.config.Projection;
+import za.co.lsd.ahoy.server.environments.EnvironmentSimpleProjection;
 
-@Projection(name = "applicationVersion", types = {ApplicationVersion.class})
-public interface ApplicationVersionProjection {
+import java.util.List;
+
+@Projection(name = "clusterSummary", types = {Cluster.class})
+public interface ClusterSummaryProjection {
+
 	long getId();
 
-	String getVersion();
+	String getName();
 
-	ApplicationSpec getSpec();
+	String getHost();
 
-	Application getApplication();
+	boolean getInCluster();
+
+	ClusterType getType();
+
+	List<EnvironmentSimpleProjection> getEnvironments();
 }

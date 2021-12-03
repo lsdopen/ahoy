@@ -17,7 +17,7 @@
 <div class="p-grid">
   <div class="p-col-12">
 
-    <div class="card" *ngIf="clusters && clusters.length === 0">
+    <div class="card" *ngIf="clusterCount === 0">
       <div class="card-header">
         <div class="p-d-flex p-flex-row p-ai-baseline">
           <i class="pi pi-folder p-mr-2 app-icon"></i>
@@ -26,7 +26,7 @@
       </div>
 
       <div class="p-field">
-        There are no clusters setup, click <a routerLink="/cluster/new">here</a> to configure a cluster..
+        There are no clusters setup<span *appUserRole="[Role.admin]">, click <a routerLink="/cluster/new">here</a> to configure a cluster..</span>
       </div>
     </div>
 
@@ -40,12 +40,12 @@
 
       <p-toolbar>
         <ng-template pTemplate="left">
-          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/environment/new"></button>
+          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/environment/new" *appUserRole="[Role.admin, Role.releasemanager]"></button>
         </ng-template>
       </p-toolbar>
 
       <div class="p-field" *ngIf="environments && (environments.length === 0)">
-        There are no environments, click <a routerLink="/environment/new">here</a> to create an environment..
+        There are no environments setup<span *appUserRole="[Role.admin, Role.releasemanager]">, click <a routerLink="/environment/new">here</a> to create an environment..</span>
       </div>
 
       <p-table #dt [value]="environments" dataKey="id" selectionMode="single"
@@ -91,13 +91,16 @@
                       pTooltip="Manage environment"></button>
               <button pButton pRipple icon="pi pi-copy" class="p-button-rounded p-button-plain p-mr-2"
                       routerLink="/environment/new" [queryParams]="{sourceEnvironmentId: environment.id}"
-                      pTooltip="Duplicate environment to a new environment"></button>
+                      pTooltip="Duplicate environment to a new environment"
+                      *appUserRole="[Role.admin, Role.releasemanager]"></button>
               <button pButton pRipple icon="pi pi-arrow-right" class="p-button-rounded p-button-plain p-mr-2"
                       (click)="move($event, environment)"
-                      pTooltip="Move environment"></button>
+                      pTooltip="Move environment"
+                      *appUserRole="[Role.admin, Role.releasemanager]"></button>
               <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
                       (click)="delete($event, environment)"
-                      pTooltip="Delete environment"></button>
+                      pTooltip="Delete environment"
+                      *appUserRole="[Role.admin, Role.releasemanager]"></button>
             </td>
           </tr>
         </ng-template>

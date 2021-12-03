@@ -21,11 +21,14 @@ import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import za.co.lsd.ahoy.server.security.Role;
 
 @RepositoryRestController
 @RequestMapping("/environments")
 @Slf4j
+@Secured({Role.admin, Role.releasemanager})
 public class EnvironmentsController {
 	private final EnvironmentService environmentService;
 

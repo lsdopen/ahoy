@@ -27,6 +27,7 @@ import {ReleaseManageService} from '../release-manage/release-manage.service';
 import {Release} from '../releases/release';
 import {ReleaseService} from '../releases/release.service';
 import {TaskEvent} from '../taskevents/task-events';
+import {Role} from '../util/auth';
 import {LoggerService} from '../util/logger.service';
 import {AddReleaseDialogComponent} from './add-release-dialog/add-release-dialog.component';
 import {EnvironmentRelease, EnvironmentReleaseId} from './environment-release';
@@ -38,6 +39,7 @@ import {EnvironmentReleaseService} from './environment-release.service';
   styleUrls: ['./environment-releases.component.scss']
 })
 export class EnvironmentReleasesComponent implements OnInit {
+  Role = Role;
   environmentReleases: EnvironmentRelease[] = undefined;
   environment: Environment;
 

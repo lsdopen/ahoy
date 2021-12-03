@@ -17,16 +17,26 @@
 package za.co.lsd.ahoy.server;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import za.co.lsd.ahoy.server.security.Role;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
+	private final JwtAuthenticationConverter jwtAuthenticationConverter;
+
+	public SecurityConfiguration(JwtAuthenticationConverter jwtAuthenticationConverter) {
+		this.jwtAuthenticationConverter = jwtAuthenticationConverter;
+	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -37,12 +47,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
 			.headers().frameOptions().disable().and()
 			.authorizeRequests()
 			.antMatchers("/*", "/assets/**", "/ws/**", "/auth/**").permitAll()
+			.regexMatchers(HttpMethod.GET,"/data/applicationVersions/.*projection=.*Full").hasAnyAuthority(Role.admin, Role.releasemanager, Role.developer)
+			.regexMatchers(HttpMethod.GET,"/data/applicationEnvironmentConfigs/.*projection=.*Full").hasAnyAuthority(Role.admin, Role.releasemanager, Role.developer)
+			.regexMatchers(HttpMethod.GET,"/data/.*projection=.*Full").hasAuthority(Role.admin)
 			.antMatchers("/data/**").hasAuthority("SCOPE_ahoy")
 			.antMatchers("/api/**").hasAuthority("SCOPE_ahoy")
 			.anyRequest().authenticated()
 			.and()
 			.oauth2ResourceServer()
-			.jwt();
+			.jwt()
+			.jwtAuthenticationConverter(jwtAuthenticationConverter);
 
 		http
 			.sessionManagement()

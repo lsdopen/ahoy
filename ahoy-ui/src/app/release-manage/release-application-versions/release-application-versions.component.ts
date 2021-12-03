@@ -17,6 +17,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
 import {filter, map, mergeMap, take} from 'rxjs/operators';
+import {Role} from 'src/app/util/auth';
 import {Application, ApplicationEnvironmentConfig, ApplicationVersion} from '../../applications/application';
 import {ApplicationService} from '../../applications/application.service';
 import {Confirmation} from '../../components/confirm-dialog/confirm';
@@ -34,6 +35,8 @@ import {ReleaseManageService} from '../release-manage.service';
   styleUrls: ['./release-application-versions.component.scss']
 })
 export class ReleaseApplicationVersionsComponent implements OnInit {
+  Role = Role;
+  applicationVersions: ApplicationVersion[];
   @Input() environmentRelease: EnvironmentRelease;
   @Input() releaseVersion: ReleaseVersion;
   @Input() releaseChanged: EventEmitter<{ environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion }>;
@@ -48,22 +51,21 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getConfigs();
-    this.getStatuses();
+    this.getApplicationVersions();
 
     if (this.releaseChanged) {
       this.releaseChanged.subscribe((data) => {
         this.environmentRelease = data.environmentRelease;
         this.releaseVersion = data.releaseVersion;
-        this.getReleaseVersion();
+        this.getApplicationVersions();
       });
     }
   }
 
-  getReleaseVersion() {
-    this.releaseService.getVersion(this.releaseVersion.id)
-      .subscribe(releaseVersion => {
-        this.releaseVersion = releaseVersion;
+  getApplicationVersions() {
+    this.applicationService.getAllVersionsForReleaseVersion(this.releaseVersion.id)
+      .subscribe(applicationVersions => {
+        this.applicationVersions = applicationVersions;
         this.getConfigs();
         this.getStatuses();
       });
@@ -82,7 +84,7 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
   getStatuses() {
     this.applicationService.getApplicationReleaseStatus(this.environmentRelease.id, this.releaseVersion.id)
       .subscribe((statuses) => {
-        for (const appVersion of this.releaseVersion.applicationVersions) {
+        for (const appVersion of this.applicationVersions) {
           for (const status of statuses) {
             if (status.id.applicationVersionId === appVersion.id) {
               appVersion.status = status;
@@ -99,7 +101,7 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
   addApplication() {
     const dialogConfig = new DynamicDialogConfig();
     dialogConfig.header = `Add application to ${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} in ${(this.environmentRelease.environment as Environment).name}:`;
-    dialogConfig.data = {environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion};
+    dialogConfig.data = {environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion, applicationVersions: this.applicationVersions};
     // TODO nested subscribes
     const dialogRef = this.dialogService.open(AddApplicationDialogComponent, dialogConfig);
     dialogRef.onClose.pipe(
@@ -107,7 +109,7 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
     ).subscribe((upgradeAppOptions: UpgradeAppOptions) => {
       this.releaseService.associateApplication(this.releaseVersion.id, upgradeAppOptions.applicationVersion.id)
         .subscribe(() => {
-          this.getReleaseVersion();
+          this.getApplicationVersions();
           this.applicationVersionsChanged.next();
         });
     });
@@ -124,7 +126,7 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
     ).subscribe(() => {
       this.releaseService.removeAssociatedApplication(this.releaseVersion.id, applicationVersion.id)
         .subscribe(() => {
-            this.getReleaseVersion();
+            this.getApplicationVersions();
             this.applicationVersionsChanged.next();
           }
         );
@@ -137,6 +139,7 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
     dialogConfig.data = {
       environmentRelease: this.environmentRelease,
       releaseVersion: this.releaseVersion,
+      applicationVersions: this.applicationVersions,
       currentApplicationVersion: currentAppVersion
     };
 
@@ -150,7 +153,7 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
       take(1),
       filter(() => upgradeAppOptions.copyEnvironmentConfig), // copy environment config?
       mergeMap(() => this.releaseManageService.copyAppEnvConfig(this.releaseVersion.id, currentAppVersion.id, upgradeAppOptions.applicationVersion.id)),
-    ).subscribe({complete: () => this.getReleaseVersion()});
+    ).subscribe({complete: () => this.getApplicationVersions()});
   }
 
   hasRoute(applicationVersion: ApplicationVersion): boolean {

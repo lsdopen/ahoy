@@ -25,6 +25,7 @@ import {EnvironmentReleaseService} from '../environment-release/environment-rele
 import {Environment} from '../environments/environment';
 import {EnvironmentService} from '../environments/environment.service';
 import {TaskEvent} from '../taskevents/task-events';
+import {Role} from '../util/auth';
 import {LoggerService} from '../util/logger.service';
 import {AddToEnvironmentDialogComponent} from './add-to-environment-dialog/add-to-environment-dialog.component';
 import {Release} from './release';
@@ -36,6 +37,7 @@ import {ReleaseService} from './release.service';
   styleUrls: ['./releases.component.scss']
 })
 export class ReleasesComponent implements OnInit {
+  Role = Role;
   releases: Release[] = undefined;
 
   constructor(private route: ActivatedRoute,

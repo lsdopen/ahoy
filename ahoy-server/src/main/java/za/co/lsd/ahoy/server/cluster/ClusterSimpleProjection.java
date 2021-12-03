@@ -14,15 +14,20 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.applications;
+package za.co.lsd.ahoy.server.cluster;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
 
-@Projection(name = "applicationEnvironmentConfigLean", types = {ApplicationEnvironmentConfig.class})
-public interface ApplicationEnvironmentConfigLeanProjection {
-	ApplicationDeploymentId getId();
+@Projection(name = "clusterSimple", types = {Cluster.class})
+public interface ClusterSimpleProjection {
 
-	@Value("#{target.leanSpec()}")
-	ApplicationEnvironmentSpec getSpec();
+	long getId();
+
+	String getName();
+
+	String getHost();
+
+	boolean getInCluster();
+
+	ClusterType getType();
 }

@@ -15,8 +15,9 @@
  */
 
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree} from '@angular/router';
+import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
 import {Observable} from 'rxjs';
+import {Role} from './auth';
 import {AuthService} from './auth.service';
 import {LoggerService} from './logger.service';
 
@@ -25,7 +26,8 @@ import {LoggerService} from './logger.service';
 })
 export class AuthGuard implements CanActivate {
 
-  constructor(private authService: AuthService,
+  constructor(private router: Router,
+              private authService: AuthService,
               private log: LoggerService) {
   }
 
@@ -34,10 +36,18 @@ export class AuthGuard implements CanActivate {
     this.log.debug('user authenticated: ', authenticated);
 
     if (!authenticated) {
-      this.log.debug('user not authenticated, starting login flow');
+      this.log.warn('user not authenticated, starting login flow');
       this.authService.login();
       return false;
     }
+
+    const roles = next.data.roles as Role[];
+    if (roles && !this.authService.hasOneOfRole(roles)) {
+      this.log.warn('user does not have one of the required roles: [' + roles + '] to navigate to: \'' + state.url + '\'');
+      this.router.navigate(['/access']).then();
+      return false;
+    }
+    this.log.debug('user has valid role');
 
     return true;
   }

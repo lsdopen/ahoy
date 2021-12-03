@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,9 +20,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Repository;
+import za.co.lsd.ahoy.server.security.Role;
 
 @Repository
+@Secured({Role.admin, Role.releasemanager, Role.developer})
 public interface ApplicationEnvironmentConfigRepository extends CrudRepository<ApplicationEnvironmentConfig, ApplicationDeploymentId> {
 
 	@RestResource(path = "exists", rel = "exists")
@@ -34,6 +37,7 @@ public interface ApplicationEnvironmentConfigRepository extends CrudRepository<A
 
 	@RestResource(path = "existingConfigs", rel = "existingConfigs")
 	@Query("select c from ApplicationEnvironmentConfig c where c.id.environmentReleaseId.environmentId = :environmentId and c.id.environmentReleaseId.releaseId = :releaseId and c.id.releaseVersionId = :releaseVersionId")
+	@Secured({Role.user})
 	Iterable<ApplicationEnvironmentConfig> getExistingConfigs(@Param("environmentId") long environmentId,
 															  @Param("releaseId") long releaseId,
 															  @Param("releaseVersionId") long releaseVersionId);

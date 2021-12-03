@@ -17,10 +17,11 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
-import {Cluster} from '../clusters/cluster';
 import {ClusterService} from '../clusters/cluster.service';
 import {Environment} from '../environments/environment';
 import {EnvironmentService} from '../environments/environment.service';
+import {RecentReleasesService} from '../release-manage/recent-releases.service';
+import {Role} from '../util/auth';
 import {LoggerService} from '../util/logger.service';
 
 @Component({
@@ -29,21 +30,25 @@ import {LoggerService} from '../util/logger.service';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
+  Role = Role;
   environments: Environment[] = [];
-  clusters: Cluster[] = [];
+  clusterCount = 0;
 
   constructor(private route: ActivatedRoute,
               private environmentService: EnvironmentService,
               private clusterService: ClusterService,
+              private recentReleasesService: RecentReleasesService,
               private log: LoggerService,
               private breadcrumbService: AppBreadcrumbService) {
     this.breadcrumbService.setItems([{label: 'dashboard'}]);
   }
 
   ngOnInit() {
-    this.clusterService.getAll().subscribe((clusters) => {
-      this.clusters = clusters;
+    this.clusterService.count().subscribe((count) => {
+      this.clusterCount = count;
     });
+
+    this.recentReleasesService.refresh();
 
     this.getEnvironments();
   }

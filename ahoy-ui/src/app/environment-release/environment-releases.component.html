@@ -30,13 +30,13 @@
 
       <p-toolbar>
         <ng-template pTemplate="left">
-          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/release/new" [queryParams]="{environmentId: environment.id}"></button>
-          <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain p-mb-2" (click)="addRelease()"></button>
+          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/release/new" [queryParams]="{environmentId: environment.id}" *appUserRole="[Role.admin, Role.releasemanager]"></button>
+          <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain p-mb-2" (click)="addRelease()" *appUserRole="[Role.admin, Role.releasemanager]"></button>
         </ng-template>
       </p-toolbar>
 
       <div class="p-field" *ngIf="environmentReleases && (environmentReleases.length === 0)">
-        There are no releases in this environment, create a <a routerLink="/release/new" [queryParams]="{environmentId: environment.id}">new</a> release or <a [routerLink]="" (click)="addRelease()">add</a> a existing release..
+        There are no releases in this environment<span *appUserRole="[Role.admin, Role.releasemanager]">, create a <a routerLink="/release/new" [queryParams]="{environmentId: environment.id}">new</a> release or <a [routerLink]="" (click)="addRelease()">add</a> an existing release..</span>
       </div>
 
       <p-table #dt [value]="environmentReleases" dataKey="id" selectionMode="single"
@@ -94,7 +94,8 @@
                       pTooltip="Manage release"></button>
               <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
                       (click)="removeRelease($event, er)"
-                      pTooltip="Remove release from environment"></button>
+                      pTooltip="Remove release from environment"
+                      *appUserRole="[Role.admin, Role.releasemanager]"></button>
             </td>
           </tr>
         </ng-template>

@@ -42,6 +42,10 @@ public class SettingsService {
 			.map(settings -> (GitSettings) settings.getSettings());
 	}
 
+	public boolean gitSettingsExists() {
+		return settingsRepository.existsById(Settings.Type.GIT);
+	}
+
 	public void saveArgoSettings(ArgoSettings argoSettings) {
 		settingsRepository.save(new Settings(argoSettings));
 	}
@@ -49,6 +53,10 @@ public class SettingsService {
 	public Optional<ArgoSettings> getArgoSettings() {
 		return settingsRepository.findById(Settings.Type.ARGO)
 			.map(settings -> (ArgoSettings) settings.getSettings());
+	}
+
+	public boolean argoSettingsExists() {
+		return settingsRepository.existsById(Settings.Type.ARGO);
 	}
 
 	public void saveDockerSettings(DockerSettings dockerSettings) {

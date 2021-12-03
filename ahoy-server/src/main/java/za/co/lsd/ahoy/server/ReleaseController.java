@@ -20,12 +20,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
 import za.co.lsd.ahoy.server.releases.PromoteOptions;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 import za.co.lsd.ahoy.server.releases.UpgradeOptions;
+import za.co.lsd.ahoy.server.security.Role;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -33,6 +35,7 @@ import java.util.concurrent.Future;
 @RestController
 @RequestMapping("/api")
 @Slf4j
+@Secured({Role.admin, Role.releasemanager})
 public class ReleaseController {
 	private final ReleaseService releaseService;
 

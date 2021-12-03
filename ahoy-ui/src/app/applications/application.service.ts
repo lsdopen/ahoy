@@ -33,15 +33,23 @@ export class ApplicationService {
   }
 
   getAll(): Observable<Application[]> {
-    const url = `/data/applications?projection=application&sort=id`;
+    const url = `/data/applications?projection=applicationSimple&sort=id`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.applications as Application[]),
       tap(apps => this.log.debug(`fetched ${apps.length} apps`))
     );
   }
 
-  getAllVersions(): Observable<ApplicationVersion[]> {
-    const url = `/data/applicationVersions?projection=applicationVersion`;
+  getAllSummary(): Observable<Application[]> {
+    const url = `/data/applications?projection=applicationSummary&sort=id`;
+    return this.restClient.get<any>(url).pipe(
+      map(response => response._embedded.applications as Application[]),
+      tap(apps => this.log.debug(`fetched ${apps.length} apps`))
+    );
+  }
+
+  getAllVersionsSummary(): Observable<ApplicationVersion[]> {
+    const url = `/data/applicationVersions?projection=applicationVersionSummary`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.applicationVersions as ApplicationVersion[]),
       tap(applicationVersions => this.log.debug(`fetched ${applicationVersions.length} application versions`))
@@ -49,7 +57,23 @@ export class ApplicationService {
   }
 
   getAllVersionsForApplication(applicationId: number): Observable<ApplicationVersion[]> {
-    const url = `/data/applications/${applicationId}/applicationVersions?projection=applicationVersion`;
+    const url = `/data/applications/${applicationId}/applicationVersions?projection=applicationVersionSimple`;
+    return this.restClient.get<any>(url).pipe(
+      map(response => response._embedded.applicationVersions as ApplicationVersion[]),
+      tap(applicationVersions => this.log.debug(`fetched ${applicationVersions.length} application versions`))
+    );
+  }
+
+  getAllVersionsSummaryForApplication(applicationId: number): Observable<ApplicationVersion[]> {
+    const url = `/data/applications/${applicationId}/applicationVersions?projection=applicationVersionSummary`;
+    return this.restClient.get<any>(url).pipe(
+      map(response => response._embedded.applicationVersions as ApplicationVersion[]),
+      tap(applicationVersions => this.log.debug(`fetched ${applicationVersions.length} application versions`))
+    );
+  }
+
+  getAllVersionsForReleaseVersion(releaseVersionId: number): Observable<ApplicationVersion[]> {
+    const url = `/data/releaseVersions/${releaseVersionId}/applicationVersions?projection=applicationVersionSummary`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.applicationVersions as ApplicationVersion[]),
       tap(applicationVersions => this.log.debug(`fetched ${applicationVersions.length} application versions`))
@@ -57,14 +81,14 @@ export class ApplicationService {
   }
 
   get(id: number): Observable<Application> {
-    const url = `/data/applications/${id}?projection=application`;
+    const url = `/data/applications/${id}?projection=applicationSummary`;
     return this.restClient.get<Application>(url).pipe(
       tap((app) => this.log.debug('fetched application', app))
     );
   }
 
   getVersion(id: number): Observable<ApplicationVersion> {
-    const url = `/data/applicationVersions/${id}?projection=applicationVersion`;
+    const url = `/data/applicationVersions/${id}?projection=applicationVersionFull`;
     return this.restClient.get<ApplicationVersion>(url).pipe(
       tap((appVersion) => this.log.debug('fetched application version', appVersion))
     );
@@ -137,7 +161,7 @@ export class ApplicationService {
   }
 
   getEnvironmentConfig(id: ApplicationEnvironmentConfigId): Observable<ApplicationEnvironmentConfig> {
-    const url = `/data/applicationEnvironmentConfigs/${ApplicationEnvironmentConfigIdUtil.toIdStringFromId(id)}`;
+    const url = `/data/applicationEnvironmentConfigs/${ApplicationEnvironmentConfigIdUtil.toIdStringFromId(id)}?projection=applicationEnvironmentConfigFull`;
     return this.restClient.get<ApplicationEnvironmentConfig>(url, false, () => {
       const defaultConfig = new ApplicationEnvironmentConfig();
       defaultConfig.id = id;
@@ -153,7 +177,7 @@ export class ApplicationService {
     const url =
       `/data/applicationEnvironmentConfigs/search/existingConfigs` +
       `?environmentId=${environmentReleaseId.environmentId}&releaseId=${environmentReleaseId.releaseId}` +
-      `&releaseVersionId=${releaseVersionId}&projection=applicationEnvironmentConfigLean`;
+      `&releaseVersionId=${releaseVersionId}&projection=applicationEnvironmentConfigSummary`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.applicationEnvironmentConfigs as ApplicationEnvironmentConfig[]),
       tap((existingConfigs) => this.log.debug('fetched existing environment configs', existingConfigs))

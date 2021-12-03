@@ -27,7 +27,7 @@
       <!-- TODO decide if it is a good idea to create new versions from here -->
       <p-toolbar>
         <ng-template pTemplate="left">
-          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="version/new"></button>
+          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="version/new" *appUserRole="[Role.admin, Role.releasemanager, Role.developer]"></button>
         </ng-template>
       </p-toolbar>
 
@@ -68,13 +68,15 @@
                 <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
                         routerLink="version/{{releaseVersion.id}}"
                         [disabled]="isDeployed(releaseVersion)"
-                        pTooltip="Edit version"></button>
+                        pTooltip="Edit version"
+                        *appUserRole="[Role.admin, Role.releasemanager, Role.developer]"></button>
               </span>
               <span pTooltip="{{canDeleteTooltip(releaseVersion)}}">
                 <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
                         [disabled]="!canDelete(releaseVersion)"
                         (click)="delete($event, releaseVersion)"
-                        pTooltip="Delete version from release"></button>
+                        pTooltip="Delete version from release"
+                        *appUserRole="[Role.admin, Role.releasemanager]"></button>
               </span>
             </td>
           </tr>

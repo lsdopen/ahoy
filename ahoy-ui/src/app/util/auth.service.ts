@@ -17,9 +17,10 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {AuthConfig, NullValidationHandler, OAuthService} from 'angular-oauth2-oidc';
+import jwtDecode from 'jwt-decode';
 import {EMPTY, Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
-import {AuthInfo} from './auth';
+import {AuthInfo, Role} from './auth';
 import {LoggerService} from './logger.service';
 import {RestClientService} from './rest-client.service';
 
@@ -39,6 +40,7 @@ export class AuthService {
     showDebugInformation: true
   };
   private authInfo: AuthInfo;
+  private roles: Role[];
 
   constructor(private router: Router,
               private oAuthService: OAuthService,
@@ -54,6 +56,7 @@ export class AuthService {
       this.oAuthService.tokenValidationHandler = new NullValidationHandler();
       this.oAuthService.loadDiscoveryDocument().then(() => {
         this.oAuthService.tryLogin().then(_ => {
+          this.loadRoles();
           this.router.navigate(['/']).then();
         });
       });
@@ -112,5 +115,48 @@ export class AuthService {
     return this.restClient.get<AuthInfo>(url, false, null).pipe(
       tap((authInfo) => this.log.debug('fetched auth info', authInfo))
     );
+  }
+
+  public hasRole(role: Role) {
+    return this.roles.includes(role);
+  }
+
+  public hasOneOfRole(roles: Role[]) {
+    return roles.some(r => this.hasRole(r));
+  }
+
+  private loadRoles() {
+    try {
+      this.log.debug('Loading roles...');
+      this.roles = [];
+
+      const rolesTokenPath = this.authInfo.rolesTokenPath;
+      if (!rolesTokenPath) {
+        this.log.error('Failed to load roles, roles token path not set');
+        return;
+      }
+
+      let context = jwtDecode(this.oAuthService.getAccessToken()) as any;
+      for (const pathContext of rolesTokenPath.split('.')) {
+        context = context[pathContext];
+        if (!context) {
+          this.log.error('Failed to load roles, path context not found: ' + pathContext);
+          return;
+        }
+      }
+
+      for (const roleStr of context) {
+        const role = Role[roleStr as keyof typeof Role];
+        if (role) {
+          this.roles.push(role);
+        } else {
+          this.log.warn('Role no found: ', roleStr);
+        }
+      }
+      this.log.debug('Loaded roles: ', this.roles);
+
+    } catch (error) {
+      this.log.error('Failed to load roles', error);
+    }
   }
 }

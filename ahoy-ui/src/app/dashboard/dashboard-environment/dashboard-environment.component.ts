@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,9 +15,10 @@
  */
 
 import {Component, Input, OnInit} from '@angular/core';
-import {Environment} from '../../environments/environment';
+import {Role} from 'src/app/util/auth';
 import {EnvironmentRelease} from '../../environment-release/environment-release';
 import {EnvironmentReleaseService} from '../../environment-release/environment-release.service';
+import {Environment} from '../../environments/environment';
 import {TaskEvent} from '../../taskevents/task-events';
 
 @Component({
@@ -26,6 +27,7 @@ import {TaskEvent} from '../../taskevents/task-events';
   styleUrls: ['./dashboard-environment.component.scss']
 })
 export class DashboardEnvironmentComponent implements OnInit {
+  Role = Role;
   @Input() environment: Environment;
   environmentReleases: EnvironmentRelease[];
 

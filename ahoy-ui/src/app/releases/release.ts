@@ -30,7 +30,6 @@ export class ReleaseVersion {
   version: string;
   release: Release | string;
   applicationVersions: ApplicationVersion[] = undefined;
-  releaseName: string;
 }
 
 export class PromoteOptions {

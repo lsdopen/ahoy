@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,25 +19,22 @@ package za.co.lsd.ahoy.server.environmentrelease;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
 import za.co.lsd.ahoy.server.argocd.model.HealthStatus;
-import za.co.lsd.ahoy.server.environments.EnvironmentProjection;
-import za.co.lsd.ahoy.server.releases.ReleaseProjection;
-import za.co.lsd.ahoy.server.releases.ReleaseVersionProjection;
+import za.co.lsd.ahoy.server.environments.EnvironmentSimpleProjection;
+import za.co.lsd.ahoy.server.releases.ReleaseSimpleProjection;
+import za.co.lsd.ahoy.server.releases.ReleaseVersionSimpleProjection;
 
-@Projection(name = "environmentRelease", types = {EnvironmentRelease.class})
-public interface EnvironmentReleaseProjection {
+@Projection(name = "environmentReleaseSimple", types = {EnvironmentRelease.class})
+public interface EnvironmentReleaseSimpleProjection {
 
 	EnvironmentReleaseId getId();
 
-	ReleaseProjection getRelease();
+	ReleaseSimpleProjection getRelease();
 
-	EnvironmentProjection getEnvironment();
+	EnvironmentSimpleProjection getEnvironment();
 
-	ReleaseVersionProjection getCurrentReleaseVersion();
+	ReleaseVersionSimpleProjection getCurrentReleaseVersion();
 
-	ReleaseVersionProjection getPreviousReleaseVersion();
-
-	@Value("#{target.latestReleaseVersion()}")
-	ReleaseVersionProjection getLatestReleaseVersion();
+	ReleaseVersionSimpleProjection getPreviousReleaseVersion();
 
 	@Value("#{target.hasCurrentReleaseVersion()}")
 	Boolean getDeployed();

@@ -16,17 +16,18 @@
 
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
+import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
 import {filter, mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Cluster} from '../clusters/cluster';
 import {ClusterService} from '../clusters/cluster.service';
 import {Confirmation} from '../components/confirm-dialog/confirm';
 import {DialogUtilService} from '../components/dialog-util.service';
+import {Role} from '../util/auth';
 import {LoggerService} from '../util/logger.service';
 import {OrderUtil} from '../util/order-util';
 import {Environment, MoveOptions} from './environment';
 import {EnvironmentService} from './environment.service';
-import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
 import {MoveDialogComponent} from './move-dialog/move-dialog.component';
 
 @Component({
@@ -35,8 +36,9 @@ import {MoveDialogComponent} from './move-dialog/move-dialog.component';
   styleUrls: ['./environments.component.scss']
 })
 export class EnvironmentsComponent implements OnInit {
+  Role = Role;
   environments: Environment[] = undefined;
-  clusters: Cluster[] = undefined;
+  clusterCount = 0;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -51,8 +53,8 @@ export class EnvironmentsComponent implements OnInit {
   ngOnInit() {
     this.setBreadcrumb();
 
-    this.clusterService.getAll().subscribe((clusters) => {
-      this.clusters = clusters;
+    this.clusterService.count().subscribe((count) => {
+      this.clusterCount = count;
     });
 
     this.getEnvironments();
@@ -87,7 +89,7 @@ export class EnvironmentsComponent implements OnInit {
   move(event: Event, environment: Environment) {
     const dialogConfig = new DynamicDialogConfig();
     dialogConfig.header = `Move ${(environment.name)} from cluster ${(environment.cluster as Cluster).name} to cluster:`;
-    dialogConfig.data = {selectedEnvironment: environment, clusters: this.clusters};
+    dialogConfig.data = {selectedEnvironment: environment};
 
     const dialogRef = this.dialogService.open(MoveDialogComponent, dialogConfig);
     dialogRef.onClose.pipe(

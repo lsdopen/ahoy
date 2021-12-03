@@ -26,6 +26,7 @@ import za.co.lsd.ahoy.server.releases.ReleaseHistory;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -37,11 +38,13 @@ public class EnvironmentRelease implements Serializable {
 	@EmbeddedId
 	private EnvironmentReleaseId id;
 
+	@NotNull
 	@ManyToOne
 	@MapsId("environmentId")
 	@JoinColumn(name = "environmentId")
 	private Environment environment;
 
+	@NotNull
 	@ManyToOne
 	@MapsId("releaseId")
 	@JoinColumn(name = "releaseId")
@@ -50,7 +53,9 @@ public class EnvironmentRelease implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private HealthStatus.StatusCode status;
 
+	@JsonIgnore
 	private String argoCdName;
+	@JsonIgnore
 	private String argoCdUid;
 
 	private Integer applicationsReady;
@@ -64,8 +69,8 @@ public class EnvironmentRelease implements Serializable {
 	private ReleaseVersion previousReleaseVersion;
 
 	@OneToMany(mappedBy = "environmentRelease", cascade = CascadeType.REMOVE)
-	@JsonIgnore
 	@OrderBy("id")
+	@JsonIgnore
 	private List<ReleaseHistory> releaseHistories;
 
 	public EnvironmentRelease(Environment environment, Release release) {

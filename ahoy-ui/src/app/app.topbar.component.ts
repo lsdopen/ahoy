@@ -14,10 +14,11 @@
  *    limitations under the License.
  */
 
-import {Component, ElementRef, ViewChild} from '@angular/core';
 import {animate, AnimationEvent, style, transition, trigger} from '@angular/animations';
+import {Component, ElementRef, ViewChild} from '@angular/core';
 import {AppComponent} from './app.component';
 import {AppMainComponent} from './app.main.component';
+import {Role} from './util/auth';
 import {AuthService} from './util/auth.service';
 
 @Component({
@@ -36,6 +37,7 @@ import {AuthService} from './util/auth.service';
   ]
 })
 export class AppTopBarComponent {
+  Role = Role;
 
   constructor(public appMain: AppMainComponent, public app: AppComponent,
               private authService: AuthService) {

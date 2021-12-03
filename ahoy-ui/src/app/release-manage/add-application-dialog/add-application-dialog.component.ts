@@ -43,7 +43,7 @@ export class AddApplicationDialogComponent implements OnInit {
     const data = config.data;
     this.environmentRelease = data.environmentRelease;
     this.releaseVersion = data.releaseVersion;
-    this.linkedApplications = this.releaseVersion.applicationVersions.map(appVersion => appVersion.application as Application);
+    this.linkedApplications = data.applicationVersions.map(appVersion => appVersion.application as Application);
 
     // upgrade?
     if (data.currentApplicationVersion) {

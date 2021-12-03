@@ -38,6 +38,10 @@ public class ClusterService {
 		this.clusterManagerFactory = clusterManagerFactory;
 	}
 
+	public Long count() {
+		return clusterRepository.count();
+	}
+
 	@Transactional
 	public Cluster destroy(Long clusterId) {
 		Cluster cluster = clusterRepository.findById(clusterId)

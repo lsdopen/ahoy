@@ -21,16 +21,25 @@ import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import za.co.lsd.ahoy.server.security.Role;
 
 @RepositoryRestController
 @RequestMapping("/clusters")
 @Slf4j
+@Secured({Role.admin})
 public class ClustersController {
 	private final ClusterService clusterService;
 
 	public ClustersController(ClusterService clusterService) {
 		this.clusterService = clusterService;
+	}
+
+	@GetMapping("/count")
+	@Secured({Role.user})
+	public ResponseEntity<Long> count() {
+		return new ResponseEntity<>(clusterService.count(), new HttpHeaders(), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/destroy/{clusterId}")

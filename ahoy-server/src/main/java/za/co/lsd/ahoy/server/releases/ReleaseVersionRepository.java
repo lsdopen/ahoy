@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2021 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,8 +17,33 @@
 package za.co.lsd.ahoy.server.releases;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Repository;
+import za.co.lsd.ahoy.server.security.Role;
+
+import java.util.Optional;
 
 @Repository
+@Secured({Role.admin, Role.releasemanager, Role.developer})
 public interface ReleaseVersionRepository extends CrudRepository<ReleaseVersion, Long> {
+
+	@Override
+	@Secured({Role.user})
+	Optional<ReleaseVersion> findById(Long aLong);
+
+	@Override
+	@Secured({Role.admin, Role.releasemanager})
+	void deleteById(Long aLong);
+
+	@Override
+	@Secured({Role.admin, Role.releasemanager})
+	void delete(ReleaseVersion entity);
+
+	@Override
+	@Secured({Role.admin, Role.releasemanager})
+	void deleteAll(Iterable<? extends ReleaseVersion> entities);
+
+	@Override
+	@Secured({Role.admin, Role.releasemanager})
+	void deleteAll();
 }

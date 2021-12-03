@@ -14,18 +14,15 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.environments;
+package za.co.lsd.ahoy.server.releases;
 
 import org.springframework.data.rest.core.config.Projection;
-import za.co.lsd.ahoy.server.cluster.Cluster;
 
-@Projection(name = "environment", types = {Environment.class})
-public interface EnvironmentProjection {
+@Projection(name = "releaseVersionSimple", types = {ReleaseVersion.class})
+public interface ReleaseVersionSimpleProjection {
 	long getId();
 
-	String getName();
+	String getVersion();
 
-	Cluster getCluster();
-
-	Double getOrderIndex();
+	ReleaseSimpleProjection getRelease();
 }

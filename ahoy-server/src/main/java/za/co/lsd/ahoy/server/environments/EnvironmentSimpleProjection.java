@@ -17,10 +17,15 @@
 package za.co.lsd.ahoy.server.environments;
 
 import org.springframework.data.rest.core.config.Projection;
+import za.co.lsd.ahoy.server.cluster.ClusterSimpleProjection;
 
 @Projection(name = "environmentSimple", types = {Environment.class})
 public interface EnvironmentSimpleProjection {
 	long getId();
 
 	String getName();
+
+	Double getOrderIndex();
+
+	ClusterSimpleProjection getCluster();
 }

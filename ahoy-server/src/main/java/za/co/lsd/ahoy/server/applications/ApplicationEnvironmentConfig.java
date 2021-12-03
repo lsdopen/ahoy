@@ -16,6 +16,7 @@
 
 package za.co.lsd.ahoy.server.applications;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -24,6 +25,8 @@ import javax.persistence.Convert;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
+
+import static com.fasterxml.jackson.annotation.JsonProperty.Access.*;
 
 @Entity
 @Data
@@ -34,6 +37,7 @@ public class ApplicationEnvironmentConfig {
 	@NotNull
 	@Convert(converter = ApplicationEnvironmentSpecConverter.class)
 	@Column(length = 10485760)
+	@JsonProperty(access = WRITE_ONLY)
 	private ApplicationEnvironmentSpec spec;
 
 	public ApplicationEnvironmentConfig(ApplicationDeploymentId id, ApplicationEnvironmentConfig applicationEnvironmentConfig) {
@@ -57,7 +61,7 @@ public class ApplicationEnvironmentConfig {
 		return spec != null && spec.getSecrets() != null && spec.getSecrets().size() > 0;
 	}
 
-	public ApplicationEnvironmentSpec leanSpec() {
+	public ApplicationEnvironmentSpec summarySpec() {
 		return new ApplicationEnvironmentSpec(spec.getRouteHostname());
 	}
 }

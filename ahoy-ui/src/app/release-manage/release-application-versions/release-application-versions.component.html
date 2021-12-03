@@ -24,18 +24,18 @@
 
       <p-toolbar>
         <ng-template pTemplate="left">
-          <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain p-mr-2 p-mb-2" (click)="addApplication()"></button>
+          <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain p-mr-2 p-mb-2" (click)="addApplication()" *appUserRole="[Role.admin, Role.releasemanager]"></button>
         </ng-template>
       </p-toolbar>
 
-      <div class="p-field" *ngIf="releaseVersion.applicationVersions && (releaseVersion.applicationVersions.length === 0)">
-        There are no applications in this release, <a [routerLink]="" (click)="addApplication()">here</a> to add an application..
+      <div class="p-field" *ngIf="applicationVersions && (applicationVersions.length === 0)">
+        There are no applications in this release<span *appUserRole="[Role.admin, Role.releasemanager, Role.developer]">, <a [routerLink]="" (click)="addApplication()">here</a> to add an application..</span>
       </div>
 
-      <p-table #dt [value]="releaseVersion.applicationVersions" dataKey="id" selectionMode="single"
+      <p-table #dt [value]="applicationVersions" dataKey="id" selectionMode="single"
                styleClass="p-datatable-applicationVersions p-datatable-striped p-datatable-sm"
                [scrollable]="true" scrollHeight="400px" [filterDelay]="0" [globalFilterFields]="['application.name', 'version', 'image']"
-               *ngIf="releaseVersion.applicationVersions && releaseVersion.applicationVersions.length > 0"
+               *ngIf="applicationVersions && applicationVersions.length > 0"
                sortField="application.name" [sortOrder]="1">
         <ng-template pTemplate="caption">
           <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
@@ -85,16 +85,20 @@
 
               <button pButton pRipple icon="pi pi-upload" class="p-button-rounded p-button-info p-mr-2"
                       (click)="upgradeApplication(av)"
-                      pTooltip="Upgrade version"></button>
+                      pTooltip="Upgrade version"
+                      *appUserRole="[Role.admin, Role.releasemanager]"></button>
               <button pButton pRipple icon="pi pi-folder" class="p-button-rounded {{hasConfig(av.id) ? 'p-button-plain' : 'p-button-outlined'}} p-mr-2"
                       routerLink="/release/{{environmentRelease.id.environmentId}}/{{environmentRelease.id.releaseId}}/config/{{releaseVersion.id}}/{{av.id}}"
-                      pTooltip="Edit environment config"></button>
+                      pTooltip="Edit environment config"
+                      *appUserRole="[Role.admin, Role.releasemanager, Role.developer]"></button>
               <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
                       routerLink="/application/{{av.application.id}}/version/{{av.id}}"
-                      pTooltip="Edit application version"></button>
+                      pTooltip="Edit application version"
+                      *appUserRole="[Role.admin, Role.releasemanager, Role.developer]"></button>
               <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
                       (click)="removeApplication(av)"
-                      pTooltip="Remove application from release"></button>
+                      pTooltip="Remove application from release"
+                      *appUserRole="[Role.admin, Role.releasemanager]"></button>
             </td>
           </tr>
         </ng-template>

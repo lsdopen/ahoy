@@ -20,18 +20,24 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Repository;
+import za.co.lsd.ahoy.server.security.Role;
 
 import java.util.Optional;
 
 @Repository
+@Secured({Role.admin, Role.releasemanager})
 public interface EnvironmentReleaseRepository extends CrudRepository<EnvironmentRelease, EnvironmentReleaseId> {
 
 	@RestResource(path = "byRelease", rel = "byRelease")
 	@Query("select e from EnvironmentRelease e where e.release.id = :releaseId order by e.environment.orderIndex,e.environment.id")
+	@Secured({Role.user})
 	Iterable<EnvironmentRelease> findByRelease(@Param("releaseId") long releaseId);
 
 	Optional<EnvironmentRelease> findByArgoCdUid(String argoCdUid);
 
-
+	@Override
+	@Secured({Role.user})
+	Optional<EnvironmentRelease> findById(EnvironmentReleaseId environmentReleaseId);
 }

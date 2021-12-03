@@ -14,24 +14,15 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.applications;
+package za.co.lsd.ahoy.server.security;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.rest.core.config.Projection;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.List;
-
-@Projection(name = "application", types = {Application.class})
-public interface ApplicationProjection {
-	@Value("#{target.id}")
-	long getId();
-
-	@Value("#{target.name}")
-	String getName();
-
-	@Value("#{target.applicationVersions}")
-	List<ApplicationVersionSummaryProjection> getApplicationVersions();
-
-	@Value("#{target.latestApplicationVersion()}")
-	ApplicationVersionSimpleProjection getLatestApplicationVersion();
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface RunAsRole {
+	String value();
 }

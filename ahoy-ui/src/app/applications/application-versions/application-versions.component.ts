@@ -14,8 +14,9 @@
  *    limitations under the License.
  */
 
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ConfirmationService} from 'primeng/api';
+import {Release} from '../../releases/release';
 import {Application, ApplicationVersion} from '../application';
 import {ApplicationService} from '../application.service';
 
@@ -24,11 +25,21 @@ import {ApplicationService} from '../application.service';
   templateUrl: './application-versions.component.html',
   styleUrls: ['./application-versions.component.scss']
 })
-export class ApplicationVersionsComponent {
+export class ApplicationVersionsComponent implements OnInit {
   @Input() application: Application;
+  applicationVersions: ApplicationVersion[];
 
   constructor(private applicationService: ApplicationService,
               private confirmationService: ConfirmationService) {
+  }
+
+  ngOnInit(): void {
+    this.loadApplicationVersions();
+  }
+
+  private loadApplicationVersions() {
+    this.applicationService.getAllVersionsSummaryForApplication(this.application.id)
+      .subscribe((applicationVersions) => this.applicationVersions = applicationVersions);
   }
 
   canDelete(applicationVersion: ApplicationVersion) {
@@ -38,7 +49,7 @@ export class ApplicationVersionsComponent {
   usedByReleaseVersions(applicationVersion: ApplicationVersion): string[] {
     const usedBy = new Set<string>();
     for (const releaseVersion of applicationVersion.releaseVersions) {
-      usedBy.add(`${releaseVersion.releaseName}`);
+      usedBy.add(`${(releaseVersion.release as Release).name}`);
     }
     return Array.from(usedBy.values()).sort();
   }
@@ -50,20 +61,15 @@ export class ApplicationVersionsComponent {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.applicationService.deleteVersion(applicationVersion)
-          .subscribe(() => {
-            const index = this.application.applicationVersions.indexOf(applicationVersion);
-            if (index > -1) {
-              this.application.applicationVersions.splice(index, 1);
-            }
-          });
+          .subscribe(() => this.loadApplicationVersions());
       }
     });
   }
 
   lastVersionId() {
-    const length = this.application.applicationVersions.length;
+    const length = this.applicationVersions.length;
     if (length > 0) {
-      return this.application.applicationVersions[length - 1].id;
+      return this.applicationVersions[length - 1].id;
     }
     return -1;
   }

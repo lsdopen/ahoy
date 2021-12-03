@@ -17,6 +17,7 @@
 import {Component, Input} from '@angular/core';
 import {ConfirmationService} from 'primeng/api';
 import {EnvironmentRelease} from '../../environment-release/environment-release';
+import {Role} from '../../util/auth';
 import {Release, ReleaseVersion} from '../release';
 import {ReleaseService} from '../release.service';
 
@@ -26,6 +27,7 @@ import {ReleaseService} from '../release.service';
   styleUrls: ['./release-versions.component.scss']
 })
 export class ReleaseVersionsComponent {
+  Role = Role;
   @Input() release: Release;
 
   constructor(private releaseService: ReleaseService,

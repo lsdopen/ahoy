@@ -36,21 +36,23 @@ public class Environment implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	@Column(unique = true)
 	@NotNull
 	@Pattern(regexp = "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
 		message = "Name invalid: should start with and use lower case letters and numbers")
 	private String name;
 
+	private Double orderIndex;
+
+	@NotNull
 	@ManyToOne
 	@JoinColumn
 	private Cluster cluster;
 
-	private Double orderIndex;
-
 	@OneToMany(mappedBy = "environment", cascade = CascadeType.REMOVE)
+	@OrderBy("environment.id")
 	@JsonIgnore
 	@ToString.Exclude
-	@OrderBy("environment.id")
 	private List<EnvironmentRelease> environmentReleases;
 
 	public Environment(@NotNull String name, Cluster cluster) {

@@ -15,7 +15,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {Observable, Subject} from 'rxjs';
+import {Observable} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 import {NotificationsService} from '../notifications/notifications.service';
 import {LoggerService} from '../util/logger.service';
@@ -26,7 +26,6 @@ import {EnvironmentRelease, EnvironmentReleaseId} from './environment-release';
   providedIn: 'root'
 })
 export class EnvironmentReleaseService {
-  private environmentReleasesRefreshedSubject = new Subject<{environmentId: number, environmentReleases: EnvironmentRelease[]}>();
 
   public static environmentReleaseEquals(er1: EnvironmentRelease, er2: EnvironmentRelease): boolean {
     return this.environmentReleaseIdEquals(er1.id, er2.id);
@@ -41,19 +40,24 @@ export class EnvironmentReleaseService {
               private log: LoggerService) {
   }
 
-  getReleasesByEnvironment(envId: number): Observable<EnvironmentRelease[]> {
-    const url = `/data/environments/${envId}/environmentReleases?projection=environmentRelease`;
+  getAll(): Observable<EnvironmentRelease[]> {
+    const url = `/data/environmentReleases/?projection=environmentReleaseSummary`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.environmentReleases as EnvironmentRelease[]),
-      tap((envReleases) => {
-        this.log.debug(`fetched ${envReleases.length} environment releases for environment=${envId}`);
-        this.environmentReleasesRefreshedSubject.next({environmentId: envId, environmentReleases: envReleases});
-      })
+      tap((envReleases) => this.log.debug(`fetched ${envReleases.length} environment releases`))
+    );
+  }
+
+  getReleasesByEnvironment(envId: number): Observable<EnvironmentRelease[]> {
+    const url = `/data/environments/${envId}/environmentReleases?projection=environmentReleaseSummary`;
+    return this.restClient.get<any>(url).pipe(
+      map(response => response._embedded.environmentReleases as EnvironmentRelease[]),
+      tap((envReleases) => this.log.debug(`fetched ${envReleases.length} environment releases for environment=${envId}`))
     );
   }
 
   getReleasesByRelease(releaseId: number): Observable<EnvironmentRelease[]> {
-    const url = `/data/environmentReleases/search/byRelease?releaseId=${releaseId}&projection=environmentRelease`;
+    const url = `/data/environmentReleases/search/byRelease?releaseId=${releaseId}&projection=environmentReleaseSummary`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.environmentReleases as EnvironmentRelease[]),
       tap((envReleases) => this.log.debug(`fetched ${envReleases.length} environment releases for release=${releaseId}`))
@@ -61,7 +65,7 @@ export class EnvironmentReleaseService {
   }
 
   get(environmentId: number, releaseId: number): Observable<EnvironmentRelease> {
-    const url = `/data/environmentReleases/${environmentId}_${releaseId}?projection=environmentRelease`;
+    const url = `/data/environmentReleases/${environmentId}_${releaseId}?projection=environmentReleaseSummary`;
     return this.restClient.get<EnvironmentRelease>(url).pipe(
       tap((envRelease) => this.log.debug('fetched environment release', envRelease))
     );
@@ -72,9 +76,5 @@ export class EnvironmentReleaseService {
     return this.restClient.post<EnvironmentRelease>('/data/environmentReleases', environmentRelease).pipe(
       tap((envRelease) => this.log.debug('saved new environment release in environment', envRelease))
     );
-  }
-
-  public environmentReleasesRefreshed(): Observable<{environmentId: number, environmentReleases: EnvironmentRelease[]}> {
-    return this.environmentReleasesRefreshedSubject.asObservable();
   }
 }

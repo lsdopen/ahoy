@@ -19,7 +19,7 @@
 
     <p-confirmPopup></p-confirmPopup>
 
-    <div class="card" *ngIf="application">
+    <div class="card" *ngIf="applicationVersions">
       <div class="card-header">
         <h5>Versions</h5>
       </div>
@@ -30,7 +30,7 @@
         </ng-template>
       </p-toolbar>
 
-      <p-table #dt [value]="application.applicationVersions" dataKey="id" selectionMode="single"
+      <p-table #dt [value]="applicationVersions" dataKey="id" selectionMode="single"
                styleClass="p-datatable-applicationVersions p-datatable-striped p-datatable-sm"
                [scrollable]="true" scrollHeight="600px" [filterDelay]="0" [globalFilterFields]="['version', 'image']"
                sortField="version" [sortOrder]="1">

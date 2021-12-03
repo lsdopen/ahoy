@@ -45,7 +45,8 @@ public class ApplicationSpec {
 
 	private List<ApplicationSecret> secrets;
 
-	public ApplicationSpec(String image) {
+	public ApplicationSpec(String image, String dockerRegistryName) {
 		this.image = image;
+		this.dockerRegistryName = dockerRegistryName;
 	}
 }
