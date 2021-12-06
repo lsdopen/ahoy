@@ -78,20 +78,20 @@ export class EnvironmentService {
   }
 
   destroy(environment: Environment): Observable<Environment> {
-    this.log.debug('destroying environment: ', environment);
+    this.log.debug('deleting environment: ', environment);
 
     const id = environment.id;
     const url = `/data/environments/destroy/${id}`;
 
     return this.restClient.delete<Environment>(url, true).pipe(
-      tap((destroyedEnvironment) => {
-        this.log.debug('destroyed environment', environment);
-        const text = `${destroyedEnvironment.name} ` + `was destroyed from cluster ${(destroyedEnvironment.cluster as Cluster).name}`;
+      tap((deletedEnvironment) => {
+        this.log.debug('deleted environment', environment);
+        const text = `${deletedEnvironment.name} ` + `was deleted from cluster ${(deletedEnvironment.cluster as Cluster).name}`;
         this.notificationsService.notification(new Notification(text));
         this.recentReleasesService.refresh();
       }),
       catchError((error) => {
-        const text = `Failed to destroy environment ${environment.name}`;
+        const text = `Failed to delete environment ${environment.name}`;
         this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })

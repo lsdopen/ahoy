@@ -34,6 +34,7 @@
           <small>enter <b>{{confirmation.verifyText}}</b> to confirm</small>
         </div>
 
+        <small *ngIf="confirmation.infoText">{{confirmation.infoText}}</small>
       </div>
     </form>
 

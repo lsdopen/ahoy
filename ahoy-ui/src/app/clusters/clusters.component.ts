@@ -55,6 +55,7 @@ export class ClustersComponent implements OnInit {
 
   delete(event: Event, cluster: Cluster) {
     const confirmation = new Confirmation(`Are you sure you want to delete ${cluster.name}?`);
+    confirmation.infoText = 'Please note: all deployed releases will be undeployed!';
     confirmation.verify = true;
     confirmation.verifyText = cluster.name;
     // TODO nested subscribes

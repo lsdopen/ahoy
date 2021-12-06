@@ -17,6 +17,7 @@
 export class Confirmation {
   title = 'Confirm';
   message: string;
+  infoText: string;
   requiresInput = false;
   input: string;
   verify = false;
