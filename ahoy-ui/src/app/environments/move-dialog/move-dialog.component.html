@@ -28,6 +28,8 @@
       <p-checkbox id="redeployReleases" name="redeployReleases" [(ngModel)]="moveOptions.redeployReleases" binary="true"></p-checkbox>
       <label for="redeployReleases">Redeploy releases</label>
     </div>
+    <small style="display: block">Please note: all currently deployed releases will be undeployed</small>
+    <small style="display: block">from the current cluster and optionally redeployed to the new cluster!</small>
 
   </div>
 </form>
