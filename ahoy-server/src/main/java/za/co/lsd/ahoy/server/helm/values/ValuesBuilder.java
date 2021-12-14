@@ -16,6 +16,8 @@
 
 package za.co.lsd.ahoy.server.helm.values;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.hash.Hashing;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -29,6 +31,7 @@ import za.co.lsd.ahoy.server.helm.HelmUtils;
 import za.co.lsd.ahoy.server.helm.sealedsecrets.DockerConfigSealedSecretProducer;
 import za.co.lsd.ahoy.server.helm.sealedsecrets.SecretDataSealedSecretProducer;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
+import za.co.lsd.ahoy.server.util.HashUtil;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -43,15 +46,18 @@ public class ValuesBuilder {
 	private final ApplicationEnvironmentConfigProvider environmentConfigProvider;
 	private final DockerConfigSealedSecretProducer dockerConfigSealedSecretProducer;
 	private final SecretDataSealedSecretProducer secretDataSealedSecretProducer;
+	private final ObjectMapper objectMapper;
 
 	public ValuesBuilder(DockerRegistryProvider dockerRegistryProvider,
 						 ApplicationEnvironmentConfigProvider environmentConfigProvider,
 						 DockerConfigSealedSecretProducer dockerConfigSealedSecretProducer,
-						 SecretDataSealedSecretProducer secretDataSealedSecretProducer) {
+						 SecretDataSealedSecretProducer secretDataSealedSecretProducer,
+						 ObjectMapper objectMapper) {
 		this.dockerRegistryProvider = dockerRegistryProvider;
 		this.environmentConfigProvider = environmentConfigProvider;
 		this.dockerConfigSealedSecretProducer = dockerConfigSealedSecretProducer;
 		this.secretDataSealedSecretProducer = secretDataSealedSecretProducer;
+		this.objectMapper = objectMapper;
 	}
 
 	public Values build(EnvironmentRelease environmentRelease, ReleaseVersion releaseVersion) throws IOException {
@@ -168,10 +174,24 @@ public class ValuesBuilder {
 		builder
 			.environmentVariables(environmentVariables)
 			.configFiles(configFiles)
+			.configFileHashes(hashes(configFiles))
 			.volumes(volumes)
 			.secrets(secrets);
 
 		return builder.build();
+	}
+
+	private String hashes(Map<String, ApplicationConfigFileValues> configFiles) throws JsonProcessingException {
+		if (configFiles != null && !configFiles.isEmpty()) {
+			Map<String, String> hashes = new LinkedHashMap<>();
+			for (Map.Entry<String, ApplicationConfigFileValues> entry : configFiles.entrySet()) {
+				ApplicationConfigFileValues configFile = entry.getValue();
+				hashes.put(configFile.name, HashUtil.hash(configFile.content));
+			}
+			return objectMapper.writeValueAsString(hashes);
+		} else {
+			return null;
+		}
 	}
 
 	private String configName(ApplicationConfigFile configFile) {

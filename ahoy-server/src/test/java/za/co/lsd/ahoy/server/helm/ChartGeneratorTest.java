@@ -39,6 +39,7 @@ import za.co.lsd.ahoy.server.helm.sealedsecrets.SecretDataSealedSecretProducer;
 import za.co.lsd.ahoy.server.helm.values.*;
 import za.co.lsd.ahoy.server.releases.Release;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
+import za.co.lsd.ahoy.server.util.HashUtil;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -253,6 +254,11 @@ public class ChartGeneratorTest {
 		configFiles.put("application-config-file-188deccf", new ApplicationConfigFileValues("application.properties", "greeting=hello"));
 		configFiles.put("application-config-file-c1fcd7e5", new ApplicationConfigFileValues("application-dev.properties", "anothergreeting=hello"));
 
+		String configFileHashes = "{"
+			+ "\"application.properties\":\"" + HashUtil.hash("greeting=hello")
+			+ "\",\"application-dev.properties\":\"" + HashUtil.hash("anothergreeting=hello")
+			+ "\"}";
+
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
 		volumes.put("my-volume", new ApplicationVolumeValues("my-volume", "/opt/vol", "standard", "ReadWriteOnce", "2Gi"));
 		volumes.put("my-secret-volume", new ApplicationVolumeValues("my-secret-volume", "/opt/secret-vol", "my-secret"));
@@ -283,6 +289,7 @@ public class ChartGeneratorTest {
 			.environmentVariables(expectedEnvironmentVariables)
 			.configPath("/opt/config")
 			.configFiles(configFiles)
+			.configFileHashes(configFileHashes)
 			.volumes(volumes)
 			.secrets(secrets)
 			.build();
@@ -384,6 +391,10 @@ public class ChartGeneratorTest {
 		Map<String, ApplicationConfigFileValues> configFiles = new LinkedHashMap<>();
 		configFiles.put("application-config-file-c1fcd7e5", new ApplicationConfigFileValues("application-dev.properties", "anothergreeting=hello"));
 
+		String configFileHashes = "{"
+			+ "\"application-dev.properties\":\"" + HashUtil.hash("anothergreeting=hello")
+			+ "\"}";
+
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
 		volumes.put("my-env-volume", new ApplicationVolumeValues("my-env-volume", "/opt/env-vol", "standard", "ReadWriteOnce", "2Gi"));
 		volumes.put("my-env-secret-volume", new ApplicationVolumeValues("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret"));
@@ -404,6 +415,7 @@ public class ChartGeneratorTest {
 			.tlsSecretName("my-tls-secret")
 			.environmentVariables(expectedEnvironmentVariables)
 			.configFiles(configFiles)
+			.configFileHashes(configFileHashes)
 			.volumes(volumes)
 			.secrets(secrets)
 			.build();
