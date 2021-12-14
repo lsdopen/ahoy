@@ -50,7 +50,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AhoyServerApplication.class)
-@ActiveProfiles(profiles = "test")
+@ActiveProfiles(profiles = {"test", "keycloak"})
 public class ReleaseManagerTest {
 	@MockBean
 	private LocalRepo localRepo;

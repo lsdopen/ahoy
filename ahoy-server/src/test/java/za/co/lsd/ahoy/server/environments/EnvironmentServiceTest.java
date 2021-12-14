@@ -48,7 +48,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AhoyServerApplication.class)
-@ActiveProfiles(profiles = "test")
+@ActiveProfiles(profiles = {"test", "keycloak"})
 class EnvironmentServiceTest {
 	@MockBean
 	private EnvironmentRepository environmentRepository;
