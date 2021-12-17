@@ -23,6 +23,7 @@ import {Component, Input, OnInit} from '@angular/core';
 })
 export class ApplicationSecretDataComponent implements OnInit {
   @Input() secretData: { [key: string]: string };
+  @Input() secretIndex: number;
   newDataKey: string;
   newDataValue: string;
   data: SecretData[];
