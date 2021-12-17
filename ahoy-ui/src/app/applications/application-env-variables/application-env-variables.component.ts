@@ -16,6 +16,7 @@
 
 import {Component, Input} from '@angular/core';
 import {ApplicationEnvironmentVariable, ApplicationSecret} from '../application';
+import {LoggerService} from '../../util/logger.service';
 
 @Component({
   selector: 'app-application-env-variables',
@@ -30,6 +31,10 @@ export class ApplicationEnvVariablesComponent {
   value: string;
   secret: ApplicationSecret;
   secretKey: string;
+  editingEnvVar: ApplicationEnvironmentVariable;
+
+  constructor(private log: LoggerService) {
+  }
 
   addEnvironmentVariable() {
     if (this.key) {
@@ -60,5 +65,29 @@ export class ApplicationEnvVariablesComponent {
   removeEnvironmentVariable(environmentVariable: ApplicationEnvironmentVariable) {
     const index = this.environmentVariables.indexOf(environmentVariable);
     this.environmentVariables.splice(index, 1);
+  }
+
+  editEnvVarInit($event: any) {
+    const index = $event.index;
+    this.editingEnvVar = this.environmentVariables[index];
+    if (this.editingEnvVar.type === 'Secret') {
+      const secretFound = this.secrets.find(s => s.name === this.editingEnvVar.secretName);
+      if (secretFound) {
+        this.secret = secretFound;
+        this.secretKey = this.editingEnvVar.secretKey;
+        this.log.debug(`Initialized secret with name '${this.secret.name}' and secret key '${this.secretKey}' variables before inline editing`);
+      }
+    }
+  }
+
+  editEnvVarComplete($event: any) {
+    if (this.editingEnvVar.type === 'Secret') {
+      this.editingEnvVar.secretName = this.secret.name;
+      this.editingEnvVar.secretKey = this.secretKey;
+      this.log.debug('Updated secret name and key after inline editing', this.editingEnvVar);
+    }
+
+    const index = $event.index;
+    this.environmentVariables[index] = this.editingEnvVar;
   }
 }
