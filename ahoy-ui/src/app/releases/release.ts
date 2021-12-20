@@ -46,3 +46,8 @@ export class UpgradeAppOptions {
   applicationVersion: ApplicationVersion;
   copyEnvironmentConfig = true;
 }
+
+export class DuplicateOptions {
+  addToSameEnvironments = true;
+  copyEnvironmentConfig = false;
+}

@@ -120,6 +120,7 @@ import {SettingsComponent} from './settings/settings.component';
 import {TaskEventsListenerComponent} from './taskevents/task-events-listener/task-events-listener.component';
 import {ErrorService} from './util/error.service';
 import {UserRoleDirective} from './util/user-role.directive';
+import {DuplicateDialogComponent} from './releases/duplicate-dialog/duplicate-dialog.component';
 
 @NgModule({
   declarations: [
@@ -177,6 +178,7 @@ import {UserRoleDirective} from './util/user-role.directive';
     EnvironmentReleasesComponent,
     ReleaseDetailComponent,
     AddToEnvironmentDialogComponent,
+    DuplicateDialogComponent,
     MultiTabComponent,
     TabItemNameUniqueValidatorDirective,
     NameUniqueValidatorDirective,

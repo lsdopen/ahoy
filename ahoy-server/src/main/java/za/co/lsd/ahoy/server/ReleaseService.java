@@ -35,10 +35,7 @@ import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.environments.EnvironmentException;
 import za.co.lsd.ahoy.server.environments.EnvironmentRepository;
-import za.co.lsd.ahoy.server.releases.PromoteOptions;
-import za.co.lsd.ahoy.server.releases.ReleaseVersion;
-import za.co.lsd.ahoy.server.releases.ReleaseVersionRepository;
-import za.co.lsd.ahoy.server.releases.UpgradeOptions;
+import za.co.lsd.ahoy.server.releases.*;
 import za.co.lsd.ahoy.server.security.Role;
 import za.co.lsd.ahoy.server.security.RunAsRole;
 
@@ -46,12 +43,14 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class ReleaseService {
 	private final EnvironmentRepository environmentRepository;
 	private final EnvironmentReleaseRepository environmentReleaseRepository;
+	private final ReleaseRepository releaseRepository;
 	private final ReleaseVersionRepository releaseVersionRepository;
 	private final ApplicationEnvironmentConfigRepository applicationEnvironmentConfigRepository;
 	private final ApplicationEnvironmentConfigProvider environmentConfigProvider;
@@ -62,6 +61,7 @@ public class ReleaseService {
 
 	public ReleaseService(EnvironmentRepository environmentRepository,
 						  EnvironmentReleaseRepository environmentReleaseRepository,
+						  ReleaseRepository releaseRepository,
 						  ReleaseVersionRepository releaseVersionRepository,
 						  ApplicationEnvironmentConfigRepository applicationEnvironmentConfigRepository,
 						  ApplicationEnvironmentConfigProvider environmentConfigProvider,
@@ -70,6 +70,7 @@ public class ReleaseService {
 						  ReleaseManager releaseManager) {
 		this.environmentRepository = environmentRepository;
 		this.environmentReleaseRepository = environmentReleaseRepository;
+		this.releaseRepository = releaseRepository;
 		this.releaseVersionRepository = releaseVersionRepository;
 		this.applicationEnvironmentConfigRepository = applicationEnvironmentConfigRepository;
 		this.environmentConfigProvider = environmentConfigProvider;
@@ -224,6 +225,60 @@ public class ReleaseService {
 	}
 
 	@Transactional
+	public Release duplicate(Long releaseId, DuplicateOptions duplicateOptions) {
+		Release sourceRelease = releaseRepository.findById(releaseId)
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find source release: " + releaseId));
+
+		Release duplicatedRelease = new Release();
+		duplicatedRelease.setName(sourceRelease.getName() + "-copy");
+		duplicatedRelease.setReleaseVersions(new ArrayList<>());
+		duplicatedRelease.setEnvironmentReleases(new ArrayList<>());
+		duplicatedRelease = releaseRepository.save(duplicatedRelease);
+		log.debug("Duplicated release: {} for source release: {}", duplicatedRelease, sourceRelease);
+
+		for (ReleaseVersion sourceReleaseVersion : sourceRelease.getReleaseVersions()) {
+			ReleaseVersion duplicatedReleaseVersion = new ReleaseVersion();
+			duplicatedReleaseVersion.setRelease(duplicatedRelease);
+			duplicatedReleaseVersion.setVersion(sourceReleaseVersion.getVersion());
+			duplicatedReleaseVersion.setApplicationVersions(sourceReleaseVersion.getApplicationVersions()
+				.stream().collect(Collectors.toList()));
+			duplicatedReleaseVersion = releaseVersionRepository.save(duplicatedReleaseVersion);
+			log.debug("Duplicated release version: {} for source release version: {}", duplicatedReleaseVersion, sourceReleaseVersion);
+
+			duplicatedRelease.getReleaseVersions().add(duplicatedReleaseVersion);
+		}
+
+		if (duplicateOptions.isAddToSameEnvironments()) {
+			for (EnvironmentRelease sourceEnvRelease : sourceRelease.getEnvironmentReleases()) {
+				EnvironmentRelease duplicatedEnvRelease = new EnvironmentRelease();
+				duplicatedEnvRelease.setId(new EnvironmentReleaseId());
+				duplicatedEnvRelease.setRelease(duplicatedRelease);
+				duplicatedEnvRelease.setEnvironment(sourceEnvRelease.getEnvironment());
+				duplicatedEnvRelease = environmentReleaseRepository.save(duplicatedEnvRelease);
+				log.debug("Duplicated environment release: {} for source environment release: {}", duplicatedEnvRelease.getId(), sourceEnvRelease.getId());
+
+				duplicatedRelease.getEnvironmentReleases().add(duplicatedEnvRelease);
+
+				if (duplicateOptions.isCopyEnvironmentConfig()) {
+					for (ReleaseVersion destReleaseVersion : duplicatedRelease.getReleaseVersions()) {
+						ReleaseVersion sourceReleaseVersion = sourceRelease.getReleaseVersions().stream()
+							.filter(rv -> rv.getVersion().equals(destReleaseVersion.getVersion()))
+							.findFirst()
+							.orElseThrow(() -> new IllegalStateException("Should have been able to find matching release versions"));
+
+						log.debug("Copying env config from: sourceEnvRelease {}, sourceReleaseVersion {} to: duplicatedEnvRelease {}, destReleaseVersion {}",
+							sourceEnvRelease.getId(), sourceReleaseVersion.getId(), duplicatedEnvRelease.getId(), destReleaseVersion.getId());
+
+						copyEnvironmentConfig(sourceEnvRelease, sourceReleaseVersion, duplicatedEnvRelease, destReleaseVersion);
+					}
+				}
+			}
+		}
+
+		return duplicatedRelease;
+	}
+
+	@Transactional
 	public EnvironmentRelease copyEnvConfig(EnvironmentReleaseId environmentReleaseId, Long sourceReleaseVersionId, Long destReleaseVersionId) {
 		log.info("Copying environment config for release: {} from sourceReleaseVersionId: {} to destReleaseVersionId: {}", environmentReleaseId, sourceReleaseVersionId, destReleaseVersionId);
 
@@ -309,6 +364,7 @@ public class ReleaseService {
 					destEnvironmentRelease.getId(),
 					destReleaseVersion.getId(),
 					destApplicationVersion.getId());
+				log.info("Saving new application env config for id {}", id);
 				applicationEnvironmentConfigRepository.save(new ApplicationEnvironmentConfig(id, sourceConfig.get()));
 			}
 		}

@@ -28,8 +28,9 @@ import {TaskEvent} from '../taskevents/task-events';
 import {Role} from '../util/auth';
 import {LoggerService} from '../util/logger.service';
 import {AddToEnvironmentDialogComponent} from './add-to-environment-dialog/add-to-environment-dialog.component';
-import {Release} from './release';
+import {DuplicateOptions, Release} from './release';
 import {ReleaseService} from './release.service';
+import {DuplicateDialogComponent} from './duplicate-dialog/duplicate-dialog.component';
 
 @Component({
   selector: 'app-releases',
@@ -82,6 +83,20 @@ export class ReleasesComponent implements OnInit {
         environmentRelease.release = this.releaseService.link(release.id);
 
         return this.environmentReleaseService.save(environmentRelease);
+      })
+    ).subscribe(() => this.getReleases());
+  }
+
+  duplicate(event: Event, release: Release) {
+    const dialogConfig = new DynamicDialogConfig();
+    dialogConfig.header = `Duplicate ${(release.name)}`;
+    dialogConfig.data = {selectedRelease: release};
+
+    const dialogRef = this.dialogService.open(DuplicateDialogComponent, dialogConfig);
+    dialogRef.onClose.pipe(
+      filter((result) => result !== undefined), // cancelled
+      mergeMap((duplicateOptions: DuplicateOptions) => {
+        return this.releaseService.duplicate(release, duplicateOptions);
       })
     ).subscribe(() => this.getReleases());
   }
