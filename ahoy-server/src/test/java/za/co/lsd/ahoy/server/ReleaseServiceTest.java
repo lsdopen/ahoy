@@ -59,6 +59,8 @@ public class ReleaseServiceTest {
 	@MockBean
 	private ReleaseHistoryRepository releaseHistoryRepository;
 	@MockBean
+	private ReleaseRepository releaseRepository;
+	@MockBean
 	private ReleaseVersionRepository releaseVersionRepository;
 	@MockBean
 	private ApplicationEnvironmentConfigRepository applicationEnvironmentConfigRepository;
@@ -301,6 +303,222 @@ public class ReleaseServiceTest {
 
 		ApplicationEnvironmentConfig savedEnvironmentConfig = applicationEnvironmentConfigArgumentCaptor.getValue();
 		assertEquals(new ApplicationDeploymentId(environmentRelease.getId(), resultReleaseVersion.getId(), applicationVersion.getId()), savedEnvironmentConfig.getId(),
+			"Environment config deployment ID incorrect; this means the config is not related to the correct entity");
+		assertEquals("myapp1-route", savedEnvironmentConfig.getSpec().getRouteHostname(), "Environment config route incorrect");
+		assertEquals(8080, savedEnvironmentConfig.getSpec().getRouteTargetPort(), "Environment config port incorrect");
+	}
+
+	@Test
+	public void duplicate() {
+		// given
+		Application application = new Application("app1");
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
+
+		Release release = new Release(1L, "release1");
+		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
+		release.setReleaseVersions(new ArrayList<>());
+		release.getReleaseVersions().add(releaseVersion);
+		when(releaseRepository.findById(1L)).thenReturn(Optional.of(release));
+
+		when(releaseRepository.save(any(Release.class))).thenAnswer(i -> {
+			Release r = (Release) i.getArguments()[0];
+			r.setId(2L);
+			return r;
+		});
+		when(releaseVersionRepository.save(any(ReleaseVersion.class))).thenAnswer(i -> {
+			ReleaseVersion r = (ReleaseVersion) i.getArguments()[0];
+			r.setId(2L);
+			return r;
+		});
+
+		// when
+		DuplicateOptions duplicateOptions = new DuplicateOptions(false, false);
+		Release duplicatedRelease = releaseService.duplicate(release.getId(), duplicateOptions);
+
+		// then
+		assertEquals(2L, duplicatedRelease.getId(), "Id incorrect");
+		assertEquals("release1-copy", duplicatedRelease.getName(), "Name incorrect");
+		assertEquals(1, duplicatedRelease.getReleaseVersions().size(), "Versions incorrect");
+		assertEquals(0, duplicatedRelease.getEnvironmentReleases().size(), "Environments incorrect");
+
+		ReleaseVersion duplicatedReleaseVersion = duplicatedRelease.getReleaseVersions().get(0);
+		assertEquals("1.0.0", duplicatedReleaseVersion.getVersion(), "Duplicated release version version incorrect");
+		assertNull(duplicatedReleaseVersion.getReleaseHistories(), "Duplicated release version history incorrect");
+		assertEquals(releaseVersion.getApplicationVersions(), duplicatedReleaseVersion.getApplicationVersions(), "Duplicated released version doesn't have the application versions from the upgraded version");
+
+		ArgumentCaptor<Release> releaseCaptor = ArgumentCaptor.forClass(Release.class);
+		verify(releaseRepository, times(1)).save(releaseCaptor.capture());
+		Release savedRelease = releaseCaptor.getValue();
+		assertSame(savedRelease, duplicatedRelease, "Saved release should be the same as the duplicated release");
+
+		ArgumentCaptor<ReleaseVersion> releaseVersionCaptor = ArgumentCaptor.forClass(ReleaseVersion.class);
+		verify(releaseVersionRepository, times(1)).save(releaseVersionCaptor.capture());
+		ReleaseVersion savedReleaseVersion = releaseVersionCaptor.getValue();
+		assertSame(savedReleaseVersion, duplicatedReleaseVersion, "Saved release version should be the same as the duplicated release version");
+
+		verifyNoInteractions(environmentReleaseRepository);
+		verifyNoInteractions(applicationEnvironmentConfigRepository);
+	}
+
+	@Test
+	public void duplicateWithEnvironment() {
+		// given
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
+		Environment environment = new Environment(1L, "dev", cluster);
+		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(1L, 1L);
+
+		Application application = new Application("app1");
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
+
+		Release release = new Release(1L, "release1");
+		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
+		release.setReleaseVersions(new ArrayList<>());
+		release.getReleaseVersions().add(releaseVersion);
+
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
+		release.setEnvironmentReleases(new ArrayList<>());
+		release.getEnvironmentReleases().add(environmentRelease);
+
+		when(releaseRepository.findById(1L)).thenReturn(Optional.of(release));
+
+		when(releaseRepository.save(any(Release.class))).thenAnswer(i -> {
+			Release r = (Release) i.getArguments()[0];
+			r.setId(2L);
+			return r;
+		});
+		when(releaseVersionRepository.save(any(ReleaseVersion.class))).thenAnswer(i -> {
+			ReleaseVersion r = (ReleaseVersion) i.getArguments()[0];
+			r.setId(2L);
+			return r;
+		});
+		when(environmentReleaseRepository.save(any(EnvironmentRelease.class))).thenAnswer(i -> {
+			EnvironmentRelease r = (EnvironmentRelease) i.getArguments()[0];
+			r.getId().setEnvironmentId(r.getEnvironment().getId());
+			r.getId().setReleaseId(r.getRelease().getId());
+			return r;
+		});
+
+		// when
+		DuplicateOptions duplicateOptions = new DuplicateOptions(true, true);
+		Release duplicatedRelease = releaseService.duplicate(release.getId(), duplicateOptions);
+
+		// then
+		assertEquals(2L, duplicatedRelease.getId(), "Id incorrect");
+		assertEquals("release1-copy", duplicatedRelease.getName(), "Name incorrect");
+		assertEquals(1, duplicatedRelease.getReleaseVersions().size(), "Versions incorrect");
+		assertEquals(1, duplicatedRelease.getEnvironmentReleases().size(), "Environments incorrect");
+
+		ReleaseVersion duplicatedReleaseVersion = duplicatedRelease.getReleaseVersions().get(0);
+		assertEquals("1.0.0", duplicatedReleaseVersion.getVersion(), "Duplicated release version version incorrect");
+		assertNull(duplicatedReleaseVersion.getReleaseHistories(), "Duplicated release version history incorrect");
+		assertEquals(releaseVersion.getApplicationVersions(), duplicatedReleaseVersion.getApplicationVersions(), "Duplicated released version doesn't have the application versions from the upgraded version");
+
+		EnvironmentRelease duplicatedEnvironmentRelease = duplicatedRelease.getEnvironmentReleases().get(0);
+		assertEquals(1L, duplicatedEnvironmentRelease.getEnvironment().getId(), "Duplicated environment release env incorrect");
+		assertEquals(2L, duplicatedEnvironmentRelease.getRelease().getId(), "Duplicated environment release release incorrect");
+
+		ArgumentCaptor<Release> releaseCaptor = ArgumentCaptor.forClass(Release.class);
+		verify(releaseRepository, times(1)).save(releaseCaptor.capture());
+		Release savedRelease = releaseCaptor.getValue();
+		assertSame(savedRelease, duplicatedRelease, "Saved release should be the same as the duplicated release");
+
+		ArgumentCaptor<ReleaseVersion> releaseVersionCaptor = ArgumentCaptor.forClass(ReleaseVersion.class);
+		verify(releaseVersionRepository, times(1)).save(releaseVersionCaptor.capture());
+		ReleaseVersion savedReleaseVersion = releaseVersionCaptor.getValue();
+		assertSame(savedReleaseVersion, duplicatedReleaseVersion, "Saved release version should be the same as the duplicated release version");
+
+		ArgumentCaptor<EnvironmentRelease> environmentReleaseCaptor = ArgumentCaptor.forClass(EnvironmentRelease.class);
+		verify(environmentReleaseRepository, times(1)).save(environmentReleaseCaptor.capture());
+		EnvironmentRelease savedEnvironmentRelease = environmentReleaseCaptor.getValue();
+		assertSame(savedEnvironmentRelease, duplicatedEnvironmentRelease, "Saved environment release should be the same as the duplicated release version");
+
+		verifyNoInteractions(applicationEnvironmentConfigRepository);
+	}
+
+	@Test
+	public void duplicateWithEnvironmentAndEnvConfig() {
+		// given
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
+		Environment environment = new Environment(1L, "dev", cluster);
+		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(1L, 1L);
+
+		Application application = new Application("app1");
+		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
+
+		Release release = new Release(1L, "release1");
+		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
+		release.setReleaseVersions(new ArrayList<>());
+		release.getReleaseVersions().add(releaseVersion);
+
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
+		release.setEnvironmentReleases(new ArrayList<>());
+		release.getEnvironmentReleases().add(environmentRelease);
+
+		when(releaseRepository.findById(1L)).thenReturn(Optional.of(release));
+
+		when(releaseRepository.save(any(Release.class))).thenAnswer(i -> {
+			Release r = (Release) i.getArguments()[0];
+			r.setId(2L);
+			return r;
+		});
+		when(releaseVersionRepository.save(any(ReleaseVersion.class))).thenAnswer(i -> {
+			ReleaseVersion r = (ReleaseVersion) i.getArguments()[0];
+			r.setId(2L);
+			return r;
+		});
+		when(environmentReleaseRepository.save(any(EnvironmentRelease.class))).thenAnswer(i -> {
+			EnvironmentRelease r = (EnvironmentRelease) i.getArguments()[0];
+			r.getId().setEnvironmentId(r.getEnvironment().getId());
+			r.getId().setReleaseId(r.getRelease().getId());
+			return r;
+		});
+		when(applicationEnvironmentConfigRepository.save(any(ApplicationEnvironmentConfig.class))).thenAnswer(i -> {
+			ApplicationEnvironmentConfig c = (ApplicationEnvironmentConfig) i.getArguments()[0];
+			return c;
+		});
+
+		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig(new ApplicationEnvironmentSpec("myapp1-route", 8080));
+		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion)).thenReturn(Optional.of(environmentConfig));
+
+		// when
+		DuplicateOptions duplicateOptions = new DuplicateOptions(true, true);
+		Release duplicatedRelease = releaseService.duplicate(release.getId(), duplicateOptions);
+
+		// then
+		assertEquals(2L, duplicatedRelease.getId(), "Id incorrect");
+		assertEquals("release1-copy", duplicatedRelease.getName(), "Name incorrect");
+		assertEquals(1, duplicatedRelease.getReleaseVersions().size(), "Versions incorrect");
+		assertEquals(1, duplicatedRelease.getEnvironmentReleases().size(), "Environments incorrect");
+
+		ReleaseVersion duplicatedReleaseVersion = duplicatedRelease.getReleaseVersions().get(0);
+		assertEquals("1.0.0", duplicatedReleaseVersion.getVersion(), "Duplicated release version version incorrect");
+		assertNull(duplicatedReleaseVersion.getReleaseHistories(), "Duplicated release version history incorrect");
+		assertEquals(releaseVersion.getApplicationVersions(), duplicatedReleaseVersion.getApplicationVersions(), "Duplicated released version doesn't have the application versions from the upgraded version");
+
+		EnvironmentRelease duplicatedEnvironmentRelease = duplicatedRelease.getEnvironmentReleases().get(0);
+		assertEquals(1L, duplicatedEnvironmentRelease.getEnvironment().getId(), "Duplicated environment release env incorrect");
+		assertEquals(2L, duplicatedEnvironmentRelease.getRelease().getId(), "Duplicated environment release release incorrect");
+
+		ArgumentCaptor<Release> releaseCaptor = ArgumentCaptor.forClass(Release.class);
+		verify(releaseRepository, times(1)).save(releaseCaptor.capture());
+		Release savedRelease = releaseCaptor.getValue();
+		assertSame(savedRelease, duplicatedRelease, "Saved release should be the same as the duplicated release");
+
+		ArgumentCaptor<ReleaseVersion> releaseVersionCaptor = ArgumentCaptor.forClass(ReleaseVersion.class);
+		verify(releaseVersionRepository, times(1)).save(releaseVersionCaptor.capture());
+		ReleaseVersion savedReleaseVersion = releaseVersionCaptor.getValue();
+		assertSame(savedReleaseVersion, duplicatedReleaseVersion, "Saved release version should be the same as the duplicated release version");
+
+		ArgumentCaptor<EnvironmentRelease> environmentReleaseCaptor = ArgumentCaptor.forClass(EnvironmentRelease.class);
+		verify(environmentReleaseRepository, times(1)).save(environmentReleaseCaptor.capture());
+		EnvironmentRelease savedEnvironmentRelease = environmentReleaseCaptor.getValue();
+		assertSame(savedEnvironmentRelease, duplicatedEnvironmentRelease, "Saved environment release should be the same as the duplicated environment release");
+
+		ArgumentCaptor<ApplicationEnvironmentConfig> envConfigCaptor = ArgumentCaptor.forClass(ApplicationEnvironmentConfig.class);
+		verify(applicationEnvironmentConfigRepository, times(1)).save(envConfigCaptor.capture());
+		ApplicationEnvironmentConfig savedEnvironmentConfig = envConfigCaptor.getValue();
+
+		assertEquals(new ApplicationDeploymentId(duplicatedEnvironmentRelease.getId(), duplicatedReleaseVersion.getId(), applicationVersion.getId()), savedEnvironmentConfig.getId(),
 			"Environment config deployment ID incorrect; this means the config is not related to the correct entity");
 		assertEquals("myapp1-route", savedEnvironmentConfig.getSpec().getRouteHostname(), "Environment config route incorrect");
 		assertEquals(8080, savedEnvironmentConfig.getSpec().getRouteTargetPort(), "Environment config port incorrect");
