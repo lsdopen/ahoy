@@ -83,16 +83,16 @@
 
                 <div *ngIf="editingEnvVar.type === 'Secret'">
                   <div class="p-field p-float-label">
-                    <p-dropdown [options]="secrets" [(ngModel)]="secret" optionLabel="name"
-                                [showClear]="true" name="environmentVariableSecret{{i}}"
-                                [autoDisplayFirst]="false"></p-dropdown>
+                    <p-dropdown [options]="secrets" [(ngModel)]="editingSecret" optionLabel="name" (onChange)="editingSecretChanged()"
+                                name="environmentVariableSecret{{i}}"
+                                [autoDisplayFirst]="false" required></p-dropdown>
                     <label>Select secret</label>
                   </div>
 
-                  <div *ngIf="secret" class="p-field p-float-label">
-                    <p-dropdown [options]="secret.data | keyvalue" [(ngModel)]="secretKey" optionLabel="key" optionValue="key"
-                                [showClear]="true" name="environmentVariableSecretKey{{i}}"
-                                [autoDisplayFirst]="false"></p-dropdown>
+                  <div *ngIf="editingSecret" class="p-field p-float-label">
+                    <p-dropdown [options]="editingSecret.data | keyvalue" [(ngModel)]="editingSecretKey" optionLabel="key" optionValue="key"
+                                name="environmentVariableSecretKey{{i}}"
+                                [autoDisplayFirst]="false" required></p-dropdown>
                     <label>Select secret key</label>
                   </div>
                 </div>
