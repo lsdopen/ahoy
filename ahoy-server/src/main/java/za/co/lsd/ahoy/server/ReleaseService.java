@@ -230,7 +230,7 @@ public class ReleaseService {
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find source release: " + releaseId));
 
 		Release duplicatedRelease = new Release();
-		duplicatedRelease.setName(sourceRelease.getName() + "-copy");
+		duplicatedRelease.setName(duplicateOptions.getReleaseName());
 		duplicatedRelease.setReleaseVersions(new ArrayList<>());
 		duplicatedRelease.setEnvironmentReleases(new ArrayList<>());
 		duplicatedRelease = releaseRepository.save(duplicatedRelease);

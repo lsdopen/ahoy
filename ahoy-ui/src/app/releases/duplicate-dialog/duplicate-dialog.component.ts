@@ -17,6 +17,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {DuplicateOptions, Release} from '../release';
+import {ReleaseService} from '../release.service';
 
 @Component({
   selector: 'app-duplicate-dialog',
@@ -24,16 +25,21 @@ import {DuplicateOptions, Release} from '../release';
   styleUrls: ['./duplicate-dialog.component.scss']
 })
 export class DuplicateDialogComponent implements OnInit {
+  releasesForValidation: Release[];
   selectedRelease: Release;
   duplicateOptions = new DuplicateOptions();
 
   constructor(public ref: DynamicDialogRef,
-              public config: DynamicDialogConfig) {
+              public config: DynamicDialogConfig,
+              private releaseService: ReleaseService) {
     const data = config.data;
     this.selectedRelease = data.selectedRelease;
+    this.duplicateOptions.releaseName = this.selectedRelease.name + '-copy';
   }
 
   ngOnInit(): void {
+    this.releaseService.getAll()
+      .subscribe(releases => this.releasesForValidation = releases);
   }
 
   close(result: any) {

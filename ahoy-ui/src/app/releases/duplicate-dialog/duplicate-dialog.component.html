@@ -17,6 +17,20 @@
 <form #f="ngForm">
   <div class="p-fluid p-mt-2">
 
+    <div class="p-field p-float-label">
+      <input pInputText id="releaseName" [(ngModel)]="duplicateOptions.releaseName" name="releaseName" appAutofocus
+             required
+             pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
+             [appNameUnique]="releasesForValidation">
+      <label for="releaseName">Name</label>
+      <small class="p-error" *ngIf="f.form.controls.releaseName?.hasError('pattern')">
+        Name invalid: should start with and use lower case letters and numbers
+      </small>
+      <small class="p-error" *ngIf="f.form.controls.releaseName?.hasError('nameNotUnique')">
+        Release already exists
+      </small>
+    </div>
+
     <div class="p-field-checkbox">
       <p-checkbox id="addToSameEnvironments" name="addToSameEnvironments" [(ngModel)]="duplicateOptions.addToSameEnvironments" binary="true"></p-checkbox>
       <label for="addToSameEnvironments">Add the duplicated release to the same environments</label>

@@ -24,6 +24,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DuplicateOptions {
+	private String releaseName;
 	private boolean addToSameEnvironments;
 	private boolean copyEnvironmentConfig;
 }

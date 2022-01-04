@@ -121,6 +121,7 @@ import {TaskEventsListenerComponent} from './taskevents/task-events-listener/tas
 import {ErrorService} from './util/error.service';
 import {UserRoleDirective} from './util/user-role.directive';
 import {DuplicateDialogComponent} from './releases/duplicate-dialog/duplicate-dialog.component';
+import { AutofocusDirective } from './util/autofocus.directive';
 
 @NgModule({
   declarations: [
@@ -188,7 +189,8 @@ import {DuplicateDialogComponent} from './releases/duplicate-dialog/duplicate-di
     AppNotFoundComponent,
     AppAccessDeniedComponent,
     AppErrorComponent,
-    UserRoleDirective
+    UserRoleDirective,
+    AutofocusDirective
   ],
   imports: [
     BrowserModule,

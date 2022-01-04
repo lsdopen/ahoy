@@ -332,7 +332,7 @@ public class ReleaseServiceTest {
 		});
 
 		// when
-		DuplicateOptions duplicateOptions = new DuplicateOptions(false, false);
+		DuplicateOptions duplicateOptions = new DuplicateOptions("release1-copy", false, false);
 		Release duplicatedRelease = releaseService.duplicate(release.getId(), duplicateOptions);
 
 		// then
@@ -399,7 +399,7 @@ public class ReleaseServiceTest {
 		});
 
 		// when
-		DuplicateOptions duplicateOptions = new DuplicateOptions(true, true);
+		DuplicateOptions duplicateOptions = new DuplicateOptions("release1-copy", true, true);
 		Release duplicatedRelease = releaseService.duplicate(release.getId(), duplicateOptions);
 
 		// then
@@ -481,7 +481,7 @@ public class ReleaseServiceTest {
 		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion)).thenReturn(Optional.of(environmentConfig));
 
 		// when
-		DuplicateOptions duplicateOptions = new DuplicateOptions(true, true);
+		DuplicateOptions duplicateOptions = new DuplicateOptions("release1-copy", true, true);
 		Release duplicatedRelease = releaseService.duplicate(release.getId(), duplicateOptions);
 
 		// then
