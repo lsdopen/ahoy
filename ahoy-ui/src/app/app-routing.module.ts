@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ import {AuthGuard} from './util/auth.guard';
 
 const routes: Routes = [
   {
-    path: '', component: AppMainComponent, canActivate: [AuthGuard],
+    path: '', component: AppMainComponent,
     children: [
       {
         path: '', component: DashboardComponent,
@@ -144,6 +144,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
+    // we use hash navigation as we load the app from a spring boot server and it would try and load pages as resource from the server otherwise
     useHash: true,
     initialNavigation: 'disabled',
     relativeLinkResolution: 'legacy',
