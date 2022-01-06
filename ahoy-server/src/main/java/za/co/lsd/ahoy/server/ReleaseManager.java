@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -30,12 +30,11 @@ import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.git.GitSettings;
 import za.co.lsd.ahoy.server.git.LocalRepo;
 import za.co.lsd.ahoy.server.helm.ChartGenerator;
+import za.co.lsd.ahoy.server.releases.Release;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 import za.co.lsd.ahoy.server.settings.SettingsProvider;
 
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -109,10 +108,19 @@ public class ReleaseManager {
 		GitSettings gitSettings = settingsProvider.getGitSettings();
 
 		Environment environment = environmentRelease.getEnvironment();
+		Release release = environmentRelease.getRelease();
+
+		Map<String, String> labels = new HashMap<>();
+		labels.put(ArgoMetadata.MANAGED_BY_LABEL, "ahoy");
+		labels.put(ArgoMetadata.CLUSTER_NAME_LABEL, environment.getCluster().getName());
+		labels.put(ArgoMetadata.ENVIRONMENT_NAME_LABEL, environment.getName());
+		labels.put(ArgoMetadata.RELEASE_NAME_LABEL, release.getName());
+		labels.put(ArgoMetadata.RELEASE_VERSION_LABEL, releaseVersion.getVersion());
+
 		return ArgoApplication.builder()
 			.metadata(ArgoMetadata.builder()
 				.name(applicationNameResolver.resolve(environmentRelease))
-				.labels(Collections.singletonMap(ArgoMetadata.RELEASE_VERSION_LABEL, releaseVersion.getVersion()))
+				.labels(labels)
 				.build())
 			.spec(ArgoApplication.Spec.builder()
 				.project("default")
