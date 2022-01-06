@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2022 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@
         </div>
 
         <div *ngIf="confirmation.verify" class="p-field">
-          <input pInputText id="verifyText" [(ngModel)]="confirmation.enteredVerifyText" name="verifyText" required [appVerifyText]="confirmation.verifyText">
+          <input pInputText id="verifyText" [(ngModel)]="confirmation.enteredVerifyText" name="verifyText" required [appVerifyText]="confirmation.verifyText" appAutofocus>
           <small>enter <b>{{confirmation.verifyText}}</b> to confirm</small>
         </div>
 
