@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ export class EnvironmentReleaseService {
   }
 
   getAll(): Observable<EnvironmentRelease[]> {
-    const url = `/data/environmentReleases/?projection=environmentReleaseSummary`;
+    const url = `/data/environmentReleases?projection=environmentReleaseSummary`;
     return this.restClient.get<any>(url).pipe(
       map(response => response._embedded.environmentReleases as EnvironmentRelease[]),
       tap((envReleases) => this.log.debug(`fetched ${envReleases.length} environment releases`))
