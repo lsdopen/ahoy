@@ -24,9 +24,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
-import za.co.lsd.ahoy.server.releases.PromoteOptions;
-import za.co.lsd.ahoy.server.releases.ReleaseVersion;
-import za.co.lsd.ahoy.server.releases.UpgradeOptions;
+import za.co.lsd.ahoy.server.releases.*;
 import za.co.lsd.ahoy.server.security.Role;
 
 import java.util.concurrent.ExecutionException;
@@ -97,5 +95,12 @@ public class ReleaseController {
 
 		releaseService.copyApplicationVersionEnvConfig(releaseVersionId, sourceApplicationVersionId, destApplicationVersionId);
 		return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.OK);
+	}
+
+	@PostMapping("/releases/{releaseId}/duplicate")
+	public ResponseEntity<Release> duplicate(@PathVariable Long releaseId, @RequestBody DuplicateOptions duplicateOptions) {
+
+		Release duplicatedRelease = releaseService.duplicate(releaseId, duplicateOptions);
+		return new ResponseEntity<>(duplicatedRelease, new HttpHeaders(), HttpStatus.OK);
 	}
 }

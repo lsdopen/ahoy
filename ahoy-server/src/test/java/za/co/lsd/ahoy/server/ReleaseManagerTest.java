@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import za.co.lsd.ahoy.server.applications.Application;
 import za.co.lsd.ahoy.server.applications.ApplicationVersion;
 import za.co.lsd.ahoy.server.argocd.ArgoClient;
 import za.co.lsd.ahoy.server.argocd.model.ArgoApplication;
+import za.co.lsd.ahoy.server.argocd.model.ArgoMetadata;
 import za.co.lsd.ahoy.server.cluster.Cluster;
 import za.co.lsd.ahoy.server.cluster.ClusterType;
 import za.co.lsd.ahoy.server.clustermanager.KubernetesClusterManager;
@@ -43,6 +44,7 @@ import za.co.lsd.ahoy.server.settings.SettingsProvider;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,7 +52,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AhoyServerApplication.class)
-@ActiveProfiles(profiles = "test")
+@ActiveProfiles(profiles = {"test", "keycloak"})
 public class ReleaseManagerTest {
 	@MockBean
 	private LocalRepo localRepo;
@@ -102,6 +104,15 @@ public class ReleaseManagerTest {
 		ArgoApplication argoApplication = applicationCaptor.getValue();
 		// app
 		assertEquals("test-cluster-dev-release1", argoApplication.getMetadata().getName());
+
+		// labels
+		Map<String, String> labels = argoApplication.getMetadata().getLabels();
+		assertEquals(5, labels.size());
+		assertEquals("ahoy", labels.get(ArgoMetadata.MANAGED_BY_LABEL));
+		assertEquals("test-cluster", labels.get(ArgoMetadata.CLUSTER_NAME_LABEL));
+		assertEquals("dev", labels.get(ArgoMetadata.ENVIRONMENT_NAME_LABEL));
+		assertEquals("release1", labels.get(ArgoMetadata.RELEASE_NAME_LABEL));
+		assertEquals("1.0.0", labels.get(ArgoMetadata.RELEASE_VERSION_LABEL));
 
 		// spec
 		assertEquals("default", argoApplication.getSpec().getProject());
@@ -160,6 +171,15 @@ public class ReleaseManagerTest {
 		ArgoApplication argoApplication = applicationCaptor.getValue();
 		// app
 		assertEquals("test-cluster-dev-release1", argoApplication.getMetadata().getName());
+
+		// labels
+		Map<String, String> labels = argoApplication.getMetadata().getLabels();
+		assertEquals(5, labels.size());
+		assertEquals("ahoy", labels.get(ArgoMetadata.MANAGED_BY_LABEL));
+		assertEquals("test-cluster", labels.get(ArgoMetadata.CLUSTER_NAME_LABEL));
+		assertEquals("dev", labels.get(ArgoMetadata.ENVIRONMENT_NAME_LABEL));
+		assertEquals("release1", labels.get(ArgoMetadata.RELEASE_NAME_LABEL));
+		assertEquals("1.0.0", labels.get(ArgoMetadata.RELEASE_VERSION_LABEL));
 
 		// spec
 		assertEquals("default", argoApplication.getSpec().getProject());

@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -28,6 +28,10 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ArgoMetadata {
+	public static final String MANAGED_BY_LABEL = "managedBy";
+	public static final String CLUSTER_NAME_LABEL = "clusterName";
+	public static final String ENVIRONMENT_NAME_LABEL = "environmentName";
+	public static final String RELEASE_NAME_LABEL = "releaseName";
 	public static final String RELEASE_VERSION_LABEL = "releaseVersion";
 
 	private String name;

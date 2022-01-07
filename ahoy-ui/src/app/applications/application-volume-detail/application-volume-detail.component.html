@@ -74,7 +74,7 @@
     <div *ngIf="volume.type === 'Secret'">
 
       <div class="p-field p-float-label">
-        <p-dropdown [options]="secrets" [(ngModel)]="volume.secretName" optionLabel="name"
+        <p-dropdown [options]="secrets" [(ngModel)]="volume.secretName" optionLabel="name" optionValue="name"
                     [showClear]="true" name="volumeSecretName{{volumeIndex}}"
                     [autoDisplayFirst]="false"></p-dropdown>
         <label>Secret</label>

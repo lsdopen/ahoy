@@ -49,7 +49,8 @@
 
   <div class="p-field p-mt-2">
     <p-table #dt [value]="environmentVariables" dataKey="id"
-             styleClass="p-datatable-environmentVariables p-datatable-striped p-datatable-sm">
+             styleClass="p-datatable-environmentVariables p-datatable-striped p-datatable-sm"
+             (onEditInit)="editEnvVarInit($event)" (onEditComplete)="editEnvVarComplete($event)">
       <ng-template pTemplate="header">
         <tr>
           <th>Variable</th>
@@ -59,12 +60,48 @@
       </ng-template>
       <ng-template pTemplate="body" let-environmentVariable let-i="rowIndex">
         <tr>
-          <td>
-            <span class="p-column-title">Variable</span>{{environmentVariable.key}}
+          <td [pEditableColumn]="environmentVariable" [pEditableColumnRowIndex]="i">
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <div class="p-field p-float-label">
+                  <input pInputText type="text" id="environmentVariableKey{{i}}" name="environmentVariableKey{{i}}" [(ngModel)]="editingEnvVar.key" required>
+                  <label for="environmentVariableKey{{i}}">Variable</label>
+                </div>
+              </ng-template>
+              <ng-template pTemplate="output">
+                <span class="p-column-title">Variable</span>{{environmentVariable.key}}
+              </ng-template>
+            </p-cellEditor>
           </td>
-          <td>
-            <span class="p-column-title">Value</span>
-            {{environmentVariable.type === 'Value' ? environmentVariable.value : environmentVariable.secretName + ':' + environmentVariable.secretKey}}
+          <td [pEditableColumn]="environmentVariable" [pEditableColumnRowIndex]="i">
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <div *ngIf="editingEnvVar.type === 'Value'" class="p-field p-float-label">
+                  <input pInputText type="text" id="environmentVariableValue{{i}}" name="environmentVariableValue{{i}}" [(ngModel)]="editingEnvVar.value" required>
+                  <label for="environmentVariableValue{{i}}">Value</label>
+                </div>
+
+                <div *ngIf="editingEnvVar.type === 'Secret'">
+                  <div class="p-field p-float-label">
+                    <p-dropdown [options]="secrets" [(ngModel)]="editingSecret" optionLabel="name" (onChange)="editingSecretChanged()"
+                                name="environmentVariableSecret{{i}}"
+                                [autoDisplayFirst]="false" required></p-dropdown>
+                    <label>Select secret</label>
+                  </div>
+
+                  <div *ngIf="editingSecret" class="p-field p-float-label">
+                    <p-dropdown [options]="editingSecret.data | keyvalue" [(ngModel)]="editingSecretKey" optionLabel="key" optionValue="key"
+                                name="environmentVariableSecretKey{{i}}"
+                                [autoDisplayFirst]="false" required></p-dropdown>
+                    <label>Select secret key</label>
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template pTemplate="output">
+                <span class="p-column-title">Value</span>
+                {{environmentVariable.type === 'Value' ? environmentVariable.value : environmentVariable.secretName + ':' + environmentVariable.secretKey}}
+              </ng-template>
+            </p-cellEditor>
           </td>
           <td>
             <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="removeEnvironmentVariable(environmentVariable)"></button>

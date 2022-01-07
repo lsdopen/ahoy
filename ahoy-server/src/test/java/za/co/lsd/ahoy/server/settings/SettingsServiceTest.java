@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-@ActiveProfiles("test")
+@ActiveProfiles(profiles = {"test", "keycloak"})
 class SettingsServiceTest {
 	@Autowired
 	private SettingsService settingsService;

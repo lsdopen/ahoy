@@ -90,19 +90,19 @@ export class ClusterService {
   }
 
   destroy(cluster: Cluster): Observable<Cluster> {
-    this.log.debug('destroying cluster: ', cluster);
+    this.log.debug('deleting cluster: ', cluster);
 
     const id = cluster.id;
     const url = `/data/clusters/destroy/${id}`;
 
     return this.restClient.delete<Cluster>(url, true).pipe(
-      tap((destroyedCluster) => {
-        this.log.debug('destroyed cluster', cluster);
-        const text = `${destroyedCluster.name} ` + `was destroyed`;
+      tap((deletedCluster) => {
+        this.log.debug('deleted cluster', cluster);
+        const text = `${deletedCluster.name} ` + `was deleted`;
         this.notificationsService.notification(new Notification(text));
       }),
       catchError((error) => {
-        const text = `Failed to destroy cluster ${cluster.name}`;
+        const text = `Failed to delete cluster ${cluster.name}`;
         this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })

@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -56,7 +56,6 @@ import {AppBreadcrumbComponent} from './app.breadcrumb.component';
 import {AppBreadcrumbService} from './app.breadcrumb.service';
 
 import {AppComponent} from './app.component';
-import {AppConfigComponent} from './app.config.component';
 import {AppFooterComponent} from './app.footer.component';
 import {AppMainComponent} from './app.main.component';
 import {AppMenuComponent} from './app.menu.component';
@@ -109,15 +108,18 @@ import {ReleaseApplicationVersionsComponent} from './release-manage/release-appl
 import {ReleaseManageComponent} from './release-manage/release-manage.component';
 import {UpgradeDialogComponent} from './release-manage/upgrade-dialog/upgrade-dialog.component';
 import {AddToEnvironmentDialogComponent} from './releases/add-to-environment-dialog/add-to-environment-dialog.component';
+import {DuplicateDialogComponent} from './releases/duplicate-dialog/duplicate-dialog.component';
 import {ReleaseDetailComponent} from './releases/release-detail/release-detail.component';
 import {ReleaseVersionDetailComponent} from './releases/release-version-detail/release-version-detail.component';
 import {ReleaseVersionsComponent} from './releases/release-versions/release-versions.component';
 import {ReleasesComponent} from './releases/releases.component';
+import {AppearanceSettingsComponent} from './settings/appearance-settings/appearance-settings.component';
 import {ArgoSettingsComponent} from './settings/argo-settings/argo-settings.component';
 import {DockerSettingsComponent} from './settings/docker-settings/docker-settings.component';
 import {GitSettingsComponent} from './settings/git-settings/git-settings.component';
 import {SettingsComponent} from './settings/settings.component';
 import {TaskEventsListenerComponent} from './taskevents/task-events-listener/task-events-listener.component';
+import {AutofocusDirective} from './util/autofocus.directive';
 import {ErrorService} from './util/error.service';
 import {UserRoleDirective} from './util/user-role.directive';
 
@@ -130,7 +132,6 @@ import {UserRoleDirective} from './util/user-role.directive';
     AppMenuitemComponent,
     AppBreadcrumbComponent,
     AppFooterComponent,
-    AppConfigComponent,
     DashboardComponent,
     ApplicationsComponent,
     ApplicationDetailComponent,
@@ -177,6 +178,7 @@ import {UserRoleDirective} from './util/user-role.directive';
     EnvironmentReleasesComponent,
     ReleaseDetailComponent,
     AddToEnvironmentDialogComponent,
+    DuplicateDialogComponent,
     MultiTabComponent,
     TabItemNameUniqueValidatorDirective,
     NameUniqueValidatorDirective,
@@ -186,7 +188,9 @@ import {UserRoleDirective} from './util/user-role.directive';
     AppNotFoundComponent,
     AppAccessDeniedComponent,
     AppErrorComponent,
-    UserRoleDirective
+    UserRoleDirective,
+    AutofocusDirective,
+    AppearanceSettingsComponent
   ],
   imports: [
     BrowserModule,

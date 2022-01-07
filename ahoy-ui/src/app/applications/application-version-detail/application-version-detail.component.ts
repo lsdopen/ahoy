@@ -48,6 +48,7 @@ export class ApplicationVersionDetailComponent implements OnInit {
   commandCategory = false;
   newArg: string;
   editingArg: string;
+  editingPort: number;
 
   constructor(private route: ActivatedRoute,
               private applicationService: ApplicationService,
@@ -242,5 +243,15 @@ export class ApplicationVersionDetailComponent implements OnInit {
   editArgComplete($event: any) {
     const index = $event.index;
     this.applicationVersion.spec.args[index] = this.editingArg;
+  }
+
+  editPortInit($event: any) {
+    const index = $event.index;
+    this.editingPort = this.applicationVersion.spec.servicePorts[index];
+  }
+
+  editPortComplete($event: any) {
+    const index = $event.index;
+    this.applicationVersion.spec.servicePorts[index] = this.editingPort;
   }
 }

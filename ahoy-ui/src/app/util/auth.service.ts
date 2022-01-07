@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -54,11 +54,9 @@ export class AuthService {
       this.oAuthService.configure(this.authConfig);
       this.oAuthService.setupAutomaticSilentRefresh();
       this.oAuthService.tokenValidationHandler = new NullValidationHandler();
-      this.oAuthService.loadDiscoveryDocument().then(() => {
-        this.oAuthService.tryLogin().then(_ => {
-          this.loadRoles();
-          this.router.navigate(['/']).then();
-        });
+      this.oAuthService.loadDiscoveryDocumentAndLogin().then(() => {
+        this.loadRoles();
+        this.router.initialNavigation();
       });
     }, (error) => {
       this.log.error('Error getting auth info', error);

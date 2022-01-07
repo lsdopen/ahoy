@@ -19,7 +19,7 @@ import {Observable} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 import {LoggerService} from '../util/logger.service';
 import {RestClientService} from '../util/rest-client.service';
-import {Release, ReleaseVersion} from './release';
+import {DuplicateOptions, Release, ReleaseVersion} from './release';
 
 @Injectable({
   providedIn: 'root'
@@ -159,6 +159,17 @@ export class ReleaseService {
     return this.restClient.put(linkUrl, null, headers).pipe(
       tap(() => this.log.debug(
         `removed association between release version id=${releaseVersionId} with all applications`))
+    );
+  }
+
+  duplicate(release: Release, duplicateOptions: DuplicateOptions): Observable<Release> {
+    this.log.debug(`duplicating release: ${release.name} with options`, duplicateOptions);
+
+    const url = `/api/releases/${release.id}/duplicate`;
+
+    return this.restClient.post<Release>(url, duplicateOptions, true).pipe(
+      tap((duplicatedRelease) =>
+        this.log.debug('duplicated release', duplicatedRelease))
     );
   }
 

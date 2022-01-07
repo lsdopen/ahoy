@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import {ReleaseManageComponent} from './release-manage/release-manage.component'
 import {ReleaseDetailComponent} from './releases/release-detail/release-detail.component';
 import {ReleaseVersionDetailComponent} from './releases/release-version-detail/release-version-detail.component';
 import {ReleasesComponent} from './releases/releases.component';
+import {AppearanceSettingsComponent} from './settings/appearance-settings/appearance-settings.component';
 import {ArgoSettingsComponent} from './settings/argo-settings/argo-settings.component';
 import {DockerSettingsComponent} from './settings/docker-settings/docker-settings.component';
 import {GitSettingsComponent} from './settings/git-settings/git-settings.component';
@@ -45,7 +46,7 @@ import {AuthGuard} from './util/auth.guard';
 
 const routes: Routes = [
   {
-    path: '', component: AppMainComponent, canActivate: [AuthGuard],
+    path: '', component: AppMainComponent,
     children: [
       {
         path: '', component: DashboardComponent,
@@ -125,11 +126,12 @@ const routes: Routes = [
       // Settings
       {
         path: 'settings', component: SettingsComponent,
-        canActivate: [AuthGuard], data: {roles: [Role.admin, Role.releasemanager, Role.developer]},
+        canActivate: [AuthGuard], data: {roles: [Role.user]},
         children: [
           {path: 'git', component: GitSettingsComponent, canActivate: [AuthGuard], data: {roles: [Role.admin]}},
           {path: 'argo', component: ArgoSettingsComponent, canActivate: [AuthGuard], data: {roles: [Role.admin]}},
-          {path: 'docker', component: DockerSettingsComponent, canActivate: [AuthGuard], data: {roles: [Role.admin, Role.releasemanager, Role.developer]}}
+          {path: 'docker', component: DockerSettingsComponent, canActivate: [AuthGuard], data: {roles: [Role.admin, Role.releasemanager, Role.developer]}},
+          {path: 'appearance', component: AppearanceSettingsComponent, canActivate: [AuthGuard], data: {roles: [Role.user]}}
         ]
       },
 
@@ -144,6 +146,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
+    // we use hash navigation as we load the app from a spring boot server and it would try and load pages as resource from the server otherwise
     useHash: true,
     initialNavigation: 'disabled',
     relativeLinkResolution: 'legacy',

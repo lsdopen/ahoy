@@ -18,6 +18,11 @@ spec:
       environment: {{ .glob.environment }}
   template:
     metadata:
+      {{ if .app.configFileHashes}}
+      annotations:
+        ahoy.lsdopen.io/configFileHashes: |
+          {{ .app.configFileHashes }}
+      {{ end }}
       labels:
         manager: ahoy
         app: {{ .app.name }}

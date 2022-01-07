@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,12 +17,13 @@
 import {Component} from '@angular/core';
 import {version} from '../../package.json';
 import {AppComponent} from './app.component';
+import {AppearanceSettingsService} from './settings/appearance-settings/appearance-settings.service';
 
 @Component({
   selector: 'app-footer',
   template: `
     <div class="layout-footer p-d-flex p-ai-center p-p-4 p-shadow-2">
-      <img id="footer-logo" [src]="'assets/layout/images/footer-' + (app.layoutMode === 'light' ? 'dark' : 'light') + '.png'" alt="ultima-footer-logo" style="height: 2.25rem">
+      <img id="footer-logo" [src]="'assets/layout/images/footer-' + (appearanceSettingsService.appearanceSettings.mode === 'light' ? 'dark' : 'light') + '.png'" alt="ultima-footer-logo" style="height: 2.25rem">
       <span [ngClass]="{'p-ml-auto p-mr-2': !app.isRTL, 'p-ml-2 p-mr-auto': app.isRTL}">{{version}}</span>
       <a pButton pRipple icon="pi pi-github fs-large" class="p-button-rounded p-button-text p-button-plain"
          href="https://github.com/lsdopen" target="_blank"
@@ -39,6 +40,7 @@ import {AppComponent} from './app.component';
 export class AppFooterComponent {
   public version: string = version;
 
-  constructor(public app: AppComponent) {
+  constructor(public app: AppComponent,
+              public appearanceSettingsService: AppearanceSettingsService) {
   }
 }

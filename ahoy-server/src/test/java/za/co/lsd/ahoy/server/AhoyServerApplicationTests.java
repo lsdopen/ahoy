@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-@ActiveProfiles("test")
+@ActiveProfiles(profiles = {"test", "keycloak"})
 public class AhoyServerApplicationTests {
 	@Autowired
 	private AhoyServerProperties ahoyServerProperties;

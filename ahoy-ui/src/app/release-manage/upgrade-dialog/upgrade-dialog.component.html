@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2022 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
     <div class="p-field p-float-label">
       <input pInputText id="releaseName" [(ngModel)]="upgradeOptions.version" name="version"
              [appVersionUnique]="release.releaseVersions"
-             required>
+             required appAutofocus>
       <label for="releaseName">Version</label>
       <small class="p-error" *ngIf="f.form.controls.version?.hasError('versionNotUnique')">
         Release version already exists

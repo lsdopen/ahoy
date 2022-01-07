@@ -87,6 +87,11 @@
                       routerLink="/release/{{release.id}}"
                       pTooltip="Edit release"
                       *appUserRole="[Role.admin, Role.releasemanager, Role.developer]"></button>
+              <button pButton pRipple icon="pi pi-copy" class="p-button-rounded p-button-plain p-mr-2"
+                      (click)="duplicate($event, release)"
+                      pTooltip="Duplicate release"
+                      *appUserRole="[Role.admin, Role.releasemanager, Role.developer]"></button>
+
               <span pTooltip="{{release.environmentReleases && release.environmentReleases.length > 0 ? 'In order to delete release, remove release from all environments' : ''}}">
                 <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
                         [disabled]="release.environmentReleases && release.environmentReleases.length > 0"

@@ -46,6 +46,7 @@ public class ApplicationValues {
 	public Integer healthEndpointPort;
 	public String healthEndpointScheme;
 	public Map<String, ApplicationConfigFileValues> configFiles;
+	public String configFileHashes;
 	public String configPath;
 	public Map<String, ApplicationVolumeValues> volumes;
 	public Map<String, ApplicationSecretValues> secrets;

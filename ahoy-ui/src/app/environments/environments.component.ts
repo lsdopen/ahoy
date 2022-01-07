@@ -75,6 +75,7 @@ export class EnvironmentsComponent implements OnInit {
 
   delete(event: Event, environment: Environment) {
     const confirmation = new Confirmation(`Are you sure you want to delete ${environment.name}?`);
+    confirmation.infoText = 'Please note: all deployed releases will be undeployed';
     confirmation.verify = true;
     confirmation.verifyText = environment.name;
     // TODO nested subscribes
