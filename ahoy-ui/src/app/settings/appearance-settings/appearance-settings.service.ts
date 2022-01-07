@@ -96,6 +96,9 @@ export class AppearanceSettingsService {
   }
 
   private replaceLink(linkElement, href, callback?) {
+    if (!linkElement) {
+      return;
+    }
     if (this.isIE()) {
       linkElement.setAttribute('href', href);
       if (callback) {
