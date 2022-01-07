@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2022 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 <div class="layout-topbar p-shadow-4">
   <div class="layout-topbar-left">
     <a class="layout-topbar-logo" routerLink="/">
-      <img id="app-logo" src="assets/layout/images/logo-light.svg" alt="ultima-layout" style="height: 2.25rem">
+      <img id="app-logo" src="assets/layout/images/logo-{{appLogoMode()}}.svg" alt="ultima-layout" style="height: 2.25rem">
     </a>
 
     <a class="layout-menu-button p-shadow-6" (click)="appMain.onMenuButtonClick($event)" pRipple>
@@ -49,7 +49,7 @@
               <span class="fs-normal">{{identityClaim().name}}</span>
             </li>
             <p-divider layout="horizontal"></p-divider>
-            <li class="layout-topbar-action-item" routerLink="/settings" pRipple *appUserRole="[Role.admin, Role.releasemanager, Role.developer]">
+            <li class="layout-topbar-action-item" routerLink="/settings" pRipple *appUserRole="[Role.user]">
               <div class="p-d-flex p-flex-row p-ai-center">
                 <i class="pi pi-cog" [ngClass]="{'p-mr-2': !app.isRTL, 'p-ml-2': app.isRTL}"></i>
                 <span>Settings</span>

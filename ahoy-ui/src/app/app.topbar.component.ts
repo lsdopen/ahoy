@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import {animate, AnimationEvent, style, transition, trigger} from '@angular/anim
 import {Component, ElementRef, ViewChild} from '@angular/core';
 import {AppComponent} from './app.component';
 import {AppMainComponent} from './app.main.component';
+import {AppearanceSettingsService} from './settings/appearance-settings/appearance-settings.service';
 import {Role} from './util/auth';
 import {AuthService} from './util/auth.service';
 
@@ -40,7 +41,8 @@ export class AppTopBarComponent {
   Role = Role;
 
   constructor(public appMain: AppMainComponent, public app: AppComponent,
-              private authService: AuthService) {
+              private authService: AuthService,
+              private appearanceSettingsService: AppearanceSettingsService) {
   }
 
   @ViewChild('searchInput') searchInputViewChild: ElementRef;
@@ -67,5 +69,14 @@ export class AppTopBarComponent {
 
   logout() {
     this.authService.logout();
+  }
+
+  appLogoMode() {
+    const topbarTheme = this.appearanceSettingsService.appearanceSettings.topbarTheme;
+    if (topbarTheme === 'white' || topbarTheme === 'yellow' || topbarTheme === 'amber' || topbarTheme === 'orange' || topbarTheme === 'lime') {
+      return 'dark';
+    } else {
+      return 'light';
+    }
   }
 }

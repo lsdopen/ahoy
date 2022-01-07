@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -40,7 +40,8 @@ export class SettingsComponent implements OnInit {
         items: [
           {label: 'Git', icon: 'pi pi-fw pi-github', routerLink: ['/settings/git'], disabled: !this.authService.hasOneOfRole([Role.admin])},
           {label: 'Argo', icon: 'pi pi-fw pi-sitemap', routerLink: ['/settings/argo'], disabled: !this.authService.hasOneOfRole([Role.admin])},
-          {label: 'Docker', icon: 'pi pi-fw pi-th-large', routerLink: ['/settings/docker'], disabled: !this.authService.hasOneOfRole([Role.admin, Role.releasemanager, Role.developer])}
+          {label: 'Docker', icon: 'pi pi-fw pi-th-large', routerLink: ['/settings/docker'], disabled: !this.authService.hasOneOfRole([Role.admin, Role.releasemanager, Role.developer])},
+          {label: 'Appearance', icon: 'pi pi-fw pi-image', routerLink: ['/settings/appearance'], disabled: !this.authService.hasOneOfRole([Role.user])}
         ]
       }
     ];

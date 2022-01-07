@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,8 +15,9 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {AuthService} from './util/auth.service';
 import {PrimeNGConfig} from 'primeng/api';
+import {AppearanceSettingsService} from './settings/appearance-settings/appearance-settings.service';
+import {AuthService} from './util/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -27,9 +28,6 @@ export class AppComponent implements OnInit {
   title = 'Ahoy';
 
   // theme
-  topbarTheme = 'bluegrey';
-  menuTheme = 'light';
-  layoutMode = 'light';
   menuMode = 'static';
   inlineMenuPosition = 'top';
   inputStyle = 'filled';
@@ -37,7 +35,8 @@ export class AppComponent implements OnInit {
   isRTL = false;
 
   constructor(private primengConfig: PrimeNGConfig,
-              private authService: AuthService) {
+              public authService: AuthService,
+              public appearanceSettingsService: AppearanceSettingsService) {
   }
 
   ngOnInit() {

@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,10 +15,11 @@
  */
 
 import {AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, Renderer2} from '@angular/core';
-import {MenuService} from './app.menu.service';
 import {PrimeNGConfig} from 'primeng/api';
 import {AppComponent} from './app.component';
+import {MenuService} from './app.menu.service';
 import {ProgressService} from './progress.service';
+import {AppearanceSettingsService} from './settings/appearance-settings/appearance-settings.service';
 
 @Component({
   selector: 'app-main',
@@ -70,7 +71,8 @@ export class AppMainComponent implements AfterViewInit, OnInit, OnDestroy {
               private menuService: MenuService,
               private primengConfig: PrimeNGConfig,
               private progressService: ProgressService,
-              public app: AppComponent) {
+              public app: AppComponent,
+              public appearanceSettingsService: AppearanceSettingsService) {
   }
 
   ngOnInit() {
