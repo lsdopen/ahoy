@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2022 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -15,13 +15,13 @@
   -->
 
 <div class="p-fluid">
-  <div class="p-col-12 p-md-5">
-    <div class="p-field p-float-label">
+  <div class="col-12 md:col-5">
+    <div class="field p-float-label">
       <input pInputText id="applicationConfigPath" [(ngModel)]="applicationVersion.spec.configPath" name="applicationConfigPath"
              [required]="configFiles.length > 0"
              [disabled]="!editPath">
       <label for="applicationConfigPath">Path</label>
-      <small class="p-message p-message-warn p-p-1" *ngIf="!editPath && configFiles.length > 0 && !applicationVersion.spec.configPath">
+      <small class="p-message p-message-warn p-1" *ngIf="!editPath && configFiles.length > 0 && !applicationVersion.spec.configPath">
         Warn: Application configuration file path required for environment configuration files
       </small>
     </div>
@@ -30,8 +30,8 @@
   <app-multi-tab [content]="configContent" [items]="configFiles" [itemFactory]="applicationConfigFileFactory()">
 
     <ng-template #configContent let-configFile let-configFileIndex="index">
-      <div class="p-fluid p-col-12 p-md-5">
-        <div class="p-field p-float-label">
+      <div class="p-fluid col-12 md:col-5">
+        <div class="field p-float-label">
           <input pInputText id="applicationConfigName{{configFileIndex}}" [(ngModel)]="configFile.name" name="applicationConfigName{{configFileIndex}}"
                  required
                  [appTabItemNameUnique]="configFiles"
@@ -42,7 +42,7 @@
           </small>
         </div>
 
-        <div class="p-field p-float-label">
+        <div class="field p-float-label">
           <textarea rows="20" cols="60" pInputTextarea id="applicationConfig{{configFileIndex}}" [(ngModel)]="configFile.content" name="applicationConfig{{configFileIndex}}"
                     required></textarea>
           <label for="applicationConfig{{configFileIndex}}">Config</label>

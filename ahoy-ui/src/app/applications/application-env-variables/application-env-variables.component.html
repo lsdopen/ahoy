@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2022 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,30 +14,30 @@
   ~    limitations under the License.
   -->
 
-<div class="p-fluid p-md-5">
-  <div class="p-field p-float-label">
+<div class="p-fluid md:col-5">
+  <div class="field p-float-label">
     <p-dropdown [options]="['Value', 'Secret']" [(ngModel)]="type" name="environmentVariableType" required></p-dropdown>
     <label>Type</label>
   </div>
 
-  <div class="p-field p-float-label">
+  <div class="field p-float-label">
     <input pInputText id="newEnvironmentVariableKey" [(ngModel)]="key" name="newEnvironmentVariableKey">
     <label for="newEnvironmentVariableKey">Variable</label>
   </div>
-  <div *ngIf="type === 'Value'" class="p-field p-float-label">
+  <div *ngIf="type === 'Value'" class="field p-float-label">
     <input pInputText id="newEnvironmentVariableValue" [(ngModel)]="value" name="newEnvironmentVariableValue">
     <label for="newEnvironmentVariableKey">Value</label>
   </div>
 
   <div *ngIf="type === 'Secret'">
-    <div class="p-field p-float-label">
+    <div class="field p-float-label">
       <p-dropdown [options]="secrets" [(ngModel)]="secret" optionLabel="name"
                   [showClear]="true" name="environmentVariableSecret"
                   [autoDisplayFirst]="false"></p-dropdown>
       <label>Select secret</label>
     </div>
 
-    <div *ngIf="secret" class="p-field p-float-label">
+    <div *ngIf="secret" class="field p-float-label">
       <p-dropdown [options]="secret.data | keyvalue" [(ngModel)]="secretKey" optionLabel="key" optionValue="key"
                   [showClear]="true" name="environmentVariableSecretKey"
                   [autoDisplayFirst]="false"></p-dropdown>
@@ -47,7 +47,7 @@
 
   <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-plain" (click)="addEnvironmentVariable()"></button>
 
-  <div class="p-field p-mt-2">
+  <div class="field mt-2">
     <p-table #dt [value]="environmentVariables" dataKey="id"
              styleClass="p-datatable-environmentVariables p-datatable-striped p-datatable-sm"
              (onEditInit)="editEnvVarInit($event)" (onEditComplete)="editEnvVarComplete($event)">
@@ -63,7 +63,7 @@
           <td [pEditableColumn]="environmentVariable" [pEditableColumnRowIndex]="i">
             <p-cellEditor>
               <ng-template pTemplate="input">
-                <div class="p-field p-float-label">
+                <div class="field p-float-label">
                   <input pInputText type="text" id="environmentVariableKey{{i}}" name="environmentVariableKey{{i}}" [(ngModel)]="editingEnvVar.key" required>
                   <label for="environmentVariableKey{{i}}">Variable</label>
                 </div>
@@ -76,20 +76,20 @@
           <td [pEditableColumn]="environmentVariable" [pEditableColumnRowIndex]="i">
             <p-cellEditor>
               <ng-template pTemplate="input">
-                <div *ngIf="editingEnvVar.type === 'Value'" class="p-field p-float-label">
+                <div *ngIf="editingEnvVar.type === 'Value'" class="field p-float-label">
                   <input pInputText type="text" id="environmentVariableValue{{i}}" name="environmentVariableValue{{i}}" [(ngModel)]="editingEnvVar.value" required>
                   <label for="environmentVariableValue{{i}}">Value</label>
                 </div>
 
                 <div *ngIf="editingEnvVar.type === 'Secret'">
-                  <div class="p-field p-float-label">
+                  <div class="field p-float-label">
                     <p-dropdown [options]="secrets" [(ngModel)]="editingSecret" optionLabel="name" (onChange)="editingSecretChanged()"
                                 name="environmentVariableSecret{{i}}"
                                 [autoDisplayFirst]="false" required></p-dropdown>
                     <label>Select secret</label>
                   </div>
 
-                  <div *ngIf="editingSecret" class="p-field p-float-label">
+                  <div *ngIf="editingSecret" class="field p-float-label">
                     <p-dropdown [options]="editingSecret.data | keyvalue" [(ngModel)]="editingSecretKey" optionLabel="key" optionValue="key"
                                 name="environmentVariableSecretKey{{i}}"
                                 [autoDisplayFirst]="false" required></p-dropdown>

@@ -1,5 +1,5 @@
 /*!
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  *    limitations under the License.
  */
 
+@use 'sass:math';
+
 .p-autocomplete {
     .p-autocomplete-loader {
         right: nth($inputPadding, 2);
@@ -26,7 +28,7 @@
     }
 
     .p-autocomplete-multiple-container {
-        padding: nth($inputPadding, 1)/2 nth($inputPadding, 2);
+        padding: math.div(nth($inputPadding, 1), 2) nth($inputPadding, 2);
 
         &:not(.p-disabled):hover {
             border-color: $inputHoverBorderColor;
@@ -37,7 +39,7 @@
         }
 
         .p-autocomplete-input-token {
-            padding: nth($inputPadding, 1)/2 0;
+            padding: math.div(nth($inputPadding, 1), 2) 0;
 
             input {
                 font-family: $fontFamily;
@@ -49,7 +51,7 @@
         }
 
         .p-autocomplete-token {
-            padding: nth($inputPadding, 1)/2 nth($inputPadding, 2);
+            padding: math.div(nth($inputPadding, 1), 2) nth($inputPadding, 2);
             margin-right: $inlineSpacing;
             background: $highlightBg;
             color: $highlightTextColor;
@@ -74,7 +76,13 @@ p-autocomplete.ng-dirty.ng-invalid > .p-autocomplete > .p-inputtext {
     box-shadow: $inputOverlayShadow;
 
     .p-autocomplete-items {
-        padding: $inputListPadding;
+        &:not(.p-autocomplete-virtualscroll) {
+            padding: $inputListPadding;
+        }
+
+        &.p-autocomplete-virtualscroll .cdk-virtual-scroll-content-wrapper {
+            padding: $inputListPadding;
+        }
 
         .p-autocomplete-item {
             margin: $inputListItemMargin;
@@ -94,6 +102,12 @@ p-autocomplete.ng-dirty.ng-invalid > .p-autocomplete > .p-inputtext {
                 color: $highlightTextColor;
                 background: $highlightBg;
             }
+        }
+
+        .p-autocomplete-empty-message {
+            padding: $inputListItemPadding;
+            color: $inputListItemTextColor;
+            background: $inputListItemBg;
         }
 
         .p-autocomplete-item-group {

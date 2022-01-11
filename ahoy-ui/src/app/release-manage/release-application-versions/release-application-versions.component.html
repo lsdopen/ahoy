@@ -14,8 +14,8 @@
   ~    limitations under the License.
   -->
 
-<div class="p-grid">
-  <div class="p-col-12">
+<div class="grid">
+  <div class="col-12">
 
     <div class="card" *ngIf="releaseVersion && existingConfigs">
       <div class="card-header">
@@ -24,22 +24,22 @@
 
       <p-toolbar>
         <ng-template pTemplate="left">
-          <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain p-mr-2 p-mb-2" (click)="addApplication()" *appUserRole="[Role.admin, Role.releasemanager]"></button>
+          <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain mr-2 mb-2" (click)="addApplication()" *appUserRole="[Role.admin, Role.releasemanager]"></button>
         </ng-template>
       </p-toolbar>
 
-      <div class="p-field" *ngIf="applicationVersions && (applicationVersions.length === 0)">
+      <div class="field" *ngIf="applicationVersions && (applicationVersions.length === 0)">
         There are no applications in this release<span *appUserRole="[Role.admin, Role.releasemanager, Role.developer]">, <a [routerLink]="[]" (click)="addApplication()">here</a> to add an application..</span>
       </div>
 
       <p-table #dt [value]="applicationVersions" dataKey="id" selectionMode="single"
                styleClass="p-datatable-applicationVersions p-datatable-striped p-datatable-sm"
-               [scrollable]="true" scrollHeight="400px" [filterDelay]="0" [globalFilterFields]="['application.name', 'version', 'image']"
+               [filterDelay]="0" [globalFilterFields]="['application.name', 'version', 'image']"
                *ngIf="applicationVersions && applicationVersions.length > 0"
                sortField="application.name" [sortOrder]="1">
         <ng-template pTemplate="caption">
-          <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
-            <span class="p-input-icon-left p-ml-auto">
+          <div class="flex flex-column md:flex-row md:justify-content-between table-header">
+            <span class="p-input-icon-left ml-auto">
                 <i class="pi pi-search"></i>
                 <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"/>
               </span>
@@ -79,19 +79,19 @@
               {{av.spec.image}}
             </td>
             <td>
-              <a *ngIf="hasRoute(av)" pButton pRipple icon="pi pi-external-link" class="p-button-rounded p-button-info p-mr-2"
+              <a *ngIf="hasRoute(av)" pButton pRipple icon="pi pi-external-link" class="p-button-rounded p-button-info mr-2"
                  href="{{getRoute(av)}}" target="_blank"
                  pTooltip="Open route: {{getRoute(av)}}"></a>
 
-              <button pButton pRipple icon="pi pi-upload" class="p-button-rounded p-button-info p-mr-2"
+              <button pButton pRipple icon="pi pi-upload" class="p-button-rounded p-button-info mr-2"
                       (click)="upgradeApplication(av)"
                       pTooltip="Upgrade version"
                       *appUserRole="[Role.admin, Role.releasemanager]"></button>
-              <button pButton pRipple icon="pi pi-folder" class="p-button-rounded {{hasConfig(av.id) ? 'p-button-plain' : 'p-button-outlined'}} p-mr-2"
+              <button pButton pRipple icon="pi pi-folder" class="p-button-rounded {{hasConfig(av.id) ? 'p-button-plain' : 'p-button-outlined'}} mr-2"
                       routerLink="/release/{{environmentRelease.id.environmentId}}/{{environmentRelease.id.releaseId}}/config/{{releaseVersion.id}}/{{av.id}}"
                       pTooltip="Edit environment config"
                       *appUserRole="[Role.admin, Role.releasemanager, Role.developer]"></button>
-              <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
+              <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain mr-2"
                       routerLink="/application/{{av.application.id}}/version/{{av.id}}"
                       pTooltip="Edit application version"
                       *appUserRole="[Role.admin, Role.releasemanager, Role.developer]"></button>

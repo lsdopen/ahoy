@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2022 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,28 +14,28 @@
   ~    limitations under the License.
   -->
 
-<div class="p-grid">
-  <div class="p-col-12" *ngIf="argoSettings">
+<div class="grid">
+  <div class="col-12" *ngIf="argoSettings">
 
     <p-toolbar>
       <ng-template pTemplate="left">
         <h5>Argo CD</h5>
       </ng-template>
       <ng-template pTemplate="right">
-        <button pButton pRipple label="Save" icon="pi pi-save" class="p-button-success p-mr-2 p-mb-2" (click)="save()" [disabled]="settingsForm.invalid"></button>
-        <button pButton pRipple label="Test" icon="pi pi-question" class="p-button-info p-mr-2 p-mb-2" (click)="test()" [disabled]="settingsForm.invalid"></button>
+        <button pButton pRipple label="Save" icon="pi pi-save" class="p-button-success mr-2 mb-2" (click)="save()" [disabled]="settingsForm.invalid"></button>
+        <button pButton pRipple label="Test" icon="pi pi-question" class="p-button-info mr-2 mb-2" (click)="test()" [disabled]="settingsForm.invalid"></button>
       </ng-template>
     </p-toolbar>
 
     <form #settingsForm="ngForm">
-      <div class="p-fluid p-col-12 p-md-5">
-        <div class="p-field p-float-label">
+      <div class="p-fluid col-12 md:col-5">
+        <div class="field p-float-label">
           <input pInputText id="argoServer" [(ngModel)]="argoSettings.argoServer" name="argoServer" required>
           <label for="argoServer">Server</label>
         </div>
 
         <i class="pi {{hideArgoToken ? 'pi-eye-slash':'pi-eye'}}" style="cursor: pointer; width: 10px" (click)="hideArgoToken = !hideArgoToken"></i>
-        <div class="p-field p-float-label">
+        <div class="field p-float-label">
           <input pInputText id="argoToken" [(ngModel)]="argoSettings.argoToken" name="argoToken"
                  [type]="hideArgoToken ? 'password' : 'text'"
                  required>

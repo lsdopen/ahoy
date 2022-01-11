@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2022 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -25,13 +25,12 @@
       <span class="fs-normal note-cluster">{{environment.cluster.name}}</span>
     </div>
 
-    <div class="p-field" *ngIf="environmentReleases && environmentReleases.length === 0">
+    <div class="field" *ngIf="environmentReleases && environmentReleases.length === 0">
       There are no releases in this environment<span *appUserRole="[Role.admin, Role.releasemanager]">, <a routerLink="/environmentreleases/{{environment.id}}">create or add</a> a release..</span>
     </div>
 
     <p-table #dt [value]="environmentReleases" dataKey="id" selectionMode="single"
              styleClass="p-datatable-releases p-datatable-sm"
-             [scrollable]="false"
              *ngIf="environmentReleases && environmentReleases.length > 0">
 
       <ng-template pTemplate="body" let-er>

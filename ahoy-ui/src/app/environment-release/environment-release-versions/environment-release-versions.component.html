@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2022 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 <span *ngIf="environmentRelease">
   <p-tag *ngIf="environmentRelease.currentReleaseVersion" value="{{environmentRelease.currentReleaseVersion.version}}"
          pTooltip="Current release version"
-         styleClass="p-mr-2" [rounded]="true"></p-tag>
+         styleClass="mr-2" [rounded]="true"></p-tag>
 
   <p-tag *ngIf="environmentRelease.latestReleaseVersion" value="{{environmentRelease.latestReleaseVersion.version}}"
          pTooltip="Latest release version"
-         styleClass="p-mr-2" severity="info" [rounded]="true"></p-tag>
+         styleClass="mr-2" severity="info" [rounded]="true"></p-tag>
 </span>

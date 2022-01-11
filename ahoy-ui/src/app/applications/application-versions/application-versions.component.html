@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2022 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
   ~    limitations under the License.
   -->
 
-<div class="p-grid">
-  <div class="p-col-12">
+<div class="grid">
+  <div class="col-12">
 
     <p-confirmPopup></p-confirmPopup>
 
@@ -26,17 +26,17 @@
 
       <p-toolbar>
         <ng-template pTemplate="left">
-          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="version/new" [queryParams]="{applicationVersionId: lastVersionId()}"></button>
+          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2 mb-2" routerLink="version/new" [queryParams]="{applicationVersionId: lastVersionId()}"></button>
         </ng-template>
       </p-toolbar>
 
       <p-table #dt [value]="applicationVersions" dataKey="id" selectionMode="single"
                styleClass="p-datatable-applicationVersions p-datatable-striped p-datatable-sm"
-               [scrollable]="true" scrollHeight="600px" [filterDelay]="0" [globalFilterFields]="['version', 'image']"
+               [filterDelay]="0" [globalFilterFields]="['version', 'image']"
                sortField="version" [sortOrder]="1">
         <ng-template pTemplate="caption">
-          <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
-              <span class="p-input-icon-left p-ml-auto">
+          <div class="flex flex-column md:flex-row md:justify-content-between table-header">
+              <span class="p-input-icon-left ml-auto">
                 <i class="pi pi-search"></i>
                 <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"/>
               </span>
@@ -64,11 +64,11 @@
             </td>
             <td><span class="p-column-title">Releases</span>
               <span *ngFor="let releaseName of usedByReleaseVersions(applicationVersion)">
-                <p-chip styleClass="p-mr-1 p-mb-1" label="{{releaseName}}"></p-chip>
+                <p-chip styleClass="mr-1 mb-1" label="{{releaseName}}"></p-chip>
               </span>
             </td>
             <td>
-              <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
+              <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain mr-2"
                       routerLink="version/{{applicationVersion.id}}"
                       pTooltip="Edit version"></button>
               <span pTooltip="{{!canDelete(applicationVersion) ? 'In order to delete application version, remove application from all release versions or delete these releases' : ''}}">

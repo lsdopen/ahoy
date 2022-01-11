@@ -1,5 +1,5 @@
 /*!
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -43,21 +43,31 @@
     }
 
     .p-paginator-first {
-        border-top-left-radius: $borderRadius;
-        border-bottom-left-radius: $borderRadius;
+        border-top-left-radius: $paginatorElementBorderRadius;
+        border-bottom-left-radius: $paginatorElementBorderRadius;
     }
 
     .p-paginator-last {
-        border-top-right-radius: $borderRadius;
-        border-bottom-right-radius: $borderRadius;
+        border-top-right-radius: $paginatorElementBorderRadius;
+        border-bottom-right-radius: $paginatorElementBorderRadius;
     }
 
     .p-dropdown {
         margin-left: $inlineSpacing;
+        margin-right: $inlineSpacing;
         height: $paginatorElementHeight;
 
         .p-dropdown-label {
             padding-right: 0;
+        }
+    }
+
+    .p-paginator-page-input {
+        margin-left: $inlineSpacing;
+        margin-right: $inlineSpacing;
+
+        .p-inputtext {
+            max-width: $paginatorElementWidth;
         }
     }
 

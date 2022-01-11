@@ -1,0 +1,97 @@
+/*!
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+@use 'sass:math';
+
+.p-speeddial-button {
+    &.p-button.p-button-icon-only {
+        width: $speedDialButtonWidth;
+        height: $speedDialButtonHeight;
+
+        .p-button-icon {
+            font-size: $speedDialButtonIconFontSize;
+        }
+    }
+}
+
+.p-speeddial-action {
+    width: $speedDialActionWidth;
+    height: $speedDialActionHeight;
+    background: $speedDialActionBg;
+    color: $speedDialActionTextColor;
+
+    &:hover {
+        background: $speedDialActionHoverBg;
+        color: $speedDialActionTextHoverColor;
+    }
+}
+
+.p-speeddial-direction-up {
+    .p-speeddial-item {
+        margin: math.div($inlineSpacing, 2) 0;
+
+        &:first-child {
+            margin-bottom: $inlineSpacing;
+        }
+    }
+}
+
+.p-speeddial-direction-down {
+    .p-speeddial-item {
+        margin: math.div($inlineSpacing, 2) 0;
+
+        &:first-child {
+            margin-top: $inlineSpacing;
+        }
+    }
+}
+
+.p-speeddial-direction-left {
+    .p-speeddial-item {
+        margin: 0 math.div($inlineSpacing, 2);
+
+        &:first-child {
+            margin-right: $inlineSpacing;
+        }
+    }
+}
+
+.p-speeddial-direction-right {
+    .p-speeddial-item {
+        margin: 0 math.div($inlineSpacing, 2);
+
+        &:first-child {
+            margin-left: $inlineSpacing;
+        }
+    }
+}
+
+.p-speeddial-circle,
+.p-speeddial-semi-circle,
+.p-speeddial-quarter-circle {
+    .p-speeddial-item {
+        margin: 0;
+
+        &:first-child,
+        &:last-child {
+            margin: 0;
+        }
+    }
+}
+
+.p-speeddial-mask {
+    background-color: $maskBg;
+}

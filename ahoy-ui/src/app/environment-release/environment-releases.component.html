@@ -14,38 +14,38 @@
   ~    limitations under the License.
   -->
 
-<div class="p-grid">
-  <div class="p-col-12">
+<div class="grid">
+  <div class="col-12">
 
     <p-confirmPopup></p-confirmPopup>
     <app-task-events-listener (taskEventEmitter)="taskEventOccurred($event)"></app-task-events-listener>
 
     <div class="card" *ngIf="environment">
       <div class="card-header">
-        <div class="p-d-flex p-flex-row p-ai-baseline">
-          <i class="pi pi-folder-open p-mr-2 app-icon"></i>
+        <div class="flex flex-row align-items-baseline">
+          <i class="pi pi-folder-open mr-2 app-icon"></i>
           <h5>Releases in {{environment.name}}</h5>
         </div>
       </div>
 
       <p-toolbar>
         <ng-template pTemplate="left">
-          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/release/new" [queryParams]="{environmentId: environment.id}" *appUserRole="[Role.admin, Role.releasemanager]"></button>
-          <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain p-mb-2" (click)="addRelease()" *appUserRole="[Role.admin, Role.releasemanager]"></button>
+          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2 mb-2" routerLink="/release/new" [queryParams]="{environmentId: environment.id}" *appUserRole="[Role.admin, Role.releasemanager]"></button>
+          <button pButton pRipple label="Add" icon="pi pi-plus-circle" class="p-button-plain mb-2" (click)="addRelease()" *appUserRole="[Role.admin, Role.releasemanager]"></button>
         </ng-template>
       </p-toolbar>
 
-      <div class="p-field" *ngIf="environmentReleases && (environmentReleases.length === 0)">
+      <div class="field" *ngIf="environmentReleases && (environmentReleases.length === 0)">
         There are no releases in this environment<span *appUserRole="[Role.admin, Role.releasemanager]">, create a <a routerLink="/release/new" [queryParams]="{environmentId: environment.id}">new</a> release or <a [routerLink]="[]" (click)="addRelease()">add</a> an existing release..</span>
       </div>
 
       <p-table #dt [value]="environmentReleases" dataKey="id" selectionMode="single"
                styleClass="p-datatable-releases p-datatable-striped p-datatable-sm"
-               [scrollable]="true" scrollHeight="600px" [filterDelay]="0" [globalFilterFields]="['release.name']"
+               [filterDelay]="0" [globalFilterFields]="['release.name']"
                *ngIf="environmentReleases && environmentReleases.length > 0">
         <ng-template pTemplate="caption">
-          <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
-            <span class="p-input-icon-left p-ml-auto">
+          <div class="flex flex-column md:flex-row md:justify-content-between table-header">
+            <span class="p-input-icon-left ml-auto">
               <i class="pi pi-search"></i>
               <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"/>
             </span>
@@ -89,7 +89,7 @@
               <app-environment-release-versions [environmentRelease]="er"></app-environment-release-versions>
             </td>
             <td>
-              <button pButton pRipple icon="pi pi-chevron-circle-right" class="p-button-rounded p-button-info p-mr-2"
+              <button pButton pRipple icon="pi pi-chevron-circle-right" class="p-button-rounded p-button-info mr-2"
                       routerLink="/release/{{er.id.environmentId}}/{{er.id.releaseId}}/version/{{er.currentReleaseVersion ? er.currentReleaseVersion.id : er.latestReleaseVersion.id}}"
                       pTooltip="Manage release"></button>
               <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"

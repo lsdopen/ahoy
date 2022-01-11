@@ -1,5 +1,5 @@
 /*!
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -13,6 +13,8 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+
+@use 'sass:math';
 
 .p-tag {
     background: $badgeBg;
@@ -43,7 +45,7 @@
     }
 
     .p-tag-icon {
-        margin-right: $inlineSpacing / 2;
+        margin-right: math.div($inlineSpacing, 2);
         font-size: $badgeFontSize;
     }
 }

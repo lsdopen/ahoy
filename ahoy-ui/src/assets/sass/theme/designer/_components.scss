@@ -1,5 +1,5 @@
 /*!
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 @import '_mixins';
 @import '_common';
+@import '_colors';
 
 //Input
 @import './components/input/_autocomplete';
@@ -39,9 +40,11 @@
 @import './components/input/_selectbutton';
 @import './components/input/_slider';
 @import './components/input/_togglebutton';
+@import './components/input/_treeselect';
 
 //Button
 @import './components/button/_button';
+@import './components/button/_speeddial';
 @import './components/button/_splitbutton';
 
 //Data
@@ -83,6 +86,7 @@
 //Menu
 @import './components/menu/_breadcrumb';
 @import './components/menu/_contextmenu';
+@import './components/menu/_dock';
 @import './components/menu/_megamenu';
 @import './components/menu/_menu';
 @import './components/menu/_menubar';
@@ -99,6 +103,7 @@
 
 //MultiMedia
 @import './components/multimedia/_galleria';
+@import './components/multimedia/_image';
 
 //Misc
 @import './components/misc/_avatar';
