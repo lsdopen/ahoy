@@ -15,7 +15,7 @@
  */
 
 import {Component} from '@angular/core';
-import {version} from '../../package.json';
+import packageJson from '../../package.json';
 import {AppComponent} from './app.component';
 import {AppearanceSettingsService} from './settings/appearance-settings/appearance-settings.service';
 
@@ -38,7 +38,7 @@ import {AppearanceSettingsService} from './settings/appearance-settings/appearan
   `
 })
 export class AppFooterComponent {
-  public version: string = version;
+  public version = packageJson.version;
 
   constructor(public app: AppComponent,
               public appearanceSettingsService: AppearanceSettingsService) {
