@@ -51,10 +51,13 @@
               <div class="p-fluid md:col-5">
                 <div class="field p-float-label">
                   <input pInputText id="environmentConfigRouteHostname" name="environmentConfigRouteHostname" [(ngModel)]="environmentConfig.spec.routeHostname"
-                         pattern="(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])"
-                         required="{{routeCategory}}">
+                         required="{{routeCategory}}" pTooltip="Available variables: ${release_name} ${application_name} ${environment_name} ${cluster_host}">
                   <label for="environmentConfigRouteHostname">Hostname</label>
-                  <small class="p-error" *ngIf="environmentConfigForm.form.controls.environmentConfigRouteHostname?.hasError('pattern')">invalid</small>
+                  <input pInputText id="environmentConfigRouteHostnameResolved" name="environmentConfigRouteHostnameResolved" ngModel="{{resolveRouteHostname()}}"
+                         pattern="(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])"
+                         [readonly]="true" [hidden]="true">
+                  <small *ngIf="!environmentConfigForm.form.controls.environmentConfigRouteHostnameResolved?.hasError('pattern')">{{resolveRouteHostname()}}</small>
+                  <small class="p-error" *ngIf="environmentConfigForm.form.controls.environmentConfigRouteHostnameResolved?.hasError('pattern')">invalid</small>
                 </div>
 
                 <div class="field">

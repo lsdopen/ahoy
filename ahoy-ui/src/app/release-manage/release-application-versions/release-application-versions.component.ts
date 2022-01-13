@@ -28,6 +28,7 @@ import {Release, ReleaseVersion, UpgradeAppOptions} from '../../releases/release
 import {ReleaseService} from '../../releases/release.service';
 import {AddApplicationDialogComponent} from '../add-application-dialog/add-application-dialog.component';
 import {ReleaseManageService} from '../release-manage.service';
+import {RouteHostnameResolver} from '../route-hostname-resolver';
 
 @Component({
   selector: 'app-release-application-versions',
@@ -163,6 +164,7 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
 
   getRoute(applicationVersion: ApplicationVersion): string {
     const config = this.existingConfigs.get(applicationVersion.id);
-    return `http://${config.spec.routeHostname}`;
+    const route = RouteHostnameResolver.resolve(this.environmentRelease, applicationVersion, config.spec.routeHostname);
+    return config.spec.tls ? `https://${route}` : `http://${route}`;
   }
 }

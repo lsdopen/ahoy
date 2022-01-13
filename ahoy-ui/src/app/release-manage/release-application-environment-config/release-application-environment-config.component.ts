@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import {mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../../app.breadcrumb.service';
 import {Application, ApplicationEnvironmentConfig, ApplicationEnvironmentConfigId, ApplicationSecret, ApplicationVersion, ApplicationVolume} from '../../applications/application';
 import {ApplicationService} from '../../applications/application.service';
-import {Cluster} from '../../clusters/cluster';
 import {TabItemFactory} from '../../components/multi-tab/multi-tab.component';
 import {EnvironmentRelease, EnvironmentReleaseId} from '../../environment-release/environment-release';
 import {EnvironmentReleaseService} from '../../environment-release/environment-release.service';
@@ -29,6 +28,7 @@ import {Environment} from '../../environments/environment';
 import {Release, ReleaseVersion} from '../../releases/release';
 import {ReleaseService} from '../../releases/release.service';
 import {LoggerService} from '../../util/logger.service';
+import {RouteHostnameResolver} from '../route-hostname-resolver';
 
 @Component({
   selector: 'app-release-application-environment-config',
@@ -83,15 +83,14 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
         }))
       .subscribe((config) => {
         this.environmentConfig = config;
-
-        const releaseName = (this.environmentRelease.release as Release).name;
-        const appName = (this.applicationVersion.application as Application).name;
-        const envName = (this.environmentRelease.environment as Environment).name;
-        const clusterHost = ((this.environmentRelease.environment as Environment).cluster as Cluster).host;
-        this.exampleRouteHost = `${releaseName}-${appName}-${envName}.${clusterHost}`;
+        this.exampleRouteHost = '${release_name}-${application_name}-${environment_name}.${cluster_host}';
         this.setCategoriesExpanded();
         this.setBreadcrumb();
       });
+  }
+
+  public resolveRouteHostname(): string {
+    return RouteHostnameResolver.resolve(this.environmentRelease, this.applicationVersion, this.environmentConfig.spec.routeHostname);
   }
 
   private setBreadcrumb() {
