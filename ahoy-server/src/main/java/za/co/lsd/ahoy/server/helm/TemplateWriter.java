@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -97,7 +97,9 @@ public class TemplateWriter {
 				applicationVersion.getSpec().getServicePorts().size() > 0) {
 				addTemplate(application, "service", templatesPath, trackedTemplates);
 
-				if (applicationEnvironmentConfig != null && applicationEnvironmentConfig.getSpec().getRouteHostname() != null && applicationEnvironmentConfig.getSpec().getRouteTargetPort() != null) {
+				if (applicationEnvironmentConfig != null &&
+					applicationEnvironmentConfig.getSpec().getRouteHostname() != null && !applicationEnvironmentConfig.getSpec().getRouteHostname().trim().isEmpty() &&
+					applicationEnvironmentConfig.getSpec().getRouteTargetPort() != null) {
 					addTemplate(application, "ingress", templatesPath, trackedTemplates);
 				}
 			}
