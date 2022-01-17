@@ -89,7 +89,7 @@ public class ReleaseController {
 	}
 
 	@PostMapping("/releaseVersions/{releaseVersionId}/copyAppEnvConfig")
-	public ResponseEntity<EnvironmentRelease> copyApplicationVersionEnvConfig(@PathVariable Long releaseVersionId,
+	public ResponseEntity<Void> copyApplicationVersionEnvConfig(@PathVariable Long releaseVersionId,
 																			  @RequestParam Long sourceApplicationVersionId,
 																			  @RequestParam Long destApplicationVersionId) {
 

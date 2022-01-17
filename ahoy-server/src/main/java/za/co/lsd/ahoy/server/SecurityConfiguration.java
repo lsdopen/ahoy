@@ -27,6 +27,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import za.co.lsd.ahoy.server.security.Role;
+import za.co.lsd.ahoy.server.security.Scope;
 
 @Configuration
 @EnableWebSecurity
@@ -50,8 +51,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
 			.regexMatchers(HttpMethod.GET,"/data/applicationVersions/.*projection=.*Full").hasAnyAuthority(Role.admin, Role.releasemanager, Role.developer)
 			.regexMatchers(HttpMethod.GET,"/data/applicationEnvironmentConfigs/.*projection=.*Full").hasAnyAuthority(Role.admin, Role.releasemanager, Role.developer)
 			.regexMatchers(HttpMethod.GET,"/data/.*projection=.*Full").hasAuthority(Role.admin)
-			.antMatchers("/data/**").hasAuthority("SCOPE_ahoy")
-			.antMatchers("/api/**").hasAuthority("SCOPE_ahoy")
+			.antMatchers("/data/**").hasAuthority(Scope.ahoy)
+			.antMatchers("/api/**").hasAuthority(Scope.ahoy)
 			.anyRequest().authenticated()
 			.and()
 			.oauth2ResourceServer()
