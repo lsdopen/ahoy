@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ public class OpenShiftClusterManager implements ClusterManager {
 
 		try (DefaultOpenShiftClient openShiftClient = new DefaultOpenShiftClient(config)) {
 
-			if (openShiftClient.projects().withName(name).get() != null) {
+			if (openShiftClient.projects().withName(name).get() == null) {
 				openShiftClient.projects().createOrReplaceWithNew()
 					.withNewMetadata()
 					.withName(name)
