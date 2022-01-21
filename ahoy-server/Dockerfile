@@ -22,7 +22,7 @@ ARG JAR_FILE
 ADD ${JAR_FILE} app.jar
 
 # setup environment
-ENV SPRING_PROFILES=prod
+ENV SPRING_PROFILES=prod,keycloak
 EXPOSE 8080
 
 ENTRYPOINT ["sh","-c","java -Dspring.profiles.active=$SPRING_PROFILES -jar app.jar", "--spring.config.location=/tmp/config/"]
