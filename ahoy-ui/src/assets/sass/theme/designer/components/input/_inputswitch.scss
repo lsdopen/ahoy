@@ -1,5 +1,5 @@
 /*!
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -13,6 +13,8 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+
+@use 'sass:math';
 
 .p-inputswitch {
     width: $inputSwitchWidth;
@@ -28,7 +30,7 @@
             width: $inputSwitchHandleWidth;
             height: $inputSwitchHandleHeight;
             left: $inputSwitchSliderPadding;
-            margin-top: -1 * $inputSwitchHandleHeight / 2;
+            margin-top: math.div(-1 * $inputSwitchHandleHeight, 2);
             border-radius: $inputSwitchHandleBorderRadius;
             transition-duration: $transitionDuration;
         }

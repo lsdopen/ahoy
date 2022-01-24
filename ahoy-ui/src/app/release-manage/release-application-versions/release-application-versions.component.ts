@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import {Release, ReleaseVersion, UpgradeAppOptions} from '../../releases/release
 import {ReleaseService} from '../../releases/release.service';
 import {AddApplicationDialogComponent} from '../add-application-dialog/add-application-dialog.component';
 import {ReleaseManageService} from '../release-manage.service';
+import {RouteHostnameResolver} from '../route-hostname-resolver';
 
 @Component({
   selector: 'app-release-application-versions',
@@ -110,7 +111,7 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
       this.releaseService.associateApplication(this.releaseVersion.id, upgradeAppOptions.applicationVersion.id)
         .subscribe(() => {
           this.getApplicationVersions();
-          this.applicationVersionsChanged.next();
+          this.applicationVersionsChanged.next(null);
         });
     });
   }
@@ -127,7 +128,7 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
       this.releaseService.removeAssociatedApplication(this.releaseVersion.id, applicationVersion.id)
         .subscribe(() => {
             this.getApplicationVersions();
-            this.applicationVersionsChanged.next();
+            this.applicationVersionsChanged.next(null);
           }
         );
     });
@@ -163,6 +164,7 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
 
   getRoute(applicationVersion: ApplicationVersion): string {
     const config = this.existingConfigs.get(applicationVersion.id);
-    return `http://${config.spec.routeHostname}`;
+    const route = RouteHostnameResolver.resolve(this.environmentRelease, applicationVersion, config.spec.routeHostname);
+    return config.spec.tls ? `https://${route}` : `http://${route}`;
   }
 }

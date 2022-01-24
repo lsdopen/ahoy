@@ -14,22 +14,22 @@
   ~    limitations under the License.
   -->
 
-<div class="p-grid">
-  <div class="p-col-12">
+<div class="grid">
+  <div class="col-12">
 
     <form #confirmationForm="ngForm">
-      <div class="p-fluid p-col-12">
+      <div class="p-fluid col-12">
 
-        <div *ngIf="!confirmation.requiresInput" class="p-field">
+        <div *ngIf="!confirmation.requiresInput" class="field">
           {{confirmation.message}}
         </div>
 
-        <div *ngIf="confirmation.requiresInput" class="p-field">
+        <div *ngIf="confirmation.requiresInput" class="field">
           <label for="confirmationInput">{{confirmation.message}}</label>
           <textarea rows="10" cols="30" pInputTextarea id="confirmationInput" name="confirmationInput" [(ngModel)]="confirmation.input" required></textarea>
         </div>
 
-        <div *ngIf="confirmation.verify" class="p-field">
+        <div *ngIf="confirmation.verify" class="field">
           <input pInputText id="verifyText" [(ngModel)]="confirmation.enteredVerifyText" name="verifyText" required [appVerifyText]="confirmation.verifyText" appAutofocus>
           <small>enter <b>{{confirmation.verifyText}}</b> to confirm</small>
         </div>
@@ -41,7 +41,7 @@
   </div>
 </div>
 
-<div class="p-grid p-pt-3">
-  <button pButton pRipple type="button" icon="pi pi-times" (click)="close(undefined)" label="Cancel" class="p-button-text p-ml-auto p-mr-2"></button>
-  <button pButton pRipple type="button" icon="pi pi-check" (click)="close(confirmation)" label="Confirm" class="p-button-text p-mr-2" [disabled]="confirmationForm.invalid" autofocus></button>
+<div class="grid pt-3">
+  <button pButton pRipple type="button" icon="pi pi-times" (click)="close(undefined)" label="Cancel" class="p-button-text ml-auto mr-2"></button>
+  <button pButton pRipple type="button" icon="pi pi-check" (click)="close(confirmation)" label="Confirm" class="p-button-text mr-2" [disabled]="confirmationForm.invalid" autofocus></button>
 </div>

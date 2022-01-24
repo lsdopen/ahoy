@@ -17,7 +17,6 @@
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {HttpClientModule} from '@angular/common/http';
 import {ErrorHandler, NgModule} from '@angular/core';
-import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule} from '@angular/forms';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -204,7 +203,6 @@ import {UserRoleDirective} from './util/user-role.directive';
       }
     }),
     BrowserAnimationsModule,
-    FlexLayoutModule,
     ScrollingModule,
     MegaMenuModule,
     SidebarModule,

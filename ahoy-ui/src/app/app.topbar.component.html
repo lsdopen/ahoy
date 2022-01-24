@@ -14,13 +14,13 @@
   ~    limitations under the License.
   -->
 
-<div class="layout-topbar p-shadow-4">
+<div class="layout-topbar shadow-4">
   <div class="layout-topbar-left">
     <a class="layout-topbar-logo" routerLink="/">
       <img id="app-logo" src="assets/layout/images/logo-{{appLogoMode()}}.svg" alt="ultima-layout" style="height: 2.25rem">
     </a>
 
-    <a class="layout-menu-button p-shadow-6" (click)="appMain.onMenuButtonClick($event)" pRipple>
+    <a class="layout-menu-button shadow-6" (click)="appMain.onMenuButtonClick($event)" pRipple>
       <i class="pi pi-chevron-right"></i>
     </a>
 
@@ -39,33 +39,33 @@
         </li>
 
         <li class="layout-topbar-item" *ngIf="identityClaim()">
-          <a class="layout-topbar-action p-d-flex p-dir-row p-jc-center p-ai-center p-px-0 rounded-circle" (click)="appMain.onTopbarItemClick($event, 'profile')" pRipple>
+          <a class="layout-topbar-action flex flex-row justify-content-center align-items-center px-0 rounded-circle" (click)="appMain.onTopbarItemClick($event, 'profile')" pRipple>
             <p-avatar label="{{userInitials()}}" shape="circle"></p-avatar>
           </a>
 
-          <ul class="layout-topbar-action-panel p-shadow-6" [@topbarActionPanelAnimation]="'visible'" *ngIf="appMain.activeTopbarItem === 'profile'">
-            <li class="p-px-3">
-              <i class="pi pi-user" [ngClass]="{'p-mr-2': !app.isRTL, 'p-ml-2': app.isRTL}"></i>
+          <ul class="layout-topbar-action-panel shadow-6" [@topbarActionPanelAnimation]="'visible'" *ngIf="appMain.activeTopbarItem === 'profile'">
+            <li class="px-3">
+              <i class="pi pi-user" [ngClass]="{'mr-2': !app.isRTL, 'ml-2': app.isRTL}"></i>
               <span class="fs-normal">{{identityClaim().name}}</span>
             </li>
             <p-divider layout="horizontal"></p-divider>
             <li class="layout-topbar-action-item" routerLink="/settings" pRipple *appUserRole="[Role.user]">
-              <div class="p-d-flex p-flex-row p-ai-center">
-                <i class="pi pi-cog" [ngClass]="{'p-mr-2': !app.isRTL, 'p-ml-2': app.isRTL}"></i>
+              <div class="flex flex-row align-items-center">
+                <i class="pi pi-cog" [ngClass]="{'mr-2': !app.isRTL, 'ml-2': app.isRTL}"></i>
                 <span>Settings</span>
               </div>
             </li>
 
             <li *ngIf="accountUri()">
-              <a class="layout-topbar-action-item p-d-flex p-flex-row p-ai-center" href="{{accountUri()}}" target="_blank" pRipple>
-                <i class="pi pi-user-edit" [ngClass]="{'p-mr-2': !app.isRTL, 'p-ml-2': app.isRTL}"></i>
+              <a class="layout-topbar-action-item flex flex-row align-items-center" href="{{accountUri()}}" target="_blank" pRipple>
+                <i class="pi pi-user-edit" [ngClass]="{'mr-2': !app.isRTL, 'ml-2': app.isRTL}"></i>
                 <span>Account</span>
               </a>
             </li>
 
             <li class="layout-topbar-action-item" pRipple (click)="logout()">
-              <div class="p-d-flex p-flex-row p-ai-center">
-                <i class="pi pi-power-off" [ngClass]="{'p-mr-2': !app.isRTL, 'p-ml-2': app.isRTL}"></i>
+              <div class="flex flex-row align-items-center">
+                <i class="pi pi-power-off" [ngClass]="{'mr-2': !app.isRTL, 'ml-2': app.isRTL}"></i>
                 <span>Logout</span>
               </div>
             </li>

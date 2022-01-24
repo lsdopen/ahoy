@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2022 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -15,15 +15,15 @@
   -->
 
 <div class="p-fluid">
-  <div class="p-col-12 p-md-5">
-    <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-plain p-mr-2" (click)="add()"></button>
+  <div class="col-12 md:col-5">
+    <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-plain mr-2" (click)="add()"></button>
     <span [pTooltip]="getDeleteDisabledTooltip()">
       <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="delete()"
               [disabled]="isDeleteDisabled()"></button>
     </span>
   </div>
 
-  <div *ngIf="items && items.length > 0" class="p-col-12">
+  <div *ngIf="items && items.length > 0" class="col-12">
     <p-tabView orientation="left" [(activeIndex)]="selectedIndex">
       <p-tabPanel [header]="item.name ? item.name : '<new>'"
                   *ngFor="let item of items; let itemIndex = index" [selected]="itemIndex == 0">

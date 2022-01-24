@@ -1,5 +1,5 @@
 /*!
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -67,12 +67,7 @@
             border: $inputListItemBorder;
             color: $inputListItemTextColor;
             background: $inputListItemBg;
-            transition: transform $transitionDuration, $listItemTransition;
-
-            &:not(.p-highlight):hover {
-                background: $inputListItemHoverBg;
-                color: $inputListItemTextHoverColor;
-            }
+            transition: $listItemTransition;
 
             &:focus {
                 @include focused-listitem();
@@ -84,53 +79,29 @@
             }
         }
 
-        .p-picklist-droppoint {
-            &.p-picklist-droppoint-highlight {
-                background-color: scale-color($highlightBg, $lightness: -20%);
-            }
-        }
-
         .p-picklist-empty-message {
             padding: $inputListItemPadding;
             color: $inputListItemTextColor;
         }
-    }
-}
 
-@media screen and (max-width: $pickListBreakpoint) {
-    .p-picklist  {
-        flex-direction: column;
-
-        .p-picklist-buttons {
-            padding: $panelContentPadding;
-            flex-direction: row;
-
-            .p-button {
-                margin-right: $inlineSpacing;
-                margin-bottom: 0;
-
-                &:last-child {
-                    margin-right: 0;
+        &:not(.cdk-drop-list-dragging) {
+            .p-picklist-item {
+                &:not(.p-highlight):hover {
+                    background: $inputListItemHoverBg;
+                    color: $inputListItemTextHoverColor;
                 }
             }
         }
+    }
+}
 
-        .p-picklist-transfer-buttons {
-            .pi-angle-right {
-                @include icon_override('\e930');
-            }
-
-            .pi-angle-double-right {
-                @include icon_override('\e92c');
-            }
-
-            .pi-angle-left {
-                @include icon_override('\e933');
-            }
-
-            .pi-angle-double-left {
-                @include icon_override('\e92f');
-            }
-        }
+.p-picklist-item {
+    &.cdk-drag-preview {
+        padding: $inputListItemPadding;
+        box-shadow: $inputOverlayShadow;
+        border: $inputListItemBorder;
+        color: $inputListItemTextColor;
+        background: $panelContentBg;
+        margin: 0;
     }
 }

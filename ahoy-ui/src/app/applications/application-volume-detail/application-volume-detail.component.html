@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2022 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
   -->
 
 <div class="p-fluid">
-  <div class="p-col-12 p-md-5">
+  <div class="col-12 md:col-5">
 
-    <div class="p-field p-float-label">
+    <div class="field p-float-label">
       <input pInputText id="volumeName{{volumeIndex}}" [(ngModel)]="volume.name" name="volumeName{{volumeIndex}}"
              required
              pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
@@ -32,13 +32,13 @@
       </small>
     </div>
 
-    <div class="p-field p-float-label">
+    <div class="field p-float-label">
       <input pInputText id="volumeMountPath{{volumeIndex}}" [(ngModel)]="volume.mountPath" name="volumeMountPath{{volumeIndex}}"
              required>
       <label for="volumeMountPath{{volumeIndex}}">Mount path</label>
     </div>
 
-    <div class="p-field p-float-label">
+    <div class="field p-float-label">
       <p-dropdown [options]="[{label: 'Persistent Volume', value: 'PersistentVolume'}, {label: 'Secret', value: 'Secret'}]"
                   optionLabel="label" optionValue="value" [(ngModel)]="volume.type"
                   name="volumeType{{volumeIndex}}" required [autoDisplayFirst]="false"></p-dropdown>
@@ -47,23 +47,23 @@
 
     <div *ngIf="volume.type === 'PersistentVolume'">
 
-      <div class="p-field p-float-label">
-        <input pInputText id="volumeStorageClassName{{volumeIndex}}" [(ngModel)]="volume.storageClassName" name="volumeStorageClassName{{volumeIndex}}" required>
+      <div class="field p-float-label">
+        <input pInputText id="volumeStorageClassName{{volumeIndex}}" [(ngModel)]="volume.storageClassName" name="volumeStorageClassName{{volumeIndex}}">
         <label for="volumeStorageClassName{{volumeIndex}}">Storage class name</label>
       </div>
 
-      <div class="p-field p-float-label">
+      <div class="field p-float-label">
         <p-dropdown [options]="['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany']" [(ngModel)]="volume.accessMode" name="volumeAccessMode{{volumeIndex}}" required></p-dropdown>
         <label>Access Mode</label>
       </div>
 
       <div class="p-formgroup-inline">
-        <div class="p-field p-float-label">
+        <div class="field p-float-label">
           <input pInputText id="volumeStorageSize{{volumeIndex}}" [(ngModel)]="volume.size" name="volumeStorageSize{{volumeIndex}}" required>
           <label for="volumeStorageSize{{volumeIndex}}">Storage size</label>
         </div>
 
-        <div class="p-field p-float-label">
+        <div class="field p-float-label">
           <p-dropdown [options]="['Mi', 'Gi']" [(ngModel)]="volume.sizeStorageUnit" name="volumeStorageSizeUnit{{volumeIndex}}" required></p-dropdown>
           <label>Unit</label>
         </div>
@@ -73,7 +73,7 @@
 
     <div *ngIf="volume.type === 'Secret'">
 
-      <div class="p-field p-float-label">
+      <div class="field p-float-label">
         <p-dropdown [options]="secrets" [(ngModel)]="volume.secretName" optionLabel="name" optionValue="name"
                     [showClear]="true" name="volumeSecretName{{volumeIndex}}"
                     [autoDisplayFirst]="false"></p-dropdown>

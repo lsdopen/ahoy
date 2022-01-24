@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2022 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,28 +14,28 @@
   ~    limitations under the License.
   -->
 
-<div class="pages-body error-page p-d-flex p-flex-column">
-    <div class="topbar p-p-3 p-d-flex p-jc-between p-flex-row p-ai-center">
-        <div class="topbar-left p-ml-3 p-d-flex" routerLink="/">
+<div class="pages-body error-page flex flex-column">
+    <div class="topbar p-3 flex justify-content-between flex-row align-items-center">
+        <div class="topbar-left ml-3 flex" routerLink="/">
             <div class="logo">
                 <img src="assets/layout/images/logo-light.svg" alt=""/>
             </div>
         </div>
-        <div class="topbar-right p-mr-3 p-d-flex">
+        <div class="topbar-right mr-3 flex">
             <button pButton pRipple type="button" label="DASHBOARD" [routerLink]="['/']"
                     class="p-button-text p-button-plain topbar-button"></button>
         </div>
     </div>
 
-    <div class="p-as-center p-mt-auto p-mb-auto">
-        <div class="pages-panel card p-d-flex p-flex-column">
-            <div class="pages-header p-px-3 p-py-1">
+    <div class="align-self-center mt-auto mb-auto">
+        <div class="pages-panel card flex flex-column">
+            <div class="pages-header px-3 py-1">
                 <h2>ERROR</h2>
             </div>
-            <div class="card p-mt-3 p-px-6">
+            <div class="card mt-3 px-6">
                 <img src="assets/layout/images/pages/error.png" alt=""/>
             </div>
-            <div class="pages-detail p-pb-6">Requested resource is not available.</div>
+            <div class="pages-detail pb-6">Requested resource is not available.</div>
             <button pButton pRipple type="button" label="GO BACK TO DASHBOARD" [routerLink]="['/']" class="p-button-text"></button>
         </div>
     </div>

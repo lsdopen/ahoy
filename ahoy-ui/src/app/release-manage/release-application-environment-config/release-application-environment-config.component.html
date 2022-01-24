@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2022 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
   ~    limitations under the License.
   -->
 
-<div class="p-grid">
-  <div class="p-col-12" *ngIf="environmentConfig">
+<div class="grid">
+  <div class="col-12" *ngIf="environmentConfig">
 
     <div class="card">
       <div class="card-header">
@@ -27,15 +27,15 @@
 
       <p-toolbar>
         <ng-template pTemplate="left">
-          <button pButton pRipple label="Save" icon="pi pi-save" class="p-button-success p-mr-2 p-mb-2" (click)="save()" [disabled]="environmentConfigForm.invalid"></button>
-          <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-plain p-mb-2" (click)="cancel()"></button>
+          <button pButton pRipple label="Save" icon="pi pi-save" class="p-button-success mr-2 mb-2" (click)="save()" [disabled]="environmentConfigForm.invalid"></button>
+          <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-plain mb-2" (click)="cancel()"></button>
         </ng-template>
       </p-toolbar>
 
       <form #environmentConfigForm="ngForm">
-        <div class="p-fluid p-col-12 p-md-5">
+        <div class="p-fluid col-12 md:col-5">
 
-          <div class="p-field p-float-label">
+          <div class="field p-float-label">
             <p-inputNumber id="environmentConfigReplicas" name="environmentConfigReplicas" [(ngModel)]="environmentConfig.spec.replicas"
                            mode="decimal" [showButtons]="true" [min]="0" [max]="100"
                            required>
@@ -44,33 +44,36 @@
           </div>
         </div>
 
-        <div class="p-col-12">
+        <div class="col-12">
           <p-accordion multiple="true">
             <p-accordionTab header="Route" [(selected)]="routeCategory" (selectedChange)="routeSelectedChange()">
 
-              <div class="p-fluid p-md-5">
-                <div class="p-field p-float-label">
+              <div class="p-fluid md:col-5">
+                <div class="field p-float-label">
                   <input pInputText id="environmentConfigRouteHostname" name="environmentConfigRouteHostname" [(ngModel)]="environmentConfig.spec.routeHostname"
-                         pattern="(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])"
-                         required="{{routeCategory}}">
+                         required="{{routeCategory}}" pTooltip="Available variables: ${release_name} ${application_name} ${environment_name} ${cluster_host}">
                   <label for="environmentConfigRouteHostname">Hostname</label>
-                  <small class="p-error" *ngIf="environmentConfigForm.form.controls.environmentConfigRouteHostname?.hasError('pattern')">invalid</small>
+                  <input pInputText id="environmentConfigRouteHostnameResolved" name="environmentConfigRouteHostnameResolved" ngModel="{{resolveRouteHostname()}}"
+                         pattern="(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])"
+                         [readonly]="true" [hidden]="true">
+                  <small *ngIf="!environmentConfigForm.form.controls.environmentConfigRouteHostnameResolved?.hasError('pattern')">{{resolveRouteHostname()}}</small>
+                  <small class="p-error" *ngIf="environmentConfigForm.form.controls.environmentConfigRouteHostnameResolved?.hasError('pattern')">invalid</small>
                 </div>
 
-                <div class="p-field">
+                <div class="field">
                   <p-dropdown id="environmentConfigRouteTargetPort" name="environmentConfigRouteTargetPort" [options]="applicationVersion.spec.servicePorts" [(ngModel)]="environmentConfig.spec.routeTargetPort"
                               placeholder="Target Port" [showClear]="true" [editable]="true" required="{{routeCategory}}"></p-dropdown>
-                  <small class="p-message p-message-warn p-p-1" *ngIf="environmentConfig.spec.routeTargetPort && applicationVersion.spec.servicePorts.indexOf(environmentConfig.spec.routeTargetPort) === -1">
+                  <small class="p-message p-message-warn p-1" *ngIf="environmentConfig.spec.routeTargetPort && applicationVersion.spec.servicePorts.indexOf(environmentConfig.spec.routeTargetPort) === -1">
                     Warn: route port not configured in application configuration
                   </small>
                 </div>
 
-                <div class="p-field-checkbox">
+                <div class="field-checkbox">
                   <p-checkbox id="environmentConfigTls" name="environmentConfigTls" [(ngModel)]="environmentConfig.spec.tls" binary="true"></p-checkbox>
                   <label for="environmentConfigTls">Tls</label>
                 </div>
 
-                <div class="p-field" *ngIf="environmentConfig.spec.tls">
+                <div class="field" *ngIf="environmentConfig.spec.tls">
                   <p-dropdown id="environmentConfigTlsSecretName" name="environmentConfigTlsSecretName" [options]="tlsSecrets()" [(ngModel)]="environmentConfig.spec.tlsSecretName"
                               placeholder="Select Tls secret" optionLabel="name" optionValue="name" [showClear]="true" required></p-dropdown>
                 </div>

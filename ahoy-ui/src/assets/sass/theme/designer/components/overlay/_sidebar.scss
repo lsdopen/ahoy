@@ -1,5 +1,5 @@
 /*!
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,15 +17,23 @@
 .p-sidebar {
     background: $overlayContentBg;
     color: $panelContentTextColor;
-    padding: $panelContentPadding;
     border: $overlayContentBorder;
     box-shadow: $overlayContainerShadow;
 
-    .p-sidebar-close {
-        @include action-icon();
-    }
-}
+    .p-sidebar-header {
+        padding: $panelHeaderPadding;
 
-.p-sidebar-mask.p-component-overlay {
-    background: $maskBg;
+        .p-sidebar-close,
+        .p-sidebar-icon {
+            @include action-icon();
+        }
+
+        & + .p-sidebar-content {
+            padding-top: 0;
+        }
+    }
+
+    .p-sidebar-content {
+        padding: $panelContentPadding;
+    }
 }

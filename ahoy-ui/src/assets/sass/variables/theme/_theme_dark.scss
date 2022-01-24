@@ -1,5 +1,5 @@
 /*!
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -13,6 +13,19 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+
+$colors: (
+    "blue": #2196F3,
+    "green": #689F38,
+    "yellow": #FBC02D,
+    "cyan": #00BCD4,
+    "pink": #E91E63,
+    "indigo": #4E5FBB,
+    "teal": #009688,
+    "orange": #FF9800,
+    "bluegray": #607D8B,
+    "purple": #9C27B0
+);
 
 $emphasis-high:rgba(255,255,255,.87);
 $emphasis-medium:rgba(255,255,255,.60);
@@ -110,6 +123,12 @@ $inputOverlayHeaderBg:#2b2b2b;
 $inputOverlayBorder:0 none;
 $inputOverlayShadow:0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
 
+//password
+$passwordMeterBg:rgba($primaryColor, .32);
+$passwordWeakBg:#EF9A9A;
+$passwordMediumBg:#FFF59D;
+$passwordStrongBg:#C5E1A5;
+
 //button
 $buttonPadding:0.714rem 1rem;
 $buttonIconOnlyWidth:3rem;
@@ -128,7 +147,7 @@ $roundedButtonBorderRadius:2rem;
 
 $textButtonHoverBgOpacity:.04;
 $textButtonActiveBgOpacity:.16;
-$outlinedButtonBorder:1px solid;
+$outlinedButtonBorder:0 none;
 $plainButtonTextColor:$textSecondaryColor;
 $plainButtonHoverBgColor:rgba(255,255,255,.04);
 $plainButtonActiveBgColor:rgba(255,255,255,.16);
@@ -233,6 +252,7 @@ $colorPickerPreviewWidth:2rem;
 $colorPickerPreviewHeight:2rem;
 $colorPickerBg:#2b2b2b;
 $colorPickerBorderColor:#1e1e1e;
+$colorPickerBorder:1px solid #1e1e1e !default;
 $colorPickerHandleColor:#ffffff;
 
 //togglebutton
@@ -296,6 +316,7 @@ $calendarHeaderBorder:$divider;
 $calendarHeaderTextColor:$textColor;
 $calendarHeaderFontWeight:500;
 $calendarHeaderCellPadding:.5rem;
+$calendarMonthYearHeaderHoverTextColor: $primaryColor !default;
 
 $calendarCellDatePadding:.5rem;
 $calendarCellDateWidth:2.5rem;
@@ -331,6 +352,7 @@ $inputSwitchSliderOnHoverBg:rgba($primaryColor, .5);
 $inputSwitchHandleOnBg:$primaryColor;
 
 //panel
+$panelHeaderBorderColor: rgba(255,255,255,.12) !default;
 $panelHeaderBorder:1px solid rgba(255,255,255,.12);
 $panelHeaderBg:#1e1e1e;
 $panelHeaderTextColor:$textColor;
@@ -342,6 +364,7 @@ $panelHeaderHoverBg:rgba($overlayColor,.04);
 $panelHeaderHoverBorderColor:rgba(255,255,255,.12);
 $panelHeaderTextHoverColor:$textColor;
 
+$panelContentBorderColor: rgba(255,255,255,.12) !default;
 $panelContentBorder:1px solid rgba(255,255,255,.12);
 $panelContentBg:#1e1e1e;
 $panelContentTextColor:$textColor;
@@ -518,6 +541,7 @@ $pickListBreakpoint:769px;
 
 //schedule
 $fullCalendarEventBg:$highlightBg;
+$fullCalendarEventBorderColor:$highlightBg !default;
 $fullCalendarEventBorder:1px solid $highlightBg;
 $fullCalendarEventTextColor:$highlightTextColor;
 
@@ -622,6 +646,7 @@ $progressBarHeight:4px;
 $progressBarBorder:0 none;
 $progressBarBg:rgba($primaryColor, .32);
 $progressBarValueBg:$primaryColor;
+$progressBarValueTextColor:$primaryTextColor !default;
 
 //menu (e.g. menu, menubar, tieredmenu)
 $menuWidth:12.5rem;
@@ -774,6 +799,44 @@ $skeletonAnimationBg:rgba(255,255,255,.04);
 $splitterGutterBg:hsla(0,0%,100%,.04);
 $splitterGutterHandleBg:hsla(0,0%,100%,.12);
 
+//speeddial
+$speedDialButtonWidth: 4rem !default;
+$speedDialButtonHeight: 4rem !default;
+$speedDialButtonIconFontSize: 2rem !default;
+$speedDialActionWidth: 3rem !default;
+$speedDialActionHeight: 3rem !default;
+$speedDialActionBg: $accentColor !default;
+$speedDialActionHoverBg: rgba($accentColor, .92) !default;
+$speedDialActionTextColor: #212121 !default;
+$speedDialActionTextHoverColor: #212121 !default;
+
+//dock
+$dockActionWidth: 4rem !default;
+$dockActionHeight: 4rem !default;
+$dockItemPadding: .5rem !default;
+$dockCurrentItemMargin: 1.5rem !default;
+$dockFirstItemsMargin: 1.3rem !default;
+$dockSecondItemsMargin: 0.9rem !default;
+$dockBg: rgba(255,255,255,.1) !default;
+$dockBorder: 1px solid rgba(255,255,255,0.2) !default;
+$dockPadding: .5rem .5rem !default;
+$dockBorderRadius: .5rem !default;
+
+//image
+$imageMaskBg:rgba(0,0,0,0.9) !default;
+$imagePreviewToolbarPadding:1rem !default;
+$imagePreviewIndicatorColor:#f8f9fa !default;
+$imagePreviewIndicatorBg:rgba(0,0,0,0.5) !default;
+$imagePreviewActionIconBg:transparent !default;
+$imagePreviewActionIconColor:#f8f9fa !default;
+$imagePreviewActionIconHoverBg:rgba(255,255,255,0.1) !default;
+$imagePreviewActionIconHoverColor:#f8f9fa !default;
+$imagePreviewActionIconWidth:3rem !default;
+$imagePreviewActionIconHeight:3rem !default;
+$imagePreviewActionIconFontSize:1.5rem !default;
+$imagePreviewActionIconBorderRadius:50% !default;
+
+
 :root {
     --surface-a:#1e1e1e;
     --surface-b:#121212;
@@ -784,7 +847,39 @@ $splitterGutterHandleBg:hsla(0,0%,100%,.12);
     --text-color:#{$textColor};
     --text-color-secondary:#{$textSecondaryColor};
     --primary-color:#{$primaryColor};
-    --primary-lightest-color:#{$primaryLightestColor};
     --primary-color-text:#{$primaryTextColor};
     --font-family:#{$fontFamily};
+    --surface-0: #121212;
+    --surface-50: #2a2a2a;
+    --surface-100: #414141;
+    --surface-200: #595959;
+    --surface-300: #717171;
+    --surface-400: #898989;
+    --surface-500: #a0a0a0;
+    --surface-600: #b8b8b8;
+    --surface-700: #d0d0d0;
+    --surface-800: #e7e7e7;
+    --surface-900: #ffffff;
+    --gray-50: #e7e7e7;
+    --gray-100: #d0d0d0;
+    --gray-200: #b8b8b8;
+    --gray-300: #a0a0a0;
+    --gray-400: #898989;
+    --gray-500: #717171;
+    --gray-600: #595959;
+    --gray-700: #414141;
+    --gray-800: #2a2a2a;
+    --gray-900: #121212;
+    --content-padding:#{$panelContentPadding};
+    --inline-spacing:#{$inlineSpacing};
+    --border-radius:#{$borderRadius};
+    --surface-ground:#121212;
+    --surface-section:#121212;
+    --surface-card:#1e1e1e;
+    --surface-overlay:#262626;
+    --surface-border:hsla(0,0%,100%,.12);
+    --surface-hover:hsla(0,0%,100%,.04);
+    --maskbg: #{$maskBg};
+    --focus-ring: #{$focusShadow};
 }
+

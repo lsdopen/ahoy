@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -48,7 +49,7 @@ public class Release implements Serializable {
 	@OneToMany(mappedBy = "release", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	@OrderBy("id")
-	private List<ReleaseVersion> releaseVersions;
+	private List<ReleaseVersion> releaseVersions = new ArrayList<>();
 
 	public ReleaseVersion latestReleaseVersion() {
 		if (releaseVersions != null && releaseVersions.size() > 0) {
@@ -64,6 +65,11 @@ public class Release implements Serializable {
 	public Release(Long id, @NotNull String name) {
 		this.id = id;
 		this.name = name;
+	}
+
+	public void addReleaseVersion(ReleaseVersion releaseVersion) {
+		releaseVersions.add(releaseVersion);
+		releaseVersion.setRelease(this);
 	}
 
 	@Override

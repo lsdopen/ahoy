@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,12 +20,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import za.co.lsd.ahoy.server.argocd.ArgoSettings;
 import za.co.lsd.ahoy.server.docker.DockerRegistry;
 import za.co.lsd.ahoy.server.docker.DockerSettings;
 import za.co.lsd.ahoy.server.git.GitSettings;
+import za.co.lsd.ahoy.server.security.Role;
+import za.co.lsd.ahoy.server.security.Scope;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -40,6 +43,7 @@ class SettingsServiceTest {
 	private SettingsService settingsService;
 
 	@Test
+	@WithMockUser(authorities = {Scope.ahoy, Role.releasemanager})
 	void saveAndGetGitSettings() {
 		// given
 		GitSettings gitSettings = new GitSettings("git@github.com:lsdopen/ahoy.git");
@@ -54,6 +58,7 @@ class SettingsServiceTest {
 	}
 
 	@Test
+	@WithMockUser(authorities = {Scope.ahoy, Role.admin})
 	void saveAndGetArgoSettings() {
 		// given
 		ArgoSettings argoSettings = new ArgoSettings();
@@ -70,6 +75,7 @@ class SettingsServiceTest {
 	}
 
 	@Test
+	@WithMockUser(authorities = {Scope.ahoy, Role.developer})
 	void saveAndGetDockerSettings() {
 		// given
 		DockerSettings dockerSettings = new DockerSettings();

@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -47,17 +47,20 @@ public class ValuesBuilder {
 	private final DockerConfigSealedSecretProducer dockerConfigSealedSecretProducer;
 	private final SecretDataSealedSecretProducer secretDataSealedSecretProducer;
 	private final ObjectMapper objectMapper;
+	private RouteHostnameResolver routeHostnameResolver;
 
 	public ValuesBuilder(DockerRegistryProvider dockerRegistryProvider,
 						 ApplicationEnvironmentConfigProvider environmentConfigProvider,
 						 DockerConfigSealedSecretProducer dockerConfigSealedSecretProducer,
 						 SecretDataSealedSecretProducer secretDataSealedSecretProducer,
-						 ObjectMapper objectMapper) {
+						 ObjectMapper objectMapper,
+						 RouteHostnameResolver routeHostnameResolver) {
 		this.dockerRegistryProvider = dockerRegistryProvider;
 		this.environmentConfigProvider = environmentConfigProvider;
 		this.dockerConfigSealedSecretProducer = dockerConfigSealedSecretProducer;
 		this.secretDataSealedSecretProducer = secretDataSealedSecretProducer;
 		this.objectMapper = objectMapper;
+		this.routeHostnameResolver = routeHostnameResolver;
 	}
 
 	public Values build(EnvironmentRelease environmentRelease, ReleaseVersion releaseVersion) throws IOException {
@@ -76,7 +79,7 @@ public class ValuesBuilder {
 			ApplicationEnvironmentConfig applicationEnvironmentConfig =
 				environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion)
 					.orElse(null);
-			apps.put(HelmUtils.valuesName(application), buildApplication(applicationVersion, applicationEnvironmentConfig));
+			apps.put(HelmUtils.valuesName(application), buildApplication(environmentRelease, applicationVersion, applicationEnvironmentConfig));
 
 			log.debug("Added values for application '{}' in environment '{}'", application.getName(), environment.getName());
 		}
@@ -85,7 +88,7 @@ public class ValuesBuilder {
 		return valuesBuilder.build();
 	}
 
-	public ApplicationValues buildApplication(ApplicationVersion applicationVersion, ApplicationEnvironmentConfig environmentConfig) throws IOException {
+	public ApplicationValues buildApplication(EnvironmentRelease environmentRelease, ApplicationVersion applicationVersion, ApplicationEnvironmentConfig environmentConfig) throws IOException {
 		ApplicationSpec spec = applicationVersion.getSpec();
 		ApplicationValues.ApplicationValuesBuilder builder = ApplicationValues.builder()
 			.name(applicationVersion.getApplication().getName())
@@ -162,7 +165,7 @@ public class ValuesBuilder {
 
 			builder
 				.replicas(environmentSpec.getReplicas() != null ? environmentSpec.getReplicas() : 1)
-				.routeHostname(environmentSpec.getRouteHostname())
+				.routeHostname(routeHostnameResolver.resolve(environmentRelease, applicationVersion.getApplication(), environmentSpec.getRouteHostname()))
 				.routeTargetPort(environmentSpec.getRouteTargetPort())
 				.tls(environmentSpec.isTls())
 				.tlsSecretName(environmentSpec.getTlsSecretName());

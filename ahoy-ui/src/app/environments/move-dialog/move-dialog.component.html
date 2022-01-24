@@ -15,16 +15,16 @@
   -->
 
 <form #f="ngForm">
-  <div class="p-fluid p-mt-2">
+  <div class="p-fluid mt-2">
 
-    <div class="p-field">
+    <div class="field">
       <p-dropdown id="cluster" name="cluster" [options]="clusters" [(ngModel)]="moveOptions.destClusterId"
                   placeholder="Cluster" optionLabel="name" optionValue="id" required
                   appendTo="body">
       </p-dropdown>
     </div>
 
-    <div class="p-field-checkbox">
+    <div class="field-checkbox">
       <p-checkbox id="redeployReleases" name="redeployReleases" [(ngModel)]="moveOptions.redeployReleases" binary="true"></p-checkbox>
       <label for="redeployReleases">Redeploy releases</label>
     </div>
@@ -33,7 +33,7 @@
   </div>
 </form>
 
-<div class="p-grid p-pt-3">
-  <button pButton pRipple type="button" icon="pi pi-times" (click)="close(undefined)" label="Cancel" class="p-button-text p-ml-auto p-mr-2"></button>
-  <button pButton pRipple type="button" icon="pi pi-check" (click)="close(moveOptions)" label="Ok" class="p-button-text p-mr-2" [disabled]="f.invalid"></button>
+<div class="grid pt-3">
+  <button pButton pRipple type="button" icon="pi pi-times" (click)="close(undefined)" label="Cancel" class="p-button-text ml-auto mr-2"></button>
+  <button pButton pRipple type="button" icon="pi pi-check" (click)="close(moveOptions)" label="Ok" class="p-button-text mr-2" [disabled]="f.invalid"></button>
 </div>

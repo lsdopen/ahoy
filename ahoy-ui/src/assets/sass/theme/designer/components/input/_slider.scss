@@ -1,5 +1,5 @@
 /*!
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  *    limitations under the License.
  */
 
+@use 'sass:math';
+
 .p-slider {
     background: $sliderBg;
     border: $sliderBorder;
@@ -23,8 +25,8 @@
         height: $sliderHorizontalHeight;
 
         .p-slider-handle {
-            margin-top: (-1 * $sliderHandleHeight / 2);
-            margin-left: (-1 * $sliderHandleWidth / 2);
+            margin-top: math.div(-1 * $sliderHandleHeight, 2);
+            margin-left: math.div(-1 * $sliderHandleWidth, 2);
         }
     }
 
@@ -32,8 +34,8 @@
         width: $sliderVerticalWidth;
 
         .p-slider-handle {
-            margin-left: (-1 * $sliderHandleWidth / 2);
-            margin-bottom: (-1 * $sliderHandleHeight / 2);
+            margin-left: math.div(-1 * $sliderHandleWidth, 2);
+            margin-bottom: math.div(-1 * $sliderHandleHeight, 2);
         }
     }
 

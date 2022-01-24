@@ -1,5 +1,5 @@
 /*!
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -38,11 +38,29 @@
                                 margin-left: 0;
                                 margin-right: auto;
                             }
+
+                            .layout-menuitem-text {
+                                margin-right: .75rem;
+                                margin-left: 0;
+                            }
                         }
 
                         > ul {
                             > li {
                                 @include nested-submenu-indents-rtl(.875rem, 2, 5);
+                            }
+                        }
+                    }
+                }
+            }
+
+            .layout-inline-menu {
+                .layout-inline-menu-action-panel {
+                    .layout-inline-menu-action-item {
+                        a {
+                            i {
+                                margin-right: 0;
+                                margin-left: .75rem;
                             }
                         }
                     }

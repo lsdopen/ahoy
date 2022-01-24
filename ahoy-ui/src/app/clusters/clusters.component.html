@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright  2021 LSD Information Technology (Pty) Ltd
+  ~ Copyright  2022 LSD Information Technology (Pty) Ltd
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -14,30 +14,30 @@
   ~    limitations under the License.
   -->
 
-<div class="p-grid">
-  <div class="p-col-12">
+<div class="grid">
+  <div class="col-12">
 
     <div class="card">
       <div class="card-header">
-        <div class="p-d-flex p-flex-row p-ai-baseline">
-          <i class="pi pi-table p-mr-2 app-icon"></i>
+        <div class="flex flex-row align-items-baseline">
+          <i class="pi pi-table mr-2 app-icon"></i>
           <h5>Clusters</h5>
         </div>
       </div>
 
       <p-toolbar>
         <ng-template pTemplate="left">
-          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" routerLink="/cluster/new" *appUserRole="[Role.admin]"></button>
+          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2 mb-2" routerLink="/cluster/new" *appUserRole="[Role.admin]"></button>
         </ng-template>
       </p-toolbar>
 
       <p-table #dt [value]="clusters" dataKey="id" selectionMode="single"
                styleClass="p-datatable-clusters p-datatable-striped p-datatable-sm"
-               [scrollable]="true" scrollHeight="600px" [filterDelay]="0" [globalFilterFields]="['name', 'host']"
+               [filterDelay]="0" [globalFilterFields]="['name', 'host']"
                *ngIf="clusters && clusters.length > 0">
         <ng-template pTemplate="caption">
-          <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
-            <span class="p-input-icon-left p-ml-auto">
+          <div class="flex flex-column md:flex-row md:justify-content-between table-header">
+            <span class="p-input-icon-left ml-auto">
               <i class="pi pi-search"></i>
               <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"/>
             </span>
@@ -63,7 +63,7 @@
               {{cluster.host}}
             </td>
             <td>
-              <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain p-mr-2"
+              <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain mr-2"
                       routerLink="/cluster/{{cluster.id}}"
                       pTooltip="Edit cluster"
                       *appUserRole="[Role.admin]"></button>
@@ -78,7 +78,7 @@
         </ng-template>
       </p-table>
 
-      <div class="p-field" *ngIf="clusters && clusters.length === 0">
+      <div class="field" *ngIf="clusters && clusters.length === 0">
         There are no clusters setup<span *appUserRole="[Role.admin]">, click <a routerLink="/cluster/new">here</a> to configure a cluster..</span>
       </div>
 

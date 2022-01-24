@@ -15,30 +15,30 @@
  */
 
 import {Component} from '@angular/core';
-import {version} from '../../package.json';
+import packageJson from '../../package.json';
 import {AppComponent} from './app.component';
 import {AppearanceSettingsService} from './settings/appearance-settings/appearance-settings.service';
 
 @Component({
   selector: 'app-footer',
   template: `
-    <div class="layout-footer p-d-flex p-ai-center p-p-4 p-shadow-2">
+    <div class="layout-footer flex align-items-center p-4 shadow-2">
       <img id="footer-logo" [src]="'assets/layout/images/footer-' + (appearanceSettingsService.appearanceSettings.mode === 'light' ? 'dark' : 'light') + '.png'" alt="ultima-footer-logo" style="height: 2.25rem">
-      <span [ngClass]="{'p-ml-auto p-mr-2': !app.isRTL, 'p-ml-2 p-mr-auto': app.isRTL}">{{version}}</span>
+      <span [ngClass]="{'ml-auto mr-2': !app.isRTL, 'ml-2 mr-auto': app.isRTL}">{{version}}</span>
       <a pButton pRipple icon="pi pi-github fs-large" class="p-button-rounded p-button-text p-button-plain"
          href="https://github.com/lsdopen" target="_blank"
-         [ngClass]="{'p-mr-2': !app.isRTL, 'p-ml-2': app.isRTL}"></a>
+         [ngClass]="{'mr-2': !app.isRTL, 'ml-2': app.isRTL}"></a>
       <a pButton pRipple type="button" icon="pi pi-facebook fs-large" class="p-button-rounded p-button-text p-button-plain"
          href="https://www.facebook.com/lsdopen" target="_blank"
-         [ngClass]="{'p-mr-2': !app.isRTL, 'p-ml-2': app.isRTL}"></a>
+         [ngClass]="{'mr-2': !app.isRTL, 'ml-2': app.isRTL}"></a>
       <a pButton pRipple type="button" icon="pi pi-twitter fs-large" class="p-button-rounded p-button-text p-button-plain"
          href="https://twitter.com/lsdopen" target="_blank"
-         [ngClass]="{'p-mr-2': !app.isRTL, 'p-ml-2': app.isRTL}"></a>
+         [ngClass]="{'mr-2': !app.isRTL, 'ml-2': app.isRTL}"></a>
     </div>
   `
 })
 export class AppFooterComponent {
-  public version: string = version;
+  public version = packageJson.version;
 
   constructor(public app: AppComponent,
               public appearanceSettingsService: AppearanceSettingsService) {

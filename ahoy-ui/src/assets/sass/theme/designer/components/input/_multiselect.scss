@@ -1,5 +1,5 @@
 /*!
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -13,6 +13,8 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+
+@use 'sass:math';
 
 .p-multiselect {
     background: $inputBg;
@@ -39,7 +41,7 @@
 
     &.p-multiselect-chip {
         .p-multiselect-token {
-            padding: nth($inputPadding, 1)/2 nth($inputPadding, 2);
+            padding: math.div(nth($inputPadding, 1), 2) nth($inputPadding, 2);
             margin-right: $inlineSpacing;
             background: $highlightBg;
             color: $highlightTextColor;
@@ -64,7 +66,7 @@
     .p-multiselect {
         &.p-multiselect-chip {
             .p-multiselect-label {
-                padding: nth($inputPadding, 1)/2 nth($inputPadding, 2);
+                padding: math.div(nth($inputPadding, 1), 2) nth($inputPadding, 2);
             }
         }
     }
@@ -108,7 +110,13 @@
     }
 
     .p-multiselect-items {
-        padding: $inputListPadding;
+        &:not(.p-multiselect-virtualscroll) {
+            padding: $inputListPadding;
+        }
+
+        &.p-multiselect-virtualscroll .cdk-virtual-scroll-content-wrapper {
+            padding: $inputListPadding;
+        }
 
         .p-multiselect-item {
             margin: $inputListItemMargin;

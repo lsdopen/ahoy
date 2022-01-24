@@ -22,14 +22,14 @@
   <parent>
     <groupId>za.co.lsd.ahoy</groupId>
     <artifactId>ahoy</artifactId>
-    <version>0.8.0</version>
+    <version>0.9.0</version>
   </parent>
   <artifactId>ahoy-ui</artifactId>
   <packaging>pom</packaging>
 
   <properties>
-    <node-version>v13.11.0</node-version>
-    <npm-version>6.13.7</npm-version>
+    <node-version>v16.13.1</node-version>
+    <npm-version>8.1.2</npm-version>
     <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
     <sonar.sources>src</sonar.sources>
     <sonar.exclusions>
