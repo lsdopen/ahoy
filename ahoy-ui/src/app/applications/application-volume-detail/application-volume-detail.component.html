@@ -48,7 +48,7 @@
     <div *ngIf="volume.type === 'PersistentVolume'">
 
       <div class="field p-float-label">
-        <input pInputText id="volumeStorageClassName{{volumeIndex}}" [(ngModel)]="volume.storageClassName" name="volumeStorageClassName{{volumeIndex}}" required>
+        <input pInputText id="volumeStorageClassName{{volumeIndex}}" [(ngModel)]="volume.storageClassName" name="volumeStorageClassName{{volumeIndex}}">
         <label for="volumeStorageClassName{{volumeIndex}}">Storage class name</label>
       </div>
 
