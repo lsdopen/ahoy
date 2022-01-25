@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -209,7 +208,9 @@ public class ReleaseService {
 
 		log.info("Upgrading release version: {} to version: {}", currentReleaseVersion, upgradeOptions.getVersion());
 
-		ReleaseVersion upgradedReleaseVersion = new ReleaseVersion(upgradeOptions.getVersion(), currentReleaseVersion.getRelease(), new ArrayList<>(currentReleaseVersion.getApplicationVersions()));
+		ReleaseVersion upgradedReleaseVersion = new ReleaseVersion(upgradeOptions.getVersion());
+		upgradedReleaseVersion.setApplicationVersions(new ArrayList<>(currentReleaseVersion.getApplicationVersions()));
+		currentReleaseVersion.getRelease().addReleaseVersion(upgradedReleaseVersion);
 		upgradedReleaseVersion = releaseVersionRepository.save(upgradedReleaseVersion);
 
 		if (upgradeOptions.isCopyEnvironmentConfig()) {
@@ -229,35 +230,22 @@ public class ReleaseService {
 		Release sourceRelease = releaseRepository.findById(releaseId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find source release: " + releaseId));
 
-		Release duplicatedRelease = new Release();
-		duplicatedRelease.setName(duplicateOptions.getReleaseName());
-		duplicatedRelease.setReleaseVersions(new ArrayList<>());
-		duplicatedRelease.setEnvironmentReleases(new ArrayList<>());
-		duplicatedRelease = releaseRepository.save(duplicatedRelease);
+		Release duplicatedRelease = releaseRepository.save(new Release(duplicateOptions.getReleaseName()));
 		log.debug("Duplicated release: {} for source release: {}", duplicatedRelease, sourceRelease);
 
 		for (ReleaseVersion sourceReleaseVersion : sourceRelease.getReleaseVersions()) {
-			ReleaseVersion duplicatedReleaseVersion = new ReleaseVersion();
-			duplicatedReleaseVersion.setRelease(duplicatedRelease);
-			duplicatedReleaseVersion.setVersion(sourceReleaseVersion.getVersion());
-			duplicatedReleaseVersion.setApplicationVersions(sourceReleaseVersion.getApplicationVersions()
-				.stream().collect(Collectors.toList()));
+			ReleaseVersion duplicatedReleaseVersion = new ReleaseVersion(sourceReleaseVersion.getVersion());
+			duplicatedRelease.addReleaseVersion(duplicatedReleaseVersion);
+			duplicatedReleaseVersion.setApplicationVersions(new ArrayList<>(sourceReleaseVersion.getApplicationVersions()));
 			duplicatedReleaseVersion = releaseVersionRepository.save(duplicatedReleaseVersion);
 			log.debug("Duplicated release version: {} for source release version: {}", duplicatedReleaseVersion, sourceReleaseVersion);
-
-			duplicatedRelease.getReleaseVersions().add(duplicatedReleaseVersion);
 		}
 
 		if (duplicateOptions.isAddToSameEnvironments()) {
 			for (EnvironmentRelease sourceEnvRelease : sourceRelease.getEnvironmentReleases()) {
-				EnvironmentRelease duplicatedEnvRelease = new EnvironmentRelease();
-				duplicatedEnvRelease.setId(new EnvironmentReleaseId());
-				duplicatedEnvRelease.setRelease(duplicatedRelease);
-				duplicatedEnvRelease.setEnvironment(sourceEnvRelease.getEnvironment());
+				EnvironmentRelease duplicatedEnvRelease = new EnvironmentRelease(sourceEnvRelease.getEnvironment(), duplicatedRelease);
 				duplicatedEnvRelease = environmentReleaseRepository.save(duplicatedEnvRelease);
 				log.debug("Duplicated environment release: {} for source environment release: {}", duplicatedEnvRelease.getId(), sourceEnvRelease.getId());
-
-				duplicatedRelease.getEnvironmentReleases().add(duplicatedEnvRelease);
 
 				if (duplicateOptions.isCopyEnvironmentConfig()) {
 					for (ReleaseVersion destReleaseVersion : duplicatedRelease.getReleaseVersions()) {
@@ -411,7 +399,7 @@ public class ReleaseService {
 				ApplicationReleaseStatus status = applicationReleaseStatusRepository.findById(id)
 					.orElse(new ApplicationReleaseStatus(id));
 
-				int statusHashCode = status.hashCode();
+				int statusHash = status.hash();
 				Optional<ResourceStatus> deploymentStatusOptional = argoApplicationStatus.getDeploymentResource(applicationName);
 				if (deploymentStatusOptional.isPresent()) {
 					ResourceStatus deploymentStatus = deploymentStatusOptional.get();
@@ -421,7 +409,7 @@ public class ReleaseService {
 					status.setStatus(HealthStatus.StatusCode.Unknown);
 				}
 
-				boolean changed = status.hashCode() != statusHashCode;
+				boolean changed = status.hash() != statusHash;
 				if (changed) {
 					applicationReleaseStatusRepository.save(status);
 					log.info("Status changed for application {} in release {} in environment {}: {}", applicationName, releaseName, environmentName, status);

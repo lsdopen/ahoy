@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -18,21 +18,27 @@ package za.co.lsd.ahoy.server.releases;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.Hibernate;
 import za.co.lsd.ahoy.server.applications.ApplicationVersion;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.*;
 
 @Entity
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Table(uniqueConstraints = @UniqueConstraint(name = "release_version", columnNames = {"release_id", "version"}))
 public class ReleaseVersion implements Serializable {
 	@Id
@@ -44,6 +50,7 @@ public class ReleaseVersion implements Serializable {
 	@NotNull
 	@ManyToOne
 	@JsonProperty(access = WRITE_ONLY)
+	@ToString.Exclude
 	private Release release;
 
 	@ManyToMany
@@ -52,43 +59,33 @@ public class ReleaseVersion implements Serializable {
 		inverseJoinColumns = @JoinColumn(name = "APPLICATION_VERSIONS_ID"))
 	@OrderBy("id")
 	@JsonIgnore
-	private List<ApplicationVersion> applicationVersions;
+	@ToString.Exclude
+	private List<ApplicationVersion> applicationVersions = new ArrayList<>();
 
 	@OneToMany(mappedBy = "releaseVersion", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	@JsonIgnore
-	private List<ReleaseHistory> releaseHistories;
+	@ToString.Exclude
+	private List<ReleaseHistory> releaseHistories = new ArrayList<>();
 
-	public ReleaseVersion(@NotNull String version, Release release, List<ApplicationVersion> applicationVersions) {
+	public ReleaseVersion(@NotNull String version) {
 		this.version = version;
-		this.release = release;
-		this.applicationVersions = applicationVersions;
 	}
 
-	public ReleaseVersion(@NotNull Long id, @NotNull String version, Release release, List<ApplicationVersion> applicationVersions) {
+	public ReleaseVersion(@NotNull Long id, @NotNull String version) {
 		this.id = id;
 		this.version = version;
-		this.release = release;
-		this.applicationVersions = applicationVersions;
 	}
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
 		ReleaseVersion that = (ReleaseVersion) o;
-		return id.equals(that.id);
+		return Objects.equals(id, that.id);
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
-	}
-
-	@Override
-	public String toString() {
-		return "ReleaseVersion{" +
-			"id=" + id +
-			", version='" + version + '\'' +
-			'}';
 	}
 }

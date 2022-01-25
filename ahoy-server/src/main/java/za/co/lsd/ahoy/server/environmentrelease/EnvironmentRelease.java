@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,8 +17,11 @@
 package za.co.lsd.ahoy.server.environmentrelease;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.Hibernate;
 import za.co.lsd.ahoy.server.argocd.model.HealthStatus;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.releases.Release;
@@ -28,11 +31,15 @@ import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 public class EnvironmentRelease implements Serializable {
 
 	@EmbeddedId
@@ -71,17 +78,15 @@ public class EnvironmentRelease implements Serializable {
 	@OneToMany(mappedBy = "environmentRelease", cascade = CascadeType.REMOVE)
 	@OrderBy("id")
 	@JsonIgnore
-	private List<ReleaseHistory> releaseHistories;
+	@ToString.Exclude
+	private List<ReleaseHistory> releaseHistories = new ArrayList<>();
 
 	public EnvironmentRelease(Environment environment, Release release) {
+		this.id = new EnvironmentReleaseId(environment.getId(), release.getId());
 		this.environment = environment;
 		this.release = release;
-	}
-
-	public EnvironmentRelease(EnvironmentReleaseId id, Environment environment, Release release) {
-		this.id = id;
-		this.environment = environment;
-		this.release = release;
+		environment.getEnvironmentReleases().add(this);
+		release.getEnvironmentReleases().add(this);
 	}
 
 	public String getNamespace() {
@@ -105,16 +110,15 @@ public class EnvironmentRelease implements Serializable {
 	}
 
 	@Override
-	public String toString() {
-		return "EnvironmentRelease{" +
-			"id=" + id +
-			", environment=" + environment +
-			", release=" + release +
-			", status=" + status +
-			", applicationsReady=" + applicationsReady +
-			", currentReleaseVersion=" + currentReleaseVersion +
-			", argoCdName=" + argoCdName +
-			", argoCdUid=" + argoCdUid +
-			'}';
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+		EnvironmentRelease that = (EnvironmentRelease) o;
+		return Objects.equals(id, that.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 }

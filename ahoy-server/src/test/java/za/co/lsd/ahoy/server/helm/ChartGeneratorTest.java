@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -84,7 +84,8 @@ public class ChartGeneratorTest {
 	public void generateBasic() throws Exception {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment("dev", cluster);
+		Environment environment = new Environment("dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
@@ -93,7 +94,9 @@ public class ChartGeneratorTest {
 		ApplicationSpec spec = new ApplicationSpec("image", "docker-registry");
 		applicationVersion.setSpec(spec);
 
-		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion));
+		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.empty());
 
@@ -149,7 +152,8 @@ public class ChartGeneratorTest {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
 		cluster.setHost("my-host");
-		Environment environment = new Environment("dev", cluster);
+		Environment environment = new Environment("dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
@@ -173,7 +177,9 @@ public class ChartGeneratorTest {
 		spec.setConfigPath("/opt/config");
 		List<ApplicationConfigFile> appConfigs = Collections.singletonList(new ApplicationConfigFile("application.properties", "greeting=hello"));
 		spec.setConfigFiles(appConfigs);
-		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion));
+		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 
 		ApplicationEnvironmentSpec environmentSpec = new ApplicationEnvironmentSpec("myapp1-route", 8080);
 		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig(environmentSpec);
@@ -312,7 +318,8 @@ public class ChartGeneratorTest {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
 		cluster.setHost("my-host");
-		Environment environment = new Environment("dev", cluster);
+		Environment environment = new Environment("dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
@@ -325,7 +332,9 @@ public class ChartGeneratorTest {
 		List<Integer> servicePorts = Collections.singletonList(8080);
 		spec.setServicePorts(servicePorts);
 
-		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion));
+		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 
 		ApplicationEnvironmentSpec environmentSpec = new ApplicationEnvironmentSpec("myapp1-route", 8080);
 		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig(environmentSpec);
@@ -437,13 +446,16 @@ public class ChartGeneratorTest {
 	public void generateBasicPruneTemplateFiles() throws Exception {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment("dev", cluster);
+		Environment environment = new Environment("dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
-		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion));
+		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.empty());
 

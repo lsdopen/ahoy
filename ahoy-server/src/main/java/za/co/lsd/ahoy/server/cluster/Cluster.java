@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -18,9 +18,11 @@ package za.co.lsd.ahoy.server.cluster;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.Type;
 import za.co.lsd.ahoy.server.environments.Environment;
 
@@ -28,13 +30,17 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.*;
 
 @Entity
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 public class Cluster implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -71,7 +77,7 @@ public class Cluster implements Serializable {
 	@OrderBy("id")
 	@JsonIgnore
 	@ToString.Exclude
-	private List<Environment> environments;
+	private List<Environment> environments = new ArrayList<>();
 
 	public Cluster(@NotNull String name, @NotNull String masterUrl, @NotNull ClusterType type) {
 		this.name = name;
@@ -95,5 +101,23 @@ public class Cluster implements Serializable {
 		this.host = dto.getHost();
 		this.inCluster = dto.isInCluster();
 		this.type = dto.getType();
+	}
+
+	public void addEnvironment(Environment environment) {
+		environments.add(environment);
+		environment.setCluster(this);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+		Cluster cluster = (Cluster) o;
+		return Objects.equals(id, cluster.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 }

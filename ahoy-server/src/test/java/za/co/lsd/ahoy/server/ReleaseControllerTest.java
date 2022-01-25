@@ -1,3 +1,19 @@
+/*
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
 package za.co.lsd.ahoy.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -344,11 +360,10 @@ public class ReleaseControllerTest {
 
 	private EnvironmentRelease testEnvRelease(Long clusterId, Long environmentId, Long releaseId) {
 		Cluster cluster = new Cluster(clusterId, "test-cluster-1", "https://kubernetes1.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(environmentId, "dev", cluster);
+		Environment environment = new Environment(environmentId, "dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release(releaseId, "release1");
-		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(environment.getId(), release.getId());
-
-		return new EnvironmentRelease(environmentReleaseId, environment, release);
+		return new EnvironmentRelease(environment, release);
 	}
 
 	private String json(Object obj) throws JsonProcessingException {

@@ -71,13 +71,16 @@ public class ReleaseManagerTest {
 	public void deployCreateApplication() throws Exception {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment("dev", cluster);
+		Environment environment = new Environment("dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
-		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion));
+		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 
 		LocalRepo.WorkingTree workingTree = mock(LocalRepo.WorkingTree.class);
 		Path testPath = Paths.get("test");
@@ -138,13 +141,16 @@ public class ReleaseManagerTest {
 	public void deployUpdateApplication() throws Exception {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment("dev", cluster);
+		Environment environment = new Environment("dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
-		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion));
+		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 
 		LocalRepo.WorkingTree workingTree = mock(LocalRepo.WorkingTree.class);
 		Path testPath = Paths.get("test");
@@ -205,7 +211,8 @@ public class ReleaseManagerTest {
 	public void undeployExists() {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment("dev", cluster);
+		Environment environment = new Environment("dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 		environmentRelease.setArgoCdName("test-cluster-dev-release1");
@@ -223,7 +230,8 @@ public class ReleaseManagerTest {
 	public void undeployDoesNotExist() {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment("dev", cluster);
+		Environment environment = new Environment("dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 		environmentRelease.setArgoCdName("test-cluster-dev-release1");
