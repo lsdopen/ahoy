@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -212,10 +212,12 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   }
 
   undeploy() {
-    const confirmation = new Confirmation(`Are you sure you want to undeploy ${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} from ` +
-      `${(this.environmentRelease.environment as Environment).name}?`);
+    const environmentName = (this.environmentRelease.environment as Environment).name;
+    const releaseName = (this.environmentRelease.release as Release).name;
+    const confirmation = new Confirmation(`Are you sure you want to undeploy ${releaseName}:${this.releaseVersion.version} from ` +
+      `${environmentName}?`);
     confirmation.verify = true;
-    confirmation.verifyText = (this.environmentRelease.release as Release).name;
+    confirmation.verifyText = `${environmentName}/${releaseName}`;
     // TODO nested subscribes
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
