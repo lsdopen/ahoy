@@ -192,7 +192,9 @@ class ReleaseServiceIntegrationTest {
 		List<ReleaseHistory> releaseHistories = StreamSupport.stream(releaseHistoryRepository.findAll().spliterator(), false).collect(Collectors.toList());
 		assertEquals(1, releaseHistories.size());
 		ReleaseHistory releaseHistory = releaseHistories.get(0);
-		assertEquals(deployedEnvironmentRelease.getId(), releaseHistory.getEnvironmentRelease().getId());
+		assertEquals(environment, releaseHistory.getEnvironment());
+		assertEquals(release, releaseHistory.getRelease());
+		assertEquals(releaseVersion, releaseHistory.getReleaseVersion());
 		assertEquals(ReleaseHistoryAction.DEPLOY, releaseHistory.getAction());
 		assertEquals(ReleaseHistoryStatus.SUCCESS, releaseHistory.getStatus());
 	}
@@ -272,7 +274,9 @@ class ReleaseServiceIntegrationTest {
 		List<ReleaseHistory> releaseHistories = StreamSupport.stream(releaseHistoryRepository.findAll().spliterator(), false).collect(Collectors.toList());
 		assertEquals(1, releaseHistories.size());
 		ReleaseHistory releaseHistory = releaseHistories.get(0);
-		assertEquals(deployedEnvironmentRelease.getId(), releaseHistory.getEnvironmentRelease().getId());
+		assertEquals(environment, releaseHistory.getEnvironment());
+		assertEquals(release, releaseHistory.getRelease());
+		assertEquals(upgradedReleaseVersion, releaseHistory.getReleaseVersion());
 		assertEquals(ReleaseHistoryAction.DEPLOY, releaseHistory.getAction());
 		assertEquals(ReleaseHistoryStatus.SUCCESS, releaseHistory.getStatus());
 	}
@@ -346,7 +350,9 @@ class ReleaseServiceIntegrationTest {
 		List<ReleaseHistory> releaseHistories = StreamSupport.stream(releaseHistoryRepository.findAll().spliterator(), false).collect(Collectors.toList());
 		assertEquals(1, releaseHistories.size());
 		ReleaseHistory releaseHistory = releaseHistories.get(0);
-		assertEquals(deployedEnvironmentRelease.getId(), releaseHistory.getEnvironmentRelease().getId());
+		assertEquals(environment, releaseHistory.getEnvironment());
+		assertEquals(release, releaseHistory.getRelease());
+		assertEquals(releaseVersion, releaseHistory.getReleaseVersion());
 		assertEquals(ReleaseHistoryAction.DEPLOY, releaseHistory.getAction());
 		assertEquals(ReleaseHistoryStatus.SUCCESS, releaseHistory.getStatus());
 	}
@@ -386,7 +392,7 @@ class ReleaseServiceIntegrationTest {
 				.build()).build()));
 
 		// when
-		EnvironmentRelease deployedEnvironmentRelease = releaseService.undeploy(environmentRelease.getId()).get();
+		EnvironmentRelease undeployedEnvironmentRelease = releaseService.undeploy(environmentRelease.getId()).get();
 
 		// then
 		// verify external collaborators
@@ -395,7 +401,7 @@ class ReleaseServiceIntegrationTest {
 		verifyNoMoreInteractions(clusterManager, argoClient);
 
 		// verify environment release
-		EnvironmentRelease retrievedEnvironmentRelease = environmentReleaseRepository.findById(deployedEnvironmentRelease.getId()).orElseThrow();
+		EnvironmentRelease retrievedEnvironmentRelease = environmentReleaseRepository.findById(undeployedEnvironmentRelease.getId()).orElseThrow();
 		assertNull(retrievedEnvironmentRelease.getCurrentReleaseVersion());
 		assertNull(retrievedEnvironmentRelease.getArgoCdName());
 		assertNull(retrievedEnvironmentRelease.getArgoCdUid());
@@ -404,7 +410,9 @@ class ReleaseServiceIntegrationTest {
 		List<ReleaseHistory> releaseHistories = StreamSupport.stream(releaseHistoryRepository.findAll().spliterator(), false).collect(Collectors.toList());
 		assertEquals(1, releaseHistories.size());
 		ReleaseHistory releaseHistory = releaseHistories.get(0);
-		assertEquals(deployedEnvironmentRelease.getId(), releaseHistory.getEnvironmentRelease().getId());
+		assertEquals(environment, releaseHistory.getEnvironment());
+		assertEquals(release, releaseHistory.getRelease());
+		assertEquals(releaseVersion, releaseHistory.getReleaseVersion());
 		assertEquals(ReleaseHistoryAction.UNDEPLOY, releaseHistory.getAction());
 		assertEquals(ReleaseHistoryStatus.SUCCESS, releaseHistory.getStatus());
 	}
@@ -439,7 +447,7 @@ class ReleaseServiceIntegrationTest {
 		when(argoClient.getApplication(eq(argoApplicationName))).thenReturn(Optional.empty());
 
 		// when
-		EnvironmentRelease deployedEnvironmentRelease = releaseService.undeploy(environmentRelease.getId()).get();
+		EnvironmentRelease undeployedEnvironmentRelease = releaseService.undeploy(environmentRelease.getId()).get();
 
 		// then
 		// verify external collaborators
@@ -448,7 +456,7 @@ class ReleaseServiceIntegrationTest {
 		verifyNoMoreInteractions(clusterManager, argoClient);
 
 		// verify environment release
-		EnvironmentRelease retrievedEnvironmentRelease = environmentReleaseRepository.findById(deployedEnvironmentRelease.getId()).orElseThrow();
+		EnvironmentRelease retrievedEnvironmentRelease = environmentReleaseRepository.findById(undeployedEnvironmentRelease.getId()).orElseThrow();
 		assertNull(retrievedEnvironmentRelease.getCurrentReleaseVersion());
 		assertNull(retrievedEnvironmentRelease.getArgoCdName());
 		assertNull(retrievedEnvironmentRelease.getArgoCdUid());
@@ -457,7 +465,9 @@ class ReleaseServiceIntegrationTest {
 		List<ReleaseHistory> releaseHistories = StreamSupport.stream(releaseHistoryRepository.findAll().spliterator(), false).collect(Collectors.toList());
 		assertEquals(1, releaseHistories.size());
 		ReleaseHistory releaseHistory = releaseHistories.get(0);
-		assertEquals(deployedEnvironmentRelease.getId(), releaseHistory.getEnvironmentRelease().getId());
+		assertEquals(environment, releaseHistory.getEnvironment());
+		assertEquals(release, releaseHistory.getRelease());
+		assertEquals(releaseVersion, releaseHistory.getReleaseVersion());
 		assertEquals(ReleaseHistoryAction.UNDEPLOY, releaseHistory.getAction());
 		assertEquals(ReleaseHistoryStatus.SUCCESS, releaseHistory.getStatus());
 	}
@@ -497,5 +507,66 @@ class ReleaseServiceIntegrationTest {
 		ReleaseVersion retrievedReleaseVersion = releaseVersionRepository.findById(upgradedReleaseVersion.getId()).orElseThrow();
 		assertEquals("1.0.1", retrievedReleaseVersion.getVersion());
 		assertArrayEquals(releaseVersion.getApplicationVersions().toArray(), retrievedReleaseVersion.getApplicationVersions().toArray());
+
+		// verify release history
+		List<ReleaseHistory> releaseHistories = StreamSupport.stream(releaseHistoryRepository.findAll().spliterator(), false).collect(Collectors.toList());
+		assertEquals(1, releaseHistories.size());
+		ReleaseHistory releaseHistory = releaseHistories.get(0);
+		assertEquals(release, releaseHistory.getRelease());
+		assertEquals(releaseVersion, releaseHistory.getReleaseVersion());
+		assertEquals(ReleaseHistoryAction.UPGRADE, releaseHistory.getAction());
+		assertEquals(ReleaseHistoryStatus.SUCCESS, releaseHistory.getStatus());
+	}
+
+	/**
+	 * Tests the upgrade of a release version.
+	 */
+	@Test
+	@WithMockUser(authorities = {Scope.ahoy, Role.admin, Role.user})
+	@DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+	void promote() {
+		// given
+		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
+		Environment environment = new Environment("dev");
+		cluster.addEnvironment(environment);
+		environment = environmentRepository.save(environment);
+
+		Environment destEnvironment = new Environment("qa");
+		cluster.addEnvironment(destEnvironment);
+		destEnvironment = environmentRepository.save(destEnvironment);
+
+		Release release = releaseRepository.save(new Release("release1"));
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
+		environmentRelease = environmentReleaseRepository.save(environmentRelease);
+
+		Application application = applicationRepository.save(new Application("app1"));
+		ApplicationVersion applicationVersion = applicationVersionRepository.save(new ApplicationVersion("1.0.0", application));
+
+		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
+		releaseVersion = releaseVersionRepository.save(releaseVersion);
+
+		PromoteOptions promoteOptions = new PromoteOptions(destEnvironment.getId(), false);
+
+		// when
+		EnvironmentRelease promotedEnvironmentRelease = releaseService.promote(environmentRelease.getId(), promoteOptions);
+
+		// then
+		// verify external collaborators
+		verifyNoInteractions(clusterManager, argoClient);
+
+		// verify environment release
+		EnvironmentRelease retrievedEnvironmentRelease = environmentReleaseRepository.findById(promotedEnvironmentRelease.getId()).orElseThrow();
+		assertEquals(destEnvironment, retrievedEnvironmentRelease.getEnvironment());
+
+		// verify release history
+		List<ReleaseHistory> releaseHistories = StreamSupport.stream(releaseHistoryRepository.findAll().spliterator(), false).collect(Collectors.toList());
+		assertEquals(1, releaseHistories.size());
+		ReleaseHistory releaseHistory = releaseHistories.get(0);
+		assertEquals(environment, releaseHistory.getEnvironment());
+		assertEquals(release, releaseHistory.getRelease());
+		assertEquals(ReleaseHistoryAction.PROMOTE, releaseHistory.getAction());
+		assertEquals(ReleaseHistoryStatus.SUCCESS, releaseHistory.getStatus());
 	}
 }

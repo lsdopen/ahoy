@@ -59,6 +59,12 @@ public class Release implements Serializable {
 	@ToString.Exclude
 	private List<ReleaseVersion> releaseVersions = new ArrayList<>();
 
+	@OneToMany(mappedBy = "release", cascade = CascadeType.REMOVE, orphanRemoval = true)
+	@OrderBy("id")
+	@JsonIgnore
+	@ToString.Exclude
+	private List<ReleaseHistory> releaseHistories = new ArrayList<>();
+
 	public ReleaseVersion latestReleaseVersion() {
 		if (releaseVersions != null && releaseVersions.size() > 0) {
 			return releaseVersions.get(releaseVersions.size() - 1);

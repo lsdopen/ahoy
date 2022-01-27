@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -26,9 +26,10 @@ import za.co.lsd.ahoy.server.DeployOptions;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
+import za.co.lsd.ahoy.server.environments.Environment;
+import za.co.lsd.ahoy.server.environments.EnvironmentRepository;
 
 import java.time.LocalDateTime;
-import java.util.concurrent.Future;
 
 import static za.co.lsd.ahoy.server.releases.ReleaseHistoryAction.*;
 import static za.co.lsd.ahoy.server.releases.ReleaseHistoryStatus.*;
@@ -37,11 +38,16 @@ import static za.co.lsd.ahoy.server.releases.ReleaseHistoryStatus.*;
 @Aspect
 @Slf4j
 public class ReleaseHistoryAspect {
+	private final EnvironmentRepository environmentRepository;
 	private final EnvironmentReleaseRepository environmentReleaseRepository;
 	private final ReleaseVersionRepository releaseVersionRepository;
 	private final ReleaseHistoryService releaseHistoryService;
 
-	public ReleaseHistoryAspect(EnvironmentReleaseRepository environmentReleaseRepository, ReleaseVersionRepository releaseVersionRepository, ReleaseHistoryService releaseHistoryService) {
+	public ReleaseHistoryAspect(EnvironmentRepository environmentRepository,
+								EnvironmentReleaseRepository environmentReleaseRepository,
+								ReleaseVersionRepository releaseVersionRepository,
+								ReleaseHistoryService releaseHistoryService) {
+		this.environmentRepository = environmentRepository;
 		this.environmentReleaseRepository = environmentReleaseRepository;
 		this.releaseVersionRepository = releaseVersionRepository;
 		this.releaseHistoryService = releaseHistoryService;
@@ -61,18 +67,19 @@ public class ReleaseHistoryAspect {
 		ReleaseHistory.ReleaseHistoryBuilder historyBuilder = ReleaseHistory.builder()
 			.action(DEPLOY)
 			.time(LocalDateTime.now())
-			.environmentRelease(environmentRelease)
+			.environment(environmentRelease.getEnvironment())
+			.release(environmentRelease.getRelease())
 			.releaseVersion(releaseVersion);
 
 		try {
-			Future<EnvironmentRelease> deployedEnvironmentRelease = (Future<EnvironmentRelease>) pjp.proceed();
+			Object retVal = pjp.proceed();
 
 			releaseHistoryService.save(historyBuilder
 				.status(SUCCESS)
 				.description("Deployment successful")
 				.build());
 
-			return deployedEnvironmentRelease;
+			return retVal;
 		} catch (Throwable t) {
 			log.error("Failed to save report history item", t);
 
@@ -98,7 +105,8 @@ public class ReleaseHistoryAspect {
 		ReleaseHistory.ReleaseHistoryBuilder historyBuilder = ReleaseHistory.builder()
 			.action(UNDEPLOY)
 			.time(LocalDateTime.now())
-			.environmentRelease(environmentRelease)
+			.environment(environmentRelease.getEnvironment())
+			.release(environmentRelease.getRelease())
 			.releaseVersion(releaseVersion);
 
 		try {
@@ -115,6 +123,79 @@ public class ReleaseHistoryAspect {
 			releaseHistoryService.save(historyBuilder
 				.status(FAILED)
 				.description("Un-deployment failed: \n" + t.getMessage())
+				.build());
+
+			throw t;
+		}
+	}
+
+	@Around("execution(* *..ReleaseService.upgrade(..))")
+	public Object upgrade(ProceedingJoinPoint pjp) throws Throwable {
+		Object[] args = pjp.getArgs();
+		Long releaseVersionId = (Long) args[0];
+		UpgradeOptions upgradeOptions = (UpgradeOptions) args[1];
+
+		ReleaseVersion releaseVersion = releaseVersionRepository.findById(releaseVersionId)
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find releaseVersion in release, releaseVersionId: " + releaseVersionId));
+
+		ReleaseHistory.ReleaseHistoryBuilder historyBuilder = ReleaseHistory.builder()
+			.action(UPGRADE)
+			.release(releaseVersion.getRelease())
+			.releaseVersion(releaseVersion)
+			.time(LocalDateTime.now());
+
+		try {
+			Object retVal = pjp.proceed();
+
+			releaseHistoryService.save(historyBuilder
+				.status(SUCCESS)
+				.description("Upgrade to version " + upgradeOptions.getVersion() + " successful")
+				.build());
+
+			return retVal;
+		} catch (Throwable t) {
+
+			releaseHistoryService.save(historyBuilder
+				.status(FAILED)
+				.description("Upgrade to version " + upgradeOptions.getVersion() + " failed: \n" + t.getMessage())
+				.build());
+
+			throw t;
+		}
+	}
+
+	@Around("execution(* *..ReleaseService.promote(..))")
+	public Object promote(ProceedingJoinPoint pjp) throws Throwable {
+		Object[] args = pjp.getArgs();
+		EnvironmentReleaseId environmentReleaseId = (EnvironmentReleaseId) args[0];
+		PromoteOptions promoteOptions = (PromoteOptions) args[1];
+
+		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
+
+		Environment destEnvironment = environmentRepository.findById(promoteOptions.getDestEnvironmentId())
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment: " + promoteOptions.getDestEnvironmentId()));
+
+		ReleaseHistory.ReleaseHistoryBuilder historyBuilder = ReleaseHistory.builder()
+			.action(PROMOTE)
+			.environment(environmentRelease.getEnvironment())
+			.release(environmentRelease.getRelease())
+			.time(LocalDateTime.now());
+
+		try {
+			Object retVal = pjp.proceed();
+
+			releaseHistoryService.save(historyBuilder
+				.status(SUCCESS)
+				.description("Promote to environment " + destEnvironment.getName() + " successful")
+				.build());
+
+			return retVal;
+		} catch (Throwable t) {
+
+			releaseHistoryService.save(historyBuilder
+				.status(FAILED)
+				.description("Promote to environment " + destEnvironment.getName() + " failed: \n" + t.getMessage())
 				.build());
 
 			throw t;

@@ -587,6 +587,7 @@ public class ReleaseServiceTest {
 		PromoteOptions promoteOptions = new PromoteOptions(destEnvironment.getId(), false);
 
 		EnvironmentRelease resultEnvironmentRelease = new EnvironmentRelease(destEnvironment, release);
+		when(environmentRepository.findById(destEnvironment.getId())).thenReturn(Optional.of(destEnvironment));
 		when(environmentReleaseRepository.findById(environmentRelease.getId())).thenReturn(Optional.of(environmentRelease));
 		when(environmentReleaseRepository.findById(resultEnvironmentRelease.getId())).thenReturn(Optional.of(resultEnvironmentRelease));
 

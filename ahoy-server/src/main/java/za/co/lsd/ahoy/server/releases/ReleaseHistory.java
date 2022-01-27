@@ -19,7 +19,7 @@ package za.co.lsd.ahoy.server.releases;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.Type;
-import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
+import za.co.lsd.ahoy.server.environments.Environment;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -40,7 +40,10 @@ public class ReleaseHistory implements Serializable {
 	private Long id;
 
 	@ManyToOne
-	private EnvironmentRelease environmentRelease;
+	private Environment environment;
+
+	@ManyToOne
+	private Release release;
 
 	@ManyToOne
 	private ReleaseVersion releaseVersion;

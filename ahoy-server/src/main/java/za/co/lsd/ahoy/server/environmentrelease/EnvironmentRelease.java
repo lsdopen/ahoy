@@ -25,13 +25,11 @@ import org.hibernate.Hibernate;
 import za.co.lsd.ahoy.server.argocd.model.HealthStatus;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.releases.Release;
-import za.co.lsd.ahoy.server.releases.ReleaseHistory;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -74,12 +72,6 @@ public class EnvironmentRelease implements Serializable {
 	@OneToOne
 	@JoinColumn(name = "previousReleaseVersionId")
 	private ReleaseVersion previousReleaseVersion;
-
-	@OneToMany(mappedBy = "environmentRelease", cascade = CascadeType.REMOVE)
-	@OrderBy("id")
-	@JsonIgnore
-	@ToString.Exclude
-	private List<ReleaseHistory> releaseHistories = new ArrayList<>();
 
 	public EnvironmentRelease(Environment environment, Release release) {
 		this.id = new EnvironmentReleaseId(environment.getId(), release.getId());
