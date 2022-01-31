@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import za.co.lsd.ahoy.server.ReleaseStatusChangedEvent;
+import za.co.lsd.ahoy.server.argocd.ArgoConnectionEvent;
 
 @Component
 @Slf4j
@@ -34,6 +35,13 @@ public class TaskEventsListener {
 	public void onReleaseStatusChanged(ReleaseStatusChangedEvent releaseStatusChangedEvent) {
 		TaskEvent taskEvent = new TaskEvent(releaseStatusChangedEvent);
 		log.debug("Environment release status changed, sending event: {}", taskEvent);
+		taskEventsService.sendTaskEvent(taskEvent);
+	}
+
+	@EventListener
+	public void onArgoConnectionChanged(ArgoConnectionEvent argoConnectionEvent) {
+		TaskEvent taskEvent = new TaskEvent(argoConnectionEvent);
+		log.debug("Argo connection status changed, sending event: {}", taskEvent);
 		taskEventsService.sendTaskEvent(taskEvent);
 	}
 }

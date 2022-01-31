@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,7 +15,9 @@
  */
 
 import {ReleaseStatusChangedEvent} from '../environment-release/environment-release';
+import {ArgoConnectionEvent} from '../util/argo';
 
 export class TaskEvent {
   releaseStatusChangedEvent: ReleaseStatusChangedEvent;
+  argoConnectionEvent: ArgoConnectionEvent;
 }

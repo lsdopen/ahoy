@@ -14,22 +14,6 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.taskevents;
-
-import lombok.Data;
-import za.co.lsd.ahoy.server.ReleaseStatusChangedEvent;
-import za.co.lsd.ahoy.server.argocd.ArgoConnectionEvent;
-
-@Data
-public class TaskEvent {
-	private ReleaseStatusChangedEvent releaseStatusChangedEvent;
-	private ArgoConnectionEvent argoConnectionEvent;
-
-	public TaskEvent(ReleaseStatusChangedEvent releaseStatusChangedEvent) {
-		this.releaseStatusChangedEvent = releaseStatusChangedEvent;
-	}
-
-	public TaskEvent(ArgoConnectionEvent argoConnectionEvent) {
-		this.argoConnectionEvent = argoConnectionEvent;
-	}
+export class ArgoConnectionEvent {
+  connected: boolean;
 }

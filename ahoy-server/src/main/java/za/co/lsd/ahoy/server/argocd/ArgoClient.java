@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -301,6 +301,21 @@ public class ArgoClient {
 			String reason = getReasonMessage(e);
 			log.error("Failed to connect to argocd: {}", reason);
 			throw new ArgoException("Failed to connect to argocd: " + reason, e);
+		}
+	}
+
+	public boolean silentTestConnection(ArgoSettings settings) {
+		try {
+			HttpHeaders httpHeaders = authHeaders(settings);
+			restClient.exchange(apiPath(settings) + "/clusters",
+				HttpMethod.GET,
+				new HttpEntity<>(httpHeaders),
+				String.class);
+
+			return true;
+
+		} catch (Throwable e) {
+			return false;
 		}
 	}
 

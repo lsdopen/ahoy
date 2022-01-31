@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,8 +17,11 @@
 package za.co.lsd.ahoy.server.settings;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import za.co.lsd.ahoy.server.argocd.ArgoSettings;
+import za.co.lsd.ahoy.server.argocd.ArgoSettingsChangedEvent;
 import za.co.lsd.ahoy.server.docker.DockerSettings;
 import za.co.lsd.ahoy.server.git.GitSettings;
 
@@ -28,9 +31,15 @@ import java.util.Optional;
 @Slf4j
 public class SettingsService {
 	private final SettingsRepository settingsRepository;
+	private ApplicationEventPublisher applicationEventPublisher;
 
 	public SettingsService(SettingsRepository settingsRepository) {
 		this.settingsRepository = settingsRepository;
+	}
+
+	@Autowired
+	public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+		this.applicationEventPublisher = applicationEventPublisher;
 	}
 
 	public void saveGitSettings(GitSettings gitSettings) {
@@ -48,6 +57,7 @@ public class SettingsService {
 
 	public void saveArgoSettings(ArgoSettings argoSettings) {
 		settingsRepository.save(new Settings(argoSettings));
+		applicationEventPublisher.publishEvent(new ArgoSettingsChangedEvent(this, argoSettings));
 	}
 
 	public Optional<ArgoSettings> getArgoSettings() {

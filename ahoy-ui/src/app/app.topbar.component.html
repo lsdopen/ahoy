@@ -15,6 +15,9 @@
   -->
 
 <div class="layout-topbar shadow-4">
+
+  <app-task-events-listener (taskEventEmitter)="taskEventOccurred($event)"></app-task-events-listener>
+
   <div class="layout-topbar-left">
     <a class="layout-topbar-logo" routerLink="/">
       <img id="app-logo" src="assets/layout/images/logo-{{appLogoMode()}}.svg" alt="ultima-layout" style="height: 2.25rem">
@@ -34,6 +37,13 @@
     </div>
     <div class="layout-topbar-actions-right">
       <ul class="layout-topbar-items">
+        <li class="layout-topbar-item">
+          <span [class]="'argo-status-badge argo-status-' + (argoConnected ? 'connected' : 'failed')"
+                pTooltip="ArgoCD connection status: {{argoConnected ? 'connected' : 'failed'}}">
+            <img src="assets/app/images/argo-icon-black.png" style="width: 2rem; height: 2rem" alt="argocd">
+          </span>
+        </li>
+
         <li class="layout-topbar-item notifications">
           <app-notifications></app-notifications>
         </li>

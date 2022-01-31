@@ -14,22 +14,23 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.taskevents;
+package za.co.lsd.ahoy.server;
 
-import lombok.Data;
-import za.co.lsd.ahoy.server.ReleaseStatusChangedEvent;
-import za.co.lsd.ahoy.server.argocd.ArgoConnectionEvent;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Data
-public class TaskEvent {
-	private ReleaseStatusChangedEvent releaseStatusChangedEvent;
-	private ArgoConnectionEvent argoConnectionEvent;
+@RestController
+@RequestMapping("/api/server")
+public class ServerController {
+	private final ServerService serverService;
 
-	public TaskEvent(ReleaseStatusChangedEvent releaseStatusChangedEvent) {
-		this.releaseStatusChangedEvent = releaseStatusChangedEvent;
+	public ServerController(ServerService serverService) {
+		this.serverService = serverService;
 	}
 
-	public TaskEvent(ArgoConnectionEvent argoConnectionEvent) {
-		this.argoConnectionEvent = argoConnectionEvent;
+	@GetMapping("/status")
+	public ServerStatus status() {
+		return serverService.status();
 	}
 }

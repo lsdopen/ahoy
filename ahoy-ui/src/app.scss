@@ -1,5 +1,5 @@
 /*!
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,6 +19,24 @@
 }
 
 .layout-topbar {
+  .argo-status-badge {
+    padding: 0 .6rem;
+    margin: 0 .4rem;
+    border-radius: 50%;
+    height: 3rem;
+    min-width: 3rem;
+    display: flex;
+    align-items: center;
+
+    &.argo-status-connected {
+      background: #C8E6C9;
+    }
+
+    &.argo-status-failed {
+      background: #FEEDAF;
+    }
+  }
+
   .notifications {
     .layout-topbar-action-panel {
       img {

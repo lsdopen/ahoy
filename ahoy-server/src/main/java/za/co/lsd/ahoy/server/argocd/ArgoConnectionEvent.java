@@ -14,22 +14,19 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.taskevents;
+package za.co.lsd.ahoy.server.argocd;
 
-import lombok.Data;
-import za.co.lsd.ahoy.server.ReleaseStatusChangedEvent;
-import za.co.lsd.ahoy.server.argocd.ArgoConnectionEvent;
+import lombok.Getter;
+import lombok.ToString;
+import org.springframework.context.ApplicationEvent;
 
-@Data
-public class TaskEvent {
-	private ReleaseStatusChangedEvent releaseStatusChangedEvent;
-	private ArgoConnectionEvent argoConnectionEvent;
+@Getter
+@ToString
+public class ArgoConnectionEvent extends ApplicationEvent {
+	private final boolean connected;
 
-	public TaskEvent(ReleaseStatusChangedEvent releaseStatusChangedEvent) {
-		this.releaseStatusChangedEvent = releaseStatusChangedEvent;
-	}
-
-	public TaskEvent(ArgoConnectionEvent argoConnectionEvent) {
-		this.argoConnectionEvent = argoConnectionEvent;
+	public ArgoConnectionEvent(Object source, boolean connected) {
+		super(source);
+		this.connected = connected;
 	}
 }

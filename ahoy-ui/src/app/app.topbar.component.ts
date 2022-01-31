@@ -15,12 +15,14 @@
  */
 
 import {animate, AnimationEvent, style, transition, trigger} from '@angular/animations';
-import {Component, ElementRef, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {AppComponent} from './app.component';
 import {AppMainComponent} from './app.main.component';
 import {AppearanceSettingsService} from './settings/appearance-settings/appearance-settings.service';
 import {Role} from './util/auth';
 import {AuthService} from './util/auth.service';
+import {TaskEvent} from './taskevents/task-events';
+import {ServerService} from './server.service';
 
 @Component({
   selector: 'app-topbar',
@@ -37,15 +39,22 @@ import {AuthService} from './util/auth.service';
     ])
   ]
 })
-export class AppTopBarComponent {
+export class AppTopBarComponent implements OnInit {
   Role = Role;
+  argoConnected: boolean;
+  @ViewChild('searchInput') searchInputViewChild: ElementRef;
 
   constructor(public appMain: AppMainComponent, public app: AppComponent,
               private authService: AuthService,
+              private serverService: ServerService,
               private appearanceSettingsService: AppearanceSettingsService) {
   }
 
-  @ViewChild('searchInput') searchInputViewChild: ElementRef;
+  ngOnInit(): void {
+    this.serverService.getServerStatus().subscribe((serverStatus) => {
+      this.argoConnected = serverStatus.argoCdConnected;
+    });
+  }
 
   onSearchAnimationEnd(event: AnimationEvent) {
     switch (event.toState) {
@@ -77,6 +86,12 @@ export class AppTopBarComponent {
       return 'dark';
     } else {
       return 'light';
+    }
+  }
+
+  taskEventOccurred(event: TaskEvent) {
+    if (event.argoConnectionEvent) {
+      this.argoConnected = event.argoConnectionEvent.connected;
     }
   }
 }
