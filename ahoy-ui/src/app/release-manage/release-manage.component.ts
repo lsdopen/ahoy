@@ -112,7 +112,8 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
       mergeMap(environmentRelease => {
           return this.environmentReleaseService.getReleasesByRelease((environmentRelease.release as Release).id);
         }
-      ), mergeMap(environmentReleases => {
+      ),
+      mergeMap(environmentReleases => {
         this.environmentReleases = environmentReleases;
         this.setupMenuItems();
 
@@ -324,6 +325,11 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
       this.releaseManageService.deploy(this.environmentRelease, deployOptions)
         .subscribe(() => this.log.debug('rolled back release:', this.environmentRelease));
     });
+  }
+
+  canShowResources() {
+    return this.environmentRelease.deployed &&
+      this.releaseVersion.id === this.environmentRelease.currentReleaseVersion.id;
   }
 
   taskEventOccurred(event: TaskEvent) {

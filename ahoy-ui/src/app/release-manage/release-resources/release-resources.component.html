@@ -1,0 +1,110 @@
+<!--
+  ~ Copyright  2022 LSD Information Technology (Pty) Ltd
+  ~
+  ~    Licensed under the Apache License, Version 2.0 (the "License");
+  ~    you may not use this file except in compliance with the License.
+  ~    You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~    Unless required by applicable law or agreed to in writing, software
+  ~    distributed under the License is distributed on an "AS IS" BASIS,
+  ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~    See the License for the specific language governing permissions and
+  ~    limitations under the License.
+  -->
+
+<div class="grid">
+  <div class="col-12">
+
+    <div *ngIf="environmentRelease">
+      <div class="card mb-3">
+        <div class="card-header">
+          <div class="flex flex-row align-items-baseline">
+            <i class="pi pi-sitemap mr-2 app-icon"></i>
+            <h5>Resources</h5>
+          </div>
+        </div>
+
+        <p-toolbar>
+          <ng-template pTemplate="left">
+            <button pButton pRipple label="Done" class="p-button-plain ml-auto mr-2 mb-2" (click)="done()"></button>
+            <button pButton pRipple label="" icon="pi pi-refresh" class="p-button-info ml-auto mr-2 mb-2" (click)="reload()"></button>
+          </ng-template>
+        </p-toolbar>
+
+        <p-tree [value]="resources" layout="horizontal" selectionMode="single" [(selection)]="selectedNode" (onNodeSelect)="nodeSelected($event)"></p-tree>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h5>{{eventsDescription()}}</h5>
+        </div>
+
+        <div *ngIf="!events || events.length == 0">
+          No events for current resource.
+        </div>
+
+        <p-table #dt *ngIf="events && events.length > 0" [value]="events"
+                 styleClass="p-datatable-events p-datatable-striped p-datatable-sm"
+                 [filterDelay]="0" [globalFilterFields]="['reason', 'message']">
+          <ng-template pTemplate="caption">
+            <div class="flex flex-column md:flex-row md:justify-content-between table-header">
+              <span class="p-input-icon-left ml-auto">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"/>
+              </span>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="type">Type
+                <p-sortIcon field="type"></p-sortIcon>
+              </th>
+              <th pSortableColumn="reason">Reason
+                <p-sortIcon field="reason"></p-sortIcon>
+              </th>
+              <th pSortableColumn="message">Message
+                <p-sortIcon field="message"></p-sortIcon>
+              </th>
+              <th pSortableColumn="count">Count
+                <p-sortIcon field="count"></p-sortIcon>
+              </th>
+              <th pSortableColumn="firstTimestamp">First Occurred
+                <p-sortIcon field="firstTimestamp"></p-sortIcon>
+              </th>
+              <th pSortableColumn="lastTimestamp">Last Occurred
+                <p-sortIcon field="lastTimestamp"></p-sortIcon>
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-event>
+            <tr>
+              <td><span class="p-column-title">Type</span>
+                <span [class]="'type-badge type-' + (event.type | lowercase)">{{event.type}}</span>
+              </td>
+              <td><span class="p-column-title">Reason</span>
+                {{event.reason}}
+              </td>
+              <td><span class="p-column-title">Message</span>
+                {{event.message}}
+              </td>
+              <td><span class="p-column-title">Count</span>
+                {{event.count}}
+              </td>
+              <td><span class="p-column-title">First Occurred</span>
+                {{event.firstTimestamp ? (event.firstTimestamp | date:'YYYY-MM-dd hh:mm:ss') : (event.eventTime | date:'YYYY-MM-dd hh:mm:ss')}}
+              </td>
+              <td><span class="p-column-title">Last Occurred</span>
+                {{event.lastTimestamp | date:'YYYY-MM-dd hh:mm:ss'}}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>

@@ -151,6 +151,71 @@ public class ArgoClient {
 		}
 	}
 
+	public Optional<ResourceTree> getResourceTree(String applicationName) {
+		Objects.requireNonNull(applicationName, "applicationName is required");
+
+		try {
+			ArgoSettings settings = settingsProvider.getArgoSettings();
+			HttpHeaders httpHeaders = authHeaders(settings);
+			ResponseEntity<ResourceTree> get = restClient.exchange(
+				apiPath(settings) + "/applications/" + applicationName + "/resource-tree",
+				HttpMethod.GET,
+				new HttpEntity<>(httpHeaders),
+				ResourceTree.class);
+
+			ResourceTree resourceTree = get.getBody();
+			return Optional.ofNullable(resourceTree);
+
+		} catch (RestClientResponseException e) {
+			if (e instanceof HttpStatusCodeException) {
+				HttpStatusCodeException statusCodeException = (HttpStatusCodeException) e;
+				if (HttpStatus.NOT_FOUND.equals(statusCodeException.getStatusCode())) {
+					return Optional.empty();
+				}
+			}
+			String reason = getReasonMessage(e);
+			log.error("Failed to get application resource tree for: {}, reason: {}", applicationName, reason);
+			throw new ArgoException("Failed to get application resource tree for : " + applicationName + ", reason: " + reason, e);
+		}
+	}
+
+	public Optional<ArgoEvents> getEvents(String applicationName,
+										  String resourceUid,
+										  String resourceNamespace,
+										  String resourceName) {
+		Objects.requireNonNull(applicationName, "applicationName is required");
+		Objects.requireNonNull(resourceUid, "resourceUid is required");
+		Objects.requireNonNull(resourceNamespace, "resourceNamespace is required");
+		Objects.requireNonNull(resourceName, "resourceName is required");
+
+		try {
+			ArgoSettings settings = settingsProvider.getArgoSettings();
+			HttpHeaders httpHeaders = authHeaders(settings);
+			ResponseEntity<ArgoEvents> get = restClient.exchange(
+				apiPath(settings) + "/applications/" + applicationName + "/events"
+					+ "?resourceUID=" + resourceUid
+					+ "&resourceNamespace=" + resourceNamespace
+					+ "&resourceName=" + resourceName,
+				HttpMethod.GET,
+				new HttpEntity<>(httpHeaders),
+				ArgoEvents.class);
+
+			ArgoEvents argoEvents = get.getBody();
+			return Optional.ofNullable(argoEvents);
+
+		} catch (RestClientResponseException e) {
+			if (e instanceof HttpStatusCodeException) {
+				HttpStatusCodeException statusCodeException = (HttpStatusCodeException) e;
+				if (HttpStatus.NOT_FOUND.equals(statusCodeException.getStatusCode())) {
+					return Optional.empty();
+				}
+			}
+			String reason = getReasonMessage(e);
+			log.error("Failed to get application events for: {}, reason: {}", applicationName, reason);
+			throw new ArgoException("Failed to get application events for : " + applicationName + ", reason: " + reason, e);
+		}
+	}
+
 	public ArgoRepositories getRepositories() {
 		try {
 			ArgoSettings settings = settingsProvider.getArgoSettings();

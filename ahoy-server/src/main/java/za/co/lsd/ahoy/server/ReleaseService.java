@@ -25,10 +25,7 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import za.co.lsd.ahoy.server.applications.*;
-import za.co.lsd.ahoy.server.argocd.model.ArgoApplication;
-import za.co.lsd.ahoy.server.argocd.model.ArgoMetadata;
-import za.co.lsd.ahoy.server.argocd.model.HealthStatus;
-import za.co.lsd.ahoy.server.argocd.model.ResourceStatus;
+import za.co.lsd.ahoy.server.argocd.model.*;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
@@ -36,6 +33,8 @@ import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.environments.EnvironmentException;
 import za.co.lsd.ahoy.server.environments.EnvironmentRepository;
 import za.co.lsd.ahoy.server.releases.*;
+import za.co.lsd.ahoy.server.releases.resources.ResourceNode;
+import za.co.lsd.ahoy.server.releases.resources.ResourceTreeConverter;
 import za.co.lsd.ahoy.server.security.Role;
 import za.co.lsd.ahoy.server.security.RunAsRole;
 
@@ -56,6 +55,7 @@ public class ReleaseService {
 	private final ApplicationReleaseStatusRepository applicationReleaseStatusRepository;
 	private final ApplicationVersionRepository applicationVersionRepository;
 	private final ReleaseManager releaseManager;
+	private final ResourceTreeConverter resourceTreeConverter;
 	private ApplicationEventPublisher eventPublisher;
 
 	public ReleaseService(EnvironmentRepository environmentRepository,
@@ -66,7 +66,7 @@ public class ReleaseService {
 						  ApplicationEnvironmentConfigProvider environmentConfigProvider,
 						  ApplicationReleaseStatusRepository applicationReleaseStatusRepository,
 						  ApplicationVersionRepository applicationVersionRepository,
-						  ReleaseManager releaseManager) {
+						  ReleaseManager releaseManager, ResourceTreeConverter resourceTreeConverter) {
 		this.environmentRepository = environmentRepository;
 		this.environmentReleaseRepository = environmentReleaseRepository;
 		this.releaseRepository = releaseRepository;
@@ -76,6 +76,7 @@ public class ReleaseService {
 		this.applicationReleaseStatusRepository = applicationReleaseStatusRepository;
 		this.applicationVersionRepository = applicationVersionRepository;
 		this.releaseManager = releaseManager;
+		this.resourceTreeConverter = resourceTreeConverter;
 	}
 
 	@Autowired
@@ -306,6 +307,21 @@ public class ReleaseService {
 		for (EnvironmentRelease environmentRelease : environmentReleases) {
 			copyEnvironmentConfig(environmentRelease, releaseVersion, sourceApplicationVersion, destApplicationVersion);
 		}
+	}
+
+	public Optional<ResourceNode> getResources(EnvironmentReleaseId environmentReleaseId) {
+		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
+
+		Optional<ResourceTree> resourceTree = releaseManager.getResourceTree(environmentRelease);
+		return resourceTree.map(resourceTreeConverter::convert);
+	}
+
+	public Optional<ArgoEvents> getEvents(EnvironmentReleaseId environmentReleaseId, String resourceUid, String resourceNamespace, String resourceName) {
+		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
+
+		return releaseManager.getEvents(environmentRelease, resourceUid, resourceNamespace, resourceName);
 	}
 
 	/**

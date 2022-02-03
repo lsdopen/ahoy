@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,11 +22,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import za.co.lsd.ahoy.server.argocd.model.ArgoEvents;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
 import za.co.lsd.ahoy.server.releases.*;
+import za.co.lsd.ahoy.server.releases.resources.ResourceNode;
 import za.co.lsd.ahoy.server.security.Role;
 
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -90,8 +93,8 @@ public class ReleaseController {
 
 	@PostMapping("/releaseVersions/{releaseVersionId}/copyAppEnvConfig")
 	public ResponseEntity<Void> copyApplicationVersionEnvConfig(@PathVariable Long releaseVersionId,
-																			  @RequestParam Long sourceApplicationVersionId,
-																			  @RequestParam Long destApplicationVersionId) {
+																@RequestParam Long sourceApplicationVersionId,
+																@RequestParam Long destApplicationVersionId) {
 
 		releaseService.copyApplicationVersionEnvConfig(releaseVersionId, sourceApplicationVersionId, destApplicationVersionId);
 		return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.OK);
@@ -102,5 +105,24 @@ public class ReleaseController {
 
 		Release duplicatedRelease = releaseService.duplicate(releaseId, duplicateOptions);
 		return new ResponseEntity<>(duplicatedRelease, new HttpHeaders(), HttpStatus.OK);
+	}
+
+	@GetMapping("/environmentReleases/{environmentReleaseId}/resources")
+	@Secured({Role.admin, Role.releasemanager, Role.developer})
+	public ResponseEntity<ResourceNode> resources(@PathVariable EnvironmentReleaseId environmentReleaseId) {
+
+		Optional<ResourceNode> resourceNode = releaseService.getResources(environmentReleaseId);
+		return new ResponseEntity<>(resourceNode.orElse(null), new HttpHeaders(), HttpStatus.OK);
+	}
+
+	@GetMapping("/environmentReleases/{environmentReleaseId}/events")
+	@Secured({Role.admin, Role.releasemanager, Role.developer})
+	public ResponseEntity<ArgoEvents> events(@PathVariable EnvironmentReleaseId environmentReleaseId,
+											 @RequestParam String resourceUid,
+											 @RequestParam String resourceNamespace,
+											 @RequestParam String resourceName) {
+
+		Optional<ArgoEvents> events = releaseService.getEvents(environmentReleaseId, resourceUid, resourceNamespace, resourceName);
+		return new ResponseEntity<>(events.orElse(null), new HttpHeaders(), HttpStatus.OK);
 	}
 }

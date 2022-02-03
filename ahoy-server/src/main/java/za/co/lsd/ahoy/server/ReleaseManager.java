@@ -20,9 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import za.co.lsd.ahoy.server.argocd.ApplicationNameResolver;
 import za.co.lsd.ahoy.server.argocd.ArgoClient;
-import za.co.lsd.ahoy.server.argocd.model.ArgoApplication;
-import za.co.lsd.ahoy.server.argocd.model.ArgoMetadata;
-import za.co.lsd.ahoy.server.argocd.model.ArgoSyncPolicy;
+import za.co.lsd.ahoy.server.argocd.model.*;
 import za.co.lsd.ahoy.server.clustermanager.ClusterManager;
 import za.co.lsd.ahoy.server.clustermanager.ClusterManagerFactory;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
@@ -102,6 +100,20 @@ public class ReleaseManager {
 		String applicationName = environmentRelease.getArgoCdName();
 		argoClient.getApplication(applicationName)
 			.ifPresent((existingApplication) -> argoClient.deleteApplication(applicationName));
+	}
+
+	public Optional<ResourceTree> getResourceTree(EnvironmentRelease environmentRelease) {
+		if (environmentRelease.hasCurrentReleaseVersion()) {
+			return argoClient.getResourceTree(environmentRelease.getArgoCdName());
+		}
+		return Optional.empty();
+	}
+
+	public Optional<ArgoEvents> getEvents(EnvironmentRelease environmentRelease, String resourceUid, String resourceNamespace, String resourceName) {
+		if (environmentRelease.hasCurrentReleaseVersion()) {
+			return argoClient.getEvents(environmentRelease.getArgoCdName(), resourceUid, resourceNamespace, resourceName);
+		}
+		return Optional.empty();
 	}
 
 	private ArgoApplication buildApplication(EnvironmentRelease environmentRelease, ReleaseVersion releaseVersion) {

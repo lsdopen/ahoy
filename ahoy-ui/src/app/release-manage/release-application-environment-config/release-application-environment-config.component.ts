@@ -99,8 +99,8 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
     const app = (this.applicationVersion.application as Application);
     this.breadcrumbService.setItems([
       {label: env.name, routerLink: '/environments'},
-      {label: rel.name, routerLink: `/release/${rel.id}/${env.id}/version/${this.releaseVersion.id}`},
-      {label: this.releaseVersion.version, routerLink: `/release/${rel.id}/${env.id}/version/${this.releaseVersion.id}`},
+      {label: rel.name, routerLink: `/release/${env.id}/${rel.id}/version/${this.releaseVersion.id}`},
+      {label: this.releaseVersion.version, routerLink: `/release/${env.id}/${rel.id}/version/${this.releaseVersion.id}`},
       {label: app.name},
       {label: this.applicationVersion.version},
       {label: 'env config'}
