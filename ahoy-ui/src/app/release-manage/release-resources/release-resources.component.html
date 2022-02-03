@@ -42,7 +42,7 @@
         </div>
 
         <div *ngIf="!events || events.length == 0">
-          No events for current resource.
+          No events available
         </div>
 
         <p-table #dt *ngIf="events && events.length > 0" [value]="events"
