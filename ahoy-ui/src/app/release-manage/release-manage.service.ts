@@ -26,6 +26,8 @@ import {LoggerService} from '../util/logger.service';
 import {RestClientService} from '../util/rest-client.service';
 import {RecentReleasesService} from './recent-releases.service';
 import {ArgoEvents, ResourceNode} from './resource';
+import {PodLog} from './log';
+import {EventSourceService} from '../util/event-source.service';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +36,7 @@ export class ReleaseManageService {
   private environmentReleaseChangedSubject = new Subject<EnvironmentRelease>();
 
   constructor(private restClient: RestClientService,
+              private eventSourceService: EventSourceService,
               private notificationsService: NotificationsService,
               private recentReleasesService: RecentReleasesService,
               private log: LoggerService) {
@@ -147,6 +150,12 @@ export class ReleaseManageService {
     return this.restClient.get<ArgoEvents>(url).pipe(
       tap((events) => this.log.debug('fetched events', events))
     );
+  }
+
+  logs(environmentReleaseId: EnvironmentReleaseId, podName: string, resourceNamespace: string): Observable<PodLog> {
+    this.log.debug(`getting logs for environment release ${environmentReleaseId}, podName: ${podName}, resourceNamespace: ${resourceNamespace}`);
+    const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentReleaseId)}/logs?podName=${podName}&resourceNamespace=${resourceNamespace}`;
+    return this.eventSourceService.getEvents<PodLog>(url);
   }
 
   resources(environmentReleaseId: EnvironmentReleaseId): Observable<ResourceNode> {

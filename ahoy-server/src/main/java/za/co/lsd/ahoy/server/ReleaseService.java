@@ -24,6 +24,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
 import za.co.lsd.ahoy.server.applications.*;
 import za.co.lsd.ahoy.server.argocd.model.*;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
@@ -322,6 +323,17 @@ public class ReleaseService {
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
 
 		return releaseManager.getEvents(environmentRelease, resourceUid, resourceNamespace, resourceName);
+	}
+
+	public Flux<PodLog> getLogs(EnvironmentReleaseId environmentReleaseId,
+								String podName,
+								String resourceNamespace) {
+		log.debug("Getting logs for environment release: {}, podName: {}", environmentReleaseId, podName);
+
+		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
+
+		return releaseManager.getLogs(environmentRelease, podName, resourceNamespace);
 	}
 
 	/**

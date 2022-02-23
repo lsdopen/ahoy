@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -26,6 +26,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.task.DelegatingSecurityContextAsyncTaskExecutor;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 @Configuration
 @EnableAsync
 @EnableScheduling
@@ -42,5 +45,10 @@ public class AhoyServerConfiguration {
 		executor.initialize();
 
 		return new DelegatingSecurityContextAsyncTaskExecutor(executor);
+	}
+
+	@Bean
+	public ExecutorService sseMvcExecutor() {
+		return Executors.newCachedThreadPool(r -> new Thread(r, "sseMvc"));
 	}
 }

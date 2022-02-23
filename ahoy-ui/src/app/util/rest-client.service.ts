@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ export class RestClientService {
   }
 
   post<T>(path: string, body?: T | any, progress = false): Observable<T> {
-    this.log.trace("posting to path: " + path);
+    this.log.trace('posting to path: ' + path);
     this.startProgress(progress);
     return this.http.post<T>(this.appsUrl + path, body, this.createOptions()).pipe(
       tap(() => this.stopProgress(progress)),
@@ -52,7 +52,7 @@ export class RestClientService {
   }
 
   put<T>(path: string, body?: T, headers?: { [key: string]: string }, progress = false): Observable<T> {
-    this.log.trace("putting to path: " + path);
+    this.log.trace('putting to path: ' + path);
     this.startProgress(progress);
     return this.http.put<T>(this.appsUrl + path, body, this.createOptions(undefined, headers)).pipe(
       tap(() => this.stopProgress(progress)),
@@ -61,7 +61,7 @@ export class RestClientService {
   }
 
   patch<T>(path: string, body?: T, headers?: { [key: string]: string }, progress = false): Observable<T> {
-    this.log.trace("patching to path: " + path);
+    this.log.trace('patching to path: ' + path);
     this.startProgress(progress);
     return this.http.patch<T>(this.appsUrl + path, body, this.createOptions(undefined, headers)).pipe(
       tap(() => this.stopProgress(progress)),
@@ -69,17 +69,17 @@ export class RestClientService {
     );
   }
 
-  get<T>(path: string, progress = false, defaultIfNotFound?: () => T): Observable<T> {
-    this.log.trace("getting from path: " + path);
+  get<T>(path: string, progress = false, defaultIfNotFound?: () => T, options?: { [key: string]: string }, headers?: { [key: string]: string }): Observable<T> {
+    this.log.trace('getting from path: ' + path);
     this.startProgress(progress);
-    return this.http.get<T>(this.appsUrl + path, this.createOptions()).pipe(
+    return this.http.get<T>(this.appsUrl + path, this.createOptions(options, headers)).pipe(
       tap(() => this.stopProgress(progress)),
       catchError(this.handleError<T>(progress, defaultIfNotFound))
     );
   }
 
   exists(path: string, progress = false): Observable<boolean> {
-    this.log.trace("checking existence at path: " + path);
+    this.log.trace('checking existence at path: ' + path);
     this.startProgress(progress);
     return this.http.get(this.appsUrl + path, this.createOptions()).pipe(
       mergeMap(() => {
@@ -92,7 +92,7 @@ export class RestClientService {
   }
 
   delete<T>(path: string, progress = false): Observable<T> {
-    this.log.trace("deleting at path: " + path);
+    this.log.trace('deleting at path: ' + path);
     this.startProgress(progress);
     return this.http.delete<T>(this.appsUrl + path, this.createOptions()).pipe(
       tap(() => this.stopProgress(progress)),

@@ -18,6 +18,7 @@ package za.co.lsd.ahoy.server;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 import za.co.lsd.ahoy.server.argocd.ApplicationNameResolver;
 import za.co.lsd.ahoy.server.argocd.ArgoClient;
 import za.co.lsd.ahoy.server.argocd.model.*;
@@ -114,6 +115,15 @@ public class ReleaseManager {
 			return argoClient.getEvents(environmentRelease.getArgoCdName(), resourceUid, resourceNamespace, resourceName);
 		}
 		return Optional.empty();
+	}
+
+	public Flux<PodLog> getLogs(EnvironmentRelease environmentRelease,
+								String podName,
+								String resourceNamespace) {
+		if (environmentRelease.hasCurrentReleaseVersion()) {
+			return argoClient.getLogs(environmentRelease.getArgoCdName(), podName, resourceNamespace);
+		}
+		return Flux.empty();
 	}
 
 	private ArgoApplication buildApplication(EnvironmentRelease environmentRelease, ReleaseVersion releaseVersion) {

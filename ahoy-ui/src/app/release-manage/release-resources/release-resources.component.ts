@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ReleaseManageService} from '../release-manage.service';
 import {EnvironmentRelease} from '../../environment-release/environment-release';
@@ -24,34 +24,55 @@ import {EnvironmentReleaseService} from '../../environment-release/environment-r
 import {mergeMap} from 'rxjs/operators';
 import {Environment} from '../../environments/environment';
 import {AppBreadcrumbService} from '../../app.breadcrumb.service';
-import {of} from 'rxjs';
+import {of, Subscription} from 'rxjs';
 import {Event, ResourceNode} from '../resource';
 import {Location} from '@angular/common';
+import {LoggerService} from '../../util/logger.service';
 
 @Component({
   selector: 'app-release-resources',
   templateUrl: './release-resources.component.html',
   styleUrls: ['./release-resources.component.scss']
 })
-export class ReleaseResourcesComponent implements OnInit {
+export class ReleaseResourcesComponent implements OnInit, OnDestroy {
   resources: TreeNode<ResourceNode>[];
   selectedNode: TreeNode<ResourceNode>;
   environmentRelease: EnvironmentRelease;
   releaseVersion: ReleaseVersion;
   events: Event[];
   selectedResourceNode: ResourceNode;
+  logsSubscription: Subscription;
+  logsContent = '';
+  tabActiveIndex: 0;
+  tailLogs = true;
+  private tailLogsInterval: number;
 
   constructor(private route: ActivatedRoute,
               private location: Location,
               private releaseManageService: ReleaseManageService,
               private environmentReleaseService: EnvironmentReleaseService,
-              private breadcrumbService: AppBreadcrumbService) {
+              private breadcrumbService: AppBreadcrumbService,
+              private log: LoggerService) {
   }
 
   ngOnInit(): void {
     const environmentId = +this.route.snapshot.paramMap.get('environmentId');
     const releaseId = +this.route.snapshot.paramMap.get('releaseId');
     this.getResources(environmentId, releaseId);
+    this.scheduleTailLogs();
+
+    this.tailLogsInterval = window.setInterval(() => {
+      this.scheduleTailLogs();
+    }, 1000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.logsSubscription) {
+      this.logsSubscription.unsubscribe();
+      this.logsSubscription = null;
+      this.logsContent = '';
+    }
+    clearInterval(this.tailLogsInterval);
   }
 
   private getResources(environmentId: number, releaseId: number) {
@@ -103,6 +124,13 @@ export class ReleaseResourcesComponent implements OnInit {
 
   nodeSelected(event: any) {
     this.selectedResourceNode = event.node.data as ResourceNode;
+    this.tabActiveIndex = 0;
+
+    if (this.logsSubscription) {
+      this.logsSubscription.unsubscribe();
+      this.logsSubscription = null;
+      this.logsContent = '';
+    }
 
     if (this.selectedResourceNode.root) {
       this.events = [];
@@ -142,10 +170,10 @@ export class ReleaseResourcesComponent implements OnInit {
 
   eventsDescription(): string {
     if (this.selectedResourceNode && !this.selectedResourceNode.root) {
-      return `Events for ${this.selectedResourceNode.kind} - ${this.selectedResourceNode.name}`;
+      return `${this.selectedResourceNode.kind} - ${this.selectedResourceNode.name}`;
     }
 
-    return 'Events';
+    return '';
   }
 
   reload() {
@@ -154,5 +182,34 @@ export class ReleaseResourcesComponent implements OnInit {
 
   done() {
     this.location.back();
+  }
+
+  podNodeSelected(): boolean {
+    return this.selectedResourceNode && this.selectedResourceNode.kind === 'Pod';
+  }
+
+  onTabChange(event: any) {
+    if (event.index === 1 && this.podNodeSelected() && !this.logsSubscription) {
+      const podNode = this.selectedResourceNode;
+      this.logsContent = '';
+      this.logsSubscription = this.releaseManageService.logs(this.environmentRelease.id, podNode.name, podNode.namespace)
+        .subscribe((podLog) => {
+          if (podLog.result && podLog.result.content) {
+            this.logsContent += podLog.result.content + '\n';
+
+          } else if (podLog.error) {
+            this.log.warn(`Error retrieving pod logs: ${podLog.error.message}, HTTP status: ${podLog.error.http_status}, code: ${podLog.error.http_code}`);
+          }
+        });
+    }
+  }
+
+  private scheduleTailLogs() {
+    if (this.tailLogs) {
+      const logsTextArea = document.getElementById('logs');
+      if (logsTextArea) {
+        logsTextArea.scrollTop = logsTextArea.scrollHeight;
+      }
+    }
   }
 }
