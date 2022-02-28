@@ -38,6 +38,13 @@
   }
 }
 
+.logs-text {
+  width: 100%;
+  white-space: pre;
+  box-sizing: border-box;
+  font-family: monospace
+}
+
 :host ::ng-deep {
   .table-header {
     display: flex;
