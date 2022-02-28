@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,20 +17,26 @@
 package za.co.lsd.ahoy.server.applications;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.Hibernate;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.*;
 
 @Entity
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 public class ApplicationEnvironmentConfig {
 	@EmbeddedId
 	private ApplicationDeploymentId id;
@@ -63,5 +69,18 @@ public class ApplicationEnvironmentConfig {
 
 	public ApplicationEnvironmentSpec summarySpec() {
 		return new ApplicationEnvironmentSpec(spec.getRouteHostname());
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+		ApplicationEnvironmentConfig that = (ApplicationEnvironmentConfig) o;
+		return Objects.equals(id, that.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 }

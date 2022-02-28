@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -31,13 +31,11 @@ import za.co.lsd.ahoy.server.argocd.model.HealthStatus;
 import za.co.lsd.ahoy.server.cluster.Cluster;
 import za.co.lsd.ahoy.server.cluster.ClusterType;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
-import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.environments.EnvironmentRepository;
 import za.co.lsd.ahoy.server.releases.*;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -75,19 +73,21 @@ public class ReleaseServiceTest {
 	public void deploy() throws Exception {
 		// given
 		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev", cluster);
+		Environment environment = new Environment(1L, "dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release(1L, "release1");
-		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(1L, 1L);
-		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 		long releaseVersionId = 1L;
-		ReleaseVersion releaseVersion = new ReleaseVersion(releaseVersionId, "1.0.0", release, Collections.singletonList(applicationVersion));
+		ReleaseVersion releaseVersion = new ReleaseVersion(releaseVersionId, "1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 
 		DeployOptions deployOptions = new DeployOptions(releaseVersionId, "This is a test commit message");
 
-		when(environmentReleaseRepository.findById(environmentReleaseId)).thenReturn(Optional.of(environmentRelease));
+		when(environmentReleaseRepository.findById(environmentRelease.getId())).thenReturn(Optional.of(environmentRelease));
 		when(releaseVersionRepository.findById(releaseVersionId)).thenReturn(Optional.of(releaseVersion));
 		when(releaseManager.deploy(same(environmentRelease), same(releaseVersion), same(deployOptions)))
 			.thenReturn(ArgoApplication.builder()
@@ -97,7 +97,7 @@ public class ReleaseServiceTest {
 					.build()).build());
 
 		// when
-		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentReleaseId, deployOptions).get();
+		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions).get();
 
 		// then
 		assertEquals(releaseVersion, deployedEnvironmentRelease.getCurrentReleaseVersion(), "Release version should now be the current release version");
@@ -113,23 +113,27 @@ public class ReleaseServiceTest {
 	public void deployUpgrade() throws Exception {
 		// given
 		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev", cluster);
+		Environment environment = new Environment(1L, "dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release(1L, "release1");
-		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(1L, 1L);
-		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
-		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
+		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 
 		environmentRelease.setCurrentReleaseVersion(releaseVersion);
 
 		long upgradedReleaseVersionId = 2L;
-		ReleaseVersion upgradedReleaseVersion = new ReleaseVersion(upgradedReleaseVersionId, "1.0.1", release, Collections.singletonList(applicationVersion));
+		ReleaseVersion upgradedReleaseVersion = new ReleaseVersion(upgradedReleaseVersionId, "1.0.1");
+		release.addReleaseVersion(upgradedReleaseVersion);
+		upgradedReleaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 
 		DeployOptions deployOptions = new DeployOptions(upgradedReleaseVersionId, "This is a test commit message");
 
-		when(environmentReleaseRepository.findById(environmentReleaseId)).thenReturn(Optional.of(environmentRelease));
+		when(environmentReleaseRepository.findById(environmentRelease.getId())).thenReturn(Optional.of(environmentRelease));
 		when(releaseVersionRepository.findById(upgradedReleaseVersionId)).thenReturn(Optional.of(upgradedReleaseVersion));
 		when(releaseManager.deploy(same(environmentRelease), same(upgradedReleaseVersion), same(deployOptions)))
 			.thenReturn(ArgoApplication.builder()
@@ -139,7 +143,7 @@ public class ReleaseServiceTest {
 					.build()).build());
 
 		// when
-		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentReleaseId, deployOptions).get();
+		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions).get();
 
 		// then
 		assertEquals(upgradedReleaseVersion, deployedEnvironmentRelease.getCurrentReleaseVersion(), "Release version should now be the current release version");
@@ -159,21 +163,23 @@ public class ReleaseServiceTest {
 	public void deployRedeploy() throws Exception {
 		// given
 		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev", cluster);
+		Environment environment = new Environment(1L, "dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release(1L, "release1");
-		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(1L, 1L);
-		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 		long releaseVersionId = 1L;
-		ReleaseVersion releaseVersion = new ReleaseVersion(releaseVersionId, "1.0.0", release, Collections.singletonList(applicationVersion));
+		ReleaseVersion releaseVersion = new ReleaseVersion(releaseVersionId, "1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 
 		environmentRelease.setCurrentReleaseVersion(releaseVersion);
 
 		DeployOptions deployOptions = new DeployOptions(releaseVersionId, "This is a test commit message");
 
-		when(environmentReleaseRepository.findById(environmentReleaseId)).thenReturn(Optional.of(environmentRelease));
+		when(environmentReleaseRepository.findById(environmentRelease.getId())).thenReturn(Optional.of(environmentRelease));
 		when(releaseVersionRepository.findById(releaseVersionId)).thenReturn(Optional.of(releaseVersion));
 		when(releaseManager.deploy(same(environmentRelease), same(releaseVersion), same(deployOptions)))
 			.thenReturn(ArgoApplication.builder()
@@ -183,7 +189,7 @@ public class ReleaseServiceTest {
 					.build()).build());
 
 		// when
-		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentReleaseId, deployOptions).get();
+		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions).get();
 
 		// then
 		assertEquals(releaseVersion, deployedEnvironmentRelease.getCurrentReleaseVersion(), "Release version should now be the current release version");
@@ -199,21 +205,23 @@ public class ReleaseServiceTest {
 	public void undeploy() throws Exception {
 		// given
 		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev", cluster);
+		Environment environment = new Environment(1L, "dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release(1L, "release1");
-		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(1L, 1L);
-		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
-		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
+		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 
 		environmentRelease.setCurrentReleaseVersion(releaseVersion);
 
-		when(environmentReleaseRepository.findById(environmentReleaseId)).thenReturn(Optional.of(environmentRelease));
+		when(environmentReleaseRepository.findById(environmentRelease.getId())).thenReturn(Optional.of(environmentRelease));
 
 		// when
-		EnvironmentRelease undeployedEnvironmentRelease = releaseService.undeploy(environmentReleaseId).get();
+		EnvironmentRelease undeployedEnvironmentRelease = releaseService.undeploy(environmentRelease.getId()).get();
 
 		// then
 		assertNull(undeployedEnvironmentRelease.getCurrentReleaseVersion(), "Release version should be null");
@@ -236,12 +244,16 @@ public class ReleaseServiceTest {
 
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
-		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
+		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 
 		UpgradeOptions upgradeOptions = new UpgradeOptions("1.1.0", false);
 
 		when(releaseVersionRepository.findById(1L)).thenReturn(Optional.of(releaseVersion));
-		ReleaseVersion resultReleaseVersion = new ReleaseVersion(2L, upgradeOptions.getVersion(), releaseVersion.getRelease(), new ArrayList<>(releaseVersion.getApplicationVersions()));
+		ReleaseVersion resultReleaseVersion = new ReleaseVersion(2L, upgradeOptions.getVersion());
+		release.addReleaseVersion(resultReleaseVersion);
+		resultReleaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 		when(releaseVersionRepository.save(any(ReleaseVersion.class))).thenReturn(resultReleaseVersion);
 
 		// when
@@ -264,18 +276,23 @@ public class ReleaseServiceTest {
 	public void upgradeWithCopyEnvironmentConfig() {
 		// given
 		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev", cluster);
+		Environment environment = new Environment(1L, "dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release(1L, "release1");
-		EnvironmentRelease environmentRelease = new EnvironmentRelease(new EnvironmentReleaseId(1L, 1L), environment, release);
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion = new ApplicationVersion(1L, "1.0.0", application);
-		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
+		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 
 		UpgradeOptions upgradeOptions = new UpgradeOptions("1.1.0", true);
 
 		when(releaseVersionRepository.findById(1L)).thenReturn(Optional.of(releaseVersion));
-		ReleaseVersion resultReleaseVersion = new ReleaseVersion(2L, upgradeOptions.getVersion(), releaseVersion.getRelease(), new ArrayList<>(releaseVersion.getApplicationVersions()));
+		ReleaseVersion resultReleaseVersion = new ReleaseVersion(2L, upgradeOptions.getVersion());
+		release.addReleaseVersion(resultReleaseVersion);
+		resultReleaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 		when(releaseVersionRepository.save(any(ReleaseVersion.class))).thenReturn(resultReleaseVersion);
 
 		when(environmentReleaseRepository.findByRelease(release.getId())).thenReturn(Collections.singletonList(environmentRelease));
@@ -315,9 +332,9 @@ public class ReleaseServiceTest {
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 
 		Release release = new Release(1L, "release1");
-		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
-		release.setReleaseVersions(new ArrayList<>());
-		release.getReleaseVersions().add(releaseVersion);
+		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 		when(releaseRepository.findById(1L)).thenReturn(Optional.of(release));
 
 		when(releaseRepository.save(any(Release.class))).thenAnswer(i -> {
@@ -343,7 +360,7 @@ public class ReleaseServiceTest {
 
 		ReleaseVersion duplicatedReleaseVersion = duplicatedRelease.getReleaseVersions().get(0);
 		assertEquals("1.0.0", duplicatedReleaseVersion.getVersion(), "Duplicated release version version incorrect");
-		assertNull(duplicatedReleaseVersion.getReleaseHistories(), "Duplicated release version history incorrect");
+		assertTrue(duplicatedReleaseVersion.getReleaseHistories().isEmpty(), "Duplicated release version history incorrect");
 		assertEquals(releaseVersion.getApplicationVersions(), duplicatedReleaseVersion.getApplicationVersions(), "Duplicated released version doesn't have the application versions from the upgraded version");
 
 		ArgumentCaptor<Release> releaseCaptor = ArgumentCaptor.forClass(Release.class);
@@ -364,20 +381,18 @@ public class ReleaseServiceTest {
 	public void duplicateWithEnvironment() {
 		// given
 		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev", cluster);
-		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(1L, 1L);
+		Environment environment = new Environment(1L, "dev");
+		cluster.addEnvironment(environment);
 
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 
 		Release release = new Release(1L, "release1");
-		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
-		release.setReleaseVersions(new ArrayList<>());
-		release.getReleaseVersions().add(releaseVersion);
+		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 
-		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
-		release.setEnvironmentReleases(new ArrayList<>());
-		release.getEnvironmentReleases().add(environmentRelease);
+		new EnvironmentRelease(environment, release);
 
 		when(releaseRepository.findById(1L)).thenReturn(Optional.of(release));
 
@@ -410,7 +425,7 @@ public class ReleaseServiceTest {
 
 		ReleaseVersion duplicatedReleaseVersion = duplicatedRelease.getReleaseVersions().get(0);
 		assertEquals("1.0.0", duplicatedReleaseVersion.getVersion(), "Duplicated release version version incorrect");
-		assertNull(duplicatedReleaseVersion.getReleaseHistories(), "Duplicated release version history incorrect");
+		assertTrue(duplicatedReleaseVersion.getReleaseHistories().isEmpty(), "Duplicated release version history incorrect");
 		assertEquals(releaseVersion.getApplicationVersions(), duplicatedReleaseVersion.getApplicationVersions(), "Duplicated released version doesn't have the application versions from the upgraded version");
 
 		EnvironmentRelease duplicatedEnvironmentRelease = duplicatedRelease.getEnvironmentReleases().get(0);
@@ -439,20 +454,18 @@ public class ReleaseServiceTest {
 	public void duplicateWithEnvironmentAndEnvConfig() {
 		// given
 		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev", cluster);
-		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(1L, 1L);
+		Environment environment = new Environment(1L, "dev");
+		cluster.addEnvironment(environment);
 
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 
 		Release release = new Release(1L, "release1");
-		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
-		release.setReleaseVersions(new ArrayList<>());
-		release.getReleaseVersions().add(releaseVersion);
+		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 
-		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
-		release.setEnvironmentReleases(new ArrayList<>());
-		release.getEnvironmentReleases().add(environmentRelease);
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		when(releaseRepository.findById(1L)).thenReturn(Optional.of(release));
 
@@ -492,7 +505,7 @@ public class ReleaseServiceTest {
 
 		ReleaseVersion duplicatedReleaseVersion = duplicatedRelease.getReleaseVersions().get(0);
 		assertEquals("1.0.0", duplicatedReleaseVersion.getVersion(), "Duplicated release version version incorrect");
-		assertNull(duplicatedReleaseVersion.getReleaseHistories(), "Duplicated release version history incorrect");
+		assertTrue(duplicatedReleaseVersion.getReleaseHistories().isEmpty(), "Duplicated release version history incorrect");
 		assertEquals(releaseVersion.getApplicationVersions(), duplicatedReleaseVersion.getApplicationVersions(), "Duplicated released version doesn't have the application versions from the upgraded version");
 
 		EnvironmentRelease duplicatedEnvironmentRelease = duplicatedRelease.getEnvironmentReleases().get(0);
@@ -528,25 +541,24 @@ public class ReleaseServiceTest {
 	public void promote() {
 		// given
 		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev", cluster);
+		Environment environment = new Environment(1L, "dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release(1L, "release1");
-		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(1L, 1L);
-		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
-		Environment destEnvironment = new Environment(2L, "qa", cluster);
+		Environment destEnvironment = new Environment(2L, "qa");
+		cluster.addEnvironment(destEnvironment);
 
 		PromoteOptions promoteOptions = new PromoteOptions(destEnvironment.getId(), false);
 
+		EnvironmentRelease resultEnvironmentRelease = new EnvironmentRelease(destEnvironment, release);
 		when(environmentReleaseRepository.findById(environmentRelease.getId())).thenReturn(Optional.of(environmentRelease));
-		EnvironmentReleaseId resultEnvironmentReleaseId = new EnvironmentReleaseId(destEnvironment.getId(), release.getId());
-		when(environmentReleaseRepository.findById(resultEnvironmentReleaseId)).thenReturn(Optional.empty());
+		when(environmentReleaseRepository.findById(resultEnvironmentRelease.getId())).thenReturn(Optional.empty());
 		when(environmentRepository.findById(destEnvironment.getId())).thenReturn(Optional.of(destEnvironment));
-
-		EnvironmentRelease resultEnvironmentRelease = new EnvironmentRelease(resultEnvironmentReleaseId, destEnvironment, release);
 		when(environmentReleaseRepository.save(any(EnvironmentRelease.class))).thenReturn(resultEnvironmentRelease);
 
 		// when
-		EnvironmentRelease promotedEnvironmentRelease = releaseService.promote(environmentReleaseId, promoteOptions);
+		EnvironmentRelease promotedEnvironmentRelease = releaseService.promote(environmentRelease.getId(), promoteOptions);
 
 		// then
 		ArgumentCaptor<EnvironmentRelease> environmentReleaseArgumentCaptor = ArgumentCaptor.forClass(EnvironmentRelease.class);
@@ -564,22 +576,23 @@ public class ReleaseServiceTest {
 	public void promoteAlreadyExists() {
 		// given
 		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev", cluster);
+		Environment environment = new Environment(1L, "dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release(1L, "release1");
-		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(1L, 1L);
-		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
-		Environment destEnvironment = new Environment(2L, "qa", cluster);
+		Environment destEnvironment = new Environment(2L, "qa");
+		cluster.addEnvironment(destEnvironment);
 
 		PromoteOptions promoteOptions = new PromoteOptions(destEnvironment.getId(), false);
 
+		EnvironmentRelease resultEnvironmentRelease = new EnvironmentRelease(destEnvironment, release);
+		when(environmentRepository.findById(destEnvironment.getId())).thenReturn(Optional.of(destEnvironment));
 		when(environmentReleaseRepository.findById(environmentRelease.getId())).thenReturn(Optional.of(environmentRelease));
-		EnvironmentReleaseId resultEnvironmentReleaseId = new EnvironmentReleaseId(destEnvironment.getId(), release.getId());
-		EnvironmentRelease resultEnvironmentRelease = new EnvironmentRelease(resultEnvironmentReleaseId, destEnvironment, release);
-		when(environmentReleaseRepository.findById(resultEnvironmentReleaseId)).thenReturn(Optional.of(resultEnvironmentRelease));
+		when(environmentReleaseRepository.findById(resultEnvironmentRelease.getId())).thenReturn(Optional.of(resultEnvironmentRelease));
 
 		// when
-		EnvironmentRelease promotedEnvironmentRelease = releaseService.promote(environmentReleaseId, promoteOptions);
+		EnvironmentRelease promotedEnvironmentRelease = releaseService.promote(environmentRelease.getId(), promoteOptions);
 
 		// then
 		verify(environmentReleaseRepository, never()).save(any(EnvironmentRelease.class));
@@ -592,26 +605,28 @@ public class ReleaseServiceTest {
 	public void promoteWithCopyEnvironmentConfig() {
 		// given
 		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev", cluster);
+		Environment environment = new Environment(1L, "dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release(1L, "release1");
-		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(1L, 1L);
-		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
-		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
+		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 		release.setReleaseVersions(Collections.singletonList(releaseVersion));
 
-		Environment destEnvironment = new Environment(2L, "qa", cluster);
+		Environment destEnvironment = new Environment(2L, "qa");
+		cluster.addEnvironment(destEnvironment);
 
 		PromoteOptions promoteOptions = new PromoteOptions(destEnvironment.getId(), true);
 
+		EnvironmentRelease resultEnvironmentRelease = new EnvironmentRelease(destEnvironment, release);
 		when(environmentReleaseRepository.findById(environmentRelease.getId())).thenReturn(Optional.of(environmentRelease));
-		EnvironmentReleaseId resultEnvironmentReleaseId = new EnvironmentReleaseId(destEnvironment.getId(), release.getId());
-		when(environmentReleaseRepository.findById(resultEnvironmentReleaseId)).thenReturn(Optional.empty());
+		when(environmentReleaseRepository.findById(resultEnvironmentRelease.getId())).thenReturn(Optional.empty());
 		when(environmentRepository.findById(destEnvironment.getId())).thenReturn(Optional.of(destEnvironment));
 
-		EnvironmentRelease resultEnvironmentRelease = new EnvironmentRelease(resultEnvironmentReleaseId, destEnvironment, release);
 		when(environmentReleaseRepository.save(any(EnvironmentRelease.class))).thenReturn(resultEnvironmentRelease);
 
 		ApplicationEnvironmentConfig environmentConfig = new ApplicationEnvironmentConfig(new ApplicationEnvironmentSpec("myapp1-route", 8080));
@@ -619,7 +634,7 @@ public class ReleaseServiceTest {
 		when(environmentConfigProvider.environmentConfigFor(resultEnvironmentRelease, releaseVersion, applicationVersion)).thenReturn(Optional.empty());
 
 		// when
-		EnvironmentRelease promotedEnvironmentRelease = releaseService.promote(environmentReleaseId, promoteOptions);
+		EnvironmentRelease promotedEnvironmentRelease = releaseService.promote(environmentRelease.getId(), promoteOptions);
 
 		// then
 		ArgumentCaptor<EnvironmentRelease> environmentReleaseArgumentCaptor = ArgumentCaptor.forClass(EnvironmentRelease.class);
@@ -645,14 +660,17 @@ public class ReleaseServiceTest {
 	public void copyApplicationVersionEnvConfig() {
 		// given
 		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev", cluster);
+		Environment environment = new Environment(1L, "dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release(1L, "release1");
-		EnvironmentRelease environmentRelease = new EnvironmentRelease(new EnvironmentReleaseId(1L, 1L), environment, release);
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion1 = new ApplicationVersion(1L, "1.0.0", application);
 		ApplicationVersion applicationVersion2 = new ApplicationVersion(2L, "2.0.0", application);
-		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion2));
+		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion2));
 
 		when(releaseVersionRepository.findById(1L)).thenReturn(Optional.of(releaseVersion));
 		when(applicationVersionRepository.findById(1L)).thenReturn(Optional.of(applicationVersion1));
@@ -682,14 +700,17 @@ public class ReleaseServiceTest {
 	public void copyApplicationVersionEnvConfigExistingConfig() {
 		// given
 		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev", cluster);
+		Environment environment = new Environment(1L, "dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release(1L, "release1");
-		EnvironmentRelease environmentRelease = new EnvironmentRelease(new EnvironmentReleaseId(1L, 1L), environment, release);
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion1 = new ApplicationVersion(1L, "1.0.0", application);
 		ApplicationVersion applicationVersion2 = new ApplicationVersion(2L, "2.0.0", application);
-		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion2));
+		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion2));
 
 		when(releaseVersionRepository.findById(1L)).thenReturn(Optional.of(releaseVersion));
 		when(applicationVersionRepository.findById(1L)).thenReturn(Optional.of(applicationVersion1));

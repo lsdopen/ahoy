@@ -44,7 +44,6 @@ import za.co.lsd.ahoy.server.cluster.ClusterRepository;
 import za.co.lsd.ahoy.server.clustermanager.ClusterManager;
 import za.co.lsd.ahoy.server.clustermanager.ClusterManagerFactory;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
-import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.environments.EnvironmentRepository;
@@ -126,7 +125,7 @@ class ReleaseServiceIntegrationTest {
 	}
 
 	@AfterEach
-	public void cleanup() throws Exception {
+	public void cleanup() {
 		localRepo.delete();
 	}
 
@@ -139,14 +138,20 @@ class ReleaseServiceIntegrationTest {
 	void deploy() throws Exception {
 		// given
 		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
-		Environment environment = environmentRepository.save(new Environment("dev", cluster));
+		Environment environment = new Environment("dev");
+		cluster.addEnvironment(environment);
+		environment = environmentRepository.save(environment);
 		Release release = releaseRepository.save(new Release("release1"));
-		EnvironmentRelease environmentRelease = environmentReleaseRepository.save(new EnvironmentRelease(new EnvironmentReleaseId(), environment, release));
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
+		environmentRelease = environmentReleaseRepository.save(environmentRelease);
 
 		Application application = applicationRepository.save(new Application("app1"));
 		ApplicationVersion applicationVersion = applicationVersionRepository.save(new ApplicationVersion("1.0.0", application));
 
-		ReleaseVersion releaseVersion = releaseVersionRepository.save(new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion)));
+		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
+		releaseVersion = releaseVersionRepository.save(releaseVersion);
 
 		DeployOptions deployOptions = new DeployOptions(releaseVersion.getId(), "This is a test commit message");
 
@@ -187,7 +192,9 @@ class ReleaseServiceIntegrationTest {
 		List<ReleaseHistory> releaseHistories = StreamSupport.stream(releaseHistoryRepository.findAll().spliterator(), false).collect(Collectors.toList());
 		assertEquals(1, releaseHistories.size());
 		ReleaseHistory releaseHistory = releaseHistories.get(0);
-		assertEquals(deployedEnvironmentRelease.getId(), releaseHistory.getEnvironmentRelease().getId());
+		assertEquals(environment, releaseHistory.getEnvironment());
+		assertEquals(release, releaseHistory.getRelease());
+		assertEquals(releaseVersion, releaseHistory.getReleaseVersion());
 		assertEquals(ReleaseHistoryAction.DEPLOY, releaseHistory.getAction());
 		assertEquals(ReleaseHistoryStatus.SUCCESS, releaseHistory.getStatus());
 	}
@@ -201,19 +208,27 @@ class ReleaseServiceIntegrationTest {
 	void deployUpgrade() throws Exception {
 		// given
 		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
-		Environment environment = environmentRepository.save(new Environment("dev", cluster));
+		Environment environment = new Environment("dev");
+		cluster.addEnvironment(environment);
+		environment = environmentRepository.save(environment);
 		Release release = releaseRepository.save(new Release("release1"));
 
 		Application application = applicationRepository.save(new Application("app1"));
 		ApplicationVersion applicationVersion = applicationVersionRepository.save(new ApplicationVersion("1.0.0", application));
 		ApplicationVersion upgradedApplicationVersion = applicationVersionRepository.save(new ApplicationVersion("1.0.1", application));
 
-		ReleaseVersion releaseVersion = releaseVersionRepository.save(new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion)));
-		EnvironmentRelease environmentRelease = new EnvironmentRelease(new EnvironmentReleaseId(), environment, release);
+		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
+		releaseVersion = releaseVersionRepository.save(releaseVersion);
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 		environmentRelease.setCurrentReleaseVersion(releaseVersion); // this release version is deployed
 		environmentRelease = environmentReleaseRepository.save(environmentRelease);
 
-		ReleaseVersion upgradedReleaseVersion = releaseVersionRepository.save(new ReleaseVersion("1.0.1", release, Collections.singletonList(upgradedApplicationVersion)));
+		ReleaseVersion upgradedReleaseVersion = new ReleaseVersion("1.0.1");
+		release.addReleaseVersion(upgradedReleaseVersion);
+		upgradedReleaseVersion.setApplicationVersions(Collections.singletonList(upgradedApplicationVersion));
+		upgradedReleaseVersion = releaseVersionRepository.save(upgradedReleaseVersion);
 
 		DeployOptions deployOptions = new DeployOptions(upgradedReleaseVersion.getId(), "This is a test commit message");
 
@@ -259,7 +274,9 @@ class ReleaseServiceIntegrationTest {
 		List<ReleaseHistory> releaseHistories = StreamSupport.stream(releaseHistoryRepository.findAll().spliterator(), false).collect(Collectors.toList());
 		assertEquals(1, releaseHistories.size());
 		ReleaseHistory releaseHistory = releaseHistories.get(0);
-		assertEquals(deployedEnvironmentRelease.getId(), releaseHistory.getEnvironmentRelease().getId());
+		assertEquals(environment, releaseHistory.getEnvironment());
+		assertEquals(release, releaseHistory.getRelease());
+		assertEquals(upgradedReleaseVersion, releaseHistory.getReleaseVersion());
 		assertEquals(ReleaseHistoryAction.DEPLOY, releaseHistory.getAction());
 		assertEquals(ReleaseHistoryStatus.SUCCESS, releaseHistory.getStatus());
 	}
@@ -273,14 +290,19 @@ class ReleaseServiceIntegrationTest {
 	void deployRedeploy() throws Exception {
 		// given
 		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
-		Environment environment = environmentRepository.save(new Environment("dev", cluster));
+		Environment environment = new Environment("dev");
+		cluster.addEnvironment(environment);
+		environment = environmentRepository.save(environment);
 		Release release = releaseRepository.save(new Release("release1"));
 
 		Application application = applicationRepository.save(new Application("app1"));
 		ApplicationVersion applicationVersion = applicationVersionRepository.save(new ApplicationVersion("1.0.0", application));
 
-		ReleaseVersion releaseVersion = releaseVersionRepository.save(new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion)));
-		EnvironmentRelease environmentRelease = new EnvironmentRelease(new EnvironmentReleaseId(), environment, release);
+		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
+		releaseVersion = releaseVersionRepository.save(releaseVersion);
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 		environmentRelease.setCurrentReleaseVersion(releaseVersion); // this release version is deployed
 		environmentRelease = environmentReleaseRepository.save(environmentRelease);
 
@@ -328,7 +350,9 @@ class ReleaseServiceIntegrationTest {
 		List<ReleaseHistory> releaseHistories = StreamSupport.stream(releaseHistoryRepository.findAll().spliterator(), false).collect(Collectors.toList());
 		assertEquals(1, releaseHistories.size());
 		ReleaseHistory releaseHistory = releaseHistories.get(0);
-		assertEquals(deployedEnvironmentRelease.getId(), releaseHistory.getEnvironmentRelease().getId());
+		assertEquals(environment, releaseHistory.getEnvironment());
+		assertEquals(release, releaseHistory.getRelease());
+		assertEquals(releaseVersion, releaseHistory.getReleaseVersion());
 		assertEquals(ReleaseHistoryAction.DEPLOY, releaseHistory.getAction());
 		assertEquals(ReleaseHistoryStatus.SUCCESS, releaseHistory.getStatus());
 	}
@@ -342,15 +366,20 @@ class ReleaseServiceIntegrationTest {
 	void undeploy() throws Exception {
 		// given
 		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
-		Environment environment = environmentRepository.save(new Environment("dev", cluster));
+		Environment environment = new Environment("dev");
+		cluster.addEnvironment(environment);
+		environment = environmentRepository.save(environment);
 		Release release = releaseRepository.save(new Release("release1"));
 
 		Application application = applicationRepository.save(new Application("app1"));
 		ApplicationVersion applicationVersion = applicationVersionRepository.save(new ApplicationVersion("1.0.0", application));
 
 		String argoApplicationName = "minikube-dev-release1";
-		ReleaseVersion releaseVersion = releaseVersionRepository.save(new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion)));
-		EnvironmentRelease environmentRelease = new EnvironmentRelease(new EnvironmentReleaseId(), environment, release);
+		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
+		releaseVersion = releaseVersionRepository.save(releaseVersion);
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 		environmentRelease.setCurrentReleaseVersion(releaseVersion); // this release version is deployed
 		environmentRelease.setArgoCdName(argoApplicationName);
 		environmentRelease = environmentReleaseRepository.save(environmentRelease);
@@ -363,7 +392,7 @@ class ReleaseServiceIntegrationTest {
 				.build()).build()));
 
 		// when
-		EnvironmentRelease deployedEnvironmentRelease = releaseService.undeploy(environmentRelease.getId()).get();
+		EnvironmentRelease undeployedEnvironmentRelease = releaseService.undeploy(environmentRelease.getId()).get();
 
 		// then
 		// verify external collaborators
@@ -372,7 +401,7 @@ class ReleaseServiceIntegrationTest {
 		verifyNoMoreInteractions(clusterManager, argoClient);
 
 		// verify environment release
-		EnvironmentRelease retrievedEnvironmentRelease = environmentReleaseRepository.findById(deployedEnvironmentRelease.getId()).orElseThrow();
+		EnvironmentRelease retrievedEnvironmentRelease = environmentReleaseRepository.findById(undeployedEnvironmentRelease.getId()).orElseThrow();
 		assertNull(retrievedEnvironmentRelease.getCurrentReleaseVersion());
 		assertNull(retrievedEnvironmentRelease.getArgoCdName());
 		assertNull(retrievedEnvironmentRelease.getArgoCdUid());
@@ -381,7 +410,9 @@ class ReleaseServiceIntegrationTest {
 		List<ReleaseHistory> releaseHistories = StreamSupport.stream(releaseHistoryRepository.findAll().spliterator(), false).collect(Collectors.toList());
 		assertEquals(1, releaseHistories.size());
 		ReleaseHistory releaseHistory = releaseHistories.get(0);
-		assertEquals(deployedEnvironmentRelease.getId(), releaseHistory.getEnvironmentRelease().getId());
+		assertEquals(environment, releaseHistory.getEnvironment());
+		assertEquals(release, releaseHistory.getRelease());
+		assertEquals(releaseVersion, releaseHistory.getReleaseVersion());
 		assertEquals(ReleaseHistoryAction.UNDEPLOY, releaseHistory.getAction());
 		assertEquals(ReleaseHistoryStatus.SUCCESS, releaseHistory.getStatus());
 	}
@@ -395,15 +426,20 @@ class ReleaseServiceIntegrationTest {
 	void undeployDoesNotExist() throws Exception {
 		// given
 		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
-		Environment environment = environmentRepository.save(new Environment("dev", cluster));
+		Environment environment = new Environment("dev");
+		cluster.addEnvironment(environment);
+		environment = environmentRepository.save(environment);
 		Release release = releaseRepository.save(new Release("release1"));
 
 		Application application = applicationRepository.save(new Application("app1"));
 		ApplicationVersion applicationVersion = applicationVersionRepository.save(new ApplicationVersion("1.0.0", application));
 
 		String argoApplicationName = "minikube-dev-release1";
-		ReleaseVersion releaseVersion = releaseVersionRepository.save(new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion)));
-		EnvironmentRelease environmentRelease = new EnvironmentRelease(new EnvironmentReleaseId(), environment, release);
+		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
+		releaseVersion = releaseVersionRepository.save(releaseVersion);
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 		environmentRelease.setCurrentReleaseVersion(releaseVersion); // this release version is deployed
 		environmentRelease.setArgoCdName(argoApplicationName);
 		environmentRelease = environmentReleaseRepository.save(environmentRelease);
@@ -411,7 +447,7 @@ class ReleaseServiceIntegrationTest {
 		when(argoClient.getApplication(eq(argoApplicationName))).thenReturn(Optional.empty());
 
 		// when
-		EnvironmentRelease deployedEnvironmentRelease = releaseService.undeploy(environmentRelease.getId()).get();
+		EnvironmentRelease undeployedEnvironmentRelease = releaseService.undeploy(environmentRelease.getId()).get();
 
 		// then
 		// verify external collaborators
@@ -420,7 +456,7 @@ class ReleaseServiceIntegrationTest {
 		verifyNoMoreInteractions(clusterManager, argoClient);
 
 		// verify environment release
-		EnvironmentRelease retrievedEnvironmentRelease = environmentReleaseRepository.findById(deployedEnvironmentRelease.getId()).orElseThrow();
+		EnvironmentRelease retrievedEnvironmentRelease = environmentReleaseRepository.findById(undeployedEnvironmentRelease.getId()).orElseThrow();
 		assertNull(retrievedEnvironmentRelease.getCurrentReleaseVersion());
 		assertNull(retrievedEnvironmentRelease.getArgoCdName());
 		assertNull(retrievedEnvironmentRelease.getArgoCdUid());
@@ -429,7 +465,9 @@ class ReleaseServiceIntegrationTest {
 		List<ReleaseHistory> releaseHistories = StreamSupport.stream(releaseHistoryRepository.findAll().spliterator(), false).collect(Collectors.toList());
 		assertEquals(1, releaseHistories.size());
 		ReleaseHistory releaseHistory = releaseHistories.get(0);
-		assertEquals(deployedEnvironmentRelease.getId(), releaseHistory.getEnvironmentRelease().getId());
+		assertEquals(environment, releaseHistory.getEnvironment());
+		assertEquals(release, releaseHistory.getRelease());
+		assertEquals(releaseVersion, releaseHistory.getReleaseVersion());
 		assertEquals(ReleaseHistoryAction.UNDEPLOY, releaseHistory.getAction());
 		assertEquals(ReleaseHistoryStatus.SUCCESS, releaseHistory.getStatus());
 	}
@@ -440,15 +478,16 @@ class ReleaseServiceIntegrationTest {
 	@Test
 	@WithMockUser(authorities = {Scope.ahoy, Role.admin, Role.user})
 	@DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-	void upgrade() throws Exception {
+	void upgrade() {
 		// given
 		Release release = releaseRepository.save(new Release("release1"));
 
 		Application application = applicationRepository.save(new Application("app1"));
 		ApplicationVersion applicationVersion = applicationVersionRepository.save(new ApplicationVersion("1.0.0", application));
 
-		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0", release, Collections.singletonList(applicationVersion));
+		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0");
 		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 		releaseVersion = releaseVersionRepository.save(releaseVersion);
 
 		UpgradeOptions upgradeOptions = new UpgradeOptions("1.0.1", false);
@@ -468,5 +507,66 @@ class ReleaseServiceIntegrationTest {
 		ReleaseVersion retrievedReleaseVersion = releaseVersionRepository.findById(upgradedReleaseVersion.getId()).orElseThrow();
 		assertEquals("1.0.1", retrievedReleaseVersion.getVersion());
 		assertArrayEquals(releaseVersion.getApplicationVersions().toArray(), retrievedReleaseVersion.getApplicationVersions().toArray());
+
+		// verify release history
+		List<ReleaseHistory> releaseHistories = StreamSupport.stream(releaseHistoryRepository.findAll().spliterator(), false).collect(Collectors.toList());
+		assertEquals(1, releaseHistories.size());
+		ReleaseHistory releaseHistory = releaseHistories.get(0);
+		assertEquals(release, releaseHistory.getRelease());
+		assertEquals(releaseVersion, releaseHistory.getReleaseVersion());
+		assertEquals(ReleaseHistoryAction.UPGRADE, releaseHistory.getAction());
+		assertEquals(ReleaseHistoryStatus.SUCCESS, releaseHistory.getStatus());
+	}
+
+	/**
+	 * Tests the upgrade of a release version.
+	 */
+	@Test
+	@WithMockUser(authorities = {Scope.ahoy, Role.admin, Role.user})
+	@DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+	void promote() {
+		// given
+		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
+		Environment environment = new Environment("dev");
+		cluster.addEnvironment(environment);
+		environment = environmentRepository.save(environment);
+
+		Environment destEnvironment = new Environment("qa");
+		cluster.addEnvironment(destEnvironment);
+		destEnvironment = environmentRepository.save(destEnvironment);
+
+		Release release = releaseRepository.save(new Release("release1"));
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
+		environmentRelease = environmentReleaseRepository.save(environmentRelease);
+
+		Application application = applicationRepository.save(new Application("app1"));
+		ApplicationVersion applicationVersion = applicationVersionRepository.save(new ApplicationVersion("1.0.0", application));
+
+		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
+		releaseVersion = releaseVersionRepository.save(releaseVersion);
+
+		PromoteOptions promoteOptions = new PromoteOptions(destEnvironment.getId(), false);
+
+		// when
+		EnvironmentRelease promotedEnvironmentRelease = releaseService.promote(environmentRelease.getId(), promoteOptions);
+
+		// then
+		// verify external collaborators
+		verifyNoInteractions(clusterManager, argoClient);
+
+		// verify environment release
+		EnvironmentRelease retrievedEnvironmentRelease = environmentReleaseRepository.findById(promotedEnvironmentRelease.getId()).orElseThrow();
+		assertEquals(destEnvironment, retrievedEnvironmentRelease.getEnvironment());
+
+		// verify release history
+		List<ReleaseHistory> releaseHistories = StreamSupport.stream(releaseHistoryRepository.findAll().spliterator(), false).collect(Collectors.toList());
+		assertEquals(1, releaseHistories.size());
+		ReleaseHistory releaseHistory = releaseHistories.get(0);
+		assertEquals(environment, releaseHistory.getEnvironment());
+		assertEquals(release, releaseHistory.getRelease());
+		assertEquals(ReleaseHistoryAction.PROMOTE, releaseHistory.getAction());
+		assertEquals(ReleaseHistoryStatus.SUCCESS, releaseHistory.getStatus());
 	}
 }

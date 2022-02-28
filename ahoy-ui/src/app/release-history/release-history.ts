@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,12 +14,13 @@
  *    limitations under the License.
  */
 
-import {EnvironmentRelease} from '../environment-release/environment-release';
-import {ReleaseVersion} from '../releases/release';
+import {Release, ReleaseVersion} from '../releases/release';
+import {Environment} from '../environments/environment';
 
 export class ReleaseHistory {
   id: number;
-  environmentRelease: EnvironmentRelease;
+  environment: Environment;
+  release: Release;
   releaseVersion: ReleaseVersion;
   action: string;
   status: string;

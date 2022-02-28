@@ -1,5 +1,5 @@
 /*
- * Copyright  2020 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,17 +17,24 @@
 package za.co.lsd.ahoy.server.applications;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 public class Application {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +48,8 @@ public class Application {
 	@OneToMany(mappedBy = "application", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	@OrderBy("id")
-	private List<ApplicationVersion> applicationVersions;
+	@ToString.Exclude
+	private List<ApplicationVersion> applicationVersions = new ArrayList<>();
 
 	public ApplicationVersion latestApplicationVersion() {
 		if (applicationVersions != null && applicationVersions.size() > 0) {
@@ -55,10 +63,15 @@ public class Application {
 	}
 
 	@Override
-	public String toString() {
-		return "Application{" + "id=" + id +
-			", name='" + name + '\'' +
-			", applicationVersions='" + applicationVersions + '\'' +
-			'}';
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+		Application that = (Application) o;
+		return Objects.equals(id, that.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 }

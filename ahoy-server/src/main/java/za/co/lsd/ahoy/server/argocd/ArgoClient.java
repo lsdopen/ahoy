@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import za.co.lsd.ahoy.server.argocd.model.*;
 import za.co.lsd.ahoy.server.git.GitSettings;
 import za.co.lsd.ahoy.server.settings.SettingsProvider;
@@ -43,11 +45,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ArgoClient {
 	private final RestTemplate restClient;
+	private final WebClient webClient;
 	private final SettingsProvider settingsProvider;
 	private ObjectMapper objectMapper;
 
-	public ArgoClient(RestTemplate restClient, SettingsProvider settingsProvider) {
+	public ArgoClient(RestTemplate restClient, WebClient webClient, SettingsProvider settingsProvider) {
 		this.restClient = restClient;
+		this.webClient = webClient;
 		this.settingsProvider = settingsProvider;
 	}
 
@@ -148,6 +152,89 @@ public class ArgoClient {
 			String reason = getReasonMessage(e);
 			log.error("Failed to delete application: {}, reason: {}", applicationName, reason);
 			throw new ArgoException("Failed to delete application: " + applicationName + ", reason: " + reason, e);
+		}
+	}
+
+	public Optional<ResourceTree> getResourceTree(String applicationName) {
+		Objects.requireNonNull(applicationName, "applicationName is required");
+
+		try {
+			ArgoSettings settings = settingsProvider.getArgoSettings();
+			HttpHeaders httpHeaders = authHeaders(settings);
+			ResponseEntity<ResourceTree> get = restClient.exchange(
+				apiPath(settings) + "/applications/" + applicationName + "/resource-tree",
+				HttpMethod.GET,
+				new HttpEntity<>(httpHeaders),
+				ResourceTree.class);
+
+			ResourceTree resourceTree = get.getBody();
+			return Optional.ofNullable(resourceTree);
+
+		} catch (RestClientResponseException e) {
+			if (e instanceof HttpStatusCodeException) {
+				HttpStatusCodeException statusCodeException = (HttpStatusCodeException) e;
+				if (HttpStatus.NOT_FOUND.equals(statusCodeException.getStatusCode())) {
+					return Optional.empty();
+				}
+			}
+			String reason = getReasonMessage(e);
+			log.error("Failed to get application resource tree for: {}, reason: {}", applicationName, reason);
+			throw new ArgoException("Failed to get application resource tree for : " + applicationName + ", reason: " + reason, e);
+		}
+	}
+
+	public Optional<ArgoEvents> getEvents(String applicationName,
+										  String resourceUid,
+										  String resourceNamespace,
+										  String resourceName) {
+		Objects.requireNonNull(applicationName, "applicationName is required");
+		Objects.requireNonNull(resourceUid, "resourceUid is required");
+		Objects.requireNonNull(resourceNamespace, "resourceNamespace is required");
+		Objects.requireNonNull(resourceName, "resourceName is required");
+
+		try {
+			ArgoSettings settings = settingsProvider.getArgoSettings();
+			HttpHeaders httpHeaders = authHeaders(settings);
+			ResponseEntity<ArgoEvents> get = restClient.exchange(
+				apiPath(settings) + "/applications/" + applicationName + "/events"
+					+ "?resourceUID=" + resourceUid
+					+ "&resourceNamespace=" + resourceNamespace
+					+ "&resourceName=" + resourceName,
+				HttpMethod.GET,
+				new HttpEntity<>(httpHeaders),
+				ArgoEvents.class);
+
+			ArgoEvents argoEvents = get.getBody();
+			return Optional.ofNullable(argoEvents);
+
+		} catch (RestClientResponseException e) {
+			if (e instanceof HttpStatusCodeException) {
+				HttpStatusCodeException statusCodeException = (HttpStatusCodeException) e;
+				if (HttpStatus.NOT_FOUND.equals(statusCodeException.getStatusCode())) {
+					return Optional.empty();
+				}
+			}
+			String reason = getReasonMessage(e);
+			log.error("Failed to get application events for: {}, reason: {}", applicationName, reason);
+			throw new ArgoException("Failed to get application events for : " + applicationName + ", reason: " + reason, e);
+		}
+	}
+
+	public Flux<PodLog> getLogs(String applicationName,
+								String podName,
+								String resourceNamespace) {
+		try {
+			ArgoSettings settings = settingsProvider.getArgoSettings();
+			return webClient.get().uri(apiPath(settings) + "/applications/" + applicationName + "/pods/" + podName + "/logs"
+					+ "?follow=true"
+					+ "&namespace=" + resourceNamespace)
+				.headers(httpHeaders -> httpHeaders.putAll(authHeaders(settings)))
+				.retrieve()
+				.bodyToFlux(PodLog.class);
+
+		} catch (Exception e) {
+			log.error("Failed to get application logs for: {}, pod: {}, reason: {}", applicationName, podName, e.getMessage());
+			throw new ArgoException("Failed to get logs: " + e.getMessage(), e);
 		}
 	}
 
@@ -301,6 +388,21 @@ public class ArgoClient {
 			String reason = getReasonMessage(e);
 			log.error("Failed to connect to argocd: {}", reason);
 			throw new ArgoException("Failed to connect to argocd: " + reason, e);
+		}
+	}
+
+	public boolean silentTestConnection(ArgoSettings settings) {
+		try {
+			HttpHeaders httpHeaders = authHeaders(settings);
+			restClient.exchange(apiPath(settings) + "/clusters",
+				HttpMethod.GET,
+				new HttpEntity<>(httpHeaders),
+				String.class);
+
+			return true;
+
+		} catch (Throwable e) {
+			return false;
 		}
 	}
 

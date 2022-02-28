@@ -17,8 +17,11 @@
 package za.co.lsd.ahoy.server.releases;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.Hibernate;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 
 import javax.persistence.*;
@@ -27,10 +30,13 @@ import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 public class Release implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,12 +50,20 @@ public class Release implements Serializable {
 	@OneToMany(mappedBy = "release")
 	@JsonIgnore
 	@OrderBy("environment.id")
-	private List<EnvironmentRelease> environmentReleases;
+	@ToString.Exclude
+	private List<EnvironmentRelease> environmentReleases = new ArrayList<>();
 
 	@OneToMany(mappedBy = "release", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	@OrderBy("id")
+	@ToString.Exclude
 	private List<ReleaseVersion> releaseVersions = new ArrayList<>();
+
+	@OneToMany(mappedBy = "release", cascade = CascadeType.REMOVE, orphanRemoval = true)
+	@OrderBy("id")
+	@JsonIgnore
+	@ToString.Exclude
+	private List<ReleaseHistory> releaseHistories = new ArrayList<>();
 
 	public ReleaseVersion latestReleaseVersion() {
 		if (releaseVersions != null && releaseVersions.size() > 0) {
@@ -73,10 +87,15 @@ public class Release implements Serializable {
 	}
 
 	@Override
-	public String toString() {
-		return "Release{" +
-			"id=" + id +
-			", name='" + name + '\'' +
-			'}';
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+		Release that = (Release) o;
+		return Objects.equals(id, that.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 }

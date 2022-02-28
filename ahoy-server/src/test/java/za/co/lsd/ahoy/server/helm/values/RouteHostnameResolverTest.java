@@ -34,7 +34,8 @@ class RouteHostnameResolverTest {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
 		cluster.setHost("minikube.host");
-		Environment environment = new Environment("dev", cluster);
+		Environment environment = new Environment("dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 		Application application = new Application("app1");
@@ -52,7 +53,8 @@ class RouteHostnameResolverTest {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
 		cluster.setHost("minikube.host");
-		Environment environment = new Environment("dev", cluster);
+		Environment environment = new Environment("dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 		Application application = new Application("app1");
@@ -70,7 +72,8 @@ class RouteHostnameResolverTest {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
 		cluster.setHost("minikube.host");
-		Environment environment = new Environment("dev", cluster);
+		Environment environment = new Environment("dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 		Application application = new Application("app1");

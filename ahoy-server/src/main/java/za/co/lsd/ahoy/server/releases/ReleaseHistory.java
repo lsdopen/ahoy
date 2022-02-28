@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,30 +16,34 @@
 
 package za.co.lsd.ahoy.server.releases;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.Type;
-import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
+import za.co.lsd.ahoy.server.environments.Environment;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 public class ReleaseHistory implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToOne
-	private EnvironmentRelease environmentRelease;
+	private Environment environment;
+
+	@ManyToOne
+	private Release release;
 
 	@ManyToOne
 	private ReleaseVersion releaseVersion;
@@ -57,15 +61,15 @@ public class ReleaseHistory implements Serializable {
 	private String description;
 
 	@Override
-	public String toString() {
-		return "ReleaseHistory{" +
-			"id=" + id +
-			", environmentRelease=" + environmentRelease +
-			", releaseVersion=" + releaseVersion +
-			", action=" + action +
-			", status=" + status +
-			", time=" + time +
-			", description='" + description + '\'' +
-			'}';
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+		ReleaseHistory that = (ReleaseHistory) o;
+		return Objects.equals(id, that.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 }

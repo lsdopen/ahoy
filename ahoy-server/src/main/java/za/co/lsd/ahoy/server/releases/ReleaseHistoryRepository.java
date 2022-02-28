@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -28,5 +28,5 @@ public interface ReleaseHistoryRepository extends CrudRepository<ReleaseHistory,
 
 	@RestResource(path = "findByReleaseId", rel = "findByReleaseId")
 	@Secured({Role.user})
-	Iterable<ReleaseHistory> findTop50ByEnvironmentReleaseReleaseIdOrderByTimeDesc(long releaseId);
+	Iterable<ReleaseHistory> findTop50ByReleaseIdOrderByTimeDesc(long releaseId);
 }

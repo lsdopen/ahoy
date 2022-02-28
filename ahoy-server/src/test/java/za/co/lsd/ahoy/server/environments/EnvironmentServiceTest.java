@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -33,11 +33,9 @@ import za.co.lsd.ahoy.server.cluster.Cluster;
 import za.co.lsd.ahoy.server.cluster.ClusterRepository;
 import za.co.lsd.ahoy.server.cluster.ClusterType;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
-import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
 import za.co.lsd.ahoy.server.releases.Release;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -74,15 +72,12 @@ class EnvironmentServiceTest {
 		Cluster cluster1 = new Cluster(1L, "test-cluster-1", "https://kubernetes1.default.svc", ClusterType.KUBERNETES);
 		Cluster cluster2 = new Cluster(2L, "test-cluster-2", "https://kubernetes2.default.svc", ClusterType.KUBERNETES);
 
-		Environment environment = new Environment(1L, "dev", cluster1);
-		environment.setEnvironmentReleases(new ArrayList<>());
+		Environment environment = new Environment(1L, "dev");
+		cluster1.addEnvironment(environment);
 
 		Release release = new Release(1L, "release1");
-		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(1L, 1L);
-		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
-
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 		environmentRelease.setCurrentReleaseVersion(null);
-		environment.getEnvironmentReleases().add(environmentRelease);
 
 		when(environmentRepository.findById(1L)).thenReturn(Optional.of(environment));
 		when(clusterRepository.findById(2L)).thenReturn(Optional.of(cluster2));
@@ -107,19 +102,19 @@ class EnvironmentServiceTest {
 		Cluster cluster1 = new Cluster(1L, "test-cluster-1", "https://kubernetes1.default.svc", ClusterType.KUBERNETES);
 		Cluster cluster2 = new Cluster(2L, "test-cluster-2", "https://kubernetes2.default.svc", ClusterType.KUBERNETES);
 
-		Environment environment = new Environment(1L, "dev", cluster1);
-		environment.setEnvironmentReleases(new ArrayList<>());
+		Environment environment = new Environment(1L, "dev");
+		cluster1.addEnvironment(environment);
 
 		Release release = new Release(1L, "release1");
-		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(1L, 1L);
-		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
-		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
+		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 
 		environmentRelease.setCurrentReleaseVersion(releaseVersion);
-		environment.getEnvironmentReleases().add(environmentRelease);
 
 		// The future is needed for deploy/undeploy but the value is never used
 		Future<EnvironmentRelease> environmentReleaseFuture = mock(Future.class);
@@ -127,23 +122,23 @@ class EnvironmentServiceTest {
 
 		when(environmentRepository.findById(1L)).thenReturn(Optional.of(environment));
 		when(clusterRepository.findById(2L)).thenReturn(Optional.of(cluster2));
-		when(releaseService.undeploy(same(environmentReleaseId))).thenReturn(environmentReleaseFuture);
+		when(releaseService.undeploy(same(environmentRelease.getId()))).thenReturn(environmentReleaseFuture);
 		when(environmentRepository.save(same(environment))).thenReturn(environment);
-		when(releaseService.deploy(same(environmentReleaseId), any(DeployOptions.class))).thenReturn(environmentReleaseFuture);
+		when(releaseService.deploy(same(environmentRelease.getId()), any(DeployOptions.class))).thenReturn(environmentReleaseFuture);
 
 		// when
 		MoveOptions moveOptions = new MoveOptions(2L, true);
 		environmentService.move(1L, moveOptions);
 
 		// then
-		verify(releaseService, times(1)).undeploy(same(environmentReleaseId));
+		verify(releaseService, times(1)).undeploy(same(environmentRelease.getId()));
 
 		ArgumentCaptor<Environment> environmentArgumentCaptor = ArgumentCaptor.forClass(Environment.class);
 		verify(environmentRepository, times(1)).save(environmentArgumentCaptor.capture());
 		Environment savedEnvironment = environmentArgumentCaptor.getValue();
 		assertEquals(2L, savedEnvironment.getCluster().getId());
 
-		verify(releaseService, times(1)).deploy(same(environmentReleaseId), any(DeployOptions.class));
+		verify(releaseService, times(1)).deploy(same(environmentRelease.getId()), any(DeployOptions.class));
 		verifyNoMoreInteractions(releaseService);
 	}
 
@@ -153,19 +148,19 @@ class EnvironmentServiceTest {
 		Cluster cluster1 = new Cluster(1L, "test-cluster-1", "https://kubernetes1.default.svc", ClusterType.KUBERNETES);
 		Cluster cluster2 = new Cluster(2L, "test-cluster-2", "https://kubernetes2.default.svc", ClusterType.KUBERNETES);
 
-		Environment environment = new Environment(1L, "dev", cluster1);
-		environment.setEnvironmentReleases(new ArrayList<>());
+		Environment environment = new Environment(1L, "dev");
+		cluster1.addEnvironment(environment);
 
 		Release release = new Release(1L, "release1");
-		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(1L, 1L);
-		EnvironmentRelease environmentRelease = new EnvironmentRelease(environmentReleaseId, environment, release);
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
-		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0", release, Collections.singletonList(applicationVersion));
+		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 
 		environmentRelease.setCurrentReleaseVersion(releaseVersion);
-		environment.getEnvironmentReleases().add(environmentRelease);
 
 		// The future is needed for deploy/undeploy but the value is never used
 		Future<EnvironmentRelease> environmentReleaseFuture = mock(Future.class);
@@ -173,7 +168,7 @@ class EnvironmentServiceTest {
 
 		when(environmentRepository.findById(1L)).thenReturn(Optional.of(environment));
 		when(clusterRepository.findById(2L)).thenReturn(Optional.of(cluster2));
-		when(releaseService.undeploy(same(environmentReleaseId))).thenReturn(environmentReleaseFuture);
+		when(releaseService.undeploy(same(environmentRelease.getId()))).thenReturn(environmentReleaseFuture);
 		when(environmentRepository.save(same(environment))).thenReturn(environment);
 
 		// when
@@ -181,7 +176,7 @@ class EnvironmentServiceTest {
 		environmentService.move(1L, moveOptions);
 
 		// then
-		verify(releaseService, times(1)).undeploy(same(environmentReleaseId));
+		verify(releaseService, times(1)).undeploy(same(environmentRelease.getId()));
 
 		ArgumentCaptor<Environment> environmentArgumentCaptor = ArgumentCaptor.forClass(Environment.class);
 		verify(environmentRepository, times(1)).save(environmentArgumentCaptor.capture());

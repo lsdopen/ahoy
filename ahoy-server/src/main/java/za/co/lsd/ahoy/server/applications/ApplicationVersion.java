@@ -18,22 +18,27 @@ package za.co.lsd.ahoy.server.applications;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.Hibernate;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.*;
 
 @Entity
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Table(uniqueConstraints = @UniqueConstraint(name = "application_version", columnNames = {"application_id", "version"}))
 public class ApplicationVersion implements Serializable {
 	@Id
@@ -57,7 +62,7 @@ public class ApplicationVersion implements Serializable {
 	@OrderBy("id")
 	@JsonIgnore
 	@ToString.Exclude
-	private List<ReleaseVersion> releaseVersions;
+	private List<ReleaseVersion> releaseVersions = new ArrayList<>();
 
 	public ApplicationVersion(@NotNull String version, Application application) {
 		this.version = version;
@@ -91,9 +96,9 @@ public class ApplicationVersion implements Serializable {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
 		ApplicationVersion that = (ApplicationVersion) o;
-		return id.equals(that.id);
+		return Objects.equals(id, that.id);
 	}
 
 	@Override

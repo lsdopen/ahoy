@@ -1,3 +1,19 @@
+/*
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
 package za.co.lsd.ahoy.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,15 +32,19 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import za.co.lsd.ahoy.server.argocd.model.ArgoEvents;
 import za.co.lsd.ahoy.server.cluster.Cluster;
 import za.co.lsd.ahoy.server.cluster.ClusterType;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.releases.*;
+import za.co.lsd.ahoy.server.releases.resources.ResourceNode;
 import za.co.lsd.ahoy.server.security.Role;
 import za.co.lsd.ahoy.server.security.Scope;
 
+import java.util.Collections;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static org.mockito.Mockito.*;
@@ -342,13 +362,90 @@ public class ReleaseControllerTest {
 		verifyNoInteractions(releaseService);
 	}
 
+	@Test
+	@WithMockUser(authorities = {Scope.ahoy, Role.developer})
+	void getResources() throws Exception {
+		// given
+		EnvironmentRelease environmentRelease = testEnvRelease(1L, 2L, 3L);
+		EnvironmentReleaseId environmentReleaseId = environmentRelease.getId();
+		ResourceNode resourceNode = new ResourceNode("root");
+
+		when(releaseService.getResources(eq(environmentReleaseId))).thenReturn(Optional.of(resourceNode));
+
+		// when
+		mvc.perform(get("/api/environmentReleases/2_3/resources")
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.name").value("root"));
+
+		// then
+		verify(releaseService, times(1)).getResources(eq(environmentReleaseId));
+	}
+
+	@Test
+	@WithMockUser(authorities = {Scope.ahoy, Role.user})
+	void getResourcesAsUser() throws Exception {
+		// when
+		mvc.perform(get("/api/environmentReleases/2_3/resources")
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().is(403));
+
+		// then
+		verifyNoInteractions(releaseService);
+	}
+
+	@Test
+	@WithMockUser(authorities = {Scope.ahoy, Role.developer})
+	void getEvents() throws Exception {
+		// given
+		EnvironmentRelease environmentRelease = testEnvRelease(1L, 2L, 3L);
+		EnvironmentReleaseId environmentReleaseId = environmentRelease.getId();
+		ArgoEvents.Event event = new ArgoEvents.Event();
+		event.setMessage("Test event");
+		ArgoEvents argoEvents = new ArgoEvents(Collections.singletonList(event));
+
+		when(releaseService.getEvents(eq(environmentReleaseId), eq("abcd"), eq("release1-dev"), eq("release1-app"))).thenReturn(Optional.of(argoEvents));
+
+		// when
+		mvc.perform(get("/api/environmentReleases/2_3/events")
+				.contentType(MediaType.APPLICATION_JSON)
+				.param("resourceUid", "abcd")
+				.param("resourceNamespace", "release1-dev")
+				.param("resourceName", "release1-app")
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.items[0].message").value("Test event"));
+
+		// then
+		verify(releaseService, times(1)).getEvents(eq(environmentReleaseId), eq("abcd"), eq("release1-dev"), eq("release1-app"));
+	}
+
+	@Test
+	@WithMockUser(authorities = {Scope.ahoy, Role.user})
+	void getEventsAsUser() throws Exception {
+		// when
+		mvc.perform(get("/api/environmentReleases/2_3/events")
+				.contentType(MediaType.APPLICATION_JSON)
+				.param("resourceUid", "abcd")
+				.param("resourceNamespace", "release1-dev")
+				.param("resourceName", "release1-app")
+			)
+			.andDo(print())
+			.andExpect(status().is(403));
+
+		// then
+		verifyNoInteractions(releaseService);
+	}
+
 	private EnvironmentRelease testEnvRelease(Long clusterId, Long environmentId, Long releaseId) {
 		Cluster cluster = new Cluster(clusterId, "test-cluster-1", "https://kubernetes1.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(environmentId, "dev", cluster);
+		Environment environment = new Environment(environmentId, "dev");
+		cluster.addEnvironment(environment);
 		Release release = new Release(releaseId, "release1");
-		EnvironmentReleaseId environmentReleaseId = new EnvironmentReleaseId(environment.getId(), release.getId());
-
-		return new EnvironmentRelease(environmentReleaseId, environment, release);
+		return new EnvironmentRelease(environment, release);
 	}
 
 	private String json(Object obj) throws JsonProcessingException {

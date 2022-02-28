@@ -43,6 +43,7 @@ import {SettingsComponent} from './settings/settings.component';
 import {SettingsGuard} from './settings/settings.guard';
 import {Role} from './util/auth';
 import {AuthGuard} from './util/auth.guard';
+import {ReleaseResourcesComponent} from './release-manage/release-resources/release-resources.component';
 
 const routes: Routes = [
   {
@@ -74,6 +75,10 @@ const routes: Routes = [
       },
       {
         path: 'release/:environmentId/:releaseId/config/:relVersionId/:appVersionId', component: ReleaseApplicationEnvironmentConfigComponent,
+        canActivate: [AuthGuard], data: {roles: [Role.admin, Role.releasemanager, Role.developer]}
+      },
+      {
+        path: 'release/:environmentId/:releaseId/resources', component: ReleaseResourcesComponent,
         canActivate: [AuthGuard], data: {roles: [Role.admin, Role.releasemanager, Role.developer]}
       },
 

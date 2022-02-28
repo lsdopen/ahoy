@@ -1,0 +1,207 @@
+{
+	"nodes": [
+		{
+			"version": "v1",
+			"kind": "Endpoints",
+			"namespace": "release1-dev",
+			"name": "release1-app1",
+			"uid": "abdb9857-44d4-492d-bafe-e79ebbb574b8",
+			"parentRefs": [
+				{
+					"kind": "Service",
+					"namespace": "release1-dev",
+					"name": "release1-app1",
+					"uid": "6d14f23d-ac19-4de8-ac7f-7a3f8ca0baf7"
+				}
+			],
+			"resourceVersion": "440296",
+			"createdAt": "2022-02-01T12:24:41Z"
+		},
+		{
+			"version": "v1",
+			"kind": "Pod",
+			"namespace": "release1-dev",
+			"name": "release1-app1-668d768f76-srkvg",
+			"uid": "65c5ee7d-d32c-4901-b2ae-5958c186f55a",
+			"parentRefs": [
+				{
+					"group": "apps",
+					"kind": "ReplicaSet",
+					"namespace": "release1-dev",
+					"name": "release1-app1-668d768f76",
+					"uid": "34126717-382e-4c64-99c3-2ae6e072e4fc"
+				}
+			],
+			"info": [
+				{
+					"name": "Status Reason",
+					"value": "Running"
+				},
+				{
+					"name": "Node",
+					"value": "minikube"
+				},
+				{
+					"name": "Containers",
+					"value": "1/1"
+				},
+				{
+					"name": "Restart Count",
+					"value": "1"
+				}
+			],
+			"networkingInfo": {
+				"labels": {
+					"app": "app1",
+					"environment": "dev",
+					"manager": "ahoy",
+					"pod-template-hash": "668d768f76",
+					"releaseName": "release1"
+				}
+			},
+			"resourceVersion": "440294",
+			"images": [
+				"clivebor/spring-helloworld"
+			],
+			"health": {
+				"status": "Healthy"
+			},
+			"createdAt": "2022-02-01T12:24:41Z"
+		},
+		{
+			"version": "v1",
+			"kind": "Service",
+			"namespace": "release1-dev",
+			"name": "release1-app1",
+			"uid": "6d14f23d-ac19-4de8-ac7f-7a3f8ca0baf7",
+			"networkingInfo": {
+				"targetLabels": {
+					"app": "app1",
+					"releaseName": "release1"
+				}
+			},
+			"resourceVersion": "440897",
+			"health": {
+				"status": "Healthy"
+			},
+			"createdAt": "2022-02-01T12:24:41Z"
+		},
+		{
+			"group": "apps",
+			"version": "v1",
+			"kind": "Deployment",
+			"namespace": "release1-dev",
+			"name": "release1-app1",
+			"uid": "823e2450-9785-46c2-bc6a-f015864ca78e",
+			"info": [
+				{
+					"name": "Revision",
+					"value": "Rev:1"
+				}
+			],
+			"resourceVersion": "440299",
+			"health": {
+				"status": "Healthy"
+			},
+			"createdAt": "2022-02-01T12:24:41Z"
+		},
+		{
+			"group": "apps",
+			"version": "v1",
+			"kind": "ReplicaSet",
+			"namespace": "release1-dev",
+			"name": "release1-app1-668d768f76",
+			"uid": "34126717-382e-4c64-99c3-2ae6e072e4fc",
+			"parentRefs": [
+				{
+					"group": "apps",
+					"kind": "Deployment",
+					"namespace": "release1-dev",
+					"name": "release1-app1",
+					"uid": "823e2450-9785-46c2-bc6a-f015864ca78e"
+				}
+			],
+			"info": [
+				{
+					"name": "Revision",
+					"value": "Rev:1"
+				}
+			],
+			"resourceVersion": "440297",
+			"health": {
+				"status": "Healthy"
+			},
+			"createdAt": "2022-02-01T12:24:41Z"
+		},
+		{
+			"group": "discovery.k8s.io",
+			"version": "v1",
+			"kind": "EndpointSlice",
+			"namespace": "release1-dev",
+			"name": "release1-app1-sgpcd",
+			"uid": "30bf66f4-7c09-4eb2-9ee6-9a692e2dfac9",
+			"parentRefs": [
+				{
+					"kind": "Service",
+					"namespace": "release1-dev",
+					"name": "release1-app1",
+					"uid": "6d14f23d-ac19-4de8-ac7f-7a3f8ca0baf7"
+				}
+			],
+			"resourceVersion": "440295",
+			"createdAt": "2022-02-01T12:24:41Z"
+		},
+		{
+			"group": "networking.k8s.io",
+			"version": "v1",
+			"kind": "Ingress",
+			"namespace": "release1-dev",
+			"name": "release1-app1",
+			"uid": "4277c4fe-0828-416f-bb4d-b90670ee5c0a",
+			"networkingInfo": {
+				"ingress": [
+					{
+						"ip": "192.168.64.3"
+					}
+				],
+				"externalURLs": [
+					"http://release1-app1-dev.minikube.host/"
+				]
+			},
+			"resourceVersion": "440904",
+			"health": {
+				"status": "Healthy"
+			},
+			"createdAt": "2022-02-02T07:36:32Z"
+		}
+	],
+	"hosts": [
+		{
+			"name": "minikube",
+			"resourcesInfo": [
+				{
+					"resourceName": "cpu",
+					"requestedByNeighbors": 1370,
+					"capacity": 6000
+				},
+				{
+					"resourceName": "memory",
+					"requestedByNeighbors": 843055104000,
+					"capacity": 4129591296000
+				}
+			],
+			"systemInfo": {
+				"machineID": "456cfb7d320040f19a79f33122941a89",
+				"systemUUID": "ae5f11ec-0000-0000-8988-acde48001122",
+				"bootID": "a6974c5c-4e07-416e-b851-0a4cd7681d9c",
+				"kernelVersion": "4.19.202",
+				"osImage": "Buildroot 2021.02.4",
+				"containerRuntimeVersion": "docker://20.10.8",
+				"kubeletVersion": "v1.22.2",
+				"kubeProxyVersion": "v1.22.2",
+				"operatingSystem": "linux",
+				"architecture": "amd64"
+			}
+		}
+	]
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -81,11 +81,7 @@ public class EnvironmentService {
 		List<EnvironmentRelease> sourceEnvironmentReleases = sourceEnvironment.getEnvironmentReleases();
 		for (EnvironmentRelease sourceEnvironmentRelease : sourceEnvironmentReleases) {
 
-			EnvironmentRelease newEnvironmentRelease = new EnvironmentRelease();
-			newEnvironmentRelease.setId(new EnvironmentReleaseId());
-			newEnvironmentRelease.setRelease(sourceEnvironmentRelease.getRelease());
-			newEnvironmentRelease.setEnvironment(destEnvironment);
-
+			EnvironmentRelease newEnvironmentRelease = new EnvironmentRelease(destEnvironment, sourceEnvironmentRelease.getRelease());
 			environmentReleaseRepository.save(newEnvironmentRelease);
 		}
 		return destEnvironment;

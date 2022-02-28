@@ -43,6 +43,10 @@
               <button pButton pRipple label="Promote" icon="pi pi-folder" class="p-button-info mr-2 mb-2" *ngIf="canPromote()" (click)="promote()"></button>
               <button pButton pRipple label="Upgrade" icon="pi pi-upload" class="p-button-info mr-2 mb-2" *ngIf="canUpgrade()" (click)="upgrade()"></button>
             </div>
+            <div *appUserRole="[Role.admin, Role.releasemanager, Role.developer]">
+              <button pButton pRipple label="" icon="pi pi-sitemap" class="p-button-info mr-2 mb-2" *ngIf="canShowResources()" routerLink="/release/{{environmentRelease.environment.id}}/{{environmentRelease.release.id}}/resources"
+                      pTooltip="View Resources and Events"></button>
+            </div>
           </ng-template>
 
           <ng-template pTemplate="right">

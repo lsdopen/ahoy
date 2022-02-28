@@ -37,7 +37,7 @@
 
       <p-table #dt [value]="releaseHistories" dataKey="id" selectionMode="single"
                styleClass="p-datatable-releaseHistories p-datatable-striped p-datatable-sm"
-               [filterDelay]="0" [globalFilterFields]="['releaseVersion.version', 'action', 'status', 'environmentRelease.environment.name', 'environmentRelease.environment.cluster.name']"
+               [filterDelay]="0" [globalFilterFields]="['releaseVersion.version', 'action', 'status', 'environment.name', 'environment.cluster.name']"
                *ngIf="releaseHistories && releaseHistories.length > 0">
         <ng-template pTemplate="caption">
           <div class="flex flex-column md:flex-row md:justify-content-between table-header">
@@ -58,11 +58,11 @@
             <th pSortableColumn="status">Status
               <p-sortIcon field="status"></p-sortIcon>
             </th>
-            <th pSortableColumn="environmentRelease.environment.name">Environment
-              <p-sortIcon field="environmentRelease.environment.name"></p-sortIcon>
+            <th pSortableColumn="environment.name">Environment
+              <p-sortIcon field="environment.name"></p-sortIcon>
             </th>
-            <th pSortableColumn="environmentRelease.environment.cluster.name">Cluster
-              <p-sortIcon field="environmentRelease.environment.cluster.name"></p-sortIcon>
+            <th pSortableColumn="environment.cluster.name">Cluster
+              <p-sortIcon field="environment.cluster.name"></p-sortIcon>
             </th>
             <th pSortableColumn="time">Date
               <p-sortIcon field="time"></p-sortIcon>
@@ -73,27 +73,28 @@
         <ng-template pTemplate="body" let-rh>
           <tr>
             <td><span class="p-column-title">Version</span>
-              {{rh.releaseVersion.version}}
+              {{rh.releaseVersion ? rh.releaseVersion.version : '-'}}
             </td>
             <td><span class="p-column-title">Action</span>
               {{rh.action | titlecase}}
             </td>
             <td><span class="p-column-title">Status</span>
-              {{rh.status | titlecase}}
+              <span [class]="'status-badge status-' + (rh.status | lowercase)">{{rh.status}}</span>
             </td>
             <td><span class="p-column-title">Environment</span>
-              {{rh.environmentRelease.environment.name}}
+              {{rh.environment ? rh.environment.name : '-'}}
             </td>
             <td><span class="p-column-title">Cluster</span>
-              {{rh.environmentRelease.environment.cluster.name}}
+              {{rh.environment ? rh.environment.cluster.name : '-'}}
             </td>
             <td><span class="p-column-title">Date</span>
               {{rh.time | date:'short'}}
             </td>
             <td>
               <button pButton pRipple icon="pi pi-chevron-circle-right" class="p-button-rounded p-button-info mr-2"
-                      routerLink="/release/{{rh.environmentRelease.id.environmentId}}/{{rh.environmentRelease.id.releaseId}}/version/{{rh.releaseVersion.id}}"
-                      pTooltip="Manage release"></button>
+                      routerLink="/release/{{rh.environment.id}}/{{rh.release.id}}/version/{{rh.releaseVersion.id}}"
+                      pTooltip="Manage release"
+                      *ngIf="rh.environment && rh.release && rh.releaseVersion"></button>
               <button pButton pRipple icon="pi pi-info" class="p-button-rounded p-button-info"
                       (click)="showDescription($event, rh)"></button>
             </td>

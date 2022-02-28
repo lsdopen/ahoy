@@ -1,0 +1,111 @@
+/*!
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+.type-badge {
+  border-radius: 2px;
+  padding: .25em .5rem;
+  //text-transform: uppercase;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: .3px;
+
+  &.type-normal {
+    background: #C8E6C9;
+    color: #256029;
+  }
+
+  &.type-warning {
+    background: #FEEDAF;
+    color: #8A5340;
+  }
+
+  &.type-error {
+    background: #FFCDD2;
+    color: #C63737;
+  }
+}
+
+.logs-text {
+  width: 100%;
+  white-space: pre;
+  box-sizing: border-box;
+  font-family: monospace
+}
+
+:host ::ng-deep {
+  .table-header {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .p-datatable.p-datatable-events {
+    .p-datatable-header {
+      padding: 1rem;
+      text-align: left;
+      font-size: 1.5rem;
+    }
+
+    .p-datatable-thead > tr > th {
+      text-align: left;
+    }
+  }
+
+  .p-datatable.p-datatable-events:not(.p-datatable-gridlines) {
+    .p-datatable-tbody > tr > td {
+      cursor: auto;
+    }
+  }
+
+  /* Responsive */
+  .p-datatable-events .p-datatable-tbody > tr > td .p-column-title {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 960px) {
+  :host ::ng-deep {
+    .p-datatable {
+      &.p-datatable-events {
+        .p-datatable-thead > tr > th,
+        .p-datatable-tfoot > tr > td {
+          display: none !important;
+        }
+
+        .p-datatable-tbody > tr {
+          border-bottom: 1px solid var(--surface-d);
+
+          > td {
+            text-align: left;
+            display: block;
+            border: 0 none !important;
+            width: 100% !important;
+            float: left;
+            clear: left;
+            border: 0 none;
+
+            .p-column-title {
+              padding: .4rem;
+              min-width: 30%;
+              display: inline-block;
+              margin: -.4rem 1rem -.4rem -.4rem;
+              font-weight: bold;
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,9 +17,11 @@
 package za.co.lsd.ahoy.server.environments;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.Hibernate;
 import za.co.lsd.ahoy.server.cluster.Cluster;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 
@@ -27,11 +29,15 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 public class Environment implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,17 +59,15 @@ public class Environment implements Serializable {
 	@OrderBy("environment.id")
 	@JsonIgnore
 	@ToString.Exclude
-	private List<EnvironmentRelease> environmentReleases;
+	private List<EnvironmentRelease> environmentReleases = new ArrayList<>();
 
-	public Environment(@NotNull String name, Cluster cluster) {
+	public Environment(@NotNull String name) {
 		this.name = name;
-		this.cluster = cluster;
 	}
 
-	public Environment(Long id, @NotNull String name, Cluster cluster) {
+	public Environment(Long id, @NotNull String name) {
 		this.id = id;
 		this.name = name;
-		this.cluster = cluster;
 	}
 
 	public Environment(EnvironmentDTO dto) {
@@ -71,5 +75,18 @@ public class Environment implements Serializable {
 		this.name = dto.getName();
 		this.cluster = new Cluster(dto.getCluster());
 		this.orderIndex = dto.getOrderIndex();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+		Environment that = (Environment) o;
+		return Objects.equals(id, that.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 }

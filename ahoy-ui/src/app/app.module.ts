@@ -121,6 +121,8 @@ import {TaskEventsListenerComponent} from './taskevents/task-events-listener/tas
 import {AutofocusDirective} from './util/autofocus.directive';
 import {ErrorService} from './util/error.service';
 import {UserRoleDirective} from './util/user-role.directive';
+import {ReleaseResourcesComponent} from './release-manage/release-resources/release-resources.component';
+import {TreeModule} from 'primeng/tree';
 
 @NgModule({
   declarations: [
@@ -189,7 +191,8 @@ import {UserRoleDirective} from './util/user-role.directive';
     AppErrorComponent,
     UserRoleDirective,
     AutofocusDirective,
-    AppearanceSettingsComponent
+    AppearanceSettingsComponent,
+    ReleaseResourcesComponent
   ],
   imports: [
     BrowserModule,
@@ -231,7 +234,8 @@ import {UserRoleDirective} from './util/user-role.directive';
     MessagesModule,
     TagModule,
     AccordionModule,
-    InputNumberModule
+    InputNumberModule,
+    TreeModule
   ],
   providers: [
     {provide: ErrorHandler, useClass: ErrorService},
