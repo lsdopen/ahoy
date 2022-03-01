@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ export class ApplicationVersionDetailComponent implements OnInit {
   volumesCategory = false;
   secretsCategory = false;
   commandCategory = false;
+  resourcesCategory = false;
   newArg: string;
   editingArg: string;
   editingPort: number;
@@ -151,6 +152,12 @@ export class ApplicationVersionDetailComponent implements OnInit {
     if (this.applicationVersion.spec.command ||
       (this.applicationVersion.spec.args && this.applicationVersion.spec.args.length > 0)) {
       this.commandCategory = true;
+    }
+
+    if (this.applicationVersion.spec.resources && (
+      this.applicationVersion.spec.resources.limitCpu || this.applicationVersion.spec.resources.limitMemory ||
+      this.applicationVersion.spec.resources.requestCpu || this.applicationVersion.spec.resources.requestMemory)) {
+      this.resourcesCategory = true;
     }
   }
 

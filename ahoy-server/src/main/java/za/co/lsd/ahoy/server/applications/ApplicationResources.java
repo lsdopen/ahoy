@@ -16,37 +16,19 @@
 
 package za.co.lsd.ahoy.server.applications;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
-public class ApplicationEnvironmentSpec {
-	private Integer replicas;
+@AllArgsConstructor
+public class ApplicationResources {
+	private Long limitCpu;
+	private Long limitMemory;
+	private QuantityUnit limitMemoryUnit;
 
-	private String routeHostname;
-	private Integer routeTargetPort;
-	private boolean tls;
-	private String tlsSecretName;
-
-	private List<ApplicationEnvironmentVariable> environmentVariables;
-
-	private List<ApplicationConfigFile> configFiles;
-
-	private List<ApplicationVolume> volumes;
-
-	private List<ApplicationSecret> secrets;
-
-	private ApplicationResources resources;
-
-	public ApplicationEnvironmentSpec(String routeHostname) {
-		this.routeHostname = routeHostname;
-	}
-
-	public ApplicationEnvironmentSpec(String routeHostname, Integer routeTargetPort) {
-		this.routeHostname = routeHostname;
-		this.routeTargetPort = routeTargetPort;
-	}
+	private Long requestCpu;
+	private Long requestMemory;
+	private QuantityUnit requestMemoryUnit;
 }

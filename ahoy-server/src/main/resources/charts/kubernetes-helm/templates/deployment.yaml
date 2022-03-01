@@ -92,7 +92,12 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           {{ end }}
+          {{ if .app.resources }}
+          resources:
+            {{- toYaml .app.resources | nindent 12 }}
+          {{ else }}
           resources: {}
+          {{ end }}
           {{ if or .app.configFiles .app.volumes }}
           volumeMounts:
             {{ if and .app.configPath .app.configFiles}}

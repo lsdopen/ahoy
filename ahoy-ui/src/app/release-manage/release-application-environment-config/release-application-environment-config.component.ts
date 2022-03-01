@@ -46,6 +46,7 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   configFileCategory = false;
   volumesCategory = false;
   secretsCategory = false;
+  resourcesCategory = false;
 
   constructor(private log: LoggerService,
               private route: ActivatedRoute,
@@ -126,6 +127,12 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
 
     if (this.environmentConfig.spec.secrets.length > 0) {
       this.secretsCategory = true;
+    }
+
+    if (this.environmentConfig.spec.resources && (
+      this.environmentConfig.spec.resources.limitCpu || this.environmentConfig.spec.resources.limitMemory ||
+      this.environmentConfig.spec.resources.requestCpu || this.environmentConfig.spec.resources.requestMemory)) {
+      this.resourcesCategory = true;
     }
   }
 

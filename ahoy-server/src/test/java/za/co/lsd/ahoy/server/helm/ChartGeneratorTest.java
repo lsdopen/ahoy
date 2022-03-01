@@ -16,6 +16,7 @@
 
 package za.co.lsd.ahoy.server.helm;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,6 +53,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AhoyServerApplication.class)
 @ActiveProfiles(profiles = {"test", "keycloak"})
+@Slf4j
 public class ChartGeneratorTest {
 	@Autowired
 	private ChartGenerator chartGenerator;
@@ -122,6 +124,7 @@ public class ChartGeneratorTest {
 			"secret-generic.yaml");
 
 		Path valuesPath = basePath.resolve("values.yaml");
+		log.info("Values: \n" + Files.readString(valuesPath));
 		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
 
 		ApplicationValues expectedApplicationValues = ApplicationValues.builder()
@@ -201,6 +204,9 @@ public class ChartGeneratorTest {
 		);
 		spec.setSecrets(appSecrets);
 
+		ApplicationResources resources = new ApplicationResources(1000L, 100L, QuantityUnit.Mi, 500L, 50L, QuantityUnit.Mi);
+		spec.setResources(resources);
+
 		List<ApplicationEnvironmentVariable> environmentVariablesEnv = Arrays.asList(
 			new ApplicationEnvironmentVariable("DEV_ENV", "VAR"),
 			new ApplicationEnvironmentVariable("SECRET_DEV_ENV", "my-secret", "secret-key")
@@ -215,6 +221,9 @@ public class ChartGeneratorTest {
 
 		List<ApplicationSecret> envSecrets = Collections.singletonList(new ApplicationSecret("my-env-secret", SecretType.Generic, Collections.singletonMap("env-secret-key", "env-secret-value")));
 		environmentSpec.setSecrets(envSecrets);
+
+		ApplicationResources envResources = new ApplicationResources(1200L, 120L, QuantityUnit.Mi, null, null, QuantityUnit.Mi);
+		environmentSpec.setResources(envResources);
 
 		DockerRegistry dockerRegistry = new DockerRegistry("docker-registry", "docker-server", "username", "password");
 		when(dockerRegistryProvider.dockerRegistryFor(eq("docker-registry"))).thenReturn(Optional.of(dockerRegistry));
@@ -248,6 +257,7 @@ public class ChartGeneratorTest {
 			"secret-generic-app1.yaml");
 
 		Path valuesPath = basePath.resolve("values.yaml");
+		log.info("Values: \n" + Files.readString(valuesPath));
 		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
 
 		Map<String, EnvironmentVariableValues> expectedEnvironmentVariables = new LinkedHashMap<>();
@@ -298,6 +308,10 @@ public class ChartGeneratorTest {
 			.configFileHashes(configFileHashes)
 			.volumes(volumes)
 			.secrets(secrets)
+			.resources(new ResourcesValues(
+				new ResourcesValues.ResourceValue("1200m", "120Mi"),
+				new ResourcesValues.ResourceValue("500m", "50Mi")
+			))
 			.build();
 		Map<String, ApplicationValues> expectedApps = new LinkedHashMap<>();
 		expectedApps.put("app1", expectedApplicationValues);
@@ -362,6 +376,9 @@ public class ChartGeneratorTest {
 		);
 		environmentSpec.setSecrets(envSecrets);
 
+		ApplicationResources envResources = new ApplicationResources(1200L, 120L, QuantityUnit.Mi, 520L, 52L, QuantityUnit.Mi);
+		environmentSpec.setResources(envResources);
+
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.of(environmentConfig));
 
 		Path basePath = repoPath.resolve(cluster.getName()).resolve(environment.getName()).resolve(release.getName());
@@ -391,6 +408,7 @@ public class ChartGeneratorTest {
 			"secret-generic-app1.yaml");
 
 		Path valuesPath = basePath.resolve("values.yaml");
+		log.info("Values: \n" + Files.readString(valuesPath));
 		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
 
 		Map<String, EnvironmentVariableValues> expectedEnvironmentVariables = new LinkedHashMap<>();
@@ -427,6 +445,10 @@ public class ChartGeneratorTest {
 			.configFileHashes(configFileHashes)
 			.volumes(volumes)
 			.secrets(secrets)
+			.resources(new ResourcesValues(
+				new ResourcesValues.ResourceValue("1200m", "120Mi"),
+				new ResourcesValues.ResourceValue("520m", "52Mi")
+			))
 			.build();
 		Map<String, ApplicationValues> expectedApps = new LinkedHashMap<>();
 		expectedApps.put("app1", expectedApplicationValues);

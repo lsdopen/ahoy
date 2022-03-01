@@ -138,6 +138,12 @@
 
             </p-accordionTab>
 
+            <p-accordionTab header="Resources" [(selected)]="resourcesCategory">
+
+              <app-application-resources [resources]="environmentConfig.spec.resources"></app-application-resources>
+
+            </p-accordionTab>
+
           </p-accordion>
         </div>
 

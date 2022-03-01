@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ export class ApplicationSpec {
   configFiles: ApplicationConfigFile[] = [];
   volumes: ApplicationVolume[] = [];
   secrets: ApplicationSecret[] = [];
+  resources = new ApplicationResources();
 }
 
 export class ApplicationEnvironmentVariable {
@@ -111,6 +112,7 @@ export class ApplicationEnvironmentSpec {
   configFiles: ApplicationConfigFile[] = [];
   volumes: ApplicationVolume[] = [];
   secrets: ApplicationSecret[] = [];
+  resources = new ApplicationResources();
 }
 
 export class ApplicationEnvironmentConfigId {
@@ -136,4 +138,14 @@ export class ApplicationEnvironmentConfigIdUtil {
 export class ApplicationReleaseStatus {
   id: ApplicationEnvironmentConfigId;
   status: string;
+}
+
+export class ApplicationResources {
+  limitCpu: number;
+  limitMemory: number;
+  limitMemoryUnit = 'Mi';
+
+  requestCpu: number;
+  requestMemory: number;
+  requestMemoryUnit = 'Mi';
 }

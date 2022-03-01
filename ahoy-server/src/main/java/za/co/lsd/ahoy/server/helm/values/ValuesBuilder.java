@@ -136,6 +136,11 @@ public class ValuesBuilder {
 			}
 		}
 
+		ResourcesValues resourcesValues = new ResourcesValues();
+		if (spec.getResources() != null) {
+			resourcesValues.spec(spec.getResources());
+		}
+
 		if (environmentConfig != null) {
 			ApplicationEnvironmentSpec environmentSpec = environmentConfig.getSpec();
 			if (environmentSpec.getEnvironmentVariables() != null) {
@@ -163,6 +168,10 @@ public class ValuesBuilder {
 				}
 			}
 
+			if (environmentSpec.getResources() != null) {
+				resourcesValues.spec(environmentSpec.getResources());
+			}
+
 			builder
 				.replicas(environmentSpec.getReplicas() != null ? environmentSpec.getReplicas() : 1)
 				.routeHostname(routeHostnameResolver.resolve(environmentRelease, applicationVersion.getApplication(), environmentSpec.getRouteHostname()))
@@ -172,6 +181,10 @@ public class ValuesBuilder {
 
 		} else {
 			builder.replicas(1);
+		}
+
+		if (resourcesValues.hasValues()) {
+			builder.resources(resourcesValues);
 		}
 
 		builder

@@ -123,6 +123,7 @@ import {ErrorService} from './util/error.service';
 import {UserRoleDirective} from './util/user-role.directive';
 import {ReleaseResourcesComponent} from './release-manage/release-resources/release-resources.component';
 import {TreeModule} from 'primeng/tree';
+import {ApplicationResourcesComponent} from './applications/application-resources/application-resources.component';
 
 @NgModule({
   declarations: [
@@ -192,7 +193,8 @@ import {TreeModule} from 'primeng/tree';
     UserRoleDirective,
     AutofocusDirective,
     AppearanceSettingsComponent,
-    ReleaseResourcesComponent
+    ReleaseResourcesComponent,
+    ApplicationResourcesComponent
   ],
   imports: [
     BrowserModule,
