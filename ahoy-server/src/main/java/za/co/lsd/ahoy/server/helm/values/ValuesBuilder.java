@@ -100,6 +100,8 @@ public class ValuesBuilder {
 			.healthEndpointPath(spec.getHealthEndpointPath())
 			.healthEndpointPort(spec.getHealthEndpointPort())
 			.healthEndpointScheme(spec.getHealthEndpointScheme())
+			.livenessProbe(spec.getLivenessProbe())
+			.readinessProbe(spec.getReadinessProbe())
 			.configPath(spec.getConfigPath());
 
 		Optional<DockerRegistry> dockerRegistry = dockerRegistryProvider.dockerRegistryFor(spec.getDockerRegistryName());

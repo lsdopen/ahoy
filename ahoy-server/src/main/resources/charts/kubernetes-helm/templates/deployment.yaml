@@ -72,25 +72,21 @@ spec:
           {{ end }}
           {{ if and .app.healthEndpointPath .app.healthEndpointPort .app.healthEndpointScheme }}
           livenessProbe:
-            failureThreshold: 3
             httpGet:
               path: {{ .app.healthEndpointPath }}
               port: {{ .app.healthEndpointPort }}
               scheme: {{ .app.healthEndpointScheme }}
-            initialDelaySeconds: 60
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 5
+            {{ if .app.livenessProbe }}
+            {{- toYaml .app.livenessProbe | nindent 12 }}
+            {{ end }}
           readinessProbe:
-            failureThreshold: 3
             httpGet:
               path: {{ .app.healthEndpointPath }}
               port: {{ .app.healthEndpointPort }}
               scheme: {{ .app.healthEndpointScheme }}
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 5
+            {{ if .app.readinessProbe }}
+            {{- toYaml .app.readinessProbe | nindent 12 }}
+            {{ end }}
           {{ end }}
           {{ if .app.resources }}
           resources:

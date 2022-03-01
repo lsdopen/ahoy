@@ -20,6 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import za.co.lsd.ahoy.server.applications.ApplicationProbe;
 
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,8 @@ public class ApplicationValues {
 	public String healthEndpointPath;
 	public Integer healthEndpointPort;
 	public String healthEndpointScheme;
+	private ApplicationProbe livenessProbe;
+	private ApplicationProbe readinessProbe;
 	public Map<String, ApplicationConfigFileValues> configFiles;
 	public String configFileHashes;
 	public String configPath;

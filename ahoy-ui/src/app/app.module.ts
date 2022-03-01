@@ -124,6 +124,7 @@ import {UserRoleDirective} from './util/user-role.directive';
 import {ReleaseResourcesComponent} from './release-manage/release-resources/release-resources.component';
 import {TreeModule} from 'primeng/tree';
 import {ApplicationResourcesComponent} from './applications/application-resources/application-resources.component';
+import {ApplicationProbeComponent} from './applications/application-probe/application-probe.component';
 
 @NgModule({
   declarations: [
@@ -194,7 +195,8 @@ import {ApplicationResourcesComponent} from './applications/application-resource
     AutofocusDirective,
     AppearanceSettingsComponent,
     ReleaseResourcesComponent,
-    ApplicationResourcesComponent
+    ApplicationResourcesComponent,
+    ApplicationProbeComponent
   ],
   imports: [
     BrowserModule,

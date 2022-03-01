@@ -183,6 +183,15 @@
                 </div>
               </div>
 
+              <p-tabView orientation="left">
+                <p-tabPanel header="Liveness probe">
+                  <app-application-probe [probe]="applicationVersion.spec.livenessProbe"></app-application-probe>
+                </p-tabPanel>
+                <p-tabPanel header="Readiness probe">
+                  <app-application-probe [probe]="applicationVersion.spec.readinessProbe"></app-application-probe>
+                </p-tabPanel>
+              </p-tabView>
+
             </p-accordionTab>
             <p-accordionTab header="Environment Variables" [(selected)]="environmentVariablesCategory">
 

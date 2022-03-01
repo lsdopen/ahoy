@@ -42,6 +42,8 @@ export class ApplicationSpec {
   healthEndpointPath: string;
   healthEndpointPort: number;
   healthEndpointScheme = 'HTTP';
+  livenessProbe = new ApplicationProbe(60, 10, 5, 1, 3);
+  readinessProbe = new ApplicationProbe(10, 10, 5, 1, 3);
   environmentVariables: ApplicationEnvironmentVariable[] = [];
   configPath: string;
   configFiles: ApplicationConfigFile[] = [];
@@ -148,4 +150,20 @@ export class ApplicationResources {
   requestCpu: number;
   requestMemory: number;
   requestMemoryUnit = 'Mi';
+}
+
+export class ApplicationProbe {
+  initialDelaySeconds: number;
+  periodSeconds: number;
+  timeoutSeconds: number;
+  successThreshold: number;
+  failureThreshold: number;
+
+  constructor(initialDelaySeconds: number, periodSeconds: number, timeoutSeconds: number, successThreshold: number, failureThreshold: number) {
+    this.initialDelaySeconds = initialDelaySeconds;
+    this.periodSeconds = periodSeconds;
+    this.timeoutSeconds = timeoutSeconds;
+    this.successThreshold = successThreshold;
+    this.failureThreshold = failureThreshold;
+  }
 }

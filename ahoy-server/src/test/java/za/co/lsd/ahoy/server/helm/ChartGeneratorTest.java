@@ -177,6 +177,8 @@ public class ChartGeneratorTest {
 		spec.setHealthEndpointPath("/");
 		spec.setHealthEndpointPort(8080);
 		spec.setHealthEndpointScheme("HTTP");
+		spec.setLivenessProbe(new ApplicationProbe(60L, 10L, 5L, 1L, 3L));
+		spec.setReadinessProbe(new ApplicationProbe(10L, 10L, 5L, 1L, 3L));
 		spec.setConfigPath("/opt/config");
 		List<ApplicationConfigFile> appConfigs = Collections.singletonList(new ApplicationConfigFile("application.properties", "greeting=hello"));
 		spec.setConfigFiles(appConfigs);
@@ -297,6 +299,8 @@ public class ChartGeneratorTest {
 			.healthEndpointPath("/")
 			.healthEndpointPort(8080)
 			.healthEndpointScheme("HTTP")
+			.livenessProbe(new ApplicationProbe(60L, 10L, 5L, 1L, 3L))
+			.readinessProbe(new ApplicationProbe(10L, 10L, 5L, 1L, 3L))
 			.replicas(2)
 			.routeHostname("myapp1-route")
 			.routeTargetPort(8080)

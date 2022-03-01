@@ -36,6 +36,9 @@ public class ApplicationSpec {
 	private Integer healthEndpointPort;
 	private String healthEndpointScheme;
 
+	private ApplicationProbe livenessProbe;
+	private ApplicationProbe readinessProbe;
+
 	private List<ApplicationEnvironmentVariable> environmentVariables;
 
 	private String configPath;
