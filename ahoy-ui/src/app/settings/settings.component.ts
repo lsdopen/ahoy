@@ -19,6 +19,7 @@ import {ActivatedRoute} from '@angular/router';
 import {MenuItem, Message} from 'primeng/api';
 import {Role} from '../util/auth';
 import {AuthService} from '../util/auth.service';
+import {AppBreadcrumbService} from '../app.breadcrumb.service';
 
 @Component({
   selector: 'app-settings',
@@ -30,7 +31,12 @@ export class SettingsComponent implements OnInit {
   msgs: Message[] = [];
 
   constructor(private route: ActivatedRoute,
-              private authService: AuthService) {
+              private authService: AuthService,
+              private breadcrumbService: AppBreadcrumbService) {
+
+    this.breadcrumbService.setItems([
+      {label: 'settings'}
+    ]);
   }
 
   ngOnInit(): void {
@@ -50,7 +56,7 @@ export class SettingsComponent implements OnInit {
       const setup = Boolean(r.snapshot.queryParamMap.get('setup'));
       if (setup) {
         this.msgs = [];
-        this.msgs.push({ severity: 'warn', summary: 'Please note', detail: 'In order to continue you need to set up the following:' });
+        this.msgs.push({severity: 'warn', summary: 'Please note', detail: 'In order to continue you need to set up the following:'});
       }
     });
   }
