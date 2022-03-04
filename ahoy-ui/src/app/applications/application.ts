@@ -36,9 +36,11 @@ export class ApplicationVersion {
 export class ApplicationSpec {
   image: string;
   dockerRegistryName: string;
+  commandArgsEnabled = false;
   command: string;
   args: string[] = [];
   servicePorts: number[] = [];
+  healthChecksEnabled = false;
   healthEndpointPath: string;
   healthEndpointPort: number;
   healthEndpointScheme = 'HTTP';

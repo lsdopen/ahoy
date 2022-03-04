@@ -40,12 +40,10 @@ export class ApplicationVersionDetailComponent implements OnInit {
   editingVersion: string;
   newServicePort: number;
   portsCategory = false;
-  healthChecksCategory = false;
   environmentVariablesCategory = false;
   configFilesCategory = false;
   volumesCategory = false;
   secretsCategory = false;
-  commandCategory = false;
   resourcesCategory = false;
   newArg: string;
   editingArg: string;
@@ -129,10 +127,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
       this.portsCategory = true;
     }
 
-    if (this.applicationVersion.spec.healthEndpointPath) {
-      this.healthChecksCategory = true;
-    }
-
     if (this.applicationVersion.spec.environmentVariables && Object.keys(this.applicationVersion.spec.environmentVariables).length > 0) {
       this.environmentVariablesCategory = true;
     }
@@ -147,11 +141,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
 
     if (this.applicationVersion.spec.secrets.length > 0) {
       this.secretsCategory = true;
-    }
-
-    if (this.applicationVersion.spec.command ||
-      (this.applicationVersion.spec.args && this.applicationVersion.spec.args.length > 0)) {
-      this.commandCategory = true;
     }
 
     if (this.applicationVersion.spec.resources && (

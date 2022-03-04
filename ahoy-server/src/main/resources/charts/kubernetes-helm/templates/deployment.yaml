@@ -37,6 +37,7 @@ spec:
         - image: {{ .app.image }}
           imagePullPolicy: Always
           name: {{ .glob.releaseName }}-{{ .app.name }}
+          {{ if .app.commandArgsEnabled }}
           {{ if .app.command }}
           command:
             - {{ .app.command }}
@@ -46,6 +47,7 @@ spec:
             {{- range .app.args }}
             - {{ . }}
             {{- end}}
+          {{ end }}
           {{ end }}
           {{ if .app.environmentVariables }}
           env:
@@ -70,7 +72,7 @@ spec:
               protocol: TCP
             {{- end }}
           {{ end }}
-          {{ if and .app.healthEndpointPath .app.healthEndpointPort .app.healthEndpointScheme }}
+          {{ if .app.healthChecksEnabled }}
           livenessProbe:
             httpGet:
               path: {{ .app.healthEndpointPath }}

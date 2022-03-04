@@ -174,6 +174,7 @@ public class ChartGeneratorTest {
 			new ApplicationEnvironmentVariable("SECRET_ENV", "my-secret", "secret-key")
 		);
 		spec.setEnvironmentVariables(environmentVariables);
+		spec.setHealthChecksEnabled(true);
 		spec.setHealthEndpointPath("/");
 		spec.setHealthEndpointPort(8080);
 		spec.setHealthEndpointScheme("HTTP");
@@ -296,6 +297,7 @@ public class ChartGeneratorTest {
 			.args(Arrays.asList("-c", "echo hello"))
 			.dockerConfigJson("encrypted-docker-config")
 			.servicePorts(servicePorts)
+			.healthChecksEnabled(true)
 			.healthEndpointPath("/")
 			.healthEndpointPort(8080)
 			.healthEndpointScheme("HTTP")

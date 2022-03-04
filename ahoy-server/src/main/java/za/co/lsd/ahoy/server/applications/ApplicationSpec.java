@@ -27,11 +27,13 @@ public class ApplicationSpec {
 	private String image;
 	private String dockerRegistryName;
 
+	private Boolean commandArgsEnabled;
 	private String command;
 	private List<String> args;
 
 	private List<Integer> servicePorts;
 
+	private Boolean healthChecksEnabled;
 	private String healthEndpointPath;
 	private Integer healthEndpointPort;
 	private String healthEndpointScheme;
