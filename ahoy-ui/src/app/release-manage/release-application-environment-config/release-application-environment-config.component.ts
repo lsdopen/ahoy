@@ -42,7 +42,6 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   releaseVersion: ReleaseVersion;
   applicationVersion: ApplicationVersion;
   routeCategory = false;
-  environmentVariablesCategory = false;
   configFileCategory = false;
   volumesCategory = false;
   secretsCategory = false;
@@ -111,10 +110,6 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   private setCategoriesExpanded() {
     if (this.environmentConfig.spec.routeHostname) {
       this.routeCategory = true;
-    }
-
-    if (this.environmentConfig.spec.environmentVariables && Object.keys(this.environmentConfig.spec.environmentVariables).length > 0) {
-      this.environmentVariablesCategory = true;
     }
 
     if (this.environmentConfig.spec.configFiles.length > 0) {

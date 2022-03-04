@@ -82,7 +82,13 @@
 
             </p-accordionTab>
 
-            <p-accordionTab header="Environment Variables" [(selected)]="environmentVariablesCategory">
+            <p-accordionTab>
+              <p-header>
+                <div class="formgroup-inline">
+                  <p-inputSwitch name="environmentVariablesEnabled" (click)="$event.stopPropagation();" [(ngModel)]="environmentConfig.spec.environmentVariablesEnabled"></p-inputSwitch>
+                  <span class="ml-2">Environment Variables</span>
+                </div>
+              </p-header>
 
               <app-application-env-variables
                 [environmentVariables]="environmentConfig.spec.environmentVariables" [secrets]="environmentConfig.spec.secrets">

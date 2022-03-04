@@ -42,6 +42,7 @@ public class ApplicationSpec {
 	private ApplicationProbe livenessProbe;
 	private ApplicationProbe readinessProbe;
 
+	private Boolean environmentVariablesEnabled;
 	private List<ApplicationEnvironmentVariable> environmentVariables;
 
 	private String configPath;

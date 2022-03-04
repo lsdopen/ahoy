@@ -105,6 +105,7 @@ public class ValuesBuilder {
 			.healthEndpointScheme(spec.getHealthEndpointScheme())
 			.livenessProbe(spec.getLivenessProbe())
 			.readinessProbe(spec.getReadinessProbe())
+			.environmentVariablesEnabled(false)
 			.configPath(spec.getConfigPath());
 
 		Optional<DockerRegistry> dockerRegistry = dockerRegistryProvider.dockerRegistryFor(spec.getDockerRegistryName());
@@ -113,7 +114,11 @@ public class ValuesBuilder {
 		}
 
 		Map<String, EnvironmentVariableValues> environmentVariables = new LinkedHashMap<>();
-		if (spec.getEnvironmentVariables() != null) {
+		if (spec.getEnvironmentVariablesEnabled() != null &&
+			spec.getEnvironmentVariablesEnabled() &&
+			spec.getEnvironmentVariables() != null) {
+
+			builder.environmentVariablesEnabled(true);
 			for (ApplicationEnvironmentVariable environmentVariable : spec.getEnvironmentVariables()) {
 				environmentVariables.put(environmentVariable.getKey(), new EnvironmentVariableValues(environmentVariable));
 			}
@@ -148,7 +153,11 @@ public class ValuesBuilder {
 
 		if (environmentConfig != null) {
 			ApplicationEnvironmentSpec environmentSpec = environmentConfig.getSpec();
-			if (environmentSpec.getEnvironmentVariables() != null) {
+			if (environmentSpec.getEnvironmentVariablesEnabled() != null &&
+				environmentSpec.getEnvironmentVariablesEnabled() &&
+				environmentSpec.getEnvironmentVariables() != null) {
+
+				builder.environmentVariablesEnabled(true);
 				for (ApplicationEnvironmentVariable environmentVariable : environmentSpec.getEnvironmentVariables()) {
 					environmentVariables.put(environmentVariable.getKey(), new EnvironmentVariableValues(environmentVariable));
 				}

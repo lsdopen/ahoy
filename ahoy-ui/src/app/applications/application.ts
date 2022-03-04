@@ -47,6 +47,7 @@ export class ApplicationSpec {
   healthEndpointScheme = 'HTTP';
   livenessProbe = new ApplicationProbe(60, 10, 5, 1, 3);
   readinessProbe = new ApplicationProbe(10, 10, 5, 1, 3);
+  environmentVariablesEnabled = false;
   environmentVariables: ApplicationEnvironmentVariable[] = [];
   configPath: string;
   configFiles: ApplicationConfigFile[] = [];
@@ -113,6 +114,7 @@ export class ApplicationEnvironmentSpec {
   routeTargetPort: number;
   tls: boolean;
   tlsSecretName: string;
+  environmentVariablesEnabled = false;
   environmentVariables: ApplicationEnvironmentVariable[] = [];
   configFiles: ApplicationConfigFile[] = [];
   volumes: ApplicationVolume[] = [];

@@ -39,7 +39,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
   editMode: boolean;
   editingVersion: string;
   newServicePort: number;
-  environmentVariablesCategory = false;
   configFilesCategory = false;
   volumesCategory = false;
   secretsCategory = false;
@@ -122,10 +121,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
   }
 
   private setCategoriesExpanded() {
-    if (this.applicationVersion.spec.environmentVariables && Object.keys(this.applicationVersion.spec.environmentVariables).length > 0) {
-      this.environmentVariablesCategory = true;
-    }
-
     if (this.applicationVersion.spec.configPath) {
       this.configFilesCategory = true;
     }

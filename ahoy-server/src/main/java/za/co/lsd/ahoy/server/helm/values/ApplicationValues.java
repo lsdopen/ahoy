@@ -44,6 +44,7 @@ public class ApplicationValues {
 	public Integer routeTargetPort;
 	public Boolean tls;
 	public String tlsSecretName;
+	public Boolean environmentVariablesEnabled;
 	public Map<String, EnvironmentVariableValues> environmentVariables;
 	public Boolean healthChecksEnabled;
 	public String healthEndpointPath;

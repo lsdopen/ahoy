@@ -209,9 +209,15 @@
                   <app-application-probe [probe]="applicationVersion.spec.readinessProbe"></app-application-probe>
                 </p-tabPanel>
               </p-tabView>
-
             </p-accordionTab>
-            <p-accordionTab header="Environment Variables" [(selected)]="environmentVariablesCategory">
+
+            <p-accordionTab>
+              <p-header>
+                <div class="formgroup-inline">
+                  <p-inputSwitch name="environmentVariablesEnabled" (click)="$event.stopPropagation();" [(ngModel)]="applicationVersion.spec.environmentVariablesEnabled"></p-inputSwitch>
+                  <span class="ml-2">Environment Variables</span>
+                </div>
+              </p-header>
 
               <app-application-env-variables
                 [environmentVariables]="applicationVersion.spec.environmentVariables" [secrets]="applicationVersion.spec.secrets">

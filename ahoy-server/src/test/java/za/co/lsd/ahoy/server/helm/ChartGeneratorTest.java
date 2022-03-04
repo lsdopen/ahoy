@@ -132,6 +132,7 @@ public class ChartGeneratorTest {
 			.version("1.0.0")
 			.image("image")
 			.replicas(1)
+			.environmentVariablesEnabled(false)
 			.environmentVariables(new LinkedHashMap<>())
 			.configFiles(new LinkedHashMap<>())
 			.volumes(new LinkedHashMap<>())
@@ -174,6 +175,7 @@ public class ChartGeneratorTest {
 			new ApplicationEnvironmentVariable("ENV", "VAR"),
 			new ApplicationEnvironmentVariable("SECRET_ENV", "my-secret", "secret-key")
 		);
+		spec.setEnvironmentVariablesEnabled(true);
 		spec.setEnvironmentVariables(environmentVariables);
 		spec.setHealthChecksEnabled(true);
 		spec.setHealthEndpointPath("/");
@@ -215,6 +217,7 @@ public class ChartGeneratorTest {
 			new ApplicationEnvironmentVariable("DEV_ENV", "VAR"),
 			new ApplicationEnvironmentVariable("SECRET_DEV_ENV", "my-secret", "secret-key")
 		);
+		environmentSpec.setEnvironmentVariablesEnabled(true);
 		environmentSpec.setEnvironmentVariables(environmentVariablesEnv);
 
 		List<ApplicationVolume> envVolumes = Arrays.asList(
@@ -310,6 +313,7 @@ public class ChartGeneratorTest {
 			.routeTargetPort(8080)
 			.tls(true)
 			.tlsSecretName("my-tls-secret")
+			.environmentVariablesEnabled(true)
 			.environmentVariables(expectedEnvironmentVariables)
 			.configPath("/opt/config")
 			.configFiles(configFiles)
@@ -371,6 +375,7 @@ public class ChartGeneratorTest {
 			new ApplicationEnvironmentVariable("DEV_ENV", "VAR"),
 			new ApplicationEnvironmentVariable("SECRET_DEV_ENV", "my-secret", "secret-key")
 		);
+		environmentSpec.setEnvironmentVariablesEnabled(true);
 		environmentSpec.setEnvironmentVariables(environmentVariablesEnv);
 
 		List<ApplicationVolume> envVolumes = Arrays.asList(
@@ -450,6 +455,7 @@ public class ChartGeneratorTest {
 			.routeTargetPort(8080)
 			.tls(true)
 			.tlsSecretName("my-tls-secret")
+			.environmentVariablesEnabled(true)
 			.environmentVariables(expectedEnvironmentVariables)
 			.configFiles(configFiles)
 			.configFileHashes(configFileHashes)

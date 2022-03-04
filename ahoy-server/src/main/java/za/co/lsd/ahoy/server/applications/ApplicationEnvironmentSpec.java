@@ -31,6 +31,7 @@ public class ApplicationEnvironmentSpec {
 	private boolean tls;
 	private String tlsSecretName;
 
+	private Boolean environmentVariablesEnabled;
 	private List<ApplicationEnvironmentVariable> environmentVariables;
 
 	private List<ApplicationConfigFile> configFiles;
