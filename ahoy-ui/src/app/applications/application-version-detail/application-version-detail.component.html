@@ -110,7 +110,13 @@
 
             </p-accordionTab>
 
-            <p-accordionTab header="Ports" [(selected)]="portsCategory">
+            <p-accordionTab>
+              <p-header>
+                <div class="formgroup-inline">
+                  <p-inputSwitch name="servicePortsEnabled" (click)="$event.stopPropagation();" [(ngModel)]="applicationVersion.spec.servicePortsEnabled"></p-inputSwitch>
+                  <span class="ml-2">Ports</span>
+                </div>
+              </p-header>
 
               <div class="p-fluid">
                 <div class="col-12 md:col-3">

@@ -37,6 +37,7 @@ public class ApplicationValues {
 	public Boolean commandArgsEnabled;
 	public String command;
 	public List<String> args;
+	public Boolean servicePortsEnabled;
 	public List<Integer> servicePorts;
 	public Integer replicas;
 	public String routeHostname;

@@ -168,6 +168,7 @@ public class ChartGeneratorTest {
 		applicationVersion.setSpec(spec);
 		spec.setCommand("/bin/sh");
 		spec.setArgs(Arrays.asList("-c", "echo hello"));
+		spec.setServicePortsEnabled(true);
 		spec.setServicePorts(servicePorts);
 		List<ApplicationEnvironmentVariable> environmentVariables = Arrays.asList(
 			new ApplicationEnvironmentVariable("ENV", "VAR"),
@@ -296,6 +297,7 @@ public class ChartGeneratorTest {
 			.command("/bin/sh")
 			.args(Arrays.asList("-c", "echo hello"))
 			.dockerConfigJson("encrypted-docker-config")
+			.servicePortsEnabled(true)
 			.servicePorts(servicePorts)
 			.healthChecksEnabled(true)
 			.healthEndpointPath("/")
@@ -350,6 +352,7 @@ public class ChartGeneratorTest {
 
 		// needed for route
 		List<Integer> servicePorts = Collections.singletonList(8080);
+		spec.setServicePortsEnabled(true);
 		spec.setServicePorts(servicePorts);
 
 		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0");
@@ -440,6 +443,7 @@ public class ChartGeneratorTest {
 			.name("app1")
 			.version("1.0.0")
 			.image("image")
+			.servicePortsEnabled(true)
 			.servicePorts(servicePorts)
 			.replicas(2)
 			.routeHostname("myapp1-route")

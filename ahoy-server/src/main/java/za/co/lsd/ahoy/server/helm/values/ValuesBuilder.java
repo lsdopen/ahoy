@@ -97,6 +97,7 @@ public class ValuesBuilder {
 			.commandArgsEnabled(spec.getCommandArgsEnabled())
 			.command(spec.getCommand())
 			.args(spec.getArgs())
+			.servicePortsEnabled(spec.getServicePortsEnabled())
 			.servicePorts(spec.getServicePorts())
 			.healthChecksEnabled(spec.getHealthChecksEnabled())
 			.healthEndpointPath(spec.getHealthEndpointPath())

@@ -65,7 +65,7 @@ spec:
             {{ end }}
             {{- end }}
           {{ end }}
-          {{ if .app.servicePorts }}
+          {{ if and .app.servicePortsEnabled .app.servicePorts }}
           ports:
             {{- range .app.servicePorts }}
             - containerPort: {{ . }}

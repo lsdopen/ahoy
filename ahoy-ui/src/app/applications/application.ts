@@ -39,6 +39,7 @@ export class ApplicationSpec {
   commandArgsEnabled = false;
   command: string;
   args: string[] = [];
+  servicePortsEnabled = false;
   servicePorts: number[] = [];
   healthChecksEnabled = false;
   healthEndpointPath: string;

@@ -31,6 +31,7 @@ public class ApplicationSpec {
 	private String command;
 	private List<String> args;
 
+	private Boolean servicePortsEnabled;
 	private List<Integer> servicePorts;
 
 	private Boolean healthChecksEnabled;

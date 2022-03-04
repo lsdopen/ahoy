@@ -93,7 +93,9 @@ public class TemplateWriter {
 				addTemplate(application, "secret-dockerconfig", templatesPath, trackedTemplates);
 			}
 
-			if (applicationVersion.getSpec().getServicePorts() != null &&
+			if (applicationVersion.getSpec().getServicePortsEnabled() != null &&
+				applicationVersion.getSpec().getServicePortsEnabled() &&
+				applicationVersion.getSpec().getServicePorts() != null &&
 				applicationVersion.getSpec().getServicePorts().size() > 0) {
 				addTemplate(application, "service", templatesPath, trackedTemplates);
 
