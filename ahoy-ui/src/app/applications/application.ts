@@ -50,6 +50,7 @@ export class ApplicationSpec {
   environmentVariablesEnabled = false;
   environmentVariables: ApplicationEnvironmentVariable[] = [];
   configPath: string;
+  configFilesEnabled = false;
   configFiles: ApplicationConfigFile[] = [];
   volumes: ApplicationVolume[] = [];
   secrets: ApplicationSecret[] = [];
@@ -116,6 +117,7 @@ export class ApplicationEnvironmentSpec {
   tlsSecretName: string;
   environmentVariablesEnabled = false;
   environmentVariables: ApplicationEnvironmentVariable[] = [];
+  configFilesEnabled = false;
   configFiles: ApplicationConfigFile[] = [];
   volumes: ApplicationVolume[] = [];
   secrets: ApplicationSecret[] = [];

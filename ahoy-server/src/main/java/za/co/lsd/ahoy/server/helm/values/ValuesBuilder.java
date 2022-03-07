@@ -106,6 +106,7 @@ public class ValuesBuilder {
 			.livenessProbe(spec.getLivenessProbe())
 			.readinessProbe(spec.getReadinessProbe())
 			.environmentVariablesEnabled(false)
+			.configFilesEnabled(applicationVersion.configEnabled() || (environmentConfig != null && environmentConfig.configEnabled()))
 			.configPath(spec.getConfigPath());
 
 		Optional<DockerRegistry> dockerRegistry = dockerRegistryProvider.dockerRegistryFor(spec.getDockerRegistryName());
@@ -125,7 +126,8 @@ public class ValuesBuilder {
 		}
 
 		Map<String, ApplicationConfigFileValues> configFiles = new LinkedHashMap<>();
-		if (spec.getConfigFiles() != null) {
+		if (applicationVersion.configEnabled() && applicationVersion.hasConfigs()) {
+
 			for (ApplicationConfigFile applicationConfigFile : spec.getConfigFiles()) {
 				configFiles.put(configName(applicationConfigFile), new ApplicationConfigFileValues(applicationConfigFile));
 			}
@@ -163,7 +165,7 @@ public class ValuesBuilder {
 				}
 			}
 
-			if (environmentSpec.getConfigFiles() != null) {
+			if (environmentConfig.configEnabled() && environmentConfig.hasConfigs()) {
 				for (ApplicationConfigFile applicationConfigFile : environmentSpec.getConfigFiles()) {
 					configFiles.put(configName(applicationConfigFile), new ApplicationConfigFileValues(applicationConfigFile));
 				}

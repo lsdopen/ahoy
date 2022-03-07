@@ -225,7 +225,13 @@
 
             </p-accordionTab>
 
-            <p-accordionTab header="Configuration Files" [(selected)]="configFilesCategory">
+            <p-accordionTab>
+              <p-header>
+                <div class="formgroup-inline">
+                  <p-inputSwitch name="configFilesEnabled" (click)="$event.stopPropagation();" [(ngModel)]="applicationVersion.spec.configFilesEnabled"></p-inputSwitch>
+                  <span class="ml-2">Configuration Files</span>
+                </div>
+              </p-header>
 
               <app-application-config-files
                 [parentForm]="applicationVersionForm"

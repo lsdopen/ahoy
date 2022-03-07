@@ -98,7 +98,7 @@ spec:
           {{ end }}
           {{ if or .app.configFiles .app.volumes }}
           volumeMounts:
-            {{ if and .app.configPath .app.configFiles}}
+            {{ if and .app.configFilesEnabled .app.configPath .app.configFiles}}
             - name: application-config
               mountPath: {{ .app.configPath }}
             {{ end }}
@@ -109,7 +109,7 @@ spec:
           {{ end }}
       {{ if or .app.configFiles .app.volumes}}
       volumes:
-        {{ if .app.configFiles}}
+        {{ if and .app.configFilesEnabled .app.configFiles}}
         - name: application-config
           configMap:
             name: {{ .glob.releaseName }}-{{ .app.name }}

@@ -134,6 +134,7 @@ public class ChartGeneratorTest {
 			.replicas(1)
 			.environmentVariablesEnabled(false)
 			.environmentVariables(new LinkedHashMap<>())
+			.configFilesEnabled(false)
 			.configFiles(new LinkedHashMap<>())
 			.volumes(new LinkedHashMap<>())
 			.secrets(new LinkedHashMap<>())
@@ -184,6 +185,7 @@ public class ChartGeneratorTest {
 		spec.setLivenessProbe(new ApplicationProbe(60L, 10L, 5L, 1L, 3L));
 		spec.setReadinessProbe(new ApplicationProbe(10L, 10L, 5L, 1L, 3L));
 		spec.setConfigPath("/opt/config");
+		spec.setConfigFilesEnabled(true);
 		List<ApplicationConfigFile> appConfigs = Collections.singletonList(new ApplicationConfigFile("application.properties", "greeting=hello"));
 		spec.setConfigFiles(appConfigs);
 		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0");
@@ -195,6 +197,7 @@ public class ChartGeneratorTest {
 		environmentSpec.setReplicas(2);
 		environmentSpec.setTls(true);
 		environmentSpec.setTlsSecretName("my-tls-secret");
+		environmentSpec.setConfigFilesEnabled(true);
 		List<ApplicationConfigFile> appEnvConfigs = Collections.singletonList(new ApplicationConfigFile("application-dev.properties", "anothergreeting=hello"));
 		environmentSpec.setConfigFiles(appEnvConfigs);
 
@@ -316,6 +319,7 @@ public class ChartGeneratorTest {
 			.environmentVariablesEnabled(true)
 			.environmentVariables(expectedEnvironmentVariables)
 			.configPath("/opt/config")
+			.configFilesEnabled(true)
 			.configFiles(configFiles)
 			.configFileHashes(configFileHashes)
 			.volumes(volumes)
@@ -368,6 +372,7 @@ public class ChartGeneratorTest {
 		environmentSpec.setReplicas(2);
 		environmentSpec.setTls(true);
 		environmentSpec.setTlsSecretName("my-tls-secret");
+		environmentSpec.setConfigFilesEnabled(true);
 		List<ApplicationConfigFile> appEnvConfigs = Collections.singletonList(new ApplicationConfigFile("application-dev.properties", "anothergreeting=hello"));
 		environmentSpec.setConfigFiles(appEnvConfigs);
 
@@ -457,6 +462,7 @@ public class ChartGeneratorTest {
 			.tlsSecretName("my-tls-secret")
 			.environmentVariablesEnabled(true)
 			.environmentVariables(expectedEnvironmentVariables)
+			.configFilesEnabled(true)
 			.configFiles(configFiles)
 			.configFileHashes(configFileHashes)
 			.volumes(volumes)

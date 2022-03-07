@@ -55,6 +55,10 @@ public class ApplicationEnvironmentConfig {
 		this.spec = spec;
 	}
 
+	public boolean configEnabled() {
+		return spec != null && spec.getConfigFilesEnabled() != null && spec.getConfigFilesEnabled();
+	}
+
 	public boolean hasConfigs() {
 		return spec != null && spec.getConfigFiles() != null && spec.getConfigFiles().size() > 0;
 	}

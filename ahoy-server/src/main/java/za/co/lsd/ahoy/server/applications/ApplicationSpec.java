@@ -45,6 +45,7 @@ public class ApplicationSpec {
 	private Boolean environmentVariablesEnabled;
 	private List<ApplicationEnvironmentVariable> environmentVariables;
 
+	private Boolean configFilesEnabled;
 	private String configPath;
 	private List<ApplicationConfigFile> configFiles;
 

@@ -52,6 +52,7 @@ public class ApplicationValues {
 	public String healthEndpointScheme;
 	public ApplicationProbe livenessProbe;
 	public ApplicationProbe readinessProbe;
+	public Boolean configFilesEnabled;
 	public Map<String, ApplicationConfigFileValues> configFiles;
 	public String configFileHashes;
 	public String configPath;

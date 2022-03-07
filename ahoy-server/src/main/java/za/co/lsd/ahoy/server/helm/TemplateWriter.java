@@ -76,7 +76,8 @@ public class TemplateWriter {
 				environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion)
 					.orElse(null);
 
-			if (applicationVersion.hasConfigs() || (applicationEnvironmentConfig != null && applicationEnvironmentConfig.hasConfigs())) {
+			if ((applicationVersion.configEnabled() && applicationVersion.hasConfigs()) ||
+				(applicationEnvironmentConfig != null && applicationEnvironmentConfig.configEnabled() && applicationEnvironmentConfig.hasConfigs())) {
 				addTemplate(application, "configmap", templatesPath, trackedTemplates);
 			}
 
