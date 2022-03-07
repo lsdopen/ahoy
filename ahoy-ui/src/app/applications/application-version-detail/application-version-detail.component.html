@@ -241,7 +241,13 @@
 
             </p-accordionTab>
 
-            <p-accordionTab header="Volumes" [(selected)]="volumesCategory">
+            <p-accordionTab>
+              <p-header>
+                <div class="formgroup-inline">
+                  <p-inputSwitch name="volumesEnabled" (click)="$event.stopPropagation();" [(ngModel)]="applicationVersion.spec.volumesEnabled"></p-inputSwitch>
+                  <span class="ml-2">Volumes</span>
+                </div>
+              </p-header>
 
               <app-multi-tab [content]="volumeContent" [items]="applicationVersion.spec.volumes" [itemFactory]="applicationVolumeFactory()">
 

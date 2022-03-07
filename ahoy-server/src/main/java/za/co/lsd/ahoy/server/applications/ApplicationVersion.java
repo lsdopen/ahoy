@@ -85,6 +85,10 @@ public class ApplicationVersion implements Serializable {
 		return spec != null && spec.getConfigFiles() != null && spec.getConfigFiles().size() > 0;
 	}
 
+	public boolean volumesEnabled() {
+		return spec != null && spec.getVolumesEnabled() != null && spec.getVolumesEnabled();
+	}
+
 	public boolean hasVolumes() {
 		return spec != null && spec.getVolumes() != null && spec.getVolumes().size() > 0;
 	}

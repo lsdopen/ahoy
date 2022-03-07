@@ -52,6 +52,7 @@ export class ApplicationSpec {
   configPath: string;
   configFilesEnabled = false;
   configFiles: ApplicationConfigFile[] = [];
+  volumesEnabled = false;
   volumes: ApplicationVolume[] = [];
   secrets: ApplicationSecret[] = [];
   resources = new ApplicationResources();
@@ -119,6 +120,7 @@ export class ApplicationEnvironmentSpec {
   environmentVariables: ApplicationEnvironmentVariable[] = [];
   configFilesEnabled = false;
   configFiles: ApplicationConfigFile[] = [];
+  volumesEnabled = false;
   volumes: ApplicationVolume[] = [];
   secrets: ApplicationSecret[] = [];
   resources = new ApplicationResources();

@@ -37,6 +37,7 @@ public class ApplicationEnvironmentSpec {
 	private Boolean configFilesEnabled;
 	private List<ApplicationConfigFile> configFiles;
 
+	private Boolean volumesEnabled;
 	private List<ApplicationVolume> volumes;
 
 	private List<ApplicationSecret> secrets;

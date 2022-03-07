@@ -56,6 +56,7 @@ public class ApplicationValues {
 	public Map<String, ApplicationConfigFileValues> configFiles;
 	public String configFileHashes;
 	public String configPath;
+	public Boolean volumesEnabled;
 	public Map<String, ApplicationVolumeValues> volumes;
 	public Map<String, ApplicationSecretValues> secrets;
 	public ResourcesValues resources;

@@ -49,6 +49,7 @@ public class ApplicationSpec {
 	private String configPath;
 	private List<ApplicationConfigFile> configFiles;
 
+	private Boolean volumesEnabled;
 	private List<ApplicationVolume> volumes;
 
 	private List<ApplicationSecret> secrets;

@@ -81,7 +81,8 @@ public class TemplateWriter {
 				addTemplate(application, "configmap", templatesPath, trackedTemplates);
 			}
 
-			if (applicationVersion.hasVolumes() || (applicationEnvironmentConfig != null && applicationEnvironmentConfig.hasVolumes())) {
+			if ((applicationVersion.volumesEnabled() && applicationVersion.hasVolumes()) ||
+				(applicationEnvironmentConfig != null && applicationEnvironmentConfig.volumesEnabled() && applicationEnvironmentConfig.hasVolumes())) {
 				addTemplate(application, "pvc", templatesPath, trackedTemplates);
 			}
 

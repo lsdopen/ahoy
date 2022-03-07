@@ -136,6 +136,7 @@ public class ChartGeneratorTest {
 			.environmentVariables(new LinkedHashMap<>())
 			.configFilesEnabled(false)
 			.configFiles(new LinkedHashMap<>())
+			.volumesEnabled(false)
 			.volumes(new LinkedHashMap<>())
 			.secrets(new LinkedHashMap<>())
 			.build();
@@ -201,6 +202,7 @@ public class ChartGeneratorTest {
 		List<ApplicationConfigFile> appEnvConfigs = Collections.singletonList(new ApplicationConfigFile("application-dev.properties", "anothergreeting=hello"));
 		environmentSpec.setConfigFiles(appEnvConfigs);
 
+		spec.setVolumesEnabled(true);
 		List<ApplicationVolume> appVolumes = Arrays.asList(
 			new ApplicationVolume("my-volume", "/opt/vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
 			new ApplicationVolume("my-secret-volume", "/opt/secret-vol", "my-secret")
@@ -223,6 +225,7 @@ public class ChartGeneratorTest {
 		environmentSpec.setEnvironmentVariablesEnabled(true);
 		environmentSpec.setEnvironmentVariables(environmentVariablesEnv);
 
+		environmentSpec.setVolumesEnabled(true);
 		List<ApplicationVolume> envVolumes = Arrays.asList(
 			new ApplicationVolume("my-env-volume", "/opt/env-vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
 			new ApplicationVolume("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret")
@@ -322,6 +325,7 @@ public class ChartGeneratorTest {
 			.configFilesEnabled(true)
 			.configFiles(configFiles)
 			.configFileHashes(configFileHashes)
+			.volumesEnabled(true)
 			.volumes(volumes)
 			.secrets(secrets)
 			.resources(new ResourcesValues(
@@ -383,6 +387,7 @@ public class ChartGeneratorTest {
 		environmentSpec.setEnvironmentVariablesEnabled(true);
 		environmentSpec.setEnvironmentVariables(environmentVariablesEnv);
 
+		environmentSpec.setVolumesEnabled(true);
 		List<ApplicationVolume> envVolumes = Arrays.asList(
 			new ApplicationVolume("my-env-volume", "/opt/env-vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
 			new ApplicationVolume("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret")
@@ -465,6 +470,7 @@ public class ChartGeneratorTest {
 			.configFilesEnabled(true)
 			.configFiles(configFiles)
 			.configFileHashes(configFileHashes)
+			.volumesEnabled(true)
 			.volumes(volumes)
 			.secrets(secrets)
 			.resources(new ResourcesValues(

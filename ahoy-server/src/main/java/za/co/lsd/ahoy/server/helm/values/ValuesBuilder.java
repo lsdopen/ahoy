@@ -107,7 +107,8 @@ public class ValuesBuilder {
 			.readinessProbe(spec.getReadinessProbe())
 			.environmentVariablesEnabled(false)
 			.configFilesEnabled(applicationVersion.configEnabled() || (environmentConfig != null && environmentConfig.configEnabled()))
-			.configPath(spec.getConfigPath());
+			.configPath(spec.getConfigPath())
+			.volumesEnabled(applicationVersion.volumesEnabled() || (environmentConfig != null && environmentConfig.volumesEnabled()));
 
 		Optional<DockerRegistry> dockerRegistry = dockerRegistryProvider.dockerRegistryFor(spec.getDockerRegistryName());
 		if (dockerRegistry.isPresent() && dockerRegistry.get().getSecure()) {
@@ -134,7 +135,7 @@ public class ValuesBuilder {
 		}
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
-		if (spec.getVolumes() != null) {
+		if (applicationVersion.volumesEnabled() && applicationVersion.hasVolumes()) {
 			for (ApplicationVolume applicationVolume : spec.getVolumes()) {
 				volumes.put(applicationVolume.getName(), new ApplicationVolumeValues(applicationVolume));
 			}
@@ -171,7 +172,7 @@ public class ValuesBuilder {
 				}
 			}
 
-			if (environmentSpec.getVolumes() != null) {
+			if (environmentConfig.volumesEnabled() && environmentConfig.hasVolumes()) {
 				for (ApplicationVolume applicationVolume : environmentSpec.getVolumes()) {
 					volumes.put(applicationVolume.getName(), new ApplicationVolumeValues(applicationVolume));
 				}

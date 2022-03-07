@@ -102,10 +102,12 @@ spec:
             - name: application-config
               mountPath: {{ .app.configPath }}
             {{ end }}
+            {{ if .app.volumesEnabled }}
             {{- range $name, $volume := .app.volumes }}
             - name: {{ $volume.name }}
               mountPath: {{ $volume.mountPath }}
             {{- end }}
+            {{ end }}
           {{ end }}
       {{ if or .app.configFiles .app.volumes}}
       volumes:
@@ -114,6 +116,7 @@ spec:
           configMap:
             name: {{ .glob.releaseName }}-{{ .app.name }}
         {{ end }}
+        {{ if .app.volumesEnabled }}
         {{- range $name, $volume := .app.volumes }}
         - name: {{ $volume.name }}
           {{ if eq $volume.type "PersistentVolume"}}
@@ -124,6 +127,7 @@ spec:
           secret:
             secretName: {{ $.glob.releaseName }}-{{ $.app.name }}-{{ $volume.secretName }}
           {{ end }}
-        {{- end}}
+        {{- end }}
+        {{ end }}
       {{ end }}
   {{- end -}}
