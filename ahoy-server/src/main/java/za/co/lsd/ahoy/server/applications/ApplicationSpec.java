@@ -52,6 +52,7 @@ public class ApplicationSpec {
 	private Boolean volumesEnabled;
 	private List<ApplicationVolume> volumes;
 
+	private Boolean secretsEnabled;
 	private List<ApplicationSecret> secrets;
 
 	private ApplicationResources resources;

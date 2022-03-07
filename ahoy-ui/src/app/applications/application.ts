@@ -54,6 +54,7 @@ export class ApplicationSpec {
   configFiles: ApplicationConfigFile[] = [];
   volumesEnabled = false;
   volumes: ApplicationVolume[] = [];
+  secretsEnabled = false;
   secrets: ApplicationSecret[] = [];
   resources = new ApplicationResources();
 }
@@ -122,6 +123,7 @@ export class ApplicationEnvironmentSpec {
   configFiles: ApplicationConfigFile[] = [];
   volumesEnabled = false;
   volumes: ApplicationVolume[] = [];
+  secretsEnabled = false;
   secrets: ApplicationSecret[] = [];
   resources = new ApplicationResources();
 }

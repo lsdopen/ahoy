@@ -108,7 +108,8 @@ public class ValuesBuilder {
 			.environmentVariablesEnabled(false)
 			.configFilesEnabled(applicationVersion.configEnabled() || (environmentConfig != null && environmentConfig.configEnabled()))
 			.configPath(spec.getConfigPath())
-			.volumesEnabled(applicationVersion.volumesEnabled() || (environmentConfig != null && environmentConfig.volumesEnabled()));
+			.volumesEnabled(applicationVersion.volumesEnabled() || (environmentConfig != null && environmentConfig.volumesEnabled()))
+			.secretsEnabled(applicationVersion.secretsEnabled() || (environmentConfig != null && environmentConfig.secretsEnabled()));
 
 		Optional<DockerRegistry> dockerRegistry = dockerRegistryProvider.dockerRegistryFor(spec.getDockerRegistryName());
 		if (dockerRegistry.isPresent() && dockerRegistry.get().getSecure()) {
@@ -142,7 +143,7 @@ public class ValuesBuilder {
 		}
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
-		if (spec.getSecrets() != null) {
+		if (applicationVersion.secretsEnabled() && applicationVersion.hasSecrets()) {
 			for (ApplicationSecret applicationSecret : spec.getSecrets()) {
 				Map<String, String> encryptedData = secretDataSealedSecretProducer.produce(applicationSecret);
 				secrets.put(applicationSecret.getName(), new ApplicationSecretValues(applicationSecret.getName(), secretType(applicationSecret), encryptedData));
@@ -178,7 +179,7 @@ public class ValuesBuilder {
 				}
 			}
 
-			if (environmentSpec.getSecrets() != null) {
+			if (environmentConfig.secretsEnabled() && environmentConfig.hasSecrets()) {
 				for (ApplicationSecret applicationSecret : environmentSpec.getSecrets()) {
 					Map<String, String> encryptedData = secretDataSealedSecretProducer.produce(applicationSecret);
 					secrets.put(applicationSecret.getName(), new ApplicationSecretValues(applicationSecret.getName(), secretType(applicationSecret), encryptedData));

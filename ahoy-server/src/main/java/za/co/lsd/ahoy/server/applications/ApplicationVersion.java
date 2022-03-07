@@ -93,6 +93,10 @@ public class ApplicationVersion implements Serializable {
 		return spec != null && spec.getVolumes() != null && spec.getVolumes().size() > 0;
 	}
 
+	public boolean secretsEnabled() {
+		return spec != null && spec.getSecretsEnabled() != null && spec.getSecretsEnabled();
+	}
+
 	public boolean hasSecrets() {
 		return spec != null && spec.getSecrets() != null && spec.getSecrets().size() > 0;
 	}

@@ -138,6 +138,7 @@ public class ChartGeneratorTest {
 			.configFiles(new LinkedHashMap<>())
 			.volumesEnabled(false)
 			.volumes(new LinkedHashMap<>())
+			.secretsEnabled(false)
 			.secrets(new LinkedHashMap<>())
 			.build();
 		Map<String, ApplicationValues> expectedApps = new LinkedHashMap<>();
@@ -209,6 +210,7 @@ public class ChartGeneratorTest {
 		);
 		spec.setVolumes(appVolumes);
 
+		spec.setSecretsEnabled(true);
 		List<ApplicationSecret> appSecrets = Arrays.asList(
 			new ApplicationSecret("my-secret", SecretType.Generic, Collections.singletonMap("secret-key", "secret-value")),
 			new ApplicationSecret("my-tls-secret", SecretType.Tls, Collections.singletonMap("cert", "my-cert"))
@@ -232,6 +234,7 @@ public class ChartGeneratorTest {
 		);
 		environmentSpec.setVolumes(envVolumes);
 
+		environmentSpec.setSecretsEnabled(true);
 		List<ApplicationSecret> envSecrets = Collections.singletonList(new ApplicationSecret("my-env-secret", SecretType.Generic, Collections.singletonMap("env-secret-key", "env-secret-value")));
 		environmentSpec.setSecrets(envSecrets);
 
@@ -327,6 +330,7 @@ public class ChartGeneratorTest {
 			.configFileHashes(configFileHashes)
 			.volumesEnabled(true)
 			.volumes(volumes)
+			.secretsEnabled(true)
 			.secrets(secrets)
 			.resources(new ResourcesValues(
 				new ResourcesValues.ResourceValue("1200m", "120Mi"),
@@ -394,6 +398,7 @@ public class ChartGeneratorTest {
 		);
 		environmentSpec.setVolumes(envVolumes);
 
+		environmentSpec.setSecretsEnabled(true);
 		List<ApplicationSecret> envSecrets = Arrays.asList(
 			new ApplicationSecret("my-env-secret", SecretType.Generic, Collections.singletonMap("env-secret-key", "env-secret-value")),
 			new ApplicationSecret("my-tls-secret", SecretType.Tls, Collections.singletonMap("cert", "my-cert"))
@@ -472,6 +477,7 @@ public class ChartGeneratorTest {
 			.configFileHashes(configFileHashes)
 			.volumesEnabled(true)
 			.volumes(volumes)
+			.secretsEnabled(true)
 			.secrets(secrets)
 			.resources(new ResourcesValues(
 				new ResourcesValues.ResourceValue("1200m", "120Mi"),

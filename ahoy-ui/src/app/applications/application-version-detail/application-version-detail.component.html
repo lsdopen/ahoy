@@ -265,7 +265,13 @@
 
             </p-accordionTab>
 
-            <p-accordionTab header="Secrets" [(selected)]="secretsCategory">
+            <p-accordionTab>
+              <p-header>
+                <div class="formgroup-inline">
+                  <p-inputSwitch name="secretsEnabled" (click)="$event.stopPropagation();" [(ngModel)]="applicationVersion.spec.secretsEnabled"></p-inputSwitch>
+                  <span class="ml-2">Secrets</span>
+                </div>
+              </p-header>
 
               <app-multi-tab [content]="secretContent" [items]="applicationVersion.spec.secrets" [itemFactory]="applicationSecretFactory()"
                              [deleteDisabled]="secretInUse()" [deleteDisabledTooltip]="secretInUseTooltip()">

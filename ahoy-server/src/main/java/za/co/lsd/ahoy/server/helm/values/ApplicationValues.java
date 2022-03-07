@@ -58,6 +58,7 @@ public class ApplicationValues {
 	public String configPath;
 	public Boolean volumesEnabled;
 	public Map<String, ApplicationVolumeValues> volumes;
+	public Boolean secretsEnabled;
 	public Map<String, ApplicationSecretValues> secrets;
 	public ResourcesValues resources;
 }

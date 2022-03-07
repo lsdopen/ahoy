@@ -42,9 +42,6 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   releaseVersion: ReleaseVersion;
   applicationVersion: ApplicationVersion;
   routeCategory = false;
-  configFileCategory = false;
-  volumesCategory = false;
-  secretsCategory = false;
   resourcesCategory = false;
 
   constructor(private log: LoggerService,
@@ -110,18 +107,6 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   private setCategoriesExpanded() {
     if (this.environmentConfig.spec.routeHostname) {
       this.routeCategory = true;
-    }
-
-    if (this.environmentConfig.spec.configFiles.length > 0) {
-      this.configFileCategory = true;
-    }
-
-    if (this.environmentConfig.spec.volumes.length > 0) {
-      this.volumesCategory = true;
-    }
-
-    if (this.environmentConfig.spec.secrets.length > 0) {
-      this.secretsCategory = true;
     }
 
     if (this.environmentConfig.spec.resources && (

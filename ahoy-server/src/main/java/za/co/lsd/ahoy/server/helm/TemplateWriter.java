@@ -86,7 +86,8 @@ public class TemplateWriter {
 				addTemplate(application, "pvc", templatesPath, trackedTemplates);
 			}
 
-			if (applicationVersion.hasSecrets() || (applicationEnvironmentConfig != null && applicationEnvironmentConfig.hasSecrets())) {
+			if ((applicationVersion.secretsEnabled() && applicationVersion.hasSecrets()) ||
+				(applicationEnvironmentConfig != null && applicationEnvironmentConfig.secretsEnabled() && applicationEnvironmentConfig.hasSecrets())) {
 				addTemplate(application, "secret-generic", templatesPath, trackedTemplates);
 			}
 

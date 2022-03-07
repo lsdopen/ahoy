@@ -39,7 +39,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
   editMode: boolean;
   editingVersion: string;
   newServicePort: number;
-  secretsCategory = false;
   resourcesCategory = false;
   newArg: string;
   editingArg: string;
@@ -119,10 +118,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
   }
 
   private setCategoriesExpanded() {
-    if (this.applicationVersion.spec.secrets.length > 0) {
-      this.secretsCategory = true;
-    }
-
     if (this.applicationVersion.spec.resources && (
       this.applicationVersion.spec.resources.limitCpu || this.applicationVersion.spec.resources.limitMemory ||
       this.applicationVersion.spec.resources.requestCpu || this.applicationVersion.spec.resources.requestMemory)) {
