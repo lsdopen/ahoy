@@ -114,6 +114,7 @@ export class ApplicationEnvironmentConfig {
 
 export class ApplicationEnvironmentSpec {
   replicas = 1;
+  routeEnabled = false;
   routeHostname: string;
   routeTargetPort: number;
   tls: boolean;

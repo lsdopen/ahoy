@@ -110,7 +110,8 @@ public class ValuesBuilder {
 			.configPath(spec.getConfigPath())
 			.volumesEnabled(applicationVersion.volumesEnabled() || (environmentConfig != null && environmentConfig.volumesEnabled()))
 			.secretsEnabled(applicationVersion.secretsEnabled() || (environmentConfig != null && environmentConfig.secretsEnabled()))
-			.resourcesEnabled(applicationVersion.resourcesEnabled() || (environmentConfig != null && environmentConfig.resourcesEnabled()));
+			.resourcesEnabled(applicationVersion.resourcesEnabled() || (environmentConfig != null && environmentConfig.resourcesEnabled()))
+			.routeEnabled(environmentConfig != null && environmentConfig.routeEnabled());
 
 		Optional<DockerRegistry> dockerRegistry = dockerRegistryProvider.dockerRegistryFor(spec.getDockerRegistryName());
 		if (dockerRegistry.isPresent() && dockerRegistry.get().getSecure()) {
@@ -191,12 +192,15 @@ public class ValuesBuilder {
 				resourcesValues.spec(environmentSpec.getResources());
 			}
 
-			builder
-				.replicas(environmentSpec.getReplicas() != null ? environmentSpec.getReplicas() : 1)
-				.routeHostname(routeHostnameResolver.resolve(environmentRelease, applicationVersion.getApplication(), environmentSpec.getRouteHostname()))
-				.routeTargetPort(environmentSpec.getRouteTargetPort())
-				.tls(environmentSpec.isTls())
-				.tlsSecretName(environmentSpec.getTlsSecretName());
+			if (environmentConfig.routeEnabled() && environmentConfig.hasRoute()) {
+				builder
+					.routeHostname(routeHostnameResolver.resolve(environmentRelease, applicationVersion.getApplication(), environmentSpec.getRouteHostname()))
+					.routeTargetPort(environmentSpec.getRouteTargetPort())
+					.tls(environmentSpec.isTls())
+					.tlsSecretName(environmentSpec.getTlsSecretName());
+			}
+
+			builder.replicas(environmentSpec.getReplicas() != null ? environmentSpec.getReplicas() : 1);
 
 		} else {
 			builder.replicas(1);

@@ -159,7 +159,7 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
 
   hasRoute(applicationVersion: ApplicationVersion): boolean {
     const config = this.existingConfigs.get(applicationVersion.id);
-    return !!(config && config.spec.routeHostname);
+    return !!(config && config.spec.routeEnabled);
   }
 
   getRoute(applicationVersion: ApplicationVersion): string {

@@ -40,6 +40,7 @@ public class ApplicationValues {
 	public Boolean servicePortsEnabled;
 	public List<Integer> servicePorts;
 	public Integer replicas;
+	public Boolean routeEnabled;
 	public String routeHostname;
 	public Integer routeTargetPort;
 	public Boolean tls;
@@ -60,6 +61,6 @@ public class ApplicationValues {
 	public Map<String, ApplicationVolumeValues> volumes;
 	public Boolean secretsEnabled;
 	public Map<String, ApplicationSecretValues> secrets;
-	private Boolean resourcesEnabled;
+	public Boolean resourcesEnabled;
 	public ResourcesValues resources;
 }

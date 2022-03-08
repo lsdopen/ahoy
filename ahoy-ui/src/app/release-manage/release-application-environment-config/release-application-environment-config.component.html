@@ -46,12 +46,18 @@
 
         <div class="col-12">
           <p-accordion multiple="true">
-            <p-accordionTab header="Route" [(selected)]="routeCategory" (selectedChange)="routeSelectedChange()">
+            <p-accordionTab>
+              <p-header>
+                <div class="formgroup-inline">
+                  <p-inputSwitch name="routeEnabled" (click)="$event.stopPropagation();" (onChange)="routeSelectedChange()" [(ngModel)]="environmentConfig.spec.routeEnabled"></p-inputSwitch>
+                  <span class="ml-2">Route</span>
+                </div>
+              </p-header>
 
               <div class="p-fluid md:col-5">
                 <div class="field p-float-label">
                   <input pInputText id="environmentConfigRouteHostname" name="environmentConfigRouteHostname" [(ngModel)]="environmentConfig.spec.routeHostname"
-                         required="{{routeCategory}}" pTooltip="Available variables: ${release_name} ${application_name} ${environment_name} ${cluster_host}">
+                         required="{{environmentConfig.spec.routeEnabled}}" pTooltip="Available variables: ${release_name} ${application_name} ${environment_name} ${cluster_host}">
                   <label for="environmentConfigRouteHostname">Hostname</label>
                   <input pInputText id="environmentConfigRouteHostnameResolved" name="environmentConfigRouteHostnameResolved" ngModel="{{resolveRouteHostname()}}"
                          pattern="(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])"
@@ -62,7 +68,7 @@
 
                 <div class="field">
                   <p-dropdown id="environmentConfigRouteTargetPort" name="environmentConfigRouteTargetPort" [options]="applicationVersion.spec.servicePorts" [(ngModel)]="environmentConfig.spec.routeTargetPort"
-                              placeholder="Target Port" [showClear]="true" [editable]="true" required="{{routeCategory}}"></p-dropdown>
+                              placeholder="Target Port" [showClear]="true" [editable]="true" required="{{environmentConfig.spec.routeEnabled}}"></p-dropdown>
                   <small class="p-message p-message-warn p-1" *ngIf="environmentConfig.spec.routeTargetPort && applicationVersion.spec.servicePorts.indexOf(environmentConfig.spec.routeTargetPort) === -1">
                     Warn: route port not configured in application configuration
                   </small>

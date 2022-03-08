@@ -41,7 +41,6 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   environmentRelease: EnvironmentRelease;
   releaseVersion: ReleaseVersion;
   applicationVersion: ApplicationVersion;
-  routeCategory = false;
 
   constructor(private log: LoggerService,
               private route: ActivatedRoute,
@@ -80,7 +79,6 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
       .subscribe((config) => {
         this.environmentConfig = config;
         this.exampleRouteHost = '${release_name}-${application_name}-${environment_name}.${cluster_host}';
-        this.setCategoriesExpanded();
         this.setBreadcrumb();
       });
   }
@@ -103,12 +101,6 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
     ]);
   }
 
-  private setCategoriesExpanded() {
-    if (this.environmentConfig.spec.routeHostname) {
-      this.routeCategory = true;
-    }
-  }
-
   save() {
     this.applicationService.saveEnvironmentConfig(this.environmentConfig)
       .subscribe(() => this.location.back());
@@ -119,7 +111,7 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   }
 
   routeSelectedChange() {
-    if (this.routeCategory && !this.environmentConfig.spec.routeHostname) {
+    if (this.environmentConfig.spec.routeEnabled && !this.environmentConfig.spec.routeHostname) {
       this.environmentConfig.spec.routeHostname = this.exampleRouteHost;
     }
   }

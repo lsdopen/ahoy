@@ -55,6 +55,14 @@ public class ApplicationEnvironmentConfig {
 		this.spec = spec;
 	}
 
+	public boolean routeEnabled() {
+		return spec != null && spec.getRouteEnabled() != null && spec.getRouteEnabled();
+	}
+
+	public boolean hasRoute() {
+		return spec != null && spec.getRouteHostname() != null;
+	}
+
 	public boolean configEnabled() {
 		return spec != null && spec.getConfigFilesEnabled() != null && spec.getConfigFilesEnabled();
 	}
@@ -88,7 +96,7 @@ public class ApplicationEnvironmentConfig {
 	}
 
 	public ApplicationEnvironmentSpec summarySpec() {
-		return new ApplicationEnvironmentSpec(spec.getRouteHostname());
+		return ApplicationEnvironmentSpec.newSummarySpec(spec.getRouteEnabled(), spec.getRouteHostname());
 	}
 
 	@Override

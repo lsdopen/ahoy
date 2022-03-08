@@ -26,6 +26,7 @@ import java.util.List;
 public class ApplicationEnvironmentSpec {
 	private Integer replicas;
 
+	private Boolean routeEnabled;
 	private String routeHostname;
 	private Integer routeTargetPort;
 	private boolean tls;
@@ -46,11 +47,15 @@ public class ApplicationEnvironmentSpec {
 	private Boolean resourcesEnabled;
 	private ApplicationResources resources;
 
-	public ApplicationEnvironmentSpec(String routeHostname) {
-		this.routeHostname = routeHostname;
+	public static ApplicationEnvironmentSpec newSummarySpec(Boolean routeEnabled, String routeHostname) {
+		ApplicationEnvironmentSpec newSummarySpec = new ApplicationEnvironmentSpec();
+		newSummarySpec.setRouteEnabled(routeEnabled);
+		newSummarySpec.setRouteHostname(routeHostname);
+		return newSummarySpec;
 	}
 
 	public ApplicationEnvironmentSpec(String routeHostname, Integer routeTargetPort) {
+		this.routeEnabled = routeHostname != null && routeTargetPort != null;
 		this.routeHostname = routeHostname;
 		this.routeTargetPort = routeTargetPort;
 	}

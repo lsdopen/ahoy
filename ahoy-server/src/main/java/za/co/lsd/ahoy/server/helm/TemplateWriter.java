@@ -103,6 +103,8 @@ public class TemplateWriter {
 				addTemplate(application, "service", templatesPath, trackedTemplates);
 
 				if (applicationEnvironmentConfig != null &&
+					applicationEnvironmentConfig.getSpec().getRouteEnabled() != null &&
+					applicationEnvironmentConfig.getSpec().getRouteEnabled() &&
 					applicationEnvironmentConfig.getSpec().getRouteHostname() != null && !applicationEnvironmentConfig.getSpec().getRouteHostname().trim().isEmpty() &&
 					applicationEnvironmentConfig.getSpec().getRouteTargetPort() != null) {
 					addTemplate(application, "ingress", templatesPath, trackedTemplates);
