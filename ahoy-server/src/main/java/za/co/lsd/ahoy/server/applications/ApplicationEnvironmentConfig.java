@@ -55,12 +55,24 @@ public class ApplicationEnvironmentConfig {
 		this.spec = spec;
 	}
 
+	public boolean hasReplicas() {
+		return spec != null && spec.getReplicas() != null;
+	}
+
 	public boolean routeEnabled() {
 		return spec != null && spec.getRouteEnabled() != null && spec.getRouteEnabled();
 	}
 
 	public boolean hasRoute() {
-		return spec != null && spec.getRouteHostname() != null;
+		return spec != null && spec.getRouteHostname() != null && !spec.getRouteHostname().trim().isEmpty() && spec.getRouteTargetPort() != null;
+	}
+
+	public boolean environmentVariablesEnabled() {
+		return spec != null && spec.getEnvironmentVariablesEnabled() != null && spec.getEnvironmentVariablesEnabled();
+	}
+
+	public boolean hasEnvironmentVariables() {
+		return spec != null && spec.getEnvironmentVariables() != null && spec.getEnvironmentVariables().size() > 0;
 	}
 
 	public boolean configEnabled() {

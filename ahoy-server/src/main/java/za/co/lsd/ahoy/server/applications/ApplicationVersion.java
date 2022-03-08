@@ -77,6 +77,22 @@ public class ApplicationVersion implements Serializable {
 		this.spec = new ApplicationSpec();
 	}
 
+	public boolean servicePortsEnabled() {
+		return spec != null && spec.getServicePortsEnabled() != null && spec.getServicePortsEnabled();
+	}
+
+	public boolean hasServicePorts() {
+		return spec != null && spec.getServicePorts() != null && spec.getServicePorts().size() > 0;
+	}
+
+	public boolean environmentVariablesEnabled() {
+		return spec != null && spec.getEnvironmentVariablesEnabled() != null && spec.getEnvironmentVariablesEnabled();
+	}
+
+	public boolean hasEnvironmentVariables() {
+		return spec != null && spec.getEnvironmentVariables() != null && spec.getEnvironmentVariables().size() > 0;
+	}
+
 	public boolean configEnabled() {
 		return spec != null && spec.getConfigFilesEnabled() != null && spec.getConfigFilesEnabled();
 	}
