@@ -56,6 +56,7 @@ export class ApplicationSpec {
   volumes: ApplicationVolume[] = [];
   secretsEnabled = false;
   secrets: ApplicationSecret[] = [];
+  resourcesEnabled = false;
   resources = new ApplicationResources();
 }
 
@@ -125,6 +126,7 @@ export class ApplicationEnvironmentSpec {
   volumes: ApplicationVolume[] = [];
   secretsEnabled = false;
   secrets: ApplicationSecret[] = [];
+  resourcesEnabled = false;
   resources = new ApplicationResources();
 }
 

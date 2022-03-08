@@ -162,7 +162,13 @@
 
             </p-accordionTab>
 
-            <p-accordionTab header="Resources" [(selected)]="resourcesCategory">
+            <p-accordionTab>
+              <p-header>
+                <div class="formgroup-inline">
+                  <p-inputSwitch name="resourcesEnabled" (click)="$event.stopPropagation();" [(ngModel)]="environmentConfig.spec.resourcesEnabled"></p-inputSwitch>
+                  <span class="ml-2">Resources</span>
+                </div>
+              </p-header>
 
               <app-application-resources [resources]="environmentConfig.spec.resources"></app-application-resources>
 

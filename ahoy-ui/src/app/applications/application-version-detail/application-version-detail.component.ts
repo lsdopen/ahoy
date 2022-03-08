@@ -39,7 +39,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
   editMode: boolean;
   editingVersion: string;
   newServicePort: number;
-  resourcesCategory = false;
   newArg: string;
   editingArg: string;
   editingPort: number;
@@ -74,8 +73,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
             this.applicationService.getVersion(this.applicationVersionId)
               .subscribe((applicationVersion) => {
                 this.applicationVersion.spec = applicationVersion.spec;
-
-                this.setCategoriesExpanded();
               });
 
           } else {
@@ -93,7 +90,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
                 this.applicationVersion.spec.healthEndpointScheme = 'HTTP';
               }
 
-              this.setCategoriesExpanded();
               this.setBreadcrumb();
             });
         }
@@ -114,14 +110,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
         {label: this.application.name, routerLink: `/application/${this.application.id}`},
         {label: 'new'}
       ]);
-    }
-  }
-
-  private setCategoriesExpanded() {
-    if (this.applicationVersion.spec.resources && (
-      this.applicationVersion.spec.resources.limitCpu || this.applicationVersion.spec.resources.limitMemory ||
-      this.applicationVersion.spec.resources.requestCpu || this.applicationVersion.spec.resources.requestMemory)) {
-      this.resourcesCategory = true;
     }
   }
 

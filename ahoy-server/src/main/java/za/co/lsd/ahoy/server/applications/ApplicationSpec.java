@@ -55,6 +55,7 @@ public class ApplicationSpec {
 	private Boolean secretsEnabled;
 	private List<ApplicationSecret> secrets;
 
+	private Boolean resourcesEnabled;
 	private ApplicationResources resources;
 
 	public ApplicationSpec(String image, String dockerRegistryName) {

@@ -79,6 +79,14 @@ public class ApplicationEnvironmentConfig {
 		return spec != null && spec.getSecrets() != null && spec.getSecrets().size() > 0;
 	}
 
+	public boolean resourcesEnabled() {
+		return spec != null && spec.getResourcesEnabled() != null && spec.getResourcesEnabled();
+	}
+
+	public boolean hasResources() {
+		return spec != null && spec.getResources() != null;
+	}
+
 	public ApplicationEnvironmentSpec summarySpec() {
 		return new ApplicationEnvironmentSpec(spec.getRouteHostname());
 	}

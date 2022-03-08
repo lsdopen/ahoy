@@ -90,7 +90,7 @@ spec:
             {{- toYaml .app.readinessProbe | nindent 12 }}
             {{ end }}
           {{ end }}
-          {{ if .app.resources }}
+          {{ if and .app.resourcesEnabled .app.resources }}
           resources:
             {{- toYaml .app.resources | nindent 12 }}
           {{ else }}

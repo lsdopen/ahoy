@@ -109,7 +109,8 @@ public class ValuesBuilder {
 			.configFilesEnabled(applicationVersion.configEnabled() || (environmentConfig != null && environmentConfig.configEnabled()))
 			.configPath(spec.getConfigPath())
 			.volumesEnabled(applicationVersion.volumesEnabled() || (environmentConfig != null && environmentConfig.volumesEnabled()))
-			.secretsEnabled(applicationVersion.secretsEnabled() || (environmentConfig != null && environmentConfig.secretsEnabled()));
+			.secretsEnabled(applicationVersion.secretsEnabled() || (environmentConfig != null && environmentConfig.secretsEnabled()))
+			.resourcesEnabled(applicationVersion.resourcesEnabled() || (environmentConfig != null && environmentConfig.resourcesEnabled()));
 
 		Optional<DockerRegistry> dockerRegistry = dockerRegistryProvider.dockerRegistryFor(spec.getDockerRegistryName());
 		if (dockerRegistry.isPresent() && dockerRegistry.get().getSecure()) {
@@ -151,7 +152,7 @@ public class ValuesBuilder {
 		}
 
 		ResourcesValues resourcesValues = new ResourcesValues();
-		if (spec.getResources() != null) {
+		if (applicationVersion.resourcesEnabled() && applicationVersion.hasResources()) {
 			resourcesValues.spec(spec.getResources());
 		}
 
@@ -186,7 +187,7 @@ public class ValuesBuilder {
 				}
 			}
 
-			if (environmentSpec.getResources() != null) {
+			if (environmentConfig.resourcesEnabled() && environmentConfig.hasResources()) {
 				resourcesValues.spec(environmentSpec.getResources());
 			}
 

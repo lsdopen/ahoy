@@ -60,5 +60,6 @@ public class ApplicationValues {
 	public Map<String, ApplicationVolumeValues> volumes;
 	public Boolean secretsEnabled;
 	public Map<String, ApplicationSecretValues> secrets;
+	private Boolean resourcesEnabled;
 	public ResourcesValues resources;
 }

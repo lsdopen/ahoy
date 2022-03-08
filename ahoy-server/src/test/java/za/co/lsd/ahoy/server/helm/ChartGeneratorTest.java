@@ -140,6 +140,7 @@ public class ChartGeneratorTest {
 			.volumes(new LinkedHashMap<>())
 			.secretsEnabled(false)
 			.secrets(new LinkedHashMap<>())
+			.resourcesEnabled(false)
 			.build();
 		Map<String, ApplicationValues> expectedApps = new LinkedHashMap<>();
 		expectedApps.put("app1", expectedApplicationValues);
@@ -217,6 +218,7 @@ public class ChartGeneratorTest {
 		);
 		spec.setSecrets(appSecrets);
 
+		spec.setResourcesEnabled(true);
 		ApplicationResources resources = new ApplicationResources(1000L, 100L, QuantityUnit.Mi, 500L, 50L, QuantityUnit.Mi);
 		spec.setResources(resources);
 
@@ -238,6 +240,7 @@ public class ChartGeneratorTest {
 		List<ApplicationSecret> envSecrets = Collections.singletonList(new ApplicationSecret("my-env-secret", SecretType.Generic, Collections.singletonMap("env-secret-key", "env-secret-value")));
 		environmentSpec.setSecrets(envSecrets);
 
+		environmentSpec.setResourcesEnabled(true);
 		ApplicationResources envResources = new ApplicationResources(1200L, 120L, QuantityUnit.Mi, null, null, QuantityUnit.Mi);
 		environmentSpec.setResources(envResources);
 
@@ -332,6 +335,7 @@ public class ChartGeneratorTest {
 			.volumes(volumes)
 			.secretsEnabled(true)
 			.secrets(secrets)
+			.resourcesEnabled(true)
 			.resources(new ResourcesValues(
 				new ResourcesValues.ResourceValue("1200m", "120Mi"),
 				new ResourcesValues.ResourceValue("500m", "50Mi")
@@ -405,6 +409,7 @@ public class ChartGeneratorTest {
 		);
 		environmentSpec.setSecrets(envSecrets);
 
+		environmentSpec.setResourcesEnabled(true);
 		ApplicationResources envResources = new ApplicationResources(1200L, 120L, QuantityUnit.Mi, 520L, 52L, QuantityUnit.Mi);
 		environmentSpec.setResources(envResources);
 
@@ -479,6 +484,7 @@ public class ChartGeneratorTest {
 			.volumes(volumes)
 			.secretsEnabled(true)
 			.secrets(secrets)
+			.resourcesEnabled(true)
 			.resources(new ResourcesValues(
 				new ResourcesValues.ResourceValue("1200m", "120Mi"),
 				new ResourcesValues.ResourceValue("520m", "52Mi")

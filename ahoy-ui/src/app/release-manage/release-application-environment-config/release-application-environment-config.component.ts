@@ -42,7 +42,6 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   releaseVersion: ReleaseVersion;
   applicationVersion: ApplicationVersion;
   routeCategory = false;
-  resourcesCategory = false;
 
   constructor(private log: LoggerService,
               private route: ActivatedRoute,
@@ -107,12 +106,6 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
   private setCategoriesExpanded() {
     if (this.environmentConfig.spec.routeHostname) {
       this.routeCategory = true;
-    }
-
-    if (this.environmentConfig.spec.resources && (
-      this.environmentConfig.spec.resources.limitCpu || this.environmentConfig.spec.resources.limitMemory ||
-      this.environmentConfig.spec.resources.requestCpu || this.environmentConfig.spec.resources.requestMemory)) {
-      this.resourcesCategory = true;
     }
   }
 
