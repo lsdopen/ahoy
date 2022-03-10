@@ -23,11 +23,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApplicationProbe {
-	private HttpEndpoint httpGet;
-	private Long initialDelaySeconds;
-	private Long periodSeconds;
-	private Long timeoutSeconds;
-	private Long successThreshold;
-	private Long failureThreshold;
+public class HttpEndpoint {
+	private String path;
+	private Integer port;
+	private String scheme;
 }

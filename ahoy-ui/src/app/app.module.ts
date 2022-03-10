@@ -124,7 +124,9 @@ import {UserRoleDirective} from './util/user-role.directive';
 import {ReleaseResourcesComponent} from './release-manage/release-resources/release-resources.component';
 import {TreeModule} from 'primeng/tree';
 import {ApplicationResourcesComponent} from './applications/application-resources/application-resources.component';
-import {ApplicationProbeComponent} from './applications/application-probe/application-probe.component';
+import {ProbeComponent} from './applications/application-healthchecks/probe/probe.component';
+import {ApplicationHealthChecksComponent} from './applications/application-healthchecks/application-health-checks.component';
+import {HttpEndpointComponent} from './applications/application-healthchecks/http-endpoint/http-endpoint.component';
 
 @NgModule({
   declarations: [
@@ -196,7 +198,9 @@ import {ApplicationProbeComponent} from './applications/application-probe/applic
     AppearanceSettingsComponent,
     ReleaseResourcesComponent,
     ApplicationResourcesComponent,
-    ApplicationProbeComponent
+    ProbeComponent,
+    ApplicationHealthChecksComponent,
+    HttpEndpointComponent
   ],
   imports: [
     BrowserModule,

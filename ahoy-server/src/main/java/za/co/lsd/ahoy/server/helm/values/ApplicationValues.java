@@ -48,9 +48,6 @@ public class ApplicationValues {
 	public Boolean environmentVariablesEnabled;
 	public Map<String, EnvironmentVariableValues> environmentVariables;
 	public Boolean healthChecksEnabled;
-	public String healthEndpointPath;
-	public Integer healthEndpointPort;
-	public String healthEndpointScheme;
 	public ApplicationProbe livenessProbe;
 	public ApplicationProbe readinessProbe;
 	public Boolean configFilesEnabled;

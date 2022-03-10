@@ -42,9 +42,6 @@ export class ApplicationSpec {
   servicePortsEnabled = false;
   servicePorts: number[] = [];
   healthChecksEnabled = false;
-  healthEndpointPath: string;
-  healthEndpointPort: number;
-  healthEndpointScheme = 'HTTP';
   livenessProbe = new ApplicationProbe(60, 10, 5, 1, 3);
   readinessProbe = new ApplicationProbe(10, 10, 5, 1, 3);
   environmentVariablesEnabled = false;
@@ -167,6 +164,7 @@ export class ApplicationResources {
 }
 
 export class ApplicationProbe {
+  httpGet = new HttpEndpoint();
   initialDelaySeconds: number;
   periodSeconds: number;
   timeoutSeconds: number;
@@ -180,4 +178,10 @@ export class ApplicationProbe {
     this.successThreshold = successThreshold;
     this.failureThreshold = failureThreshold;
   }
+}
+
+export class HttpEndpoint {
+  path: string;
+  port: number;
+  scheme = 'HTTP';
 }

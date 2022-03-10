@@ -15,14 +15,14 @@
  */
 
 import {Component, Input} from '@angular/core';
-import {ApplicationProbe} from '../application';
+import {ApplicationProbe} from '../../application';
 
 @Component({
-  selector: 'app-application-probe',
-  templateUrl: './application-probe.component.html',
-  styleUrls: ['./application-probe.component.scss']
+  selector: 'app-probe',
+  templateUrl: './probe.component.html',
+  styleUrls: ['./probe.component.scss']
 })
-export class ApplicationProbeComponent {
+export class ProbeComponent {
   @Input() probe: ApplicationProbe;
 
   constructor() {

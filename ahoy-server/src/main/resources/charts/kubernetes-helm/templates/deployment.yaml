@@ -74,18 +74,10 @@ spec:
           {{ end }}
           {{ if .app.healthChecksEnabled }}
           livenessProbe:
-            httpGet:
-              path: {{ .app.healthEndpointPath }}
-              port: {{ .app.healthEndpointPort }}
-              scheme: {{ .app.healthEndpointScheme }}
             {{ if .app.livenessProbe }}
             {{- toYaml .app.livenessProbe | nindent 12 }}
             {{ end }}
           readinessProbe:
-            httpGet:
-              path: {{ .app.healthEndpointPath }}
-              port: {{ .app.healthEndpointPort }}
-              scheme: {{ .app.healthEndpointScheme }}
             {{ if .app.readinessProbe }}
             {{- toYaml .app.readinessProbe | nindent 12 }}
             {{ end }}

@@ -172,43 +172,8 @@
                 </div>
               </p-header>
 
-              <div class="p-fluid col-12 md:col-3">
-                <div class="field p-float-label">
-                  <input pInputText id="applicationHealthEndpointPath" [(ngModel)]="applicationVersion.spec.healthEndpointPath" name="applicationHealthEndpointPath"
-                         pattern="(/[^\s]*)"
-                         [required]="applicationVersion.spec.healthChecksEnabled">
-                  <label for="applicationHealthEndpointPath">Health Endpoint Path</label>
-                  <small class="p-error" *ngIf="applicationVersionForm.form.controls.applicationHealthEndpointPath?.hasError('pattern')">invalid</small>
-                </div>
+              <app-application-health-checks [parentForm]="applicationVersionForm" [applicationSpec]="applicationVersion.spec"></app-application-health-checks>
 
-                <div class="field p-float-label">
-                  <p-dropdown [options]="applicationVersion.spec.servicePorts" [(ngModel)]="applicationVersion.spec.healthEndpointPort"
-                              [showClear]="true" name="applicationHealthEndpointPort"
-                              [editable]="true"
-                              [autoDisplayFirst]="false"
-                              required="{{applicationVersion.spec.healthChecksEnabled}}"></p-dropdown>
-                  <label>Health Endpoint Port</label>
-                  <small class="p-message p-message-warn p-1" *ngIf="applicationVersion.spec.healthEndpointPort && applicationVersion.spec.servicePorts.indexOf(applicationVersion.spec.healthEndpointPort) === -1">
-                    Warn: port not configured
-                  </small>
-                </div>
-
-                <div class="field p-float-label">
-                  <p-dropdown [options]="['HTTP', 'HTTPS']" [(ngModel)]="applicationVersion.spec.healthEndpointScheme"
-                              name="applicationHealthEndpointScheme"
-                              required="{{applicationVersion.spec.healthChecksEnabled}}"></p-dropdown>
-                  <label>Health Endpoint Scheme</label>
-                </div>
-              </div>
-
-              <p-tabView orientation="left">
-                <p-tabPanel header="Liveness probe">
-                  <app-application-probe [probe]="applicationVersion.spec.livenessProbe"></app-application-probe>
-                </p-tabPanel>
-                <p-tabPanel header="Readiness probe">
-                  <app-application-probe [probe]="applicationVersion.spec.readinessProbe"></app-application-probe>
-                </p-tabPanel>
-              </p-tabView>
             </p-accordionTab>
 
             <p-accordionTab>

@@ -35,9 +35,6 @@ public class ApplicationSpec {
 	private List<Integer> servicePorts;
 
 	private Boolean healthChecksEnabled;
-	private String healthEndpointPath;
-	private Integer healthEndpointPort;
-	private String healthEndpointScheme;
 
 	private ApplicationProbe livenessProbe;
 	private ApplicationProbe readinessProbe;

@@ -183,11 +183,9 @@ public class ChartGeneratorTest {
 		spec.setEnvironmentVariablesEnabled(true);
 		spec.setEnvironmentVariables(environmentVariables);
 		spec.setHealthChecksEnabled(true);
-		spec.setHealthEndpointPath("/");
-		spec.setHealthEndpointPort(8080);
-		spec.setHealthEndpointScheme("HTTP");
-		spec.setLivenessProbe(new ApplicationProbe(60L, 10L, 5L, 1L, 3L));
-		spec.setReadinessProbe(new ApplicationProbe(10L, 10L, 5L, 1L, 3L));
+		HttpEndpoint httpEndpoint = new HttpEndpoint("/", 8080, "HTTP");
+		spec.setLivenessProbe(new ApplicationProbe(httpEndpoint, 60L, 10L, 5L, 1L, 3L));
+		spec.setReadinessProbe(new ApplicationProbe(httpEndpoint, 10L, 10L, 5L, 1L, 3L));
 		spec.setConfigPath("/opt/config");
 		spec.setConfigFilesEnabled(true);
 		List<ApplicationConfigFile> appConfigs = Collections.singletonList(new ApplicationConfigFile("application.properties", "greeting=hello"));
@@ -316,11 +314,8 @@ public class ChartGeneratorTest {
 			.servicePortsEnabled(true)
 			.servicePorts(servicePorts)
 			.healthChecksEnabled(true)
-			.healthEndpointPath("/")
-			.healthEndpointPort(8080)
-			.healthEndpointScheme("HTTP")
-			.livenessProbe(new ApplicationProbe(60L, 10L, 5L, 1L, 3L))
-			.readinessProbe(new ApplicationProbe(10L, 10L, 5L, 1L, 3L))
+			.livenessProbe(new ApplicationProbe(new HttpEndpoint("/", 8080, "HTTP"), 60L, 10L, 5L, 1L, 3L))
+			.readinessProbe(new ApplicationProbe(new HttpEndpoint("/", 8080, "HTTP"), 10L, 10L, 5L, 1L, 3L))
 			.replicas(2)
 			.routeEnabled(true)
 			.routeHostname("myapp1-route")

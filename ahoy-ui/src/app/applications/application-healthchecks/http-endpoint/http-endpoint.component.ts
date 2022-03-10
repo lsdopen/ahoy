@@ -14,20 +14,25 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.applications;
+import {Component, Input, OnInit} from '@angular/core';
+import {ControlContainer, NgForm} from '@angular/forms';
+import {ApplicationProbe, ApplicationSpec} from '../../application';
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+@Component({
+  selector: 'app-http-endpoint',
+  templateUrl: './http-endpoint.component.html',
+  styleUrls: ['./http-endpoint.component.scss'],
+  viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
+})
+export class HttpEndpointComponent implements OnInit {
+  @Input() parentForm: NgForm;
+  @Input() applicationSpec: ApplicationSpec;
+  @Input() probe: ApplicationProbe;
+  @Input() probeName: string;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class ApplicationProbe {
-	private HttpEndpoint httpGet;
-	private Long initialDelaySeconds;
-	private Long periodSeconds;
-	private Long timeoutSeconds;
-	private Long successThreshold;
-	private Long failureThreshold;
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
 }

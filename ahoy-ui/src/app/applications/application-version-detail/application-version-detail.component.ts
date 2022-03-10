@@ -85,11 +85,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
             .subscribe(applicationVersion => {
               this.applicationVersion = applicationVersion;
               this.editingVersion = applicationVersion.version;
-
-              if (!this.applicationVersion.spec.healthEndpointScheme) {
-                this.applicationVersion.spec.healthEndpointScheme = 'HTTP';
-              }
-
               this.setBreadcrumb();
             });
         }
