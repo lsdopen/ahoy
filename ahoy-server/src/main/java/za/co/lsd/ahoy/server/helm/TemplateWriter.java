@@ -72,19 +72,21 @@ public class TemplateWriter {
 			Application application = applicationVersion.getApplication();
 			addTemplate(application, "deployment", templatesPath, trackedTemplates);
 
-			ApplicationEnvironmentConfig applicationEnvironmentConfig =
-				environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion)
-					.orElse(null);
+			Optional<ApplicationEnvironmentConfig> applicationEnvironmentConfig =
+				environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion);
 
-			if (applicationVersion.hasConfigs() || (applicationEnvironmentConfig != null && applicationEnvironmentConfig.hasConfigs())) {
+			if ((applicationVersion.configEnabled() && applicationVersion.hasConfigs()) ||
+				applicationEnvironmentConfig.map(e -> e.configEnabled() && e.hasConfigs()).orElse(false)) {
 				addTemplate(application, "configmap", templatesPath, trackedTemplates);
 			}
 
-			if (applicationVersion.hasVolumes() || (applicationEnvironmentConfig != null && applicationEnvironmentConfig.hasVolumes())) {
+			if ((applicationVersion.volumesEnabled() && applicationVersion.hasVolumes()) ||
+				applicationEnvironmentConfig.map(e -> e.volumesEnabled() && e.hasVolumes()).orElse(false)) {
 				addTemplate(application, "pvc", templatesPath, trackedTemplates);
 			}
 
-			if (applicationVersion.hasSecrets() || (applicationEnvironmentConfig != null && applicationEnvironmentConfig.hasSecrets())) {
+			if ((applicationVersion.secretsEnabled() && applicationVersion.hasSecrets()) ||
+				applicationEnvironmentConfig.map(e -> e.secretsEnabled() && e.hasSecrets()).orElse(false)) {
 				addTemplate(application, "secret-generic", templatesPath, trackedTemplates);
 			}
 
@@ -93,13 +95,10 @@ public class TemplateWriter {
 				addTemplate(application, "secret-dockerconfig", templatesPath, trackedTemplates);
 			}
 
-			if (applicationVersion.getSpec().getServicePorts() != null &&
-				applicationVersion.getSpec().getServicePorts().size() > 0) {
+			if (applicationVersion.servicePortsEnabled() && applicationVersion.hasServicePorts()) {
 				addTemplate(application, "service", templatesPath, trackedTemplates);
 
-				if (applicationEnvironmentConfig != null &&
-					applicationEnvironmentConfig.getSpec().getRouteHostname() != null && !applicationEnvironmentConfig.getSpec().getRouteHostname().trim().isEmpty() &&
-					applicationEnvironmentConfig.getSpec().getRouteTargetPort() != null) {
+				if (applicationEnvironmentConfig.map(e -> e.routeEnabled() && e.hasRoute()).orElse(false)) {
 					addTemplate(application, "ingress", templatesPath, trackedTemplates);
 				}
 			}

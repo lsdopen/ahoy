@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -39,13 +39,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
   editMode: boolean;
   editingVersion: string;
   newServicePort: number;
-  portsCategory = false;
-  healthChecksCategory = false;
-  environmentVariablesCategory = false;
-  configFilesCategory = false;
-  volumesCategory = false;
-  secretsCategory = false;
-  commandCategory = false;
   newArg: string;
   editingArg: string;
   editingPort: number;
@@ -80,8 +73,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
             this.applicationService.getVersion(this.applicationVersionId)
               .subscribe((applicationVersion) => {
                 this.applicationVersion.spec = applicationVersion.spec;
-
-                this.setCategoriesExpanded();
               });
 
           } else {
@@ -94,12 +85,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
             .subscribe(applicationVersion => {
               this.applicationVersion = applicationVersion;
               this.editingVersion = applicationVersion.version;
-
-              if (!this.applicationVersion.spec.healthEndpointScheme) {
-                this.applicationVersion.spec.healthEndpointScheme = 'HTTP';
-              }
-
-              this.setCategoriesExpanded();
               this.setBreadcrumb();
             });
         }
@@ -120,37 +105,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
         {label: this.application.name, routerLink: `/application/${this.application.id}`},
         {label: 'new'}
       ]);
-    }
-  }
-
-  private setCategoriesExpanded() {
-    if (this.applicationVersion.spec.servicePorts && this.applicationVersion.spec.servicePorts.length > 0) {
-      this.portsCategory = true;
-    }
-
-    if (this.applicationVersion.spec.healthEndpointPath) {
-      this.healthChecksCategory = true;
-    }
-
-    if (this.applicationVersion.spec.environmentVariables && Object.keys(this.applicationVersion.spec.environmentVariables).length > 0) {
-      this.environmentVariablesCategory = true;
-    }
-
-    if (this.applicationVersion.spec.configPath) {
-      this.configFilesCategory = true;
-    }
-
-    if (this.applicationVersion.spec.volumes.length > 0) {
-      this.volumesCategory = true;
-    }
-
-    if (this.applicationVersion.spec.secrets.length > 0) {
-      this.secretsCategory = true;
-    }
-
-    if (this.applicationVersion.spec.command ||
-      (this.applicationVersion.spec.args && this.applicationVersion.spec.args.length > 0)) {
-      this.commandCategory = true;
     }
   }
 

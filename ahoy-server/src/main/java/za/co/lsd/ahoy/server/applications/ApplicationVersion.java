@@ -77,16 +77,52 @@ public class ApplicationVersion implements Serializable {
 		this.spec = new ApplicationSpec();
 	}
 
+	public boolean servicePortsEnabled() {
+		return spec != null && spec.getServicePortsEnabled() != null && spec.getServicePortsEnabled();
+	}
+
+	public boolean hasServicePorts() {
+		return spec != null && spec.getServicePorts() != null && spec.getServicePorts().size() > 0;
+	}
+
+	public boolean environmentVariablesEnabled() {
+		return spec != null && spec.getEnvironmentVariablesEnabled() != null && spec.getEnvironmentVariablesEnabled();
+	}
+
+	public boolean hasEnvironmentVariables() {
+		return spec != null && spec.getEnvironmentVariables() != null && spec.getEnvironmentVariables().size() > 0;
+	}
+
+	public boolean configEnabled() {
+		return spec != null && spec.getConfigFilesEnabled() != null && spec.getConfigFilesEnabled();
+	}
+
 	public boolean hasConfigs() {
 		return spec != null && spec.getConfigFiles() != null && spec.getConfigFiles().size() > 0;
+	}
+
+	public boolean volumesEnabled() {
+		return spec != null && spec.getVolumesEnabled() != null && spec.getVolumesEnabled();
 	}
 
 	public boolean hasVolumes() {
 		return spec != null && spec.getVolumes() != null && spec.getVolumes().size() > 0;
 	}
 
+	public boolean secretsEnabled() {
+		return spec != null && spec.getSecretsEnabled() != null && spec.getSecretsEnabled();
+	}
+
 	public boolean hasSecrets() {
 		return spec != null && spec.getSecrets() != null && spec.getSecrets().size() > 0;
+	}
+
+	public boolean resourcesEnabled() {
+		return spec != null && spec.getResourcesEnabled() != null && spec.getResourcesEnabled();
+	}
+
+	public boolean hasResources() {
+		return spec != null && spec.getResources() != null;
 	}
 
 	public ApplicationSpec summarySpec() {

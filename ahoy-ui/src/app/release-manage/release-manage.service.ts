@@ -120,11 +120,21 @@ export class ReleaseManageService {
     );
   }
 
-  upgrade(releaseVersionId: number, upgradeOptions: UpgradeOptions): Observable<ReleaseVersion> {
-    this.log.debug(`upgrading release version: ${releaseVersionId} to version: ${upgradeOptions.version}`);
-    const url = `/api/releaseVersions/${releaseVersionId}/upgrade`;
+  upgrade(environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion, upgradeOptions: UpgradeOptions): Observable<ReleaseVersion> {
+    this.log.debug(`upgrading release version: ${releaseVersion.id} to version: ${upgradeOptions.version}`);
+    const url = `/api/releaseVersions/${releaseVersion.id}/upgrade`;
     return this.restClient.post<ReleaseVersion>(url, upgradeOptions).pipe(
-      tap((upgradedReleaseVersion) => this.log.debug('upgraded release version', upgradedReleaseVersion))
+      tap((upgradedReleaseVersion) => {
+        this.log.debug('upgraded release version', upgradedReleaseVersion);
+        const text = `${(environmentRelease.release as Release).name} `
+          + `was upgraded from version ${releaseVersion.version} to version ${upgradedReleaseVersion.version}`;
+        this.notificationsService.notification(new Notification(text));
+      }),
+      catchError((error) => {
+        const text = `Failed to upgrade release`;
+        this.notificationsService.notification(new Notification(text, error));
+        return EMPTY;
+      })
     );
   }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -36,17 +36,25 @@ export class ApplicationVersion {
 export class ApplicationSpec {
   image: string;
   dockerRegistryName: string;
+  commandArgsEnabled = false;
   command: string;
   args: string[] = [];
+  servicePortsEnabled = false;
   servicePorts: number[] = [];
-  healthEndpointPath: string;
-  healthEndpointPort: number;
-  healthEndpointScheme = 'HTTP';
+  healthChecksEnabled = false;
+  livenessProbe = new ApplicationProbe(60, 10, 5, 1, 3);
+  readinessProbe = new ApplicationProbe(10, 10, 5, 1, 3);
+  environmentVariablesEnabled = false;
   environmentVariables: ApplicationEnvironmentVariable[] = [];
   configPath: string;
+  configFilesEnabled = false;
   configFiles: ApplicationConfigFile[] = [];
+  volumesEnabled = false;
   volumes: ApplicationVolume[] = [];
+  secretsEnabled = false;
   secrets: ApplicationSecret[] = [];
+  resourcesEnabled = false;
+  resources = new ApplicationResources();
 }
 
 export class ApplicationEnvironmentVariable {
@@ -103,14 +111,21 @@ export class ApplicationEnvironmentConfig {
 
 export class ApplicationEnvironmentSpec {
   replicas = 1;
+  routeEnabled = false;
   routeHostname: string;
   routeTargetPort: number;
   tls: boolean;
   tlsSecretName: string;
+  environmentVariablesEnabled = false;
   environmentVariables: ApplicationEnvironmentVariable[] = [];
+  configFilesEnabled = false;
   configFiles: ApplicationConfigFile[] = [];
+  volumesEnabled = false;
   volumes: ApplicationVolume[] = [];
+  secretsEnabled = false;
   secrets: ApplicationSecret[] = [];
+  resourcesEnabled = false;
+  resources = new ApplicationResources();
 }
 
 export class ApplicationEnvironmentConfigId {
@@ -136,4 +151,37 @@ export class ApplicationEnvironmentConfigIdUtil {
 export class ApplicationReleaseStatus {
   id: ApplicationEnvironmentConfigId;
   status: string;
+}
+
+export class ApplicationResources {
+  limitCpu: number;
+  limitMemory: number;
+  limitMemoryUnit = 'Mi';
+
+  requestCpu: number;
+  requestMemory: number;
+  requestMemoryUnit = 'Mi';
+}
+
+export class ApplicationProbe {
+  httpGet = new HttpEndpoint();
+  initialDelaySeconds: number;
+  periodSeconds: number;
+  timeoutSeconds: number;
+  successThreshold: number;
+  failureThreshold: number;
+
+  constructor(initialDelaySeconds: number, periodSeconds: number, timeoutSeconds: number, successThreshold: number, failureThreshold: number) {
+    this.initialDelaySeconds = initialDelaySeconds;
+    this.periodSeconds = periodSeconds;
+    this.timeoutSeconds = timeoutSeconds;
+    this.successThreshold = successThreshold;
+    this.failureThreshold = failureThreshold;
+  }
+}
+
+export class HttpEndpoint {
+  path: string;
+  port: number;
+  scheme = 'HTTP';
 }

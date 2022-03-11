@@ -9,7 +9,6 @@ metadata:
     environment: {{ .glob.environment }}
   name: {{ .glob.releaseName }}-{{ .app.name }}
 spec:
-  {{ if .app.servicePorts }}
   ports:
     {{- range .app.servicePorts }}
     - name: {{ . }}-tcp
@@ -17,12 +16,11 @@ spec:
       protocol: TCP
       targetPort: {{ . }}
     {{- end }}
-  {{ end }}
   selector:
     app: {{ .app.name }}
     releaseName: {{ .glob.releaseName }}
   sessionAffinity: None
-  {{ if and .app.routeHostname .app.routeTargetPort }}
+  {{ if and .app.routeEnabled .app.routeHostname .app.routeTargetPort }}
   type: NodePort
   {{ else }}
   type: ClusterIP

@@ -55,20 +55,60 @@ public class ApplicationEnvironmentConfig {
 		this.spec = spec;
 	}
 
+	public boolean hasReplicas() {
+		return spec != null && spec.getReplicas() != null;
+	}
+
+	public boolean routeEnabled() {
+		return spec != null && spec.getRouteEnabled() != null && spec.getRouteEnabled();
+	}
+
+	public boolean hasRoute() {
+		return spec != null && spec.getRouteHostname() != null && !spec.getRouteHostname().trim().isEmpty() && spec.getRouteTargetPort() != null;
+	}
+
+	public boolean environmentVariablesEnabled() {
+		return spec != null && spec.getEnvironmentVariablesEnabled() != null && spec.getEnvironmentVariablesEnabled();
+	}
+
+	public boolean hasEnvironmentVariables() {
+		return spec != null && spec.getEnvironmentVariables() != null && spec.getEnvironmentVariables().size() > 0;
+	}
+
+	public boolean configEnabled() {
+		return spec != null && spec.getConfigFilesEnabled() != null && spec.getConfigFilesEnabled();
+	}
+
 	public boolean hasConfigs() {
 		return spec != null && spec.getConfigFiles() != null && spec.getConfigFiles().size() > 0;
+	}
+
+	public boolean volumesEnabled() {
+		return spec != null && spec.getVolumesEnabled() != null && spec.getVolumesEnabled();
 	}
 
 	public boolean hasVolumes() {
 		return spec != null && spec.getVolumes() != null && spec.getVolumes().size() > 0;
 	}
 
+	public boolean secretsEnabled() {
+		return spec != null && spec.getSecretsEnabled() != null && spec.getSecretsEnabled();
+	}
+
 	public boolean hasSecrets() {
 		return spec != null && spec.getSecrets() != null && spec.getSecrets().size() > 0;
 	}
 
+	public boolean resourcesEnabled() {
+		return spec != null && spec.getResourcesEnabled() != null && spec.getResourcesEnabled();
+	}
+
+	public boolean hasResources() {
+		return spec != null && spec.getResources() != null;
+	}
+
 	public ApplicationEnvironmentSpec summarySpec() {
-		return new ApplicationEnvironmentSpec(spec.getRouteHostname());
+		return ApplicationEnvironmentSpec.newSummarySpec(spec.getRouteEnabled(), spec.getRouteHostname());
 	}
 
 	@Override

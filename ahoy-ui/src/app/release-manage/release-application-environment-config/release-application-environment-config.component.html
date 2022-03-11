@@ -46,12 +46,18 @@
 
         <div class="col-12">
           <p-accordion multiple="true">
-            <p-accordionTab header="Route" [(selected)]="routeCategory" (selectedChange)="routeSelectedChange()">
+            <p-accordionTab>
+              <p-header>
+                <div class="formgroup-inline">
+                  <p-inputSwitch name="routeEnabled" (click)="$event.stopPropagation();" (onChange)="routeSelectedChange()" [(ngModel)]="environmentConfig.spec.routeEnabled"></p-inputSwitch>
+                  <span class="ml-2">Route</span>
+                </div>
+              </p-header>
 
               <div class="p-fluid md:col-5">
                 <div class="field p-float-label">
                   <input pInputText id="environmentConfigRouteHostname" name="environmentConfigRouteHostname" [(ngModel)]="environmentConfig.spec.routeHostname"
-                         required="{{routeCategory}}" pTooltip="Available variables: ${release_name} ${application_name} ${environment_name} ${cluster_host}">
+                         required="{{environmentConfig.spec.routeEnabled}}" pTooltip="Available variables: ${release_name} ${application_name} ${environment_name} ${cluster_host}">
                   <label for="environmentConfigRouteHostname">Hostname</label>
                   <input pInputText id="environmentConfigRouteHostnameResolved" name="environmentConfigRouteHostnameResolved" ngModel="{{resolveRouteHostname()}}"
                          pattern="(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])"
@@ -62,7 +68,7 @@
 
                 <div class="field">
                   <p-dropdown id="environmentConfigRouteTargetPort" name="environmentConfigRouteTargetPort" [options]="applicationVersion.spec.servicePorts" [(ngModel)]="environmentConfig.spec.routeTargetPort"
-                              placeholder="Target Port" [showClear]="true" [editable]="true" required="{{routeCategory}}"></p-dropdown>
+                              placeholder="Target Port" [showClear]="true" [editable]="true" required="{{environmentConfig.spec.routeEnabled}}"></p-dropdown>
                   <small class="p-message p-message-warn p-1" *ngIf="environmentConfig.spec.routeTargetPort && applicationVersion.spec.servicePorts.indexOf(environmentConfig.spec.routeTargetPort) === -1">
                     Warn: route port not configured in application configuration
                   </small>
@@ -82,7 +88,13 @@
 
             </p-accordionTab>
 
-            <p-accordionTab header="Environment Variables" [(selected)]="environmentVariablesCategory">
+            <p-accordionTab>
+              <p-header>
+                <div class="formgroup-inline">
+                  <p-inputSwitch name="environmentVariablesEnabled" (click)="$event.stopPropagation();" [(ngModel)]="environmentConfig.spec.environmentVariablesEnabled"></p-inputSwitch>
+                  <span class="ml-2">Environment Variables</span>
+                </div>
+              </p-header>
 
               <app-application-env-variables
                 [environmentVariables]="environmentConfig.spec.environmentVariables" [secrets]="environmentConfig.spec.secrets">
@@ -90,7 +102,13 @@
 
             </p-accordionTab>
 
-            <p-accordionTab header="Configuration Files" [(selected)]="configFileCategory">
+            <p-accordionTab>
+              <p-header>
+                <div class="formgroup-inline">
+                  <p-inputSwitch name="configFilesEnabled" (click)="$event.stopPropagation();" [(ngModel)]="environmentConfig.spec.configFilesEnabled"></p-inputSwitch>
+                  <span class="ml-2">Configuration Files</span>
+                </div>
+              </p-header>
 
               <app-application-config-files
                 [parentForm]="environmentConfigForm"
@@ -101,7 +119,13 @@
 
             </p-accordionTab>
 
-            <p-accordionTab header="Volumes" [(selected)]="volumesCategory">
+            <p-accordionTab>
+              <p-header>
+                <div class="formgroup-inline">
+                  <p-inputSwitch name="volumesEnabled" (click)="$event.stopPropagation();" [(ngModel)]="environmentConfig.spec.volumesEnabled"></p-inputSwitch>
+                  <span class="ml-2">Volumes</span>
+                </div>
+              </p-header>
 
               <app-multi-tab [content]="volumeContent" [items]="environmentConfig.spec.volumes" [itemFactory]="applicationVolumeFactory()">
 
@@ -119,7 +143,13 @@
 
             </p-accordionTab>
 
-            <p-accordionTab header="Secrets" [(selected)]="secretsCategory">
+            <p-accordionTab>
+              <p-header>
+                <div class="formgroup-inline">
+                  <p-inputSwitch name="secretsEnabled" (click)="$event.stopPropagation();" [(ngModel)]="environmentConfig.spec.secretsEnabled"></p-inputSwitch>
+                  <span class="ml-2">Secrets</span>
+                </div>
+              </p-header>
 
               <app-multi-tab [content]="secretContent" [items]="environmentConfig.spec.secrets" [itemFactory]="applicationSecretFactory()"
                              [deleteDisabled]="secretInUse()" [deleteDisabledTooltip]="secretInUseTooltip()">
@@ -135,6 +165,18 @@
                 </ng-template>
 
               </app-multi-tab>
+
+            </p-accordionTab>
+
+            <p-accordionTab>
+              <p-header>
+                <div class="formgroup-inline">
+                  <p-inputSwitch name="resourcesEnabled" (click)="$event.stopPropagation();" [(ngModel)]="environmentConfig.spec.resourcesEnabled"></p-inputSwitch>
+                  <span class="ml-2">Resources</span>
+                </div>
+              </p-header>
+
+              <app-application-resources [resources]="environmentConfig.spec.resources"></app-application-resources>
 
             </p-accordionTab>
 

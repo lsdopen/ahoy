@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -27,23 +27,33 @@ public class ApplicationSpec {
 	private String image;
 	private String dockerRegistryName;
 
+	private Boolean commandArgsEnabled;
 	private String command;
 	private List<String> args;
 
+	private Boolean servicePortsEnabled;
 	private List<Integer> servicePorts;
 
-	private String healthEndpointPath;
-	private Integer healthEndpointPort;
-	private String healthEndpointScheme;
+	private Boolean healthChecksEnabled;
 
+	private ApplicationProbe livenessProbe;
+	private ApplicationProbe readinessProbe;
+
+	private Boolean environmentVariablesEnabled;
 	private List<ApplicationEnvironmentVariable> environmentVariables;
 
+	private Boolean configFilesEnabled;
 	private String configPath;
 	private List<ApplicationConfigFile> configFiles;
 
+	private Boolean volumesEnabled;
 	private List<ApplicationVolume> volumes;
 
+	private Boolean secretsEnabled;
 	private List<ApplicationSecret> secrets;
+
+	private Boolean resourcesEnabled;
+	private ApplicationResources resources;
 
 	public ApplicationSpec(String image, String dockerRegistryName) {
 		this.image = image;

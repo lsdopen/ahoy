@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -26,24 +26,36 @@ import java.util.List;
 public class ApplicationEnvironmentSpec {
 	private Integer replicas;
 
+	private Boolean routeEnabled;
 	private String routeHostname;
 	private Integer routeTargetPort;
 	private boolean tls;
 	private String tlsSecretName;
 
+	private Boolean environmentVariablesEnabled;
 	private List<ApplicationEnvironmentVariable> environmentVariables;
 
+	private Boolean configFilesEnabled;
 	private List<ApplicationConfigFile> configFiles;
 
+	private Boolean volumesEnabled;
 	private List<ApplicationVolume> volumes;
 
+	private Boolean secretsEnabled;
 	private List<ApplicationSecret> secrets;
 
-	public ApplicationEnvironmentSpec(String routeHostname) {
-		this.routeHostname = routeHostname;
+	private Boolean resourcesEnabled;
+	private ApplicationResources resources;
+
+	public static ApplicationEnvironmentSpec newSummarySpec(Boolean routeEnabled, String routeHostname) {
+		ApplicationEnvironmentSpec newSummarySpec = new ApplicationEnvironmentSpec();
+		newSummarySpec.setRouteEnabled(routeEnabled);
+		newSummarySpec.setRouteHostname(routeHostname);
+		return newSummarySpec;
 	}
 
 	public ApplicationEnvironmentSpec(String routeHostname, Integer routeTargetPort) {
+		this.routeEnabled = routeHostname != null && routeTargetPort != null;
 		this.routeHostname = routeHostname;
 		this.routeTargetPort = routeTargetPort;
 	}

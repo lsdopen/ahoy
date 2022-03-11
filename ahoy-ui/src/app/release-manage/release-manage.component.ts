@@ -258,7 +258,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     dialogRef.onClose.pipe(
       filter((result) => result !== undefined), // cancelled
       mergeMap((upgradeOptions: UpgradeOptions) => {
-        return this.releaseManageService.upgrade(this.releaseVersion.id, upgradeOptions);
+        return this.releaseManageService.upgrade(this.environmentRelease, this.releaseVersion, upgradeOptions);
       })
     ).subscribe((newReleaseVersion: ReleaseVersion) => this.reload(this.environmentRelease.id.environmentId, newReleaseVersion.id));
   }
