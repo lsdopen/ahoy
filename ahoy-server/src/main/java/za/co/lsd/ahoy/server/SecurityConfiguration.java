@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -47,10 +47,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
 			.disable()
 			.headers().frameOptions().disable().and()
 			.authorizeRequests()
-			.antMatchers("/*", "/assets/**", "/ws/**", "/auth/**").permitAll()
-			.regexMatchers(HttpMethod.GET,"/data/applicationVersions/.*projection=.*Full").hasAnyAuthority(Role.admin, Role.releasemanager, Role.developer)
-			.regexMatchers(HttpMethod.GET,"/data/applicationEnvironmentConfigs/.*projection=.*Full").hasAnyAuthority(Role.admin, Role.releasemanager, Role.developer)
-			.regexMatchers(HttpMethod.GET,"/data/.*projection=.*Full").hasAuthority(Role.admin)
+			.antMatchers("/*", "/assets/**", "/ws/**", "/auth/**", "/actuator/**").permitAll()
+			.regexMatchers(HttpMethod.GET, "/data/applicationVersions/.*projection=.*Full").hasAnyAuthority(Role.admin, Role.releasemanager, Role.developer)
+			.regexMatchers(HttpMethod.GET, "/data/applicationEnvironmentConfigs/.*projection=.*Full").hasAnyAuthority(Role.admin, Role.releasemanager, Role.developer)
+			.regexMatchers(HttpMethod.GET, "/data/.*projection=.*Full").hasAuthority(Role.admin)
 			.antMatchers("/data/**").hasAuthority(Scope.ahoy)
 			.antMatchers("/api/**").hasAuthority(Scope.ahoy)
 			.anyRequest().authenticated()
