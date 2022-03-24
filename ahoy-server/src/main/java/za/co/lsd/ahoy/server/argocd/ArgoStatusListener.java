@@ -67,24 +67,26 @@ public class ArgoStatusListener implements Subscriber<ArgoApplicationWatchEvent>
 
 	private void connect() {
 		try {
-			ArgoSettings argoSettings = settingsProvider.getArgoSettings();
-			if (argoSettings.configured()) {
-				Flux<ArgoApplicationWatchEvent> eventStream = webClient.get()
-					.uri(argoClient.apiPath(argoSettings) + "/stream/applications")
-					.headers(httpHeaders -> httpHeaders.putAll(argoClient.authHeaders(argoSettings)))
-					.retrieve()
-					.bodyToFlux(ArgoApplicationWatchEvent.class)
-					.retryWhen(Retry.fixedDelay(Long.MAX_VALUE, Duration.ofSeconds(3))
-						.filter(error -> {
-							log.warn("Failed to subscribe to ArgoCD status stream, retrying... Error: {}", error.getMessage());
-							connected(false);
-							return true;
-						}));
+			if (settingsProvider.argoSettingsExists()) {
+				ArgoSettings argoSettings = settingsProvider.getArgoSettings();
+				if (argoSettings.configured()) {
+					Flux<ArgoApplicationWatchEvent> eventStream = webClient.get()
+						.uri(argoClient.apiPath(argoSettings) + "/stream/applications")
+						.headers(httpHeaders -> httpHeaders.putAll(argoClient.authHeaders(argoSettings)))
+						.retrieve()
+						.bodyToFlux(ArgoApplicationWatchEvent.class)
+						.retryWhen(Retry.fixedDelay(Long.MAX_VALUE, Duration.ofSeconds(3))
+							.filter(error -> {
+								log.warn("Failed to subscribe to ArgoCD status stream, retrying... Error: {}", error.getMessage());
+								connected(false);
+								return true;
+							}));
 
-				eventStream.subscribe(this);
+					eventStream.subscribe(this);
 
-			} else {
-				log.warn("Unable to subscribe to ArgoCD status stream, ArgoCD not yet configured");
+				} else {
+					log.warn("Unable to subscribe to ArgoCD status stream, ArgoCD not yet configured");
+				}
 			}
 		} catch (Exception e) {
 			log.error("Failed to subscribe to ArgoCD status stream", e);
@@ -103,9 +105,11 @@ public class ArgoStatusListener implements Subscriber<ArgoApplicationWatchEvent>
 	@RunAsRole(Role.admin)
 	public void checkConnected() {
 		if (!connected.get()) {
-			ArgoSettings argoSettings = settingsProvider.getArgoSettings();
-			if (argoSettings.configured() && argoClient.silentTestConnection(argoSettings))
-				connected(true);
+			if (settingsProvider.argoSettingsExists()) {
+				ArgoSettings argoSettings = settingsProvider.getArgoSettings();
+				if (argoSettings.configured() && argoClient.silentTestConnection(argoSettings))
+					connected(true);
+			}
 		}
 	}
 
