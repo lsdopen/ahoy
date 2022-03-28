@@ -8,17 +8,17 @@ Ahoy relies on [Helm](https://helm.sh/docs/intro/install/) to be installed.
 
 Add helm repo:
 ```shell
-helm repo add lsdopen https://lsdopen.github.io/charts
+helm repo add ahoy https://lsdopen.github.io/ahoy-helm
 helm repo update
 ```
 
 Customise the Ahoy installation by editing the values in values-k8s.yaml.
 
-Example value files available at: https://github.com/lsdopen/charts/tree/master/charts/ahoy
+Example value files available at: https://github.com/lsdopen/ahoy-helm/tree/main/charts/ahoy
 
 We are now ready to install Ahoy:
 ```shell
-helm install ahoy --namespace ahoy --create-namespace --values values-k8s.yaml --devel lsdopen/ahoy
+helm install ahoy --namespace ahoy --create-namespace --values values-k8s.yaml ahoy/ahoy
 ```
 
 Note for GKE installation; you need to create a TLS secret and supply the secret name in the values file:
@@ -40,7 +40,7 @@ kubectl create secret tls argocd-tls-certificate -n ahoy --cert argocd.crt --key
 
 Add helm repo:
 ```shell
-helm repo add lsdopen https://lsdopen.github.io/charts
+helm repo add ahoy https://lsdopen.github.io/ahoy-helm
 helm repo update
 ```
 
@@ -51,7 +51,7 @@ oc new-project ahoy --display-name="Ahoy" --description="Ahoy, your Kubernetes r
 
 Customise the Ahoy installation by editing the values in values-ocp.yaml.
 
-Example value files available at: https://github.com/lsdopen/charts/tree/master/charts/ahoy
+Example value files available at: https://github.com/lsdopen/ahoy-helm/tree/main/charts/ahoy
 
 OpenShift restricts the use of UID by default.
 
@@ -63,7 +63,7 @@ oc adm policy add-scc-to-user anyuid -z ahoy-keycloak -n ahoy
 
 We are now ready to install Ahoy:
 ```shell
-helm install ahoy --namespace ahoy --values values-ocp.yaml --devel lsdopen/ahoy
+helm install ahoy --namespace ahoy --values values-ocp.yaml ahoy/ahoy
 ```
 
 ## Uninstall

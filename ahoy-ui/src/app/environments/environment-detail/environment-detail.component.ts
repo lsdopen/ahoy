@@ -1,5 +1,5 @@
 /*
- * Copyright  2021 LSD Information Technology (Pty) Ltd
+ * Copyright  2022 LSD Information Technology (Pty) Ltd
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -36,20 +36,20 @@ import {EnvironmentService} from '../environment.service';
   styleUrls: ['./environment-detail.component.scss']
 })
 export class EnvironmentDetailComponent implements OnInit {
-  private promoteEnvironmentReleaseId: EnvironmentReleaseId;
-  private promoteCopyEnvironmentConfig: boolean;
   editMode = false;
-  sourceEnvironment: Environment;
-  cluster: Cluster;
-  clusters: Cluster[] = undefined;
   environment: Environment;
   environmentsForValidation: Environment[];
+  cluster: Cluster;
+  clusters: Cluster[] = undefined;
+  sourceEnvironment: Environment;
+  promoteEnvironmentReleaseId: EnvironmentReleaseId;
+  promoteCopyEnvironmentConfig: boolean;
 
   constructor(
     private route: ActivatedRoute,
     private environmentService: EnvironmentService,
     private environmentReleaseService: EnvironmentReleaseService,
-    private releaseService: ReleaseManageService,
+    private releaseManageService: ReleaseManageService,
     private clusterService: ClusterService,
     private location: Location,
     private breadcrumbService: AppBreadcrumbService) {
@@ -133,7 +133,7 @@ export class EnvironmentDetailComponent implements OnInit {
             const promoteOptions = new PromoteOptions();
             promoteOptions.destEnvironmentId = environment.id;
             promoteOptions.copyEnvironmentConfig = this.promoteCopyEnvironmentConfig;
-            return this.releaseService.promote(this.promoteEnvironmentReleaseId, promoteOptions);
+            return this.releaseManageService.promote(this.promoteEnvironmentReleaseId, promoteOptions);
           }
           return of(environment);
         })
