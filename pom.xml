@@ -52,6 +52,7 @@
 
 	<modules>
 		<module>ahoy-ui</module>
+		<module>ahoy-components</module>
 		<module>ahoy-server</module>
 	</modules>
 
