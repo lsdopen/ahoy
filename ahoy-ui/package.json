@@ -12,7 +12,10 @@
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
-  "private": true,
+  "repository": "git://github.com/lsdopen/ahoy.git",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "dependencies": {
     "@angular/animations": "^13.2.4",
     "@angular/cdk": "^13.2.4",

@@ -95,6 +95,20 @@
             <phase>test</phase>
           </execution>
 
+          <execution>
+            <id>publish</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <environmentVariables>
+                <NODE_AUTH_TOKEN>${env.GITHUB_TOKEN}</NODE_AUTH_TOKEN>
+              </environmentVariables>
+              <arguments>publish</arguments>
+            </configuration>
+            <phase>deploy</phase>
+          </execution>
+
         </executions>
       </plugin>
     </plugins>
