@@ -50,6 +50,14 @@
 		<url>https://github.com/lsdopen/ahoy</url>
 	</scm>
 
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub LSD OPEN Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/lsdopen/ahoy</url>
+		</repository>
+	</distributionManagement>
+
 	<modules>
 		<module>ahoy-ui</module>
 		<module>ahoy-components</module>
