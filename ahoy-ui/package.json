@@ -1,5 +1,5 @@
 {
-  "name": "ahoy-ui",
+  "name": "@lsdopen/ahoy-ui",
   "version": "0.13.0-SNAPSHOT",
   "scripts": {
     "ng": "ng",
@@ -14,7 +14,7 @@
   },
   "repository": "git://github.com/lsdopen/ahoy.git",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
+    "@lsdopen:registry": "https://npm.pkg.github.com/"
   },
   "dependencies": {
     "@angular/animations": "^13.2.4",
