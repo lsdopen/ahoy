@@ -28,7 +28,7 @@
 
 	<properties>
 		<maven.compiler.release>11</maven.compiler.release>
-		<ahoy-ui-dist-dir>${project.parent.basedir}/ahoy-ui/dist/ahoy-ui/</ahoy-ui-dist-dir>
+		<ahoy-ui-dist-dir>${project.parent.basedir}/ahoy-ui/dist/ahoy-app/</ahoy-ui-dist-dir>
 	</properties>
 
 	<dependencies>
