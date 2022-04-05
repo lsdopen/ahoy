@@ -70,6 +70,9 @@
             <goals>
               <goal>npm</goal>
             </goals>
+            <configuration>
+              <arguments>ci</arguments>
+            </configuration>
           </execution>
 
           <!-- #3 Run package.json's build-prod script  -->
@@ -93,20 +96,6 @@
               <arguments>run-script test-headless</arguments>
             </configuration>
             <phase>test</phase>
-          </execution>
-
-          <execution>
-            <id>publish</id>
-            <goals>
-              <goal>npm</goal>
-            </goals>
-            <configuration>
-              <environmentVariables>
-                <NODE_AUTH_TOKEN>${env.GITHUB_TOKEN}</NODE_AUTH_TOKEN>
-              </environmentVariables>
-              <arguments>publish</arguments>
-            </configuration>
-            <phase>deploy</phase>
           </execution>
 
         </executions>

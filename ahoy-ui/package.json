@@ -1,5 +1,5 @@
 {
-  "name": "@lsdopen/ahoy-ui",
+  "name": "ahoy-ui",
   "version": "0.13.0-SNAPSHOT",
   "scripts": {
     "ng": "ng",
@@ -11,10 +11,6 @@
     "test-headless": "ng test --watch=false --browsers=ChromeHeadless --code-coverage",
     "lint": "ng lint",
     "e2e": "ng e2e"
-  },
-  "repository": "git://github.com/lsdopen/ahoy.git",
-  "publishConfig": {
-    "@lsdopen:registry": "https://npm.pkg.github.com/"
   },
   "dependencies": {
     "@angular/animations": "^13.2.4",

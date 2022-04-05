@@ -1,6 +1,10 @@
 {
-  "name": "ahoy-components",
+  "name": "@lsdopen/ahoy-components",
   "version": "0.13.0-SNAPSHOT",
+  "repository": "git://github.com/lsdopen/ahoy.git",
+  "publishConfig": {
+    "@lsdopen:registry": "https://npm.pkg.github.com/"
+  },
   "peerDependencies": {
     "@angular/animations": "^13.2.4",
     "@angular/cdk": "^13.2.4",
