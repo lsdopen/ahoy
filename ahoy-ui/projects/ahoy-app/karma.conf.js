@@ -40,7 +40,7 @@ module.exports = function (config) {
       sonarQubeVersion: 'LATEST',
       outputFile: 'reports/ut_report.xml',
       overrideTestDescription: true,
-      testPaths: ['./projects/ahoy-app/src', './projects/ahoy-components/src'],
+      testPaths: ['./projects/ahoy-app/src'],
       testFilePattern: '.spec.ts',
       useBrowserName: false
     },

@@ -48,10 +48,20 @@ jobs:
         with:
           java-version: 11
 
-      - name: Build with Maven
+      - name: Build and test UI
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+        working-directory: ./ahoy-ui
+        run: |
+          npm ci
+          npm run-script build-prod
+          npm run-script test-headless
+
+      - name: Build and test Server
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B -s .m2/settings.xml deploy -Pcoverage -Psonar -Pui-dist -Pdocker
