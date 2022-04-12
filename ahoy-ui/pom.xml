@@ -29,10 +29,11 @@
 
   <properties>
     <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
-    <sonar.sources>
-      projects/ahoy-app/src,
-      projects/ahoy-components/src
-    </sonar.sources>
+    <sonar.sources>.</sonar.sources>
+    <sonar.inclusions>
+      projects/ahoy-app/src/**,
+      projects/ahoy-components/src/**
+    </sonar.inclusions>
     <sonar.exclusions>
       **/node_modules/**,
       **/assets/**,
