@@ -48,11 +48,11 @@ jobs:
         with:
           java-version: 11
 
-      - name: Build and test UI
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 16
-        working-directory: ./ahoy-ui
+      - name: Build and test UI
+      - working-directory: ./ahoy-ui
         run: |
           npm ci
           npm run-script build-prod
