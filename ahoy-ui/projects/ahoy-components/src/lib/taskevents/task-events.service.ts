@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-import {EventEmitter, Injectable, isDevMode} from '@angular/core';
+import {EventEmitter, Inject, Injectable, isDevMode} from '@angular/core';
 import * as SockJS from 'sockjs-client';
 import * as Stomp from 'stompjs';
 import {AuthService} from '../util/auth.service';
@@ -27,17 +27,17 @@ import {TaskEvent} from './task-events';
 export class TaskEventsService {
   private serverUrl = '/ws';
   private readonly RECONNECT_TIMEOUT = 5000;
-  private readonly ENABLED = true;
   private stompClient;
   public taskEvents = new EventEmitter<TaskEvent>();
 
   constructor(private authService: AuthService,
-              private log: LoggerService) {
+              private log: LoggerService,
+              @Inject('environment') environment) {
     if (isDevMode()) {
       this.serverUrl = 'http://localhost:8080' + this.serverUrl;
     }
 
-    if (this.ENABLED) {
+    if (environment.taskEventsWebsocketEnabled) {
       this.connectAndReconnect();
     }
   }

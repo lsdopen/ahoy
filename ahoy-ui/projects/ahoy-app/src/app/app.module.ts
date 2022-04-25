@@ -38,6 +38,7 @@ import {AppMenuitemComponent} from './app.menuitem.component';
 import {AppTopBarComponent} from './app.topbar.component';
 import {NotificationsComponent} from './notifications/notifications.component';
 import {ErrorService} from './util/error.service';
+import {environment} from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -70,6 +71,7 @@ import {ErrorService} from './util/error.service';
   ],
   providers: [
     {provide: ErrorHandler, useClass: ErrorService},
+    {provide: 'environment', useValue: environment},
     MenuService, AppBreadcrumbService, MessageService, ConfirmationService, DialogService
   ],
   bootstrap: [AppComponent]
