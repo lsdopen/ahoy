@@ -26,10 +26,11 @@
     "rxjs": "^7.5.2",
     "sockjs-client": "^1.5.2",
     "stompjs": "^2.3.3",
-    "tslib": "^2.0.0",
     "zone.js": "~0.11.4"
   },
-  "dependencies": {},
+  "dependencies": {
+    "tslib": "^2.0.0"
+  },
   "devDependencies": {
     "@angular-devkit/build-angular": "^13.2.5",
     "@angular/cli": "^13.2.5",
