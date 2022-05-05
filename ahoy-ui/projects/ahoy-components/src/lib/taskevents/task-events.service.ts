@@ -39,6 +39,8 @@ export class TaskEventsService {
 
     if (environment.taskEventsWebsocketEnabled) {
       this.connectAndReconnect();
+    } else {
+      this.log.warn('Task event websocket connection disabled');
     }
   }
 
