@@ -25,6 +25,7 @@ import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.RefUpdate;
+import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.*;
 import org.eclipse.jgit.util.FS;
@@ -74,6 +75,8 @@ public class LocalRepo {
 					log.info("Local repo found, opening: {}", localRepoPath);
 					gitRepo = Git.open(localRepoPath.toFile());
 				}
+
+				saveRepoConfig();
 			}
 
 		} catch (Exception e) {
@@ -85,6 +88,13 @@ public class LocalRepo {
 			log.error("Failed to init/open local repo", e);
 			throw new LocalRepoException("Failed to init/open local repo", e);
 		}
+	}
+
+	private void saveRepoConfig() throws IOException {
+		StoredConfig config = gitRepo.getRepository().getConfig();
+		// TODO disable sslVerify until an administrator can supply a custom CA certificate to be trusted
+		config.setBoolean("http", null, "sslVerify", false);
+		config.save();
 	}
 
 	public WorkingTree requestWorkingTree() {
