@@ -1,0 +1,57 @@
+{
+  "name": "@lsdopen/ahoy-components",
+  "version": "0.13.0",
+  "repository": "git://github.com/lsdopen/ahoy.git",
+  "publishConfig": {
+    "@lsdopen:registry": "https://npm.pkg.github.com/"
+  },
+  "peerDependencies": {
+    "@angular/animations": "^13.2.4",
+    "@angular/cdk": "^13.2.4",
+    "@angular/common": "^13.2.4",
+    "@angular/compiler": "^13.2.4",
+    "@angular/core": "^13.2.4",
+    "@angular/forms": "^13.2.4",
+    "@angular/material": "^13.2.4",
+    "@angular/platform-browser": "^13.2.4",
+    "@angular/platform-browser-dynamic": "^13.2.4",
+    "@angular/router": "^13.2.4",
+    "angular-oauth2-oidc": "^13.0.1",
+    "event-source-polyfill": "^1.0.25",
+    "jwt-decode": "^3.1.2",
+    "net": "^1.0.2",
+    "primeflex": "3.1.2",
+    "primeicons": "5.0.0",
+    "primeng": "13.0.4",
+    "rxjs": "^7.5.2",
+    "sockjs-client": "^1.5.2",
+    "stompjs": "^2.3.3",
+    "zone.js": "~0.11.4"
+  },
+  "dependencies": {
+    "tslib": "^2.0.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^13.2.5",
+    "@angular/cli": "^13.2.5",
+    "@angular/compiler-cli": "^13.2.4",
+    "@angular/language-service": "^13.2.4",
+    "@types/jasmine": "^3.10.3",
+    "@types/jasminewd2": "^2.0.10",
+    "@types/node": "^17.0.8",
+    "codelyzer": "^6.0.2",
+    "jasmine-core": "^4.0.0",
+    "jasmine-spec-reporter": "^7.0.0",
+    "karma": "^6.3.10",
+    "karma-chrome-launcher": "~3.1.0",
+    "karma-coverage": "^2.1.0",
+    "karma-jasmine": "~4.0.0",
+    "karma-jasmine-html-reporter": "^1.7.0",
+    "karma-junit-reporter": "^2.0.1",
+    "karma-sonarqube-unit-reporter": "^0.0.23",
+    "protractor": "~7.0.0",
+    "ts-node": "^10.4.0",
+    "tslint": "~6.1.0",
+    "typescript": "~4.5.4"
+  }
+}

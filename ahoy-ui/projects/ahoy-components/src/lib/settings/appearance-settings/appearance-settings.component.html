@@ -1,0 +1,91 @@
+<!--
+  ~ Copyright  2022 LSD Information Technology (Pty) Ltd
+  ~
+  ~    Licensed under the Apache License, Version 2.0 (the "License");
+  ~    you may not use this file except in compliance with the License.
+  ~    You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~    Unless required by applicable law or agreed to in writing, software
+  ~    distributed under the License is distributed on an "AS IS" BASIS,
+  ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~    See the License for the specific language governing permissions and
+  ~    limitations under the License.
+  -->
+
+<div class="grid">
+  <div class="layout-config col-12">
+
+    <p-toolbar>
+      <ng-template pTemplate="left">
+        <h5>Appearance</h5>
+      </ng-template>
+      <ng-template pTemplate="right">
+        <button pButton pRipple label="Save" icon="pi pi-save" class="p-button-success mr-2 mb-2" (click)="save()"></button>
+        <button pButton pRipple label="Default" icon="pi pi-undo" class="p-button-info mr-2 mb-2" (click)="default()"></button>
+      </ng-template>
+    </p-toolbar>
+
+    <div class="layout-config-panel flex flex-column">
+      <div class="layout-config-options p-3">
+        <h6>Mode</h6>
+        <div class="flex">
+          <div class="flex align-items-center">
+            <p-radioButton name="layoutMode" value="light" [(ngModel)]="appearanceSettingsService.appearanceSettings.mode" id="layoutMode1" (onClick)="onLayoutModeChange($event, 'light')"></p-radioButton>
+            <label for="layoutMode1" [ngClass]="{'ml-2': !themeService.isRTL, 'mr-2': themeService.isRTL}">Light</label>
+          </div>
+          <div class="flex align-items-center" [ngClass]="{'ml-4': !themeService.isRTL, 'mr-4': themeService.isRTL}">
+            <p-radioButton name="layoutMode" value="dark" [(ngModel)]="appearanceSettingsService.appearanceSettings.mode" id="layoutMode2" (onClick)="onLayoutModeChange($event, 'dark')"></p-radioButton>
+            <label for="layoutMode2" [ngClass]="{'ml-2': !themeService.isRTL, 'mr-2': themeService.isRTL}">Dark</label>
+          </div>
+        </div>
+
+        <h6>Scale</h6>
+        <div class="flex align-items-center">
+          <button pButton pRipple type="button" icon="pi pi-minus" (click)="decrementScale()" class="p-button-rounded p-button-text" [disabled]="scale === scales[0]"></button>
+          <i class="pi pi-circle-on p-m-1 scale-icon" *ngFor="let s of scales" [ngClass]="{'scale-active': s === scale}"></i>
+          <button pButton pRipple type="button" icon="pi pi-plus" (click)="incrementScale()" class="p-button-rounded p-button-text" [disabled]="scale === scales[scales.length - 1]"></button>
+        </div>
+
+        <h6>Menu colour</h6>
+        <div *ngIf="appearanceSettingsService.appearanceSettings.mode!=='dark'" class="grid">
+          <div *ngFor="let t of menuThemes" class="col col-fixed">
+            <a style="cursor: pointer" (click)="changeMenuTheme(t)" class="layout-config-color-option" [title]="t.name">
+              <span class="color" [ngStyle]="{'background-color': t.color}"></span>
+              <span class="check flex align-items-center justify-content-center" *ngIf="appearanceSettingsService.appearanceSettings.menuTheme === t.name">
+                <i class="pi pi-check" style="color: var(--menu-text-color)"></i>
+              </span>
+            </a>
+          </div>
+        </div>
+        <p *ngIf="appearanceSettingsService.appearanceSettings.mode==='dark'">Menu themes are only available in light mode by design as large surfaces can emit too much brightness in dark mode.</p>
+
+        <h6>Topbar colour</h6>
+        <div class="grid">
+          <div *ngFor="let t of topbarThemes" class="col col-fixed">
+            <a style="cursor: pointer" (click)="changeTopbarTheme(t)" class="layout-config-color-option" [title]="t.name">
+              <span class="color" [ngStyle]="{'background-color': t.color}"></span>
+              <span class="check flex align-items-center justify-content-center" *ngIf="appearanceSettingsService.appearanceSettings.topbarTheme === t.name">
+                <i class="pi pi-check" style="color: var(--topbar-text-color)"></i>
+              </span>
+            </a>
+          </div>
+        </div>
+
+        <h6>Component colour</h6>
+        <div class="grid">
+          <div *ngFor="let t of themes" class="col col-fixed">
+            <a style="cursor: pointer" (click)="changeTheme(t.name)" class="layout-config-color-option" [title]="t.name">
+              <span class="color" [ngStyle]="{'background-color': t.color}"></span>
+              <span class="check flex align-items-center justify-content-center" *ngIf="appearanceSettingsService.appearanceSettings.theme === t.name">
+                <i class="pi pi-check" style="color: var(--primary-color-text)"></i>
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

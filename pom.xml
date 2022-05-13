@@ -27,7 +27,7 @@
 
 	<groupId>za.co.lsd.ahoy</groupId>
 	<artifactId>ahoy</artifactId>
-	<version>0.12.0</version>
+	<version>0.13.0</version>
 	<packaging>pom</packaging>
 
 	<name>ahoy</name>
@@ -50,23 +50,19 @@
 		<url>https://github.com/lsdopen/ahoy</url>
 	</scm>
 
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub LSD OPEN Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/lsdopen/ahoy</url>
+		</repository>
+	</distributionManagement>
+
 	<modules>
 		<module>ahoy-ui</module>
+		<module>ahoy-components</module>
 		<module>ahoy-server</module>
 	</modules>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>3.0.0-M1</version>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 	<profiles>
 		<profile>
