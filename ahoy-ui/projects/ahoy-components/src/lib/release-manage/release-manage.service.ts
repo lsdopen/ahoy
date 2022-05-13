@@ -42,7 +42,7 @@ export class ReleaseManageService {
               private log: LoggerService) {
   }
 
-  deploy(environmentRelease: EnvironmentRelease, deployOptions: DeployOptions): Observable<EnvironmentRelease> {
+  deploy(environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion, deployOptions: DeployOptions): Observable<EnvironmentRelease> {
     this.log.debug('deploying environment release', environmentRelease);
     const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentRelease.id)}/deploy`;
     return this.restClient.post<EnvironmentRelease>(url, deployOptions, true).pipe(
@@ -54,7 +54,7 @@ export class ReleaseManageService {
         this.notificationsService.notification(new Notification(text));
       }),
       catchError((error) => {
-        const text = `Failed to deploy ${(environmentRelease.release as Release).name} : ${deployOptions.releaseVersionId} `
+        const text = `Failed to deploy ${(environmentRelease.release as Release).name} : ${releaseVersion.version} `
           + `to environment ${(environmentRelease.environment as Environment).name}`;
         this.notificationsService.notification(new Notification(text, error));
         return EMPTY;

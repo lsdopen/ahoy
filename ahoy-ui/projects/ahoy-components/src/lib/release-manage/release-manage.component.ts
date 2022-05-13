@@ -208,7 +208,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
       const deployOptions = new DeployOptions(this.releaseVersion.id, conf.input);
-      this.releaseManageService.deploy(this.environmentRelease, deployOptions).subscribe();
+      this.releaseManageService.deploy(this.environmentRelease, this.releaseVersion, deployOptions).subscribe();
     });
   }
 
@@ -322,7 +322,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
       const deployOptions = new DeployOptions(this.environmentRelease.previousReleaseVersion.id, conf.input);
-      this.releaseManageService.deploy(this.environmentRelease, deployOptions)
+      this.releaseManageService.deploy(this.environmentRelease, this.environmentRelease.previousReleaseVersion, deployOptions)
         .subscribe(() => this.log.debug('rolled back release:', this.environmentRelease));
     });
   }
