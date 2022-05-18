@@ -33,11 +33,7 @@
             "styles": [
               "projects/ahoy-app/src/styles.scss"
             ],
-            "scripts": [],
-            "allowedCommonJsDependencies": [
-              "sockjs-client",
-              "stompjs"
-            ]
+            "scripts": []
           },
           "configurations": {
             "production": {

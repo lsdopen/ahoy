@@ -24,6 +24,7 @@
     "@angular/platform-browser": "^13.2.4",
     "@angular/platform-browser-dynamic": "^13.2.4",
     "@angular/router": "^13.2.4",
+    "@stomp/stompjs": "^6.1.2",
     "angular-oauth2-oidc": "^13.0.1",
     "event-source-polyfill": "^1.0.25",
     "jwt-decode": "^3.1.2",
@@ -32,8 +33,6 @@
     "primeicons": "5.0.0",
     "primeng": "13.0.4",
     "rxjs": "^7.5.2",
-    "sockjs-client": "^1.5.2",
-    "stompjs": "^2.3.3",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.4"
   },
