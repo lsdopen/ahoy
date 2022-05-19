@@ -52,8 +52,6 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getApplicationVersions();
-
     if (this.releaseChanged) {
       this.releaseChanged.subscribe((data) => {
         this.environmentRelease = data.environmentRelease;
