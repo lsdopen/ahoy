@@ -18,7 +18,7 @@
   <div class="col-12">
 
     <div class="card">
-      <p-messages [value]="msgs" [enableService]="false"></p-messages>
+      <p-messages *ngIf="setupMessage" [value]="[{severity: 'warn', summary: 'Please note', detail: 'In order to continue you need to set up the following:'}]" [enableService]="false"></p-messages>
 
       <div class="grid">
 
