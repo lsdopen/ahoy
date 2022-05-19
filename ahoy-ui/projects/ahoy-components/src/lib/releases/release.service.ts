@@ -20,15 +20,16 @@ import {map, tap} from 'rxjs/operators';
 import {LoggerService} from '../util/logger.service';
 import {RestClientService} from '../util/rest-client.service';
 import {DuplicateOptions, Release, ReleaseVersion} from './release';
+import {RecentReleasesService} from '../release-manage/recent-releases.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReleaseService {
 
-  constructor(
-    private log: LoggerService,
-    private restClient: RestClientService) {
+  constructor(private recentReleasesService: RecentReleasesService,
+              private log: LoggerService,
+              private restClient: RestClientService) {
   }
 
   getAll(): Observable<Release[]> {
@@ -128,7 +129,10 @@ export class ReleaseService {
     const url = `/data/releaseVersions/${id}`;
 
     return this.restClient.delete<ReleaseVersion>(url).pipe(
-      tap(() => this.log.debug('deleted release version', releaseVersion))
+      tap(() => {
+        this.log.debug('deleted release version', releaseVersion);
+        this.recentReleasesService.refresh();
+      })
     );
   }
 

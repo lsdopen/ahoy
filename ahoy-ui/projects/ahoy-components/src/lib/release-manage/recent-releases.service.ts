@@ -19,7 +19,6 @@ import {Observable, Subject} from 'rxjs';
 import {EnvironmentRelease} from '../environment-release/environment-release';
 import {EnvironmentReleaseService} from '../environment-release/environment-release.service';
 import {Release} from '../releases/release';
-import {ReleaseService} from '../releases/release.service';
 import {LocalStorageService} from '../util/local-storage.service';
 
 @Injectable({
@@ -32,7 +31,6 @@ export class RecentReleasesService {
   private recentReleasesSubject = new Subject<RecentRelease[]>();
 
   constructor(private localStorageService: LocalStorageService,
-              private releaseService: ReleaseService,
               private environmentReleaseService: EnvironmentReleaseService) {
 
     const item = this.localStorageService.getItem(this.KEY);
