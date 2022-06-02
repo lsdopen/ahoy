@@ -17,7 +17,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {DockerRegistry} from '../../settings/docker-settings/docker-settings';
 import {SettingsService} from '../../settings/settings.service';
-import {ApplicationVersion} from '../application';
+import {ApplicationSpec} from '../application';
 
 @Component({
   selector: 'app-docker-registries',
@@ -25,7 +25,7 @@ import {ApplicationVersion} from '../application';
   styleUrls: ['./docker-registries.component.scss']
 })
 export class DockerRegistriesComponent implements OnInit {
-  @Input() applicationVersion: ApplicationVersion;
+  @Input() applicationSpec: ApplicationSpec;
   dockerRegistries: DockerRegistry[];
 
   constructor(private settingsService: SettingsService) {

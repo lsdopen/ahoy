@@ -9,12 +9,12 @@ metadata:
     environment: {{ .glob.environment }}
   name: {{ .glob.releaseName }}-{{ .app.name }}
 spec:
-  {{ if .app.tls }}
+  {{- if .app.tls }}
   tls:
   - hosts:
       - {{ .app.routeHostname }}
     secretName: {{ .glob.releaseName }}-{{ .app.name }}-{{ .app.tlsSecretName }}
-  {{ end }}
+  {{- end }}
   rules:
   - host: {{ .app.routeHostname }}
     http:

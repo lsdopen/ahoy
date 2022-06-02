@@ -22,7 +22,7 @@ import {AppBreadcrumbService} from '../../app.breadcrumb.service';
 import {TabItemFactory} from '../../components/multi-tab/multi-tab.component';
 import {ReleaseManageService} from '../../release-manage/release-manage.service';
 import {ReleaseService} from '../../releases/release.service';
-import {Application, ApplicationSecret, ApplicationSpec, ApplicationVersion, ApplicationVolume} from '../application';
+import {Application, ApplicationSecret, ApplicationSpec, ApplicationVersion, ApplicationVolume, ContainerSpec} from '../application';
 import {ApplicationService} from '../application.service';
 
 @Component({
@@ -38,10 +38,6 @@ export class ApplicationVersionDetailComponent implements OnInit {
   applicationVersion: ApplicationVersion;
   editMode: boolean;
   editingVersion: string;
-  newServicePort: number;
-  newArg: string;
-  editingArg: string;
-  editingPort: number;
 
   constructor(private route: ActivatedRoute,
               private applicationService: ApplicationService,
@@ -130,15 +126,10 @@ export class ApplicationVersionDetailComponent implements OnInit {
     this.location.back();
   }
 
-  addServicePort() {
-    if (this.newServicePort) {
-      this.applicationVersion.spec.servicePorts.push(this.newServicePort);
-      this.newServicePort = null;
-    }
-  }
-
-  removeServicePort(portIndex: number) {
-    this.applicationVersion.spec.servicePorts.splice(portIndex, 1);
+  containerSpecFactory(): TabItemFactory<ContainerSpec> {
+    return (): ContainerSpec => {
+      return new ContainerSpec();
+    };
   }
 
   applicationVolumeFactory(): TabItemFactory<ApplicationVolume> {
@@ -161,8 +152,12 @@ export class ApplicationVersionDetailComponent implements OnInit {
       if (secret && secret.name) {
         const inUseInVolumes = this.applicationVersion.spec.volumes
           .filter(volume => volume.type === 'Secret' && volume.secretName === secret.name).length > 0;
-        const inUseInEnvironmentVariables = this.applicationVersion.spec.environmentVariables
-          .filter(envVar => envVar.type === 'Secret' && envVar.secretName === secret.name).length > 0;
+        const containers = [this.applicationVersion.spec, ...this.applicationVersion.spec.containers];
+        const inUseInEnvironmentVariables = containers
+          .flatMap((containerSpec) => containerSpec.environmentVariables)
+          .filter(envVar => {
+            return envVar.type === 'Secret' && envVar.secretName === secret.name;
+          }).length > 0;
         return inUseInVolumes || inUseInEnvironmentVariables;
       }
       return false;
@@ -173,39 +168,5 @@ export class ApplicationVersionDetailComponent implements OnInit {
     return (secret: ApplicationSecret): string => {
       return 'Secret in use';
     };
-  }
-
-  addArg() {
-    if (this.newArg) {
-      if (!this.applicationVersion.spec.args) {
-        this.applicationVersion.spec.args = [];
-      }
-      this.applicationVersion.spec.args.push(this.newArg);
-      this.newArg = null;
-    }
-  }
-
-  removeArg(argIndex: number) {
-    this.applicationVersion.spec.args.splice(argIndex, 1);
-  }
-
-  editArgInit($event: any) {
-    const index = $event.index;
-    this.editingArg = this.applicationVersion.spec.args[index];
-  }
-
-  editArgComplete($event: any) {
-    const index = $event.index;
-    this.applicationVersion.spec.args[index] = this.editingArg;
-  }
-
-  editPortInit($event: any) {
-    const index = $event.index;
-    this.editingPort = this.applicationVersion.spec.servicePorts[index];
-  }
-
-  editPortComplete($event: any) {
-    const index = $event.index;
-    this.applicationVersion.spec.servicePorts[index] = this.editingPort;
   }
 }

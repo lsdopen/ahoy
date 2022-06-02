@@ -89,65 +89,72 @@ public class ValuesBuilder {
 	}
 
 	private ApplicationValues buildApplicationValues(EnvironmentRelease environmentRelease, ApplicationVersion applicationVersion, ApplicationEnvironmentConfig environmentConfig) throws IOException {
-		ApplicationSpec spec = applicationVersion.getSpec();
-		ApplicationValues.ApplicationValuesBuilder builder = ApplicationValues.builder()
+		ApplicationSpec applicationSpec = applicationVersion.getSpec();
+
+		ApplicationValues.ApplicationValuesBuilder applicationValuesBuilder = ApplicationValues.builder()
 			.name(applicationVersion.getApplication().getName())
-			.version(applicationVersion.getVersion())
-			.image(spec.getImage());
+			.version(applicationVersion.getVersion());
+		buildDockerRegistry(applicationValuesBuilder, applicationSpec);
+		buildConfigFiles(applicationValuesBuilder, applicationSpec, environmentConfig);
+		buildVolumes(applicationValuesBuilder, applicationSpec, environmentConfig);
+		buildSecrets(applicationValuesBuilder, applicationSpec, environmentConfig);
+		buildReplicas(applicationValuesBuilder, environmentConfig);
+		buildRoute(applicationValuesBuilder, environmentRelease, applicationVersion, environmentConfig);
 
-		buildDockerRegistry(builder, applicationVersion);
-		buildCommandArgs(builder, applicationVersion);
-		buildServicePorts(builder, applicationVersion);
-		buildHealthChecks(builder, applicationVersion);
+		Map<String, ContainerValues> containerValues = new LinkedHashMap<>();
+		for (ContainerSpec containerSpec : applicationSpec.allContainers()) {
 
-		buildEnvironmentVariables(builder, applicationVersion, environmentConfig);
-		buildConfigFiles(builder, applicationVersion, environmentConfig);
-		buildVolumes(builder, applicationVersion, environmentConfig);
-		buildSecrets(builder, applicationVersion, environmentConfig);
-		buildResources(builder, applicationVersion, environmentConfig);
+			ContainerValues.ContainerValuesBuilder containerValuesBuilder = ContainerValues.builder()
+				.name(containerSpec.getName())
+				.image(containerSpec.getImage());
 
-		buildReplicas(builder, environmentConfig);
-		buildRoute(builder, environmentRelease, applicationVersion, environmentConfig);
+			buildCommandArgs(containerValuesBuilder, containerSpec);
+			buildServicePorts(containerValuesBuilder, containerSpec);
+			buildHealthChecks(containerValuesBuilder, containerSpec);
 
-		return builder.build();
+			buildEnvironmentVariables(containerValuesBuilder, containerSpec, environmentConfig);
+			buildResources(containerValuesBuilder, containerSpec, environmentConfig);
+
+			containerValues.put(containerSpec.getName(), containerValuesBuilder.build());
+		}
+		applicationValuesBuilder.containers(containerValues);
+
+		return applicationValuesBuilder.build();
 	}
 
-	private void buildDockerRegistry(ApplicationValues.ApplicationValuesBuilder builder, ApplicationVersion applicationVersion) throws IOException {
-		Optional<DockerRegistry> dockerRegistry = dockerRegistryProvider.dockerRegistryFor(applicationVersion.getSpec().getDockerRegistryName());
+	private void buildDockerRegistry(ApplicationValues.ApplicationValuesBuilder builder, ApplicationSpec applicationSpec) throws IOException {
+		Optional<DockerRegistry> dockerRegistry = dockerRegistryProvider.dockerRegistryFor(applicationSpec.getDockerRegistryName());
 		if (dockerRegistry.isPresent() && dockerRegistry.get().getSecure()) {
 			builder.dockerConfigJson(dockerConfigSealedSecretProducer.produce(dockerRegistry.get()));
 		}
 	}
 
-	private void buildCommandArgs(ApplicationValues.ApplicationValuesBuilder builder, ApplicationVersion applicationVersion) {
-		ApplicationSpec spec = applicationVersion.getSpec();
+	private void buildCommandArgs(ContainerValues.ContainerValuesBuilder builder, ContainerSpec containerSpec) {
 		builder
-			.commandArgsEnabled(spec.getCommandArgsEnabled())
-			.command(spec.getCommand())
-			.args(spec.getArgs());
+			.commandArgsEnabled(containerSpec.getCommandArgsEnabled())
+			.command(containerSpec.getCommand())
+			.args(containerSpec.getArgs());
 	}
 
-	private void buildServicePorts(ApplicationValues.ApplicationValuesBuilder builder, ApplicationVersion applicationVersion) {
-		ApplicationSpec spec = applicationVersion.getSpec();
+	private void buildServicePorts(ContainerValues.ContainerValuesBuilder builder, ContainerSpec containerSpec) {
 		builder
-			.servicePortsEnabled(spec.getServicePortsEnabled())
-			.servicePorts(spec.getServicePorts());
+			.servicePortsEnabled(containerSpec.getServicePortsEnabled())
+			.servicePorts(containerSpec.getServicePorts());
 	}
 
-	private void buildHealthChecks(ApplicationValues.ApplicationValuesBuilder builder, ApplicationVersion applicationVersion) {
-		ApplicationSpec spec = applicationVersion.getSpec();
+	private void buildHealthChecks(ContainerValues.ContainerValuesBuilder builder, ContainerSpec containerSpec) {
 		builder
-			.healthChecksEnabled(spec.getHealthChecksEnabled())
-			.livenessProbe(spec.getLivenessProbe())
-			.readinessProbe(spec.getReadinessProbe());
+			.healthChecksEnabled(containerSpec.getHealthChecksEnabled())
+			.livenessProbe(containerSpec.getLivenessProbe())
+			.readinessProbe(containerSpec.getReadinessProbe());
 	}
 
-	private void buildEnvironmentVariables(ApplicationValues.ApplicationValuesBuilder builder, ApplicationVersion applicationVersion, ApplicationEnvironmentConfig environmentConfig) {
+	private void buildEnvironmentVariables(ContainerValues.ContainerValuesBuilder builder, ContainerSpec containerSpec, ApplicationEnvironmentConfig environmentConfig) {
 
 		Map<String, EnvironmentVariableValues> environmentVariables = new LinkedHashMap<>();
 
-		if (applicationVersion.environmentVariablesEnabled() && applicationVersion.hasEnvironmentVariables()) {
-			for (ApplicationEnvironmentVariable environmentVariable : applicationVersion.getSpec().getEnvironmentVariables()) {
+		if (containerSpec.environmentVariablesEnabled() && containerSpec.hasEnvironmentVariables()) {
+			for (ApplicationEnvironmentVariable environmentVariable : containerSpec.getEnvironmentVariables()) {
 				environmentVariables.put(environmentVariable.getKey(), new EnvironmentVariableValues(environmentVariable));
 			}
 		}
@@ -161,16 +168,16 @@ public class ValuesBuilder {
 		}
 
 		builder
-			.environmentVariablesEnabled(applicationVersion.environmentVariablesEnabled() || (environmentConfig != null && environmentConfig.environmentVariablesEnabled()))
+			.environmentVariablesEnabled(containerSpec.environmentVariablesEnabled() || (environmentConfig != null && environmentConfig.environmentVariablesEnabled()))
 			.environmentVariables(environmentVariables);
 	}
 
-	private void buildConfigFiles(ApplicationValues.ApplicationValuesBuilder builder, ApplicationVersion applicationVersion, ApplicationEnvironmentConfig environmentConfig) throws JsonProcessingException {
+	private void buildConfigFiles(ApplicationValues.ApplicationValuesBuilder builder, ApplicationSpec applicationSpec, ApplicationEnvironmentConfig environmentConfig) throws JsonProcessingException {
 
 		Map<String, ApplicationConfigFileValues> configFiles = new LinkedHashMap<>();
 
-		if (applicationVersion.configEnabled() && applicationVersion.hasConfigs()) {
-			for (ApplicationConfigFile applicationConfigFile : applicationVersion.getSpec().getConfigFiles()) {
+		if (applicationSpec.configEnabled() && applicationSpec.hasConfigs()) {
+			for (ApplicationConfigFile applicationConfigFile : applicationSpec.getConfigFiles()) {
 				configFiles.put(configName(applicationConfigFile), new ApplicationConfigFileValues(applicationConfigFile));
 			}
 		}
@@ -184,18 +191,18 @@ public class ValuesBuilder {
 		}
 
 		builder
-			.configFilesEnabled(applicationVersion.configEnabled() || (environmentConfig != null && environmentConfig.configEnabled()))
-			.configPath(applicationVersion.getSpec().getConfigPath())
+			.configFilesEnabled(applicationSpec.configEnabled() || (environmentConfig != null && environmentConfig.configEnabled()))
+			.configPath(applicationSpec.getConfigPath())
 			.configFiles(configFiles)
 			.configFileHashes(hashes(configFiles));
 	}
 
-	private void buildVolumes(ApplicationValues.ApplicationValuesBuilder builder, ApplicationVersion applicationVersion, ApplicationEnvironmentConfig environmentConfig) {
+	private void buildVolumes(ApplicationValues.ApplicationValuesBuilder builder, ApplicationSpec applicationSpec, ApplicationEnvironmentConfig environmentConfig) {
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
 
-		if (applicationVersion.volumesEnabled() && applicationVersion.hasVolumes()) {
-			for (ApplicationVolume applicationVolume : applicationVersion.getSpec().getVolumes()) {
+		if (applicationSpec.volumesEnabled() && applicationSpec.hasVolumes()) {
+			for (ApplicationVolume applicationVolume : applicationSpec.getVolumes()) {
 				volumes.put(applicationVolume.getName(), new ApplicationVolumeValues(applicationVolume));
 			}
 		}
@@ -211,16 +218,16 @@ public class ValuesBuilder {
 		}
 
 		builder
-			.volumesEnabled(applicationVersion.volumesEnabled() || (environmentConfig != null && environmentConfig.volumesEnabled()))
+			.volumesEnabled(applicationSpec.volumesEnabled() || (environmentConfig != null && environmentConfig.volumesEnabled()))
 			.volumes(volumes);
 	}
 
-	private void buildSecrets(ApplicationValues.ApplicationValuesBuilder builder, ApplicationVersion applicationVersion, ApplicationEnvironmentConfig environmentConfig) throws IOException {
+	private void buildSecrets(ApplicationValues.ApplicationValuesBuilder builder, ApplicationSpec applicationSpec, ApplicationEnvironmentConfig environmentConfig) throws IOException {
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
 
-		if (applicationVersion.secretsEnabled() && applicationVersion.hasSecrets()) {
-			for (ApplicationSecret applicationSecret : applicationVersion.getSpec().getSecrets()) {
+		if (applicationSpec.secretsEnabled() && applicationSpec.hasSecrets()) {
+			for (ApplicationSecret applicationSecret : applicationSpec.getSecrets()) {
 				Map<String, String> encryptedData = secretDataSealedSecretProducer.produce(applicationSecret);
 				secrets.put(applicationSecret.getName(), new ApplicationSecretValues(applicationSecret.getName(), secretType(applicationSecret), encryptedData));
 			}
@@ -238,16 +245,16 @@ public class ValuesBuilder {
 		}
 
 		builder
-			.secretsEnabled(applicationVersion.secretsEnabled() || (environmentConfig != null && environmentConfig.secretsEnabled()))
+			.secretsEnabled(applicationSpec.secretsEnabled() || (environmentConfig != null && environmentConfig.secretsEnabled()))
 			.secrets(secrets);
 	}
 
-	private void buildResources(ApplicationValues.ApplicationValuesBuilder builder, ApplicationVersion applicationVersion, ApplicationEnvironmentConfig environmentConfig) {
+	private void buildResources(ContainerValues.ContainerValuesBuilder builder, ContainerSpec containerSpec, ApplicationEnvironmentConfig environmentConfig) {
 
 		ResourcesValues resourcesValues = new ResourcesValues();
 
-		if (applicationVersion.resourcesEnabled() && applicationVersion.hasResources()) {
-			resourcesValues.spec(applicationVersion.getSpec().getResources());
+		if (containerSpec.resourcesEnabled() && containerSpec.hasResources()) {
+			resourcesValues.spec(containerSpec.getResources());
 		}
 
 		if (environmentConfig != null) {
@@ -259,7 +266,7 @@ public class ValuesBuilder {
 		}
 
 		builder
-			.resourcesEnabled(applicationVersion.resourcesEnabled() || (environmentConfig != null && environmentConfig.resourcesEnabled()));
+			.resourcesEnabled(containerSpec.resourcesEnabled() || (environmentConfig != null && environmentConfig.resourcesEnabled()));
 
 		if (resourcesValues.hasValues()) {
 			builder.resources(resourcesValues);

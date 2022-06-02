@@ -23,6 +23,7 @@ import {AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, Templa
 })
 export class MultiTabComponent implements OnInit, AfterContentChecked {
   @Input() content: TemplateRef<any>;
+  @Input() defaultItem: object;
   @Input() items: object[];
   @Input() itemFactory: TabItemFactory<object>;
   @Input() deleteDisabled: (item) => boolean;
@@ -48,16 +49,16 @@ export class MultiTabComponent implements OnInit, AfterContentChecked {
     const item = this.itemFactory();
     this.items.push(item);
     this.indexes.push(this.indexCount++);
-    setTimeout(() => this.selectedIndex = this.items.length - 1);
+    setTimeout(() => this.selectLastTab());
   }
 
   delete() {
-    this.items.splice(this.selectedIndex, 1);
-    this.indexes.splice(this.selectedIndex, 1);
+    this.items.splice(this.selectedIndexN(), 1);
+    this.indexes.splice(this.selectedIndexN(), 1);
     setTimeout(() => {
-      if (this.selectedIndex === this.items.length) {
-        // only move one tab back if its the last tab
-        this.selectedIndex = this.items.length - 1;
+      if (this.selectedIndexN() === this.items.length) {
+        // only move one tab back if it's the last tab
+        this.selectLastTab();
       }
     });
   }
@@ -80,6 +81,21 @@ export class MultiTabComponent implements OnInit, AfterContentChecked {
       }
     }
     return '';
+  }
+
+  private selectLastTab() {
+    if (this.defaultItem) {
+      this.selectedIndex = this.items.length;
+    } else {
+      this.selectedIndex = this.items.length - 1;
+    }
+  }
+
+  private selectedIndexN(): number {
+    if (this.defaultItem) {
+      return this.selectedIndex - 1;
+    }
+    return this.selectedIndex;
   }
 }
 

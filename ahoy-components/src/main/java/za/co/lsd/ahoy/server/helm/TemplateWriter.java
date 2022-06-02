@@ -21,10 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Component;
-import za.co.lsd.ahoy.server.applications.Application;
-import za.co.lsd.ahoy.server.applications.ApplicationEnvironmentConfig;
-import za.co.lsd.ahoy.server.applications.ApplicationEnvironmentConfigProvider;
-import za.co.lsd.ahoy.server.applications.ApplicationVersion;
+import za.co.lsd.ahoy.server.applications.*;
 import za.co.lsd.ahoy.server.docker.DockerRegistry;
 import za.co.lsd.ahoy.server.docker.DockerRegistryProvider;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
@@ -75,32 +72,35 @@ public class TemplateWriter {
 			Optional<ApplicationEnvironmentConfig> applicationEnvironmentConfig =
 				environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion);
 
-			if ((applicationVersion.configEnabled() && applicationVersion.hasConfigs()) ||
+			ApplicationSpec applicationSpec = applicationVersion.getSpec();
+
+			if ((applicationSpec.configEnabled() && applicationSpec.hasConfigs()) ||
 				applicationEnvironmentConfig.map(e -> e.configEnabled() && e.hasConfigs()).orElse(false)) {
 				addTemplate(application, "configmap", templatesPath, trackedTemplates);
 			}
 
-			if ((applicationVersion.volumesEnabled() && applicationVersion.hasVolumes()) ||
+			if ((applicationSpec.volumesEnabled() && applicationSpec.hasVolumes()) ||
 				applicationEnvironmentConfig.map(e -> e.volumesEnabled() && e.hasVolumes()).orElse(false)) {
 				addTemplate(application, "pvc", templatesPath, trackedTemplates);
 			}
 
-			if ((applicationVersion.secretsEnabled() && applicationVersion.hasSecrets()) ||
+			if ((applicationSpec.secretsEnabled() && applicationSpec.hasSecrets()) ||
 				applicationEnvironmentConfig.map(e -> e.secretsEnabled() && e.hasSecrets()).orElse(false)) {
 				addTemplate(application, "secret-generic", templatesPath, trackedTemplates);
 			}
 
-			Optional<DockerRegistry> dockerRegistry = dockerRegistryProvider.dockerRegistryFor(applicationVersion.getSpec().getDockerRegistryName());
+			Optional<DockerRegistry> dockerRegistry = dockerRegistryProvider.dockerRegistryFor(applicationSpec.getDockerRegistryName());
 			if (dockerRegistry.isPresent() && dockerRegistry.get().getSecure()) {
 				addTemplate(application, "secret-dockerconfig", templatesPath, trackedTemplates);
 			}
 
-			if (applicationVersion.servicePortsEnabled() && applicationVersion.hasServicePorts()) {
+			if (applicationSpec.allContainers().stream().anyMatch(
+				(containerSpec -> containerSpec.servicePortsEnabled() && containerSpec.hasServicePorts()))) {
 				addTemplate(application, "service", templatesPath, trackedTemplates);
+			}
 
-				if (applicationEnvironmentConfig.map(e -> e.routeEnabled() && e.hasRoute()).orElse(false)) {
-					addTemplate(application, "ingress", templatesPath, trackedTemplates);
-				}
+			if (applicationEnvironmentConfig.map(e -> e.routeEnabled() && e.hasRoute()).orElse(false)) {
+				addTemplate(application, "ingress", templatesPath, trackedTemplates);
 			}
 		}
 		pruneTemplates(trackedTemplates, templatesPath);

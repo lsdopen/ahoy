@@ -33,9 +33,9 @@ export class ApplicationVersion {
   releaseVersions: ReleaseVersion[];
 }
 
-export class ApplicationSpec {
+export class ContainerSpec {
+  name: string;
   image: string;
-  dockerRegistryName: string;
   commandArgsEnabled = false;
   command: string;
   args: string[] = [];
@@ -46,6 +46,12 @@ export class ApplicationSpec {
   readinessProbe = new ApplicationProbe(10, 10, 5, 1, 3);
   environmentVariablesEnabled = false;
   environmentVariables: ApplicationEnvironmentVariable[] = [];
+  resourcesEnabled = false;
+  resources = new ApplicationResources();
+}
+
+export class ApplicationSpec extends ContainerSpec {
+  dockerRegistryName: string;
   configPath: string;
   configFilesEnabled = false;
   configFiles: ApplicationConfigFile[] = [];
@@ -53,8 +59,7 @@ export class ApplicationSpec {
   volumes: ApplicationVolume[] = [];
   secretsEnabled = false;
   secrets: ApplicationSecret[] = [];
-  resourcesEnabled = false;
-  resources = new ApplicationResources();
+  containers: ContainerSpec[] = [];
 }
 
 export class ApplicationEnvironmentVariable {

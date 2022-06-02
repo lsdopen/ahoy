@@ -28,6 +28,7 @@ import {ApplicationEnvironmentVariable, ApplicationSecret} from '../application'
 export class ApplicationEnvVariablesComponent {
   @Input() environmentVariables: ApplicationEnvironmentVariable[];
   @Input() secrets: ApplicationSecret[];
+  @Input() containerSpecIndex: number;
   type = 'Value';
   key: string;
   value: string;
