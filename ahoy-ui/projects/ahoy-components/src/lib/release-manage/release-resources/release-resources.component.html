@@ -41,7 +41,7 @@
           <h5>{{eventsDescription()}}</h5>
         </div>
 
-        <p-tabView orientation="left" (onChange)="onTabChange($event)" [(activeIndex)]="tabActiveIndex">
+        <p-tabView (onChange)="onTabChange($event)" [(activeIndex)]="tabActiveIndex">
           <p-tabPanel header="Events">
 
             <div *ngIf="!events || events.length == 0">
@@ -109,12 +109,13 @@
 
           <p-tabPanel header="Logs" *ngIf="podNodeSelected()">
             <div class="col-12">
-              <div class="field-checkbox">
-                <p-checkbox id="tailLogs" name="tailLogs" [(ngModel)]="tailLogs" binary="true"></p-checkbox>
-                <label for="tailLogs">Tail</label>
-              </div>
 
-              <textarea pInputTextarea id="logs" name="logs" rows="40" readonly="true" class="logs-text" [(ngModel)]="logsContent"></textarea>
+              <p-tabView *ngIf="containers" orientation="left" [(activeIndex)]="containerTabActiveIndex">
+                <p-tabPanel *ngFor="let container of containers" header="{{container.name}}">
+                  <app-container-logs [environmentRelease]="environmentRelease" [podResourceNode]="selectedResourceNode" [container]="container"></app-container-logs>
+                </p-tabPanel>
+              </p-tabView>
+
             </div>
           </p-tabPanel>
 

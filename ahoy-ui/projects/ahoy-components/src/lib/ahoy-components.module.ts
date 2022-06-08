@@ -113,6 +113,7 @@ import {TaskEventsListenerComponent} from './taskevents/task-events-listener/tas
 import {AutofocusDirective} from './util/autofocus.directive';
 import {UserRoleDirective} from './util/user-role.directive';
 import {ContainerDetailComponent} from './applications/container-detail/container-detail.component';
+import {ContainerLogsComponent} from './release-manage/release-resources/container-logs/container-logs.component';
 
 @NgModule({
   declarations: [
@@ -141,6 +142,7 @@ import {ContainerDetailComponent} from './applications/container-detail/containe
     ClustersComponent,
     ConfirmDialogComponent,
     ContainerDetailComponent,
+    ContainerLogsComponent,
     CopyEnvironmentConfigDialogComponent,
     DashboardComponent,
     DashboardEnvironmentComponent,
