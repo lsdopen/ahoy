@@ -50,10 +50,12 @@
 
         <p-divider layout="horizontal">Containers</p-divider>
 
-        <app-multi-tab [content]="containerContent" [defaultItem]="applicationVersion.spec" [items]="applicationVersion.spec.containers" [itemFactory]="containerSpecFactory()">
+        <app-multi-tab [content]="containerContent" [defaultItem]="applicationVersion.spec" [items]="applicationVersion.spec.containers" [itemFactory]="containerSpecFactory()"
+                       [itemIcon]="containerIcon()">
 
-          <ng-template #containerContent let-containerSpec let-containerSpecIndex="index">
-            <app-container-detail [parentForm]="applicationVersionForm" [applicationSpec]="applicationVersion.spec" [containerSpec]="containerSpec" [containerSpecIndex]="containerSpecIndex"></app-container-detail>
+          <ng-template #containerContent let-containerSpec let-containerSpecIndex="index" let-isDefaultItem="isDefaultItem">
+            <app-container-detail [parentForm]="applicationVersionForm" [applicationSpec]="applicationVersion.spec" [containerSpec]="containerSpec" [containerSpecIndex]="containerSpecIndex"
+                                  [defaultContainerSpec]="isDefaultItem"></app-container-detail>
           </ng-template>
 
         </app-multi-tab>

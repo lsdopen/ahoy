@@ -24,6 +24,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class ContainerSpec {
+	protected ContainerType type = ContainerType.Container;
 	protected String name = "default";
 	protected String image;
 

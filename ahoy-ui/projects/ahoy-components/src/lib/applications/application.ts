@@ -36,6 +36,7 @@ export class ApplicationVersion {
 export class ContainerSpec {
   name: string;
   image: string;
+  type = 'Container';
   commandArgsEnabled = false;
   command: string;
   args: string[] = [];

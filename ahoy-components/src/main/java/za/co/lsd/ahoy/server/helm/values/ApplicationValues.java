@@ -46,4 +46,5 @@ public class ApplicationValues {
 	public Boolean secretsEnabled;
 	public Map<String, ApplicationSecretValues> secrets;
 	public Map<String, ContainerValues> containers;
+	public Map<String, ContainerValues> initContainers;
 }

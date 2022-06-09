@@ -102,6 +102,7 @@ public class ValuesBuilder {
 		buildRoute(applicationValuesBuilder, environmentRelease, applicationVersion, environmentConfig);
 
 		Map<String, ContainerValues> containerValues = new LinkedHashMap<>();
+		Map<String, ContainerValues> initContainerValues = new LinkedHashMap<>();
 		for (ContainerSpec containerSpec : applicationSpec.allContainers()) {
 
 			ContainerValues.ContainerValuesBuilder containerValuesBuilder = ContainerValues.builder()
@@ -110,14 +111,22 @@ public class ValuesBuilder {
 
 			buildCommandArgs(containerValuesBuilder, containerSpec);
 			buildServicePorts(containerValuesBuilder, containerSpec);
-			buildHealthChecks(containerValuesBuilder, containerSpec);
 
 			buildEnvironmentVariables(containerValuesBuilder, containerSpec, environmentConfig);
 			buildResources(containerValuesBuilder, containerSpec, environmentConfig);
 
-			containerValues.put(containerSpec.getName(), containerValuesBuilder.build());
+			switch(containerSpec.getType()) {
+				case Container:
+					buildHealthChecks(containerValuesBuilder, containerSpec);
+					containerValues.put(containerSpec.getName(), containerValuesBuilder.build());
+					break;
+				case Init:
+					initContainerValues.put(containerSpec.getName(), containerValuesBuilder.build());
+					break;
+			}
 		}
 		applicationValuesBuilder.containers(containerValues);
+		applicationValuesBuilder.initContainers(initContainerValues);
 
 		return applicationValuesBuilder.build();
 	}

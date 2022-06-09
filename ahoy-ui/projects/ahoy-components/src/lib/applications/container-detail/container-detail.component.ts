@@ -29,6 +29,7 @@ export class ContainerDetailComponent implements OnInit {
   @Input() applicationSpec: ApplicationSpec;
   @Input() containerSpec: ContainerSpec;
   @Input() containerSpecIndex: number;
+  @Input() defaultContainerSpec: boolean;
   newArg: string;
   editingArg: string;
   newServicePort: number;

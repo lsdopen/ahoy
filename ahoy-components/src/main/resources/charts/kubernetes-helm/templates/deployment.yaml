@@ -33,6 +33,66 @@ spec:
       imagePullSecrets:
         - name: {{ .glob.releaseName }}-{{ .app.name }}
       {{- end }}
+      initContainers:
+        {{- range $containerName, $container := .app.initContainers }}
+        - image: {{ $container.image }}
+          imagePullPolicy: Always
+          name: {{ $containerName }}
+          {{- if $container.commandArgsEnabled }}
+          {{- if $container.command }}
+          command:
+            - {{ $container.command }}
+          {{- end }}
+          {{- if $container.args }}
+          args:
+            {{- range $container.args }}
+            - {{ . }}
+            {{- end}}
+          {{- end }}
+          {{- end }}
+          {{- if and $container.environmentVariablesEnabled $container.environmentVariables }}
+          env:
+            {{- range $name, $envVariable := $container.environmentVariables }}
+            {{- if eq $envVariable.type "Value"}}
+            - name: {{ $name }}
+              value: '{{ $envVariable.value }}'
+            {{- end }}
+            {{- if eq $envVariable.type "Secret"}}
+            - name: {{ $name }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.glob.releaseName }}-{{ $.app.name }}-{{ $envVariable.secretName }}
+                  key: {{ $envVariable.secretKey }}
+            {{- end }}
+            {{- end }}
+          {{- end }}
+          {{- if and $container.servicePortsEnabled $container.servicePorts }}
+          ports:
+            {{- range $container.servicePorts }}
+            - containerPort: {{ . }}
+              protocol: TCP
+            {{- end }}
+          {{- end }}
+          {{- if and $container.resourcesEnabled $container.resources }}
+          resources:
+            {{- toYaml $container.resources | nindent 12 }}
+          {{- else }}
+          resources: {}
+          {{- end }}
+          {{- if or $.app.configFiles $.app.volumes }}
+          volumeMounts:
+            {{- if and $.app.configFilesEnabled $.app.configPath $.app.configFiles}}
+            - name: application-config
+              mountPath: {{ $.app.configPath }}
+            {{- end }}
+            {{- if $.app.volumesEnabled }}
+            {{- range $name, $volume := $.app.volumes }}
+            - name: {{ $volume.name }}
+              mountPath: {{ $volume.mountPath }}
+            {{- end }}
+            {{- end }}
+          {{- end }}
+        {{- end }}
       containers:
         {{- range $containerName, $container := .app.containers }}
         - image: {{ $container.image }}

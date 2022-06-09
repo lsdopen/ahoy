@@ -17,6 +17,13 @@
 <div class="p-fluid col-12 md:col-5">
 
   <div class="field p-float-label">
+    <p-dropdown [options]="['Container', 'Init']" [(ngModel)]="containerSpec.type" [disabled]="defaultContainerSpec"
+                name="type{{containerSpecIndex}}"
+                required="true"></p-dropdown>
+    <label>Type</label>
+  </div>
+
+  <div class="field p-float-label">
     <input pInputText id="name{{containerSpecIndex}}" [(ngModel)]="containerSpec.name" name="name{{containerSpecIndex}}" required>
     <label for="name{{containerSpecIndex}}">Name</label>
   </div>
@@ -140,7 +147,7 @@
 
     </p-accordionTab>
 
-    <p-accordionTab>
+    <p-accordionTab [disabled]="containerSpec.type !== 'Container'">
       <p-header>
         <div class="formgroup-inline">
           <p-inputSwitch name="healthChecksEnabled{{containerSpecIndex}}" (click)="$event.stopPropagation();" [(ngModel)]="containerSpec.healthChecksEnabled"></p-inputSwitch>

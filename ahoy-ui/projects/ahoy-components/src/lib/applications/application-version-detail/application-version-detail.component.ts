@@ -169,4 +169,15 @@ export class ApplicationVersionDetailComponent implements OnInit {
       return 'Secret in use';
     };
   }
+
+  containerIcon() {
+    return (containerSpec: ContainerSpec): string => {
+      switch (containerSpec.type) {
+        case 'Container':
+          return 'pi pi-stop';
+        case 'Init':
+          return 'pi pi-window-maximize';
+      }
+    };
+  }
 }

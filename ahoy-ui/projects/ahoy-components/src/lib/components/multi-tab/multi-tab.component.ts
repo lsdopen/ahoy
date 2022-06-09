@@ -28,6 +28,7 @@ export class MultiTabComponent implements OnInit, AfterContentChecked {
   @Input() itemFactory: TabItemFactory<object>;
   @Input() deleteDisabled: (item) => boolean;
   @Input() deleteDisabledTooltip: (item) => string;
+  @Input() itemIcon: (item) => string;
   indexes: number[] = [];
   indexCount = 0;
   selectedIndex = 0;
