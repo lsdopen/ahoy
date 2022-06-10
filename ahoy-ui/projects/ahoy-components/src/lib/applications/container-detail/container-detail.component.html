@@ -24,8 +24,14 @@
   </div>
 
   <div class="field p-float-label">
-    <input pInputText id="name{{containerSpecIndex}}" [(ngModel)]="containerSpec.name" name="name{{containerSpecIndex}}" required>
+    <input pInputText id="name{{containerSpecIndex}}" [(ngModel)]="containerSpec.name" name="name{{containerSpecIndex}}"
+           [appNameUnique]="containerSpecsForValidation"
+           [ignoreSelf]="containerSpec"
+           required>
     <label for="name{{containerSpecIndex}}">Name</label>
+    <small class="p-error" *ngIf="parentForm.form.controls['name' + containerSpecIndex]?.hasError('nameNotUnique')">
+      Container name in use
+    </small>
   </div>
 
   <div class="field p-float-label">

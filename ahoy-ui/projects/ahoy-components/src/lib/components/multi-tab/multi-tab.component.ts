@@ -66,7 +66,10 @@ export class MultiTabComponent implements OnInit, AfterContentChecked {
 
   isDeleteDisabled(): boolean {
     if (this.deleteDisabled) {
-      const item = this.items[this.selectedIndex];
+      if (this.defaultItem && this.selectedIndex === 0) {
+        return this.deleteDisabled(this.defaultItem);
+      }
+      const item = this.items[this.selectedIndexN()];
       if (item) {
         return this.deleteDisabled(item);
       }
@@ -76,7 +79,10 @@ export class MultiTabComponent implements OnInit, AfterContentChecked {
 
   getDeleteDisabledTooltip(): string {
     if (this.deleteDisabled && this.deleteDisabledTooltip) {
-      const item = this.items[this.selectedIndex];
+      if (this.defaultItem && this.selectedIndex === 0) {
+        return this.deleteDisabledTooltip(this.defaultItem);
+      }
+      const item = this.items[this.selectedIndexN()];
       if (item && this.deleteDisabled(item)) {
         return this.deleteDisabledTooltip(item);
       }

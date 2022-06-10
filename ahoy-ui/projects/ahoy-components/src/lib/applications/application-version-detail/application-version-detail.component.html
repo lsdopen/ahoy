@@ -51,11 +51,11 @@
         <p-divider layout="horizontal">Containers</p-divider>
 
         <app-multi-tab [content]="containerContent" [defaultItem]="applicationVersion.spec" [items]="applicationVersion.spec.containers" [itemFactory]="containerSpecFactory()"
-                       [itemIcon]="containerIcon()">
+                       [itemIcon]="containerIcon()" [deleteDisabled]="containerSpecDeleteDisabled()" [deleteDisabledTooltip]="containerSpecDeleteDisabledTooltip()">
 
           <ng-template #containerContent let-containerSpec let-containerSpecIndex="index" let-isDefaultItem="isDefaultItem">
             <app-container-detail [parentForm]="applicationVersionForm" [applicationSpec]="applicationVersion.spec" [containerSpec]="containerSpec" [containerSpecIndex]="containerSpecIndex"
-                                  [defaultContainerSpec]="isDefaultItem"></app-container-detail>
+                                  [defaultContainerSpec]="isDefaultItem" [containerSpecsForValidation]="applicationVersion.spec.containers"></app-container-detail>
           </ng-template>
 
         </app-multi-tab>

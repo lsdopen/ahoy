@@ -16,6 +16,7 @@
 
 import {EnvironmentReleaseId} from '../environment-release/environment-release';
 import {ReleaseVersion} from '../releases/release';
+import {Nameable} from '../components/name-unique-validator.directive';
 
 export class Application {
   id: number;
@@ -33,7 +34,7 @@ export class ApplicationVersion {
   releaseVersions: ReleaseVersion[];
 }
 
-export class ContainerSpec {
+export class ContainerSpec implements Nameable {
   name: string;
   image: string;
   type = 'Container';

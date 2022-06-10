@@ -180,4 +180,16 @@ export class ApplicationVersionDetailComponent implements OnInit {
       }
     };
   }
+
+  containerSpecDeleteDisabled() {
+    return (containerSpec: ContainerSpec): boolean => {
+      return containerSpec === this.applicationVersion.spec;
+    };
+  }
+
+  containerSpecDeleteDisabledTooltip() {
+    return (containerSpec: ContainerSpec): string => {
+      return 'Cannot remove default container';
+    };
+  }
 }
