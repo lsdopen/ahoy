@@ -44,152 +44,26 @@
             </small>
           </div>
 
-          <app-docker-registries [applicationVersion]="applicationVersion"></app-docker-registries>
-
-          <div class="field p-float-label">
-            <input pInputText id="applicationImage" [(ngModel)]="applicationVersion.spec.image" name="applicationImage" required>
-            <label for="applicationImage">Image</label>
-          </div>
+          <app-docker-registries [applicationSpec]="applicationVersion.spec"></app-docker-registries>
 
         </div>
 
+        <p-divider layout="horizontal">Containers</p-divider>
+
+        <app-multi-tab [content]="containerContent" [defaultItem]="applicationVersion.spec" [items]="applicationVersion.spec.containers" [itemFactory]="containerSpecFactory()"
+                       [itemIcon]="containerIcon()" [deleteDisabled]="containerSpecDeleteDisabled()" [deleteDisabledTooltip]="containerSpecDeleteDisabledTooltip()">
+
+          <ng-template #containerContent let-containerSpec let-containerSpecIndex="index" let-isDefaultItem="isDefaultItem">
+            <app-container-detail [parentForm]="applicationVersionForm" [applicationSpec]="applicationVersion.spec" [containerSpec]="containerSpec" [containerSpecIndex]="containerSpecIndex"
+                                  [defaultContainerSpec]="isDefaultItem" [containerSpecsForValidation]="applicationVersion.spec.containers"></app-container-detail>
+          </ng-template>
+
+        </app-multi-tab>
+
+        <p-divider layout="horizontal">General</p-divider>
+
         <div class="col-12">
           <p-accordion multiple="true">
-            <p-accordionTab>
-              <p-header>
-                <div class="formgroup-inline">
-                  <p-inputSwitch name="commandArgsEnabled" (click)="$event.stopPropagation();" [(ngModel)]="applicationVersion.spec.commandArgsEnabled"></p-inputSwitch>
-                  <span class="ml-2">Command & Args</span>
-                </div>
-              </p-header>
-
-              <div class="p-fluid">
-                <div class="col-12 md:col-5">
-
-                  <div class="field p-float-label">
-                    <input pInputText id="command" name="command" [(ngModel)]="applicationVersion.spec.command">
-                    <label for="command">Command</label>
-                  </div>
-
-                  <div class="field p-float-label">
-                    <input pInputText id="newArg" name="newArg" [(ngModel)]="newArg">
-                    <label for="newArg">Arg</label>
-                  </div>
-
-                  <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-plain" (click)="addArg()"></button>
-
-                  <div class="field mt-2">
-                    <p-table #dt [value]="applicationVersion.spec.args" dataKey="id"
-                             styleClass="p-datatable-ports p-datatable-striped p-datatable-sm"
-                             (onEditInit)="editArgInit($event)" (onEditComplete)="editArgComplete($event)">
-                      <ng-template pTemplate="body" let-arg let-i="rowIndex">
-                        <tr [pReorderableRow]="i">
-                          <td style="width: 3rem; text-align: center">
-                            <span class="pi pi-bars" pReorderableRowHandle></span>
-                          </td>
-                          <td [pEditableColumn]="arg" [pEditableColumnRowIndex]="i">
-                            <p-cellEditor>
-                              <ng-template pTemplate="input">
-                                <input pInputText type="text" id="arg{{i}}" name="arg{{i}}" [(ngModel)]="editingArg" required>
-                              </ng-template>
-                              <ng-template pTemplate="output">
-                                <span class="p-column-title">Arg</span>{{arg}}
-                              </ng-template>
-                            </p-cellEditor>
-                          </td>
-                          <td>
-                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="removeArg(i)"></button>
-                          </td>
-                        </tr>
-                      </ng-template>
-                    </p-table>
-                  </div>
-
-                </div>
-              </div>
-
-            </p-accordionTab>
-
-            <p-accordionTab>
-              <p-header>
-                <div class="formgroup-inline">
-                  <p-inputSwitch name="servicePortsEnabled" (click)="$event.stopPropagation();" [(ngModel)]="applicationVersion.spec.servicePortsEnabled"></p-inputSwitch>
-                  <span class="ml-2">Ports</span>
-                </div>
-              </p-header>
-
-              <div class="p-fluid">
-                <div class="col-12 md:col-3">
-
-                  <div class="field p-float-label">
-                    <input pInputText id="newServicePort" [(ngModel)]="newServicePort" name="newServicePort"
-                           pattern="([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])">
-                    <label for="newServicePort">Port</label>
-                    <small class="p-error" *ngIf="applicationVersionForm.form.controls.newServicePort?.hasError('pattern')">invalid</small>
-                  </div>
-
-                  <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-plain" (click)="addServicePort()"></button>
-
-                  <div class="field mt-2">
-                    <p-table #dt [value]="applicationVersion.spec.servicePorts" dataKey="id"
-                             styleClass="p-datatable-ports p-datatable-striped p-datatable-sm"
-                             (onEditInit)="editPortInit($event)" (onEditComplete)="editPortComplete($event)">
-                      <ng-template pTemplate="body" let-port let-i="rowIndex">
-                        <tr>
-                          <td [pEditableColumn]="port" [pEditableColumnRowIndex]="i">
-                            <p-cellEditor>
-                              <ng-template pTemplate="input">
-                                <div class="field p-float-label">
-                                  <input pInputText type="text" id="port{{i}}" name="port{{i}}" [(ngModel)]="editingPort" required
-                                         pattern="([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])">
-                                  <label for="port{{i}}">Port</label>
-                                  <small class="p-error" *ngIf="applicationVersionForm.form.controls['port' + i]?.hasError('pattern')">invalid</small>
-                                </div>
-                              </ng-template>
-                              <ng-template pTemplate="output">
-                                <span class="p-column-title">Port</span>{{port}}
-                              </ng-template>
-                            </p-cellEditor>
-                          </td>
-                          <td>
-                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="removeServicePort(i)"></button>
-                          </td>
-                        </tr>
-                      </ng-template>
-                    </p-table>
-                  </div>
-
-                </div>
-              </div>
-
-            </p-accordionTab>
-
-            <p-accordionTab>
-              <p-header>
-                <div class="formgroup-inline">
-                  <p-inputSwitch name="healthChecksEnabled" (click)="$event.stopPropagation();" [(ngModel)]="applicationVersion.spec.healthChecksEnabled"></p-inputSwitch>
-                  <span class="ml-2">Health Checks</span>
-                </div>
-              </p-header>
-
-              <app-application-health-checks [parentForm]="applicationVersionForm" [applicationSpec]="applicationVersion.spec"></app-application-health-checks>
-
-            </p-accordionTab>
-
-            <p-accordionTab>
-              <p-header>
-                <div class="formgroup-inline">
-                  <p-inputSwitch name="environmentVariablesEnabled" (click)="$event.stopPropagation();" [(ngModel)]="applicationVersion.spec.environmentVariablesEnabled"></p-inputSwitch>
-                  <span class="ml-2">Environment Variables</span>
-                </div>
-              </p-header>
-
-              <app-application-env-variables
-                [environmentVariables]="applicationVersion.spec.environmentVariables" [secrets]="applicationVersion.spec.secrets">
-              </app-application-env-variables>
-
-            </p-accordionTab>
-
             <p-accordionTab>
               <p-header>
                 <div class="formgroup-inline">
@@ -200,7 +74,7 @@
 
               <app-application-config-files
                 [parentForm]="applicationVersionForm"
-                [applicationVersion]="applicationVersion"
+                [applicationSpec]="applicationVersion.spec"
                 [configFiles]="applicationVersion.spec.configFiles">
               </app-application-config-files>
 
@@ -252,18 +126,6 @@
                 </ng-template>
 
               </app-multi-tab>
-
-            </p-accordionTab>
-
-            <p-accordionTab>
-              <p-header>
-                <div class="formgroup-inline">
-                  <p-inputSwitch name="resourcesEnabled" (click)="$event.stopPropagation();" [(ngModel)]="applicationVersion.spec.resourcesEnabled"></p-inputSwitch>
-                  <span class="ml-2">Resources</span>
-                </div>
-              </p-header>
-
-              <app-application-resources [resources]="applicationVersion.spec.resources"></app-application-resources>
 
             </p-accordionTab>
 

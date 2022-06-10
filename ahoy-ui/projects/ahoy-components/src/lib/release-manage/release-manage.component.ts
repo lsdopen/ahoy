@@ -16,7 +16,7 @@
 
 import {Location} from '@angular/common';
 import {Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {MenuItem} from 'primeng/api';
 import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
 import {Observable, of, Subscription} from 'rxjs';
@@ -54,7 +54,6 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   selectedEnvironmentRelease: EnvironmentRelease;
   releaseVersion: ReleaseVersion;
   menuItems: MenuItem[];
-  private navigationSubscription: Subscription;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -71,26 +70,21 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const environmentId = +this.route.snapshot.paramMap.get('environmentId');
-    const releaseId = +this.route.snapshot.paramMap.get('releaseId');
-    const releaseVersionId = +this.route.snapshot.paramMap.get('releaseVersionId');
-    this.getEnvironmentRelease(environmentId, releaseId, releaseVersionId).subscribe((environmentRelease) => {
-      this.subscribeToEnvironmentReleaseChanged();
+    this.route.paramMap.subscribe(paramMap => {
+      const environmentId = +paramMap.get('environmentId');
+      const releaseId = +paramMap.get('releaseId');
+      const releaseVersionId = +paramMap.get('releaseVersionId');
+      this.getEnvironmentRelease(environmentId, releaseId, releaseVersionId).subscribe((environmentRelease) => {
+        this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
+      });
     });
 
-    this.navigationSubscription = this.router.events.subscribe((e: any) => {
-      if (e instanceof NavigationEnd) {
-        this.reloadOnNavigation();
-      }
-    });
+    this.subscribeToEnvironmentReleaseChanged();
   }
 
   ngOnDestroy(): void {
     if (this.environmentReleaseChangedSubscription) {
       this.environmentReleaseChangedSubscription.unsubscribe();
-    }
-    if (this.navigationSubscription) {
-      this.navigationSubscription.unsubscribe();
     }
   }
 
@@ -160,17 +154,6 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     }
   }
 
-  private reloadOnNavigation() {
-    const environmentId = +this.route.snapshot.paramMap.get('environmentId');
-    const releaseId = +this.route.snapshot.paramMap.get('releaseId');
-    const releaseVersionId = +this.route.snapshot.paramMap.get('releaseVersionId');
-
-    this.getEnvironmentRelease(environmentId, releaseId, releaseVersionId)
-      .subscribe(() => {
-        this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
-      });
-  }
-
   reloadCurrent() {
     if (this.selectedEnvironmentRelease) {
       this.reload(this.selectedEnvironmentRelease.id.environmentId, this.releaseVersion.id);
@@ -208,7 +191,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
       const deployOptions = new DeployOptions(this.releaseVersion.id, conf.input);
-      this.releaseManageService.deploy(this.environmentRelease, deployOptions).subscribe();
+      this.releaseManageService.deploy(this.environmentRelease, this.releaseVersion, deployOptions).subscribe();
     });
   }
 
@@ -322,7 +305,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
       const deployOptions = new DeployOptions(this.environmentRelease.previousReleaseVersion.id, conf.input);
-      this.releaseManageService.deploy(this.environmentRelease, deployOptions)
+      this.releaseManageService.deploy(this.environmentRelease, this.environmentRelease.previousReleaseVersion, deployOptions)
         .subscribe(() => this.log.debug('rolled back release:', this.environmentRelease));
     });
   }

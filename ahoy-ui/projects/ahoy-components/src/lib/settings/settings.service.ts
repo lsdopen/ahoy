@@ -15,7 +15,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {EMPTY, Observable} from 'rxjs';
+import {EMPTY, Observable, Subject} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {Notification} from '../notifications/notification';
 import {NotificationsService} from '../notifications/notifications.service';
@@ -37,6 +37,7 @@ export class SettingsService {
     'gitlab.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCsj2bNKTBSpIYDEGk9KxsGh3mySTRgMtXL583qmBpzeQ+jqCMRgBqB98u3z++J1sKlXHWfM9dyhSevkMwSbhoR8XIq/U0tCNyokEi/ueaBMCvbcTHhO7FcwzY92WK4Yt0aGROY5qX2UKSeOvuP4D6TPqKF1onrSzH9bx9XUf2lEdWT/ia1NEKjunUqu1xOB/StKDHMoX4/OKyIzuS0q/T1zOATthvasJFoPrAjkohTyaDUz2LN5JoH839hViyEG82yB+MjcFV5MU3N1l1QL3cVUCh93xSaua1N85qivl+siMkPGbO5xR/En4iEY6K2XPASUEMaieWVNTRCtJ4S8H+9\n' +
     'ssh.dev.azure.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7Hr1oTWqNqOlzGJOfGJ4NakVyIzf1rXYd4d7wo6jBlkLvCA4odBlL0mDUyZ0/QUfTTqeu+tm22gOsv+VrVTMk6vwRU75gY/y9ut5Mb3bR5BV58dKXyq9A9UeB5Cakehn5Zgm6x1mKoVyf+FFn26iYqXJRgzIZZcZ5V6hrE0Qg39kZm4az48o0AUbf6Sp4SLdvnuMa2sVNwHBboS7EJkm57XQPVU3/QpyNLHbWDdzwtrlS+ez30S3AdYhLKEOxAG8weOnyrtLJAUen9mTkol8oII1edf7mWWbWVf0nBmly21+nZcmCTISQBtdcyPaEno7fFQMDD26/s0lfKob4Kw8H\n' +
     'vs-ssh.visualstudio.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7Hr1oTWqNqOlzGJOfGJ4NakVyIzf1rXYd4d7wo6jBlkLvCA4odBlL0mDUyZ0/QUfTTqeu+tm22gOsv+VrVTMk6vwRU75gY/y9ut5Mb3bR5BV58dKXyq9A9UeB5Cakehn5Zgm6x1mKoVyf+FFn26iYqXJRgzIZZcZ5V6hrE0Qg39kZm4az48o0AUbf6Sp4SLdvnuMa2sVNwHBboS7EJkm57XQPVU3/QpyNLHbWDdzwtrlS+ez30S3AdYhLKEOxAG8weOnyrtLJAUen9mTkol8oII1edf7mWWbWVf0nBmly21+nZcmCTISQBtdcyPaEno7fFQMDD26/s0lfKob4Kw8H\n';
+  private settingsChangedSubject = new Subject<any>();
 
   constructor(
     private log: LoggerService,
@@ -66,11 +67,14 @@ export class SettingsService {
     );
   }
 
-  saveGitSettings(gitSettings: GitSettings): Observable<GitSettings> {
+  saveGitSettings(gitSettings: GitSettings): Observable<void> {
     this.log.debug('saving git settings: ', gitSettings);
 
-    return this.restClient.post<GitSettings>('/api/settings/git', gitSettings, true).pipe(
-      tap((savedSettings) => this.log.debug('saved git settings', savedSettings))
+    return this.restClient.post<void>('/api/settings/git', gitSettings, true).pipe(
+      tap(() => {
+        this.log.debug('saved git settings');
+        this.settingsChangedSubject.next(gitSettings);
+      })
     );
   }
 
@@ -110,11 +114,14 @@ export class SettingsService {
     );
   }
 
-  saveArgoSettings(argoSettings: ArgoSettings): Observable<ArgoSettings> {
+  saveArgoSettings(argoSettings: ArgoSettings): Observable<void> {
     this.log.debug('saving argo settings: ', argoSettings);
 
-    return this.restClient.post<ArgoSettings>('/api/settings/argo', argoSettings, true).pipe(
-      tap((savedSettings) => this.log.debug('saved argo settings', savedSettings))
+    return this.restClient.post<void>('/api/settings/argo', argoSettings, true).pipe(
+      tap(() => {
+        this.log.debug('saved argo settings');
+        this.settingsChangedSubject.next(argoSettings);
+      })
     );
   }
 
@@ -145,7 +152,7 @@ export class SettingsService {
     );
   }
 
-  dockerSesstingsExists(): Observable<boolean> {
+  dockerSettingsExists(): Observable<boolean> {
     const url = `/api/settings/docker`;
     return this.restClient.exists(url, false).pipe(
       tap((exists) => {
@@ -154,11 +161,18 @@ export class SettingsService {
     );
   }
 
-  saveDockerSettings(dockerSettings: DockerSettings): Observable<DockerSettings> {
+  saveDockerSettings(dockerSettings: DockerSettings): Observable<void> {
     this.log.debug('saving docker settings: ', dockerSettings);
 
-    return this.restClient.post<DockerSettings>('/api/settings/docker', dockerSettings, true).pipe(
-      tap((savedSettings) => this.log.debug('saved docker settings', savedSettings))
+    return this.restClient.post<void>('/api/settings/docker', dockerSettings, true).pipe(
+      tap(() => {
+        this.log.debug('saved docker settings');
+        this.settingsChangedSubject.next(dockerSettings);
+      })
     );
+  }
+
+  public settingsChanged(): Observable<any> {
+    return this.settingsChangedSubject.asObservable();
   }
 }

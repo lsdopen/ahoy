@@ -17,41 +17,12 @@
 package za.co.lsd.ahoy.server.argocd.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResourceTree {
-	private List<Node> nodes;
-
-	@Data
-	@Builder
-	@NoArgsConstructor
-	@AllArgsConstructor
-	public static class Node {
-		private String kind;
-		private String namespace;
-		private String name;
-		private String uid;
-		private String version;
-		private List<ParentRef> parentRefs;
-	}
-
-	@Data
-	@Builder
-	@NoArgsConstructor
-	@AllArgsConstructor
-	public static class ParentRef {
-		private String group;
-		private String kind;
-		private String namespace;
-		private String name;
-		private String uid;
-	}
+public class Resource {
+	private String manifest;
 }

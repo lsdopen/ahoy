@@ -20,9 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import za.co.lsd.ahoy.server.applications.ApplicationProbe;
 
-import java.util.List;
 import java.util.Map;
 
 @Data
@@ -31,25 +29,14 @@ import java.util.Map;
 @AllArgsConstructor
 public class ApplicationValues {
 	public String name;
-	public String image;
-	public String dockerConfigJson;
 	public String version;
-	public Boolean commandArgsEnabled;
-	public String command;
-	public List<String> args;
-	public Boolean servicePortsEnabled;
-	public List<Integer> servicePorts;
+	public String dockerConfigJson;
 	public Integer replicas;
 	public Boolean routeEnabled;
 	public String routeHostname;
 	public Integer routeTargetPort;
 	public Boolean tls;
 	public String tlsSecretName;
-	public Boolean environmentVariablesEnabled;
-	public Map<String, EnvironmentVariableValues> environmentVariables;
-	public Boolean healthChecksEnabled;
-	public ApplicationProbe livenessProbe;
-	public ApplicationProbe readinessProbe;
 	public Boolean configFilesEnabled;
 	public Map<String, ApplicationConfigFileValues> configFiles;
 	public String configFileHashes;
@@ -58,6 +45,6 @@ public class ApplicationValues {
 	public Map<String, ApplicationVolumeValues> volumes;
 	public Boolean secretsEnabled;
 	public Map<String, ApplicationSecretValues> secrets;
-	public Boolean resourcesEnabled;
-	public ResourcesValues resources;
+	public Map<String, ContainerValues> containers;
+	public Map<String, ContainerValues> initContainers;
 }

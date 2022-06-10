@@ -23,10 +23,12 @@ import {AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, Templa
 })
 export class MultiTabComponent implements OnInit, AfterContentChecked {
   @Input() content: TemplateRef<any>;
+  @Input() defaultItem: object;
   @Input() items: object[];
   @Input() itemFactory: TabItemFactory<object>;
   @Input() deleteDisabled: (item) => boolean;
   @Input() deleteDisabledTooltip: (item) => string;
+  @Input() itemIcon: (item) => string;
   indexes: number[] = [];
   indexCount = 0;
   selectedIndex = 0;
@@ -48,23 +50,26 @@ export class MultiTabComponent implements OnInit, AfterContentChecked {
     const item = this.itemFactory();
     this.items.push(item);
     this.indexes.push(this.indexCount++);
-    setTimeout(() => this.selectedIndex = this.items.length - 1);
+    setTimeout(() => this.selectLastTab());
   }
 
   delete() {
-    this.items.splice(this.selectedIndex, 1);
-    this.indexes.splice(this.selectedIndex, 1);
+    this.items.splice(this.selectedIndexN(), 1);
+    this.indexes.splice(this.selectedIndexN(), 1);
     setTimeout(() => {
-      if (this.selectedIndex === this.items.length) {
-        // only move one tab back if its the last tab
-        this.selectedIndex = this.items.length - 1;
+      if (this.selectedIndexN() === this.items.length) {
+        // only move one tab back if it's the last tab
+        this.selectLastTab();
       }
     });
   }
 
   isDeleteDisabled(): boolean {
     if (this.deleteDisabled) {
-      const item = this.items[this.selectedIndex];
+      if (this.defaultItem && this.selectedIndex === 0) {
+        return this.deleteDisabled(this.defaultItem);
+      }
+      const item = this.items[this.selectedIndexN()];
       if (item) {
         return this.deleteDisabled(item);
       }
@@ -74,12 +79,30 @@ export class MultiTabComponent implements OnInit, AfterContentChecked {
 
   getDeleteDisabledTooltip(): string {
     if (this.deleteDisabled && this.deleteDisabledTooltip) {
-      const item = this.items[this.selectedIndex];
+      if (this.defaultItem && this.selectedIndex === 0) {
+        return this.deleteDisabledTooltip(this.defaultItem);
+      }
+      const item = this.items[this.selectedIndexN()];
       if (item && this.deleteDisabled(item)) {
         return this.deleteDisabledTooltip(item);
       }
     }
     return '';
+  }
+
+  private selectLastTab() {
+    if (this.defaultItem) {
+      this.selectedIndex = this.items.length;
+    } else {
+      this.selectedIndex = this.items.length - 1;
+    }
+  }
+
+  private selectedIndexN(): number {
+    if (this.defaultItem) {
+      return this.selectedIndex - 1;
+    }
+    return this.selectedIndex;
   }
 }
 

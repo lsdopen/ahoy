@@ -14,49 +14,71 @@
  *    limitations under the License.
  */
 
-import {EventEmitter, Inject, Injectable, isDevMode} from '@angular/core';
-import * as SockJS from 'sockjs-client';
-import * as Stomp from 'stompjs';
+import {EventEmitter, Inject, Injectable, isDevMode, OnDestroy} from '@angular/core';
 import {AuthService} from '../util/auth.service';
 import {LoggerService} from '../util/logger.service';
 import {TaskEvent} from './task-events';
+import {Client} from '@stomp/stompjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TaskEventsService {
-  private serverUrl = '/ws';
-  private readonly RECONNECT_TIMEOUT = 5000;
-  private stompClient;
+export class TaskEventsService implements OnDestroy {
+  private readonly serverUrl;
+  private client: Client;
   public taskEvents = new EventEmitter<TaskEvent>();
 
   constructor(private authService: AuthService,
               private log: LoggerService,
               @Inject('environment') environment) {
+
     if (isDevMode()) {
-      this.serverUrl = 'http://localhost:8080' + this.serverUrl;
+      this.serverUrl = 'ws://localhost:8080/ws';
+
+    } else {
+      const protocol = window.location.protocol === 'http:' ? 'ws' : 'wss';
+      this.serverUrl = `${protocol}://${window.location.host}/ws`;
     }
 
     if (environment.taskEventsWebsocketEnabled) {
-      this.connectAndReconnect();
+      this.connect();
+
     } else {
       this.log.warn('Task event websocket connection disabled');
     }
   }
 
-  private connectAndReconnect() {
-    const ws = new SockJS(this.serverUrl);
-    this.stompClient = Stomp.over(ws);
-    this.stompClient.debug = null;
-    const that = this;
-    this.stompClient.connect({'X-Authorization': 'Bearer ' + this.authService.accessToken()}, (frame) => {
-      this.log.debug('Websocket connection established:', ws);
-      that.stompClient.subscribe('/events', (message) => that.receivedAppMessage(message));
-      that.stompClient.subscribe('/user/events', (message) => that.receivedUserMessage(message));
-    }, (error) => {
-      this.log.warn('Websocket connection failed', error);
-      setTimeout(() => this.connectAndReconnect(), this.RECONNECT_TIMEOUT);
+  private connect() {
+    this.client = new Client({
+      brokerURL: this.serverUrl,
+      connectHeaders: {'X-Authorization': 'Bearer ' + this.authService.accessToken()},
+      reconnectDelay: 5000,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000
     });
+
+    this.client.onConnect = frame => {
+      this.log.debug('Websocket connection established:', frame);
+      this.client.subscribe('/events', (message => this.receivedAppMessage(message)));
+      this.client.subscribe('/user/events', (message) => this.receivedUserMessage(message));
+    };
+
+    this.client.onWebSocketError = frame => {
+      this.log.warn('Websocket connection failed: ', frame);
+    };
+
+    this.client.onStompError = frame => {
+      this.log.warn('Broker reported error: ', frame);
+    };
+
+    this.client.activate();
+  }
+
+  ngOnDestroy(): void {
+    if (this.client) {
+      this.client.deactivate()
+        .then(() => this.log.debug('Websocket connection deactivated'));
+    }
   }
 
   private receivedAppMessage(message) {

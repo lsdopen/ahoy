@@ -14,23 +14,9 @@
   ~    limitations under the License.
   -->
 
-<div class="grid">
-  <div class="col-12">
+<textarea pInputTextarea id="logs{{container.name}}" name="logs" rows="40" readonly="true" class="logs-text" [(ngModel)]="logsContent"></textarea>
 
-    <div class="card">
-      <p-messages *ngIf="setupMessage" [value]="[{severity: 'warn', summary: 'Please note', detail: 'In order to continue you need to set up the following:'}]" [enableService]="false"></p-messages>
-
-      <div class="grid">
-
-        <div class="col-3">
-          <p-menu [model]="items" [style]="{'width':'100%'}"></p-menu>
-        </div>
-
-        <div class="col-9">
-          <router-outlet></router-outlet>
-        </div>
-      </div>
-
-    </div>
-  </div>
+<div class="field-checkbox">
+  <p-checkbox id="tailLogs{{container.name}}" name="tailLogs{{container.name}}" [(ngModel)]="tailLogs" binary="true"></p-checkbox>
+  <label for="tailLogs{{container.name}}">Tail</label>
 </div>

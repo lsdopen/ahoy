@@ -16,6 +16,7 @@
 
 import {EnvironmentReleaseId} from '../environment-release/environment-release';
 import {ReleaseVersion} from '../releases/release';
+import {Nameable} from '../components/name-unique-validator.directive';
 
 export class Application {
   id: number;
@@ -33,9 +34,10 @@ export class ApplicationVersion {
   releaseVersions: ReleaseVersion[];
 }
 
-export class ApplicationSpec {
+export class ContainerSpec implements Nameable {
+  name: string;
   image: string;
-  dockerRegistryName: string;
+  type = 'Container';
   commandArgsEnabled = false;
   command: string;
   args: string[] = [];
@@ -46,6 +48,12 @@ export class ApplicationSpec {
   readinessProbe = new ApplicationProbe(10, 10, 5, 1, 3);
   environmentVariablesEnabled = false;
   environmentVariables: ApplicationEnvironmentVariable[] = [];
+  resourcesEnabled = false;
+  resources = new ApplicationResources();
+}
+
+export class ApplicationSpec extends ContainerSpec {
+  dockerRegistryName: string;
   configPath: string;
   configFilesEnabled = false;
   configFiles: ApplicationConfigFile[] = [];
@@ -53,8 +61,7 @@ export class ApplicationSpec {
   volumes: ApplicationVolume[] = [];
   secretsEnabled = false;
   secrets: ApplicationSecret[] = [];
-  resourcesEnabled = false;
-  resources = new ApplicationResources();
+  containers: ContainerSpec[] = [];
 }
 
 export class ApplicationEnvironmentVariable {

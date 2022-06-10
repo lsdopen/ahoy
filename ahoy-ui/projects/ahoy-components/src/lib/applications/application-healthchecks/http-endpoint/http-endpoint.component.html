@@ -17,29 +17,29 @@
 <div class="p-fluid col-12 md:col-3">
 
   <div class="field p-float-label">
-    <input pInputText id="{{probeName}}HttpGetPath" name="{{probeName}}HttpGetPath" [(ngModel)]="probe.httpGet.path"
+    <input pInputText id="{{probeName}}HttpGetPath{{containerSpecIndex}}" name="{{probeName}}HttpGetPath{{containerSpecIndex}}" [(ngModel)]="probe.httpGet.path"
            pattern="(/[^\s]*)"
-           [required]="applicationSpec.healthChecksEnabled">
-    <label for="{{probeName}}HttpGetPath">Health Endpoint Path</label>
+           [required]="containerSpec.healthChecksEnabled">
+    <label for="{{probeName}}HttpGetPath{{containerSpecIndex}}">Health Endpoint Path</label>
     <small class="p-error" *ngIf="parentForm.form.controls[probeName + 'HttpGetPath']?.hasError('pattern')">invalid</small>
   </div>
 
   <div class="field p-float-label">
-    <p-dropdown [options]="applicationSpec.servicePorts" [(ngModel)]="probe.httpGet.port"
-                [showClear]="true" name="{{probeName}}HttpGetPort"
+    <p-dropdown [options]="containerSpec.servicePorts" [(ngModel)]="probe.httpGet.port"
+                [showClear]="true" name="{{probeName}}HttpGetPort{{containerSpecIndex}}"
                 [editable]="true"
                 [autoDisplayFirst]="false"
-                required="{{applicationSpec.healthChecksEnabled}}"></p-dropdown>
+                required="{{containerSpec.healthChecksEnabled}}"></p-dropdown>
     <label>Health Endpoint Port</label>
-    <small class="p-message p-message-warn p-1" *ngIf="probe.httpGet.port && applicationSpec.servicePorts.indexOf(probe.httpGet.port) === -1">
+    <small class="p-message p-message-warn p-1" *ngIf="probe.httpGet.port && containerSpec.servicePorts.indexOf(probe.httpGet.port) === -1">
       Warn: port not configured
     </small>
   </div>
 
   <div class="field p-float-label">
     <p-dropdown [options]="['HTTP', 'HTTPS']" [(ngModel)]="probe.httpGet.scheme"
-                name="{{probeName}}HttpGetScheme"
-                required="{{applicationSpec.healthChecksEnabled}}"></p-dropdown>
+                name="{{probeName}}HttpGetScheme{{containerSpecIndex}}"
+                required="{{containerSpec.healthChecksEnabled}}"></p-dropdown>
     <label>Health Endpoint Scheme</label>
   </div>
 

@@ -318,6 +318,13 @@ public class ReleaseService {
 		return resourceTree.map(resourceTreeConverter::convert);
 	}
 
+	public Optional<Resource> getResource(EnvironmentReleaseId environmentReleaseId, String resourceNamespace, String resourceName, String version, String kind) {
+		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
+
+		return releaseManager.getResource(environmentRelease, resourceNamespace, resourceName, version, kind);
+	}
+
 	public Optional<ArgoEvents> getEvents(EnvironmentReleaseId environmentReleaseId, String resourceUid, String resourceNamespace, String resourceName) {
 		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
@@ -327,13 +334,14 @@ public class ReleaseService {
 
 	public Flux<PodLog> getLogs(EnvironmentReleaseId environmentReleaseId,
 								String podName,
-								String resourceNamespace) {
+								String resourceNamespace,
+								String container) {
 		log.debug("Getting logs for environment release: {}, podName: {}", environmentReleaseId, podName);
 
 		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
 
-		return releaseManager.getLogs(environmentRelease, podName, resourceNamespace);
+		return releaseManager.getLogs(environmentRelease, podName, resourceNamespace, container);
 	}
 
 	/**

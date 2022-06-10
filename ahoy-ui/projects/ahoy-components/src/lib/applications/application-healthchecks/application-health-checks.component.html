@@ -17,13 +17,13 @@
 <p-tabView orientation="left">
 
   <p-tabPanel header="Liveness probe">
-    <app-http-endpoint [parentForm]="parentForm" [applicationSpec]="applicationSpec" [probe]="applicationSpec.livenessProbe" [probeName]="'liveness'"></app-http-endpoint>
-    <app-probe [probe]="applicationSpec.livenessProbe"></app-probe>
+    <app-http-endpoint [parentForm]="parentForm" [containerSpec]="containerSpec" [containerSpecIndex]="containerSpecIndex" [probe]="containerSpec.livenessProbe" [probeName]="'liveness'"></app-http-endpoint>
+    <app-probe [probe]="containerSpec.livenessProbe"></app-probe>
   </p-tabPanel>
 
   <p-tabPanel header="Readiness probe">
-    <app-http-endpoint [parentForm]="parentForm" [applicationSpec]="applicationSpec" [probe]="applicationSpec.readinessProbe" [probeName]="'readiness'"></app-http-endpoint>
-    <app-probe [probe]="applicationSpec.readinessProbe"></app-probe>
+    <app-http-endpoint [parentForm]="parentForm" [containerSpec]="containerSpec" [containerSpecIndex]="containerSpecIndex" [probe]="containerSpec.readinessProbe" [probeName]="'readiness'"></app-http-endpoint>
+    <app-probe [probe]="containerSpec.readinessProbe"></app-probe>
   </p-tabPanel>
 
 </p-tabView>

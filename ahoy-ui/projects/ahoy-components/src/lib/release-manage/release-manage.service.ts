@@ -27,7 +27,7 @@ import {LoggerService} from '../util/logger.service';
 import {RestClientService} from '../util/rest-client.service';
 import {PodLog} from './log';
 import {RecentReleasesService} from './recent-releases.service';
-import {ArgoEvents, ResourceNode} from './resource';
+import {ArgoEvents, Resource, ResourceNode} from './resource';
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +42,7 @@ export class ReleaseManageService {
               private log: LoggerService) {
   }
 
-  deploy(environmentRelease: EnvironmentRelease, deployOptions: DeployOptions): Observable<EnvironmentRelease> {
+  deploy(environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion, deployOptions: DeployOptions): Observable<EnvironmentRelease> {
     this.log.debug('deploying environment release', environmentRelease);
     const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentRelease.id)}/deploy`;
     return this.restClient.post<EnvironmentRelease>(url, deployOptions, true).pipe(
@@ -54,7 +54,7 @@ export class ReleaseManageService {
         this.notificationsService.notification(new Notification(text));
       }),
       catchError((error) => {
-        const text = `Failed to deploy ${(environmentRelease.release as Release).name} : ${deployOptions.releaseVersionId} `
+        const text = `Failed to deploy ${(environmentRelease.release as Release).name} : ${releaseVersion.version} `
           + `to environment ${(environmentRelease.environment as Environment).name}`;
         this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
@@ -162,9 +162,9 @@ export class ReleaseManageService {
     );
   }
 
-  logs(environmentReleaseId: EnvironmentReleaseId, podName: string, resourceNamespace: string): Observable<PodLog> {
+  logs(environmentReleaseId: EnvironmentReleaseId, podName: string, resourceNamespace: string, container: string): Observable<PodLog> {
     this.log.debug(`getting logs for environment release ${environmentReleaseId}, podName: ${podName}, resourceNamespace: ${resourceNamespace}`);
-    const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentReleaseId)}/logs?podName=${podName}&resourceNamespace=${resourceNamespace}`;
+    const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentReleaseId)}/logs?podName=${podName}&resourceNamespace=${resourceNamespace}&container=${container}`;
     return this.eventSourceService.getEvents<PodLog>(url);
   }
 
@@ -173,6 +173,14 @@ export class ReleaseManageService {
     const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentReleaseId)}/resources`;
     return this.restClient.get<ResourceNode>(url).pipe(
       tap((resourceNode) => this.log.debug('fetched resources', resourceNode))
+    );
+  }
+
+  resource(environmentReleaseId: EnvironmentReleaseId, resourceNamespace: string, resourceName: string, version: string, kind: string): Observable<Resource> {
+    this.log.debug('getting resource for environment release', environmentReleaseId);
+    const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentReleaseId)}/resource?resourceNamespace=${resourceNamespace}&resourceName=${resourceName}&version=${version}&kind=${kind}`;
+    return this.restClient.get<Resource>(url).pipe(
+      tap((resource) => this.log.debug('fetched resource', resource))
     );
   }
 

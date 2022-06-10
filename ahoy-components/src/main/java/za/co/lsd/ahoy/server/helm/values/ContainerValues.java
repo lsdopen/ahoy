@@ -14,44 +14,34 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.argocd.model;
+package za.co.lsd.ahoy.server.helm.values;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import za.co.lsd.ahoy.server.applications.ApplicationProbe;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResourceTree {
-	private List<Node> nodes;
-
-	@Data
-	@Builder
-	@NoArgsConstructor
-	@AllArgsConstructor
-	public static class Node {
-		private String kind;
-		private String namespace;
-		private String name;
-		private String uid;
-		private String version;
-		private List<ParentRef> parentRefs;
-	}
-
-	@Data
-	@Builder
-	@NoArgsConstructor
-	@AllArgsConstructor
-	public static class ParentRef {
-		private String group;
-		private String kind;
-		private String namespace;
-		private String name;
-		private String uid;
-	}
+public class ContainerValues {
+	public String name;
+	public String image;
+	public Boolean commandArgsEnabled;
+	public String command;
+	public List<String> args;
+	public Boolean servicePortsEnabled;
+	public List<Integer> servicePorts;
+	public Boolean environmentVariablesEnabled;
+	public Map<String, EnvironmentVariableValues> environmentVariables;
+	public Boolean healthChecksEnabled;
+	public ApplicationProbe livenessProbe;
+	public ApplicationProbe readinessProbe;
+	public Boolean resourcesEnabled;
+	public ResourcesValues resources;
 }

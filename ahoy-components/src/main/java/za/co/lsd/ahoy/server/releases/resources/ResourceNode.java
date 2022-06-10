@@ -31,6 +31,7 @@ public class ResourceNode {
 	private final String kind;
 	private final String namespace;
 	private final String uid;
+	private final String version;
 	private final String parentUid;
 	private final List<ResourceNode> children = new ArrayList<>();
 
@@ -44,14 +45,16 @@ public class ResourceNode {
 		this.kind = null;
 		this.namespace = null;
 		this.uid = null;
+		this.version = null;
 		this.parentUid = null;
 	}
 
-	public ResourceNode(String name, String kind, String namespace, String uid, String parentUid) {
+	public ResourceNode(String name, String kind, String namespace, String uid, String version, String parentUid) {
 		this.name = Objects.requireNonNull(name);
 		this.kind = kind;
 		this.namespace = namespace;
 		this.uid = uid;
+		this.version = version;
 		this.parentUid = parentUid;
 	}
 

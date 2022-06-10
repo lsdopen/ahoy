@@ -24,6 +24,7 @@ import {AbstractControl, NG_VALIDATORS, Validator, ValidatorFn} from '@angular/f
 export class NameUniqueValidatorDirective implements Validator {
   @Input('appNameUnique') nameables: Nameable[];
   @Input() ignoreOwnId: number;
+  @Input() ignoreSelf: Nameable;
 
   validate(control: AbstractControl): { [key: string]: any } | null {
     return this.nameables ? this.checkNameUnique(this.nameables)(control) : null;
@@ -32,7 +33,8 @@ export class NameUniqueValidatorDirective implements Validator {
   private checkNameUnique(nameables: Nameable[]): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
       const notUnique = nameables
-        .filter(nameable => nameable.id !== this.ignoreOwnId)
+        .filter(nameable => this.ignoreOwnId ? nameable.id !== this.ignoreOwnId : true)
+        .filter(nameable => this.ignoreSelf ? nameable !== this.ignoreSelf : true)
         .find(nameable => nameable.name === control.value);
       return notUnique ? {nameNotUnique: {value: control.value}} : null;
     };
@@ -40,6 +42,6 @@ export class NameUniqueValidatorDirective implements Validator {
 }
 
 export declare interface Nameable {
-  id: number;
+  id?: number;
   name: string;
 }

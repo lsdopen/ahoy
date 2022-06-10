@@ -18,108 +18,170 @@ spec:
       environment: {{ .glob.environment }}
   template:
     metadata:
-      {{ if .app.configFileHashes}}
+      {{- if .app.configFileHashes}}
       annotations:
         ahoy.lsdopen.io/configFileHashes: |
           {{ .app.configFileHashes }}
-      {{ end }}
+      {{- end }}
       labels:
         manager: ahoy
         app: {{ .app.name }}
         releaseName: {{ .glob.releaseName }}
         environment: {{ .glob.environment }}
     spec:
-      {{ if .app.dockerConfigJson }}
+      {{- if .app.dockerConfigJson }}
       imagePullSecrets:
         - name: {{ .glob.releaseName }}-{{ .app.name }}
-      {{ end }}
-      containers:
-        - image: {{ .app.image }}
+      {{- end }}
+      initContainers:
+        {{- range $containerName, $container := .app.initContainers }}
+        - image: {{ $container.image }}
           imagePullPolicy: Always
-          name: {{ .glob.releaseName }}-{{ .app.name }}
-          {{ if .app.commandArgsEnabled }}
-          {{ if .app.command }}
+          name: {{ $containerName }}
+          {{- if $container.commandArgsEnabled }}
+          {{- if $container.command }}
           command:
-            - {{ .app.command }}
-          {{ end }}
-          {{ if .app.args }}
+            - {{ $container.command }}
+          {{- end }}
+          {{- if $container.args }}
           args:
-            {{- range .app.args }}
+            {{- range $container.args }}
             - {{ . }}
             {{- end}}
-          {{ end }}
-          {{ end }}
-          {{ if and .app.environmentVariablesEnabled .app.environmentVariables }}
+          {{- end }}
+          {{- end }}
+          {{- if and $container.environmentVariablesEnabled $container.environmentVariables }}
           env:
-            {{- range $name, $envVariable := .app.environmentVariables }}
-            {{ if eq $envVariable.type "Value"}}
+            {{- range $name, $envVariable := $container.environmentVariables }}
+            {{- if eq $envVariable.type "Value"}}
             - name: {{ $name }}
               value: '{{ $envVariable.value }}'
-            {{ end }}
-            {{ if eq $envVariable.type "Secret"}}
+            {{- end }}
+            {{- if eq $envVariable.type "Secret"}}
             - name: {{ $name }}
               valueFrom:
                 secretKeyRef:
                   name: {{ $.glob.releaseName }}-{{ $.app.name }}-{{ $envVariable.secretName }}
                   key: {{ $envVariable.secretKey }}
-            {{ end }}
             {{- end }}
-          {{ end }}
-          {{ if and .app.servicePortsEnabled .app.servicePorts }}
+            {{- end }}
+          {{- end }}
+          {{- if and $container.servicePortsEnabled $container.servicePorts }}
           ports:
-            {{- range .app.servicePorts }}
+            {{- range $container.servicePorts }}
             - containerPort: {{ . }}
               protocol: TCP
             {{- end }}
-          {{ end }}
-          {{ if .app.healthChecksEnabled }}
-          livenessProbe:
-            {{ if .app.livenessProbe }}
-            {{- toYaml .app.livenessProbe | nindent 12 }}
-            {{ end }}
-          readinessProbe:
-            {{ if .app.readinessProbe }}
-            {{- toYaml .app.readinessProbe | nindent 12 }}
-            {{ end }}
-          {{ end }}
-          {{ if and .app.resourcesEnabled .app.resources }}
+          {{- end }}
+          {{- if and $container.resourcesEnabled $container.resources }}
           resources:
-            {{- toYaml .app.resources | nindent 12 }}
-          {{ else }}
+            {{- toYaml $container.resources | nindent 12 }}
+          {{- else }}
           resources: {}
-          {{ end }}
-          {{ if or .app.configFiles .app.volumes }}
+          {{- end }}
+          {{- if or $.app.configFiles $.app.volumes }}
           volumeMounts:
-            {{ if and .app.configFilesEnabled .app.configPath .app.configFiles}}
+            {{- if and $.app.configFilesEnabled $.app.configPath $.app.configFiles}}
             - name: application-config
-              mountPath: {{ .app.configPath }}
-            {{ end }}
-            {{ if .app.volumesEnabled }}
-            {{- range $name, $volume := .app.volumes }}
+              mountPath: {{ $.app.configPath }}
+            {{- end }}
+            {{- if $.app.volumesEnabled }}
+            {{- range $name, $volume := $.app.volumes }}
             - name: {{ $volume.name }}
               mountPath: {{ $volume.mountPath }}
             {{- end }}
-            {{ end }}
-          {{ end }}
-      {{ if or .app.configFiles .app.volumes}}
+            {{- end }}
+          {{- end }}
+        {{- end }}
+      containers:
+        {{- range $containerName, $container := .app.containers }}
+        - image: {{ $container.image }}
+          imagePullPolicy: Always
+          name: {{ $containerName }}
+          {{- if $container.commandArgsEnabled }}
+          {{- if $container.command }}
+          command:
+            - {{ $container.command }}
+          {{- end }}
+          {{- if $container.args }}
+          args:
+            {{- range $container.args }}
+            - {{ . }}
+            {{- end}}
+          {{- end }}
+          {{- end }}
+          {{- if and $container.environmentVariablesEnabled $container.environmentVariables }}
+          env:
+            {{- range $name, $envVariable := $container.environmentVariables }}
+            {{- if eq $envVariable.type "Value"}}
+            - name: {{ $name }}
+              value: '{{ $envVariable.value }}'
+            {{- end }}
+            {{- if eq $envVariable.type "Secret"}}
+            - name: {{ $name }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.glob.releaseName }}-{{ $.app.name }}-{{ $envVariable.secretName }}
+                  key: {{ $envVariable.secretKey }}
+            {{- end }}
+            {{- end }}
+          {{- end }}
+          {{- if and $container.servicePortsEnabled $container.servicePorts }}
+          ports:
+            {{- range $container.servicePorts }}
+            - containerPort: {{ . }}
+              protocol: TCP
+            {{- end }}
+          {{- end }}
+          {{- if $container.healthChecksEnabled }}
+          livenessProbe:
+            {{- if $container.livenessProbe }}
+            {{- toYaml $container.livenessProbe | nindent 12 }}
+            {{- end }}
+          readinessProbe:
+            {{- if $container.readinessProbe }}
+            {{- toYaml $container.readinessProbe | nindent 12 }}
+            {{- end }}
+          {{- end }}
+          {{- if and $container.resourcesEnabled $container.resources }}
+          resources:
+            {{- toYaml $container.resources | nindent 12 }}
+          {{- else }}
+          resources: {}
+          {{- end }}
+          {{- if or $.app.configFiles $.app.volumes }}
+          volumeMounts:
+            {{- if and $.app.configFilesEnabled $.app.configPath $.app.configFiles}}
+            - name: application-config
+              mountPath: {{ $.app.configPath }}
+            {{- end }}
+            {{- if $.app.volumesEnabled }}
+            {{- range $name, $volume := $.app.volumes }}
+            - name: {{ $volume.name }}
+              mountPath: {{ $volume.mountPath }}
+            {{- end }}
+            {{- end }}
+          {{- end }}
+        {{- end }}
+      {{- if or .app.configFiles .app.volumes}}
       volumes:
-        {{ if and .app.configFilesEnabled .app.configFiles}}
+        {{- if and .app.configFilesEnabled .app.configFiles}}
         - name: application-config
           configMap:
             name: {{ .glob.releaseName }}-{{ .app.name }}
-        {{ end }}
-        {{ if .app.volumesEnabled }}
+        {{- end }}
+        {{- if .app.volumesEnabled }}
         {{- range $name, $volume := .app.volumes }}
         - name: {{ $volume.name }}
-          {{ if eq $volume.type "PersistentVolume"}}
+          {{- if eq $volume.type "PersistentVolume"}}
           persistentVolumeClaim:
             claimName: {{ $.glob.releaseName }}-{{ $.app.name }}-{{ $volume.name }}
-          {{ end }}
-          {{ if eq $volume.type "Secret"}}
+          {{- end }}
+          {{- if eq $volume.type "Secret"}}
           secret:
             secretName: {{ $.glob.releaseName }}-{{ $.app.name }}-{{ $volume.secretName }}
-          {{ end }}
+          {{- end }}
         {{- end }}
-        {{ end }}
-      {{ end }}
+        {{- end }}
+      {{- end }}
   {{- end -}}

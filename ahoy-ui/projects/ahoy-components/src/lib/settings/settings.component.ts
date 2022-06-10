@@ -14,24 +14,29 @@
  *    limitations under the License.
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {MenuItem, Message} from 'primeng/api';
+import {MenuItem} from 'primeng/api';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Role} from '../util/auth';
 import {AuthService} from '../util/auth.service';
+import {mergeMap, of, Subscription} from 'rxjs';
+import {SettingsService} from './settings.service';
+import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss']
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit, OnDestroy {
   items: MenuItem[];
-  msgs: Message[] = [];
+  setupMessage = false;
+  private settingsChangedSubscription: Subscription;
 
   constructor(private route: ActivatedRoute,
               private authService: AuthService,
+              private settingsService: SettingsService,
               private breadcrumbService: AppBreadcrumbService) {
 
     this.breadcrumbService.setItems([
@@ -55,9 +60,29 @@ export class SettingsComponent implements OnInit {
     this.route.children.map(r => {
       const setup = Boolean(r.snapshot.queryParamMap.get('setup'));
       if (setup) {
-        this.msgs = [];
-        this.msgs.push({severity: 'warn', summary: 'Please note', detail: 'In order to continue you need to set up the following:'});
+        this.setupMessage = true;
       }
     });
+
+    this.settingsChangedSubscription = this.settingsService.settingsChanged().pipe(
+      filter(() => this.setupMessage),
+      mergeMap(() => this.settingsService.gitSettingsExists()),
+      mergeMap((gitSettingsExists: boolean) => {
+        if (gitSettingsExists) {
+          return this.settingsService.argoSettingsExists();
+        }
+        return of(gitSettingsExists);
+      })
+    ).subscribe((exists) => {
+      if (exists) {
+        this.setupMessage = false;
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.settingsChangedSubscription) {
+      this.settingsChangedSubscription.unsubscribe();
+    }
   }
 }

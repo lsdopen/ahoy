@@ -16,7 +16,7 @@
 
 import {AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {ControlContainer, NgForm} from '@angular/forms';
-import {ApplicationSpec} from '../application';
+import {ContainerSpec} from '../application';
 
 @Component({
   selector: 'app-application-health-checks',
@@ -26,7 +26,8 @@ import {ApplicationSpec} from '../application';
 })
 export class ApplicationHealthChecksComponent implements OnInit, AfterContentChecked {
   @Input() parentForm: NgForm;
-  @Input() applicationSpec: ApplicationSpec;
+  @Input() containerSpec: ContainerSpec;
+  @Input() containerSpecIndex: number;
 
   constructor(private cd: ChangeDetectorRef) {
   }
