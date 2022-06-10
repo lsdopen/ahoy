@@ -105,6 +105,18 @@
             <p-accordionTab>
               <p-header>
                 <div class="formgroup-inline">
+                  <p-inputSwitch name="resourcesEnabled" (click)="$event.stopPropagation();" [(ngModel)]="environmentConfig.spec.resourcesEnabled"></p-inputSwitch>
+                  <span class="ml-2">Resources</span>
+                </div>
+              </p-header>
+
+              <app-application-resources [resources]="environmentConfig.spec.resources"></app-application-resources>
+
+            </p-accordionTab>
+
+            <p-accordionTab>
+              <p-header>
+                <div class="formgroup-inline">
                   <p-inputSwitch name="configFilesEnabled" (click)="$event.stopPropagation();" [(ngModel)]="environmentConfig.spec.configFilesEnabled"></p-inputSwitch>
                   <span class="ml-2">Configuration Files</span>
                 </div>
@@ -112,7 +124,7 @@
 
               <app-application-config-files
                 [parentForm]="environmentConfigForm"
-                [applicationVersion]="applicationVersion"
+                [applicationSpec]="applicationVersion.spec"
                 [configFiles]="environmentConfig.spec.configFiles"
                 [editPath]="false">
               </app-application-config-files>
@@ -165,18 +177,6 @@
                 </ng-template>
 
               </app-multi-tab>
-
-            </p-accordionTab>
-
-            <p-accordionTab>
-              <p-header>
-                <div class="formgroup-inline">
-                  <p-inputSwitch name="resourcesEnabled" (click)="$event.stopPropagation();" [(ngModel)]="environmentConfig.spec.resourcesEnabled"></p-inputSwitch>
-                  <span class="ml-2">Resources</span>
-                </div>
-              </p-header>
-
-              <app-application-resources [resources]="environmentConfig.spec.resources"></app-application-resources>
 
             </p-accordionTab>
 

@@ -23,12 +23,16 @@
     </span>
   </div>
 
-  <div *ngIf="items && items.length > 0" class="col-12">
+  <div *ngIf="defaultItem || (items && items.length > 0)" class="col-12">
     <p-tabView orientation="left" [(activeIndex)]="selectedIndex">
-      <p-tabPanel [header]="item.name ? item.name : '<new>'"
-                  *ngFor="let item of items; let itemIndex = index" [selected]="itemIndex == 0">
+      <p-tabPanel *ngIf="defaultItem" [header]="defaultItem.name ? defaultItem.name : '<new>'" [selected]='true' [leftIcon]="itemIcon ? itemIcon(defaultItem) : ''">
+        <ng-template [ngTemplateOutlet]="content" [ngTemplateOutletContext]="{$implicit: defaultItem, index: -1, isDefaultItem: true}"></ng-template>
+      </p-tabPanel>
 
-        <ng-template [ngTemplateOutlet]="content" [ngTemplateOutletContext]="{$implicit: item, index: indexes[itemIndex]}"></ng-template>
+      <p-tabPanel [header]="item.name ? item.name : '<new>'" [leftIcon]="itemIcon ? itemIcon(item) : ''"
+                  *ngFor="let item of items; let itemIndex = index" [selected]="!defaultItem && itemIndex == 0">
+
+        <ng-template [ngTemplateOutlet]="content" [ngTemplateOutletContext]="{$implicit: item, index: indexes[itemIndex], isDefaultItem: false}"></ng-template>
 
       </p-tabPanel>
     </p-tabView>

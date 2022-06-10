@@ -19,10 +19,15 @@ export class ResourceNode {
   kind: string;
   namespace: string;
   uid: string;
+  version: string;
   parentUid: string;
   children: ResourceNode[] = undefined;
   root: boolean;
   leaf: boolean;
+}
+
+export class Resource {
+  manifest: string;
 }
 
 export class ArgoEvents {

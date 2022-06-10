@@ -112,6 +112,8 @@ import {SettingsComponent} from './settings/settings.component';
 import {TaskEventsListenerComponent} from './taskevents/task-events-listener/task-events-listener.component';
 import {AutofocusDirective} from './util/autofocus.directive';
 import {UserRoleDirective} from './util/user-role.directive';
+import {ContainerDetailComponent} from './applications/container-detail/container-detail.component';
+import {ContainerLogsComponent} from './release-manage/release-resources/container-logs/container-logs.component';
 
 @NgModule({
   declarations: [
@@ -139,6 +141,8 @@ import {UserRoleDirective} from './util/user-role.directive';
     ClusterDetailComponent,
     ClustersComponent,
     ConfirmDialogComponent,
+    ContainerDetailComponent,
+    ContainerLogsComponent,
     CopyEnvironmentConfigDialogComponent,
     DashboardComponent,
     DashboardEnvironmentComponent,

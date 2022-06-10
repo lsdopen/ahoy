@@ -10,6 +10,7 @@
 			"kind": "Service",
 			"namespace": "release1-dev",
 			"uid": "6d14f23d-ac19-4de8-ac7f-7a3f8ca0baf7",
+			"version": "v1",
 			"parentUid": null,
 			"children": [
 				{
@@ -17,6 +18,7 @@
 					"kind": "EndpointSlice",
 					"namespace": "release1-dev",
 					"uid": "30bf66f4-7c09-4eb2-9ee6-9a692e2dfac9",
+					"version": "v1",
 					"parentUid": "6d14f23d-ac19-4de8-ac7f-7a3f8ca0baf7",
 					"children": [],
 					"leaf": true,
@@ -27,6 +29,7 @@
 					"kind": "Endpoints",
 					"namespace": "release1-dev",
 					"uid": "abdb9857-44d4-492d-bafe-e79ebbb574b8",
+					"version": "v1",
 					"parentUid": "6d14f23d-ac19-4de8-ac7f-7a3f8ca0baf7",
 					"children": [],
 					"leaf": true,
@@ -41,6 +44,7 @@
 			"kind": "Deployment",
 			"namespace": "release1-dev",
 			"uid": "823e2450-9785-46c2-bc6a-f015864ca78e",
+			"version": "v1",
 			"parentUid": null,
 			"children": [
 				{
@@ -48,6 +52,7 @@
 					"kind": "ReplicaSet",
 					"namespace": "release1-dev",
 					"uid": "34126717-382e-4c64-99c3-2ae6e072e4fc",
+					"version": "v1",
 					"parentUid": "823e2450-9785-46c2-bc6a-f015864ca78e",
 					"children": [
 						{
@@ -55,6 +60,7 @@
 							"kind": "Pod",
 							"namespace": "release1-dev",
 							"uid": "65c5ee7d-d32c-4901-b2ae-5958c186f55a",
+							"version": "v1",
 							"parentUid": "34126717-382e-4c64-99c3-2ae6e072e4fc",
 							"children": [],
 							"leaf": true,
@@ -73,6 +79,7 @@
 			"kind": "Ingress",
 			"namespace": "release1-dev",
 			"uid": "4277c4fe-0828-416f-bb4d-b90670ee5c0a",
+			"version": "v1",
 			"parentUid": null,
 			"children": [],
 			"leaf": true,

@@ -17,30 +17,19 @@
 package za.co.lsd.ahoy.server.applications;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @NoArgsConstructor
-public class ApplicationSpec {
-	private String image;
+public class ApplicationSpec extends ContainerSpec {
 	private String dockerRegistryName;
-
-	private Boolean commandArgsEnabled;
-	private String command;
-	private List<String> args;
-
-	private Boolean servicePortsEnabled;
-	private List<Integer> servicePorts;
-
-	private Boolean healthChecksEnabled;
-
-	private ApplicationProbe livenessProbe;
-	private ApplicationProbe readinessProbe;
-
-	private Boolean environmentVariablesEnabled;
-	private List<ApplicationEnvironmentVariable> environmentVariables;
 
 	private Boolean configFilesEnabled;
 	private String configPath;
@@ -52,11 +41,48 @@ public class ApplicationSpec {
 	private Boolean secretsEnabled;
 	private List<ApplicationSecret> secrets;
 
-	private Boolean resourcesEnabled;
-	private ApplicationResources resources;
+	private List<ContainerSpec> containers = new ArrayList<>();
 
-	public ApplicationSpec(String image, String dockerRegistryName) {
+	public ApplicationSpec(String name, String image, String dockerRegistryName) {
+		this.name = name;
 		this.image = image;
 		this.dockerRegistryName = dockerRegistryName;
+	}
+
+	public boolean configEnabled() {
+		return configFilesEnabled != null && configFilesEnabled;
+	}
+
+	public boolean hasConfigs() {
+		return configFiles != null && configFiles.size() > 0;
+	}
+
+	public boolean volumesEnabled() {
+		return volumesEnabled != null && volumesEnabled;
+	}
+
+	public boolean hasVolumes() {
+		return volumes != null && volumes.size() > 0;
+	}
+
+	public boolean secretsEnabled() {
+		return secretsEnabled != null && secretsEnabled;
+	}
+
+	public boolean hasSecrets() {
+		return secrets != null && secrets.size() > 0;
+	}
+
+	/**
+	 * Returns a list including the default container spec; i.e. this application spec, and all its children container specs.
+	 *
+	 * @return list of container specs
+	 */
+	public List<ContainerSpec> allContainers() {
+		List<ContainerSpec> containerSpecs = new ArrayList<>();
+		containerSpecs.add(this);
+		if (containers != null)
+			containerSpecs.addAll(containers);
+		return containerSpecs;
 	}
 }

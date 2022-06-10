@@ -17,7 +17,7 @@
 import {AfterContentChecked, ChangeDetectorRef, Component, Input} from '@angular/core';
 import {ControlContainer, NgForm} from '@angular/forms';
 import {TabItemFactory} from '../../components/multi-tab/multi-tab.component';
-import {ApplicationConfigFile, ApplicationVersion} from '../application';
+import {ApplicationConfigFile, ApplicationSpec} from '../application';
 
 @Component({
   selector: 'app-application-config-files',
@@ -27,7 +27,7 @@ import {ApplicationConfigFile, ApplicationVersion} from '../application';
 })
 export class ApplicationConfigFilesComponent implements AfterContentChecked {
   @Input() parentForm: NgForm;
-  @Input() applicationVersion: ApplicationVersion;
+  @Input() applicationSpec: ApplicationSpec;
   @Input() configFiles: ApplicationConfigFile[];
   @Input() editPath = true;
 

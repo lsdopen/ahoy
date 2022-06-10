@@ -183,6 +183,43 @@ public class ArgoClient {
 		}
 	}
 
+	public Optional<Resource> getResource(String applicationName,
+										  String resourceNamespace,
+										  String resourceName,
+										  String version,
+										  String kind) {
+		Objects.requireNonNull(applicationName, "applicationName is required");
+
+		try {
+			ArgoSettings settings = settingsProvider.getArgoSettings();
+			HttpHeaders httpHeaders = authHeaders(settings);
+			ResponseEntity<Resource> get = restClient.exchange(
+				apiPath(settings) + "/applications/" + applicationName + "/resource"
+					+ "?name=" + resourceName
+					+ "&namespace=" + resourceNamespace
+					+ "&resourceName=" + resourceName
+					+ "&version=" + version
+					+ "&kind=" + kind,
+				HttpMethod.GET,
+				new HttpEntity<>(httpHeaders),
+				Resource.class);
+
+			Resource resource = get.getBody();
+			return Optional.ofNullable(resource);
+
+		} catch (RestClientResponseException e) {
+			if (e instanceof HttpStatusCodeException) {
+				HttpStatusCodeException statusCodeException = (HttpStatusCodeException) e;
+				if (HttpStatus.NOT_FOUND.equals(statusCodeException.getStatusCode())) {
+					return Optional.empty();
+				}
+			}
+			String reason = getReasonMessage(e);
+			log.error("Failed to get application resource: {}, for application: {}, reason: {}", resourceName, applicationName, reason);
+			throw new ArgoException("Failed to get application resource: " + resourceName + "  for application: " + applicationName + ", reason: " + reason, e);
+		}
+	}
+
 	public Optional<ArgoEvents> getEvents(String applicationName,
 										  String resourceUid,
 										  String resourceNamespace,
@@ -222,12 +259,14 @@ public class ArgoClient {
 
 	public Flux<PodLog> getLogs(String applicationName,
 								String podName,
-								String resourceNamespace) {
+								String resourceNamespace,
+								String container) {
 		try {
 			ArgoSettings settings = settingsProvider.getArgoSettings();
 			return webClient.get().uri(apiPath(settings) + "/applications/" + applicationName + "/pods/" + podName + "/logs"
 					+ "?follow=true"
-					+ "&namespace=" + resourceNamespace)
+					+ "&namespace=" + resourceNamespace
+					+ "&container=" + container)
 				.headers(httpHeaders -> httpHeaders.putAll(authHeaders(settings)))
 				.retrieve()
 				.bodyToFlux(PodLog.class);

@@ -17,11 +17,11 @@
 <div class="p-fluid">
   <div class="col-12 md:col-5">
     <div class="field p-float-label">
-      <input pInputText id="applicationConfigPath" [(ngModel)]="applicationVersion.spec.configPath" name="applicationConfigPath"
+      <input pInputText id="applicationConfigPath" [(ngModel)]="applicationSpec.configPath" name="applicationConfigPath"
              [required]="configFiles.length > 0"
              [disabled]="!editPath">
       <label for="applicationConfigPath">Path</label>
-      <small class="p-message p-message-warn p-1" *ngIf="!editPath && configFiles.length > 0 && !applicationVersion.spec.configPath">
+      <small class="p-message p-message-warn p-1" *ngIf="!editPath && configFiles.length > 0 && !applicationSpec.configPath">
         Warn: Application configuration file path required for environment configuration files
       </small>
     </div>

@@ -28,6 +28,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import za.co.lsd.ahoy.server.argocd.model.ArgoEvents;
+import za.co.lsd.ahoy.server.argocd.model.Resource;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
 import za.co.lsd.ahoy.server.releases.*;
@@ -128,6 +129,18 @@ public class ReleaseController {
 		return new ResponseEntity<>(resourceNode.orElse(null), new HttpHeaders(), HttpStatus.OK);
 	}
 
+	@GetMapping("/environmentReleases/{environmentReleaseId}/resource")
+	@Secured({Role.admin, Role.releasemanager, Role.developer})
+	public ResponseEntity<Resource> resource(@PathVariable EnvironmentReleaseId environmentReleaseId,
+											 @RequestParam String resourceNamespace,
+											 @RequestParam String resourceName,
+											 @RequestParam String version,
+											 @RequestParam String kind) {
+
+		Optional<Resource> resource = releaseService.getResource(environmentReleaseId, resourceNamespace, resourceName, version, kind);
+		return new ResponseEntity<>(resource.orElse(null), new HttpHeaders(), HttpStatus.OK);
+	}
+
 	@GetMapping("/environmentReleases/{environmentReleaseId}/events")
 	@Secured({Role.admin, Role.releasemanager, Role.developer})
 	public ResponseEntity<ArgoEvents> events(@PathVariable EnvironmentReleaseId environmentReleaseId,
@@ -143,13 +156,14 @@ public class ReleaseController {
 	@Secured({Role.admin, Role.releasemanager, Role.developer})
 	public SseEmitter logs(@PathVariable EnvironmentReleaseId environmentReleaseId,
 						   @RequestParam String podName,
-						   @RequestParam String resourceNamespace) {
+						   @RequestParam String resourceNamespace,
+						   @RequestParam String container) {
 
 		Authentication originalAuth = SecurityContextHolder.getContext().getAuthentication();
 		SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
 		sseMvcExecutor.execute(() -> {
 			SecurityContextHolder.getContext().setAuthentication(originalAuth);
-			releaseService.getLogs(environmentReleaseId, podName, resourceNamespace).subscribe(new SseEmitterSubscriber<>(emitter));
+			releaseService.getLogs(environmentReleaseId, podName, resourceNamespace, container).subscribe(new SseEmitterSubscriber<>(emitter));
 		});
 		return emitter;
 	}

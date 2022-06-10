@@ -10,19 +10,21 @@ metadata:
   name: {{ .glob.releaseName }}-{{ .app.name }}
 spec:
   ports:
-    {{- range .app.servicePorts }}
+    {{- range $containerName, $container := .app.containers }}
+    {{- range $container.servicePorts }}
     - name: {{ . }}-tcp
       port: {{ . }}
       protocol: TCP
       targetPort: {{ . }}
     {{- end }}
+    {{- end }}
   selector:
     app: {{ .app.name }}
     releaseName: {{ .glob.releaseName }}
   sessionAffinity: None
-  {{ if and .app.routeEnabled .app.routeHostname .app.routeTargetPort }}
+  {{- if and .app.routeEnabled .app.routeHostname .app.routeTargetPort }}
   type: NodePort
-  {{ else }}
+  {{- else }}
   type: ClusterIP
-  {{ end }}
+  {{- end }}
 {{- end -}}

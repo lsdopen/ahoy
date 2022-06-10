@@ -27,7 +27,7 @@ import {LoggerService} from '../util/logger.service';
 import {RestClientService} from '../util/rest-client.service';
 import {PodLog} from './log';
 import {RecentReleasesService} from './recent-releases.service';
-import {ArgoEvents, ResourceNode} from './resource';
+import {ArgoEvents, Resource, ResourceNode} from './resource';
 
 @Injectable({
   providedIn: 'root'
@@ -162,9 +162,9 @@ export class ReleaseManageService {
     );
   }
 
-  logs(environmentReleaseId: EnvironmentReleaseId, podName: string, resourceNamespace: string): Observable<PodLog> {
+  logs(environmentReleaseId: EnvironmentReleaseId, podName: string, resourceNamespace: string, container: string): Observable<PodLog> {
     this.log.debug(`getting logs for environment release ${environmentReleaseId}, podName: ${podName}, resourceNamespace: ${resourceNamespace}`);
-    const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentReleaseId)}/logs?podName=${podName}&resourceNamespace=${resourceNamespace}`;
+    const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentReleaseId)}/logs?podName=${podName}&resourceNamespace=${resourceNamespace}&container=${container}`;
     return this.eventSourceService.getEvents<PodLog>(url);
   }
 
@@ -173,6 +173,14 @@ export class ReleaseManageService {
     const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentReleaseId)}/resources`;
     return this.restClient.get<ResourceNode>(url).pipe(
       tap((resourceNode) => this.log.debug('fetched resources', resourceNode))
+    );
+  }
+
+  resource(environmentReleaseId: EnvironmentReleaseId, resourceNamespace: string, resourceName: string, version: string, kind: string): Observable<Resource> {
+    this.log.debug('getting resource for environment release', environmentReleaseId);
+    const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentReleaseId)}/resource?resourceNamespace=${resourceNamespace}&resourceName=${resourceName}&version=${version}&kind=${kind}`;
+    return this.restClient.get<Resource>(url).pipe(
+      tap((resource) => this.log.debug('fetched resource', resource))
     );
   }
 

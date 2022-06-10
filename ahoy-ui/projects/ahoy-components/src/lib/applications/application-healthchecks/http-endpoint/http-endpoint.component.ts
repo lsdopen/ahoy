@@ -16,7 +16,7 @@
 
 import {Component, Input, OnInit} from '@angular/core';
 import {ControlContainer, NgForm} from '@angular/forms';
-import {ApplicationProbe, ApplicationSpec} from '../../application';
+import {ApplicationProbe, ContainerSpec} from '../../application';
 
 @Component({
   selector: 'app-http-endpoint',
@@ -26,7 +26,8 @@ import {ApplicationProbe, ApplicationSpec} from '../../application';
 })
 export class HttpEndpointComponent implements OnInit {
   @Input() parentForm: NgForm;
-  @Input() applicationSpec: ApplicationSpec;
+  @Input() containerSpec: ContainerSpec;
+  @Input() containerSpecIndex: number;
   @Input() probe: ApplicationProbe;
   @Input() probeName: string;
 

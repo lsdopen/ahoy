@@ -14,11 +14,9 @@
   ~    limitations under the License.
   -->
 
-<div class="field p-float-label">
-  <p-dropdown *ngIf="dockerRegistries" [options]="dockerRegistries" [(ngModel)]="applicationSpec.dockerRegistryName"
-              optionLabel="name" optionValue="name" [showClear]="true" [editable]="true" [autoDisplayFirst]="false"></p-dropdown>
-  <label>Docker Registry</label>
-  <small class="p-message p-message-warn p-1" *ngIf="applicationSpec.dockerRegistryName && !dockerRegistryExists(applicationSpec.dockerRegistryName)">
-    Warn: docker registry not configured in application settings
-  </small>
+<textarea pInputTextarea id="logs{{container.name}}" name="logs" rows="40" readonly="true" class="logs-text" [(ngModel)]="logsContent"></textarea>
+
+<div class="field-checkbox">
+  <p-checkbox id="tailLogs{{container.name}}" name="tailLogs{{container.name}}" [(ngModel)]="tailLogs" binary="true"></p-checkbox>
+  <label for="tailLogs{{container.name}}">Tail</label>
 </div>

@@ -110,6 +110,13 @@ public class ReleaseManager {
 		return Optional.empty();
 	}
 
+	public Optional<Resource> getResource(EnvironmentRelease environmentRelease, String resourceNamespace, String resourceName, String version, String kind) {
+		if (environmentRelease.hasCurrentReleaseVersion()) {
+			return argoClient.getResource(environmentRelease.getArgoCdName(), resourceNamespace, resourceName, version, kind);
+		}
+		return Optional.empty();
+	}
+
 	public Optional<ArgoEvents> getEvents(EnvironmentRelease environmentRelease, String resourceUid, String resourceNamespace, String resourceName) {
 		if (environmentRelease.hasCurrentReleaseVersion()) {
 			return argoClient.getEvents(environmentRelease.getArgoCdName(), resourceUid, resourceNamespace, resourceName);
@@ -119,9 +126,10 @@ public class ReleaseManager {
 
 	public Flux<PodLog> getLogs(EnvironmentRelease environmentRelease,
 								String podName,
-								String resourceNamespace) {
+								String resourceNamespace,
+								String container) {
 		if (environmentRelease.hasCurrentReleaseVersion()) {
-			return argoClient.getLogs(environmentRelease.getArgoCdName(), podName, resourceNamespace);
+			return argoClient.getLogs(environmentRelease.getArgoCdName(), podName, resourceNamespace, container);
 		}
 		return Flux.empty();
 	}

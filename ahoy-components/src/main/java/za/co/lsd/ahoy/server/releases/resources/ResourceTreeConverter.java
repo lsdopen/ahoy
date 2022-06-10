@@ -60,6 +60,6 @@ public class ResourceTreeConverter {
 
 			parentUid = parentRefs.get(0).getUid();
 		}
-		return new ResourceNode(treeNode.getName(), treeNode.getKind(), treeNode.getNamespace(), treeNode.getUid(), parentUid);
+		return new ResourceNode(treeNode.getName(), treeNode.getKind(), treeNode.getNamespace(), treeNode.getUid(), treeNode.getVersion(), parentUid);
 	}
 }
