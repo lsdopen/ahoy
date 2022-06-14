@@ -347,21 +347,30 @@ public class ReleaseService {
 	/**
 	 * Copies environment config from one release version to another for the same environment release.
 	 */
-	private void copyEnvironmentConfig(EnvironmentRelease environmentRelease, ReleaseVersion sourceReleaseVersion, ReleaseVersion destReleaseVersion) {
-		this.copyEnvironmentConfig(environmentRelease, sourceReleaseVersion, environmentRelease, destReleaseVersion);
+	public void copyEnvironmentConfig(EnvironmentRelease environmentRelease, ReleaseVersion sourceReleaseVersion, ReleaseVersion destReleaseVersion) {
+		copyEnvironmentConfig(environmentRelease, sourceReleaseVersion, environmentRelease, destReleaseVersion);
+	}
+
+	/**
+	 * Copies environment config from one environment release to another for all its release versions. Usually used when duplicating and environment with all its releases.
+	 */
+	public void copyEnvironmentConfig(EnvironmentRelease sourceEnvironmentRelease, EnvironmentRelease destEnvironmentRelease) {
+		for (ReleaseVersion releaseVersion : sourceEnvironmentRelease.getRelease().getReleaseVersions()) {
+			copyEnvironmentConfig(sourceEnvironmentRelease, destEnvironmentRelease, releaseVersion);
+		}
 	}
 
 	/**
 	 * Copies environment config from one environment release to another for the same version.
 	 */
-	private void copyEnvironmentConfig(EnvironmentRelease sourceEnvironmentRelease, EnvironmentRelease destEnvironmentRelease, ReleaseVersion releaseVersion) {
-		this.copyEnvironmentConfig(sourceEnvironmentRelease, releaseVersion, destEnvironmentRelease, releaseVersion);
+	public void copyEnvironmentConfig(EnvironmentRelease sourceEnvironmentRelease, EnvironmentRelease destEnvironmentRelease, ReleaseVersion releaseVersion) {
+		copyEnvironmentConfig(sourceEnvironmentRelease, releaseVersion, destEnvironmentRelease, releaseVersion);
 	}
 
 	/**
 	 * Copies environment config from one environment release version to another environment release version.
 	 */
-	private void copyEnvironmentConfig(EnvironmentRelease sourceEnvironmentRelease, ReleaseVersion sourceReleaseVersion, EnvironmentRelease destEnvironmentRelease, ReleaseVersion destReleaseVersion) {
+	public void copyEnvironmentConfig(EnvironmentRelease sourceEnvironmentRelease, ReleaseVersion sourceReleaseVersion, EnvironmentRelease destEnvironmentRelease, ReleaseVersion destReleaseVersion) {
 		for (ApplicationVersion applicationVersion : destReleaseVersion.getApplicationVersions()) {
 			copyEnvironmentConfig(sourceEnvironmentRelease, sourceReleaseVersion, applicationVersion, destEnvironmentRelease, destReleaseVersion, applicationVersion);
 		}
@@ -370,7 +379,7 @@ public class ReleaseService {
 	/**
 	 * Copies environment config from one application version to another for the same release version and environment.
 	 */
-	private void copyEnvironmentConfig(EnvironmentRelease environmentRelease, ReleaseVersion releaseVersion, ApplicationVersion sourceApplicationVersion, ApplicationVersion destApplicationVersion) {
+	public void copyEnvironmentConfig(EnvironmentRelease environmentRelease, ReleaseVersion releaseVersion, ApplicationVersion sourceApplicationVersion, ApplicationVersion destApplicationVersion) {
 		copyEnvironmentConfig(environmentRelease, releaseVersion, sourceApplicationVersion, environmentRelease, releaseVersion, destApplicationVersion);
 	}
 

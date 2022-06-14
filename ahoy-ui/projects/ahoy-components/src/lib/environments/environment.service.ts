@@ -23,7 +23,7 @@ import {NotificationsService} from '../notifications/notifications.service';
 import {RecentReleasesService} from '../release-manage/recent-releases.service';
 import {LoggerService} from '../util/logger.service';
 import {RestClientService} from '../util/rest-client.service';
-import {Environment, MoveOptions} from './environment';
+import {DuplicateOptions, Environment, MoveOptions} from './environment';
 
 @Injectable({
   providedIn: 'root'
@@ -117,12 +117,12 @@ export class EnvironmentService {
     );
   }
 
-  duplicate(sourceEnvironment: Environment, destEnvironment: Environment): Observable<Environment> {
+  duplicate(sourceEnvironment: Environment, destEnvironment: Environment, duplicateOptions: DuplicateOptions): Observable<Environment> {
     this.log.debug('duplicating environment: ', sourceEnvironment);
 
     const url = `/data/environments/duplicate/${sourceEnvironment.id}/${destEnvironment.id}`;
 
-    return this.restClient.post<Environment>(url, null, true).pipe(
+    return this.restClient.post<Environment>(url, duplicateOptions, true).pipe(
       tap((duplicatedEnvironment) => {
         this.log.debug('duplicated environment', duplicatedEnvironment);
         const text = `${duplicatedEnvironment.name} ` + `was duplicated in cluster ${(duplicatedEnvironment.cluster as Cluster).name}`;

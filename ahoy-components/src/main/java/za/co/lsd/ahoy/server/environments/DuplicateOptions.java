@@ -14,20 +14,15 @@
  *    limitations under the License.
  */
 
-import {Cluster} from '../clusters/cluster';
+package za.co.lsd.ahoy.server.environments;
 
-export class Environment {
-  id: number;
-  name: string;
-  cluster: Cluster | string;
-  orderIndex: number;
-}
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-export class MoveOptions {
-  destClusterId: number;
-  redeployReleases = true;
-}
-
-export class DuplicateOptions {
-  copyEnvironmentConfig = false;
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class DuplicateOptions {
+	private boolean copyEnvironmentConfig;
 }

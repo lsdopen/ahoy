@@ -27,7 +27,7 @@ import {EnvironmentReleaseService} from '../../environment-release/environment-r
 import {ReleaseManageService} from '../../release-manage/release-manage.service';
 import {PromoteOptions} from '../../releases/release';
 import {OrderUtil} from '../../util/order-util';
-import {Environment} from '../environment';
+import {DuplicateOptions, Environment} from '../environment';
 import {EnvironmentService} from '../environment.service';
 
 @Component({
@@ -44,6 +44,7 @@ export class EnvironmentDetailComponent implements OnInit {
   sourceEnvironment: Environment;
   promoteEnvironmentReleaseId: EnvironmentReleaseId;
   promoteCopyEnvironmentConfig: boolean;
+  duplicateOptions: DuplicateOptions;
 
   constructor(
     private route: ActivatedRoute,
@@ -63,6 +64,7 @@ export class EnvironmentDetailComponent implements OnInit {
       if (sourceEnvironmentId) {
         this.environmentService.get(sourceEnvironmentId)
           .subscribe((env) => {
+            this.duplicateOptions = new DuplicateOptions();
             this.sourceEnvironment = env;
             this.setBreadcrumb();
           });
@@ -123,7 +125,7 @@ export class EnvironmentDetailComponent implements OnInit {
         mergeMap((environment: Environment) => {
           if (this.sourceEnvironment) {
             // we're duplicating a source environment
-            return this.environmentService.duplicate(this.sourceEnvironment, environment);
+            return this.environmentService.duplicate(this.sourceEnvironment, environment, this.duplicateOptions);
           }
           return of(environment);
         }),
