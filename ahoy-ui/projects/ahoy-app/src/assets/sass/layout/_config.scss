@@ -75,8 +75,9 @@
 }
 
 .layout-config-button.p-button {
+    z-index: 1001;
     position: fixed;
-    top: 35%;
+    top: 50%;
     right: 0;
     width: auto;
     border-top-right-radius: 0;

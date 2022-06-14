@@ -194,3 +194,12 @@
 @function shade($color, $percentage) {
     @return mix(#000, $color, $percentage);
 }
+
+@mixin button-states {
+    // <button> and <a> tags support :enabled selector.
+
+    &:enabled,
+    &:not(button):not(a):not(.p-disabled) {
+        @content;
+    }
+}

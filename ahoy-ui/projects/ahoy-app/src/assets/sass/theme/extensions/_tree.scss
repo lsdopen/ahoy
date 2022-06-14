@@ -14,15 +14,17 @@
  *    limitations under the License.
  */
 
-.p-paginator {
-    justify-content: flex-end;
+.p-tree {
+    .p-tree-container {
+        .p-treenode {
+            .p-treenode-content {
+                &:focus {
+                    background: $emphasis-lower;
 
-    .p-paginator-element {
-        &:focus {
-            background: $emphasis-lower;
-
-            &.p-highlight {
-                background: rgba($primaryColor, .24);
+                    &.p-highlight {
+                        background: rgba($primaryColor, .24);
+                    }
+                }
             }
         }
     }

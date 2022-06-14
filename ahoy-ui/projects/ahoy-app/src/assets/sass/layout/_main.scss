@@ -73,3 +73,164 @@ body {
     color: $textSecondaryColor;
     z-index: 999;
 }
+
+.layout-topbar {
+    .notifications {
+        .layout-topbar-action-panel {
+            img {
+                width: 32px;
+                height: 32px;
+            }
+
+            .layout-topbar-action-item {
+                border-bottom: 1px solid var(--divider-color);
+
+                &:last-child {
+                    border-bottom: 0 none;
+                }
+            }
+        }
+    }
+
+    .app {
+        .layout-topbar-action-panel {
+            a {
+                padding: .5rem 0;
+
+                i {
+                    width: 42px;
+                    height: 42px;
+                    border: 1px solid transparent;
+                    border-radius: 50%;
+                    margin: .5rem 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+            }
+        }
+    }
+}
+
+.layout-rightmenu {
+    .header {
+        padding-bottom: .5rem;
+        margin-bottom: .714rem;
+        border-bottom: 1px solid var(--divider-color);
+    }
+
+    .online-members {
+        img {
+            width: 32px;
+        }
+
+        b {
+            color: var(--primary-color)
+        }
+    }
+
+    .latest-activity {
+        i {
+            border: 1px solid transparent;
+            border-radius: 50px;
+            background-color: var(--surface-d);
+        }
+    }
+
+    .next-events {
+        ul {
+            margin: 0;
+            list-style-type: none;
+            padding: 0;
+
+            > li {
+                padding: .875rem .5rem;
+            }
+        }
+    }
+}
+
+.layout-help-page {
+    .questions {
+        &.p-accordion p-accordiontab {
+            .p-accordion-tab {
+                margin-top: 1rem;
+            }
+
+            &:first-child {
+                .p-accordion-tab {
+                    margin-top: 0;
+                }
+            }
+        }
+    }
+}
+
+.layout-invoice-page {
+    .p-invoice-datatable-responsive .p-datatable-tbody > tr > td .p-column-title {
+        display: none;
+    }
+
+    @media screen and (max-width: 40rem) {
+        .p-invoice-datatable-responsive {
+            .p-datatable-thead > tr > th,
+            .p-datatable-tfoot > tr > td {
+                display: none !important;
+            }
+
+            .p-datatable-tbody > tr > td {
+                text-align: left;
+                display: block;
+                width: 100%;
+                float: left;
+                clear: left;
+                border: 0 none;
+
+                .p-column-title {
+                    padding: .4rem;
+                    min-width: 30%;
+                    display: inline-block;
+                    margin: -.4em 1em -.4em -.4rem;
+                    font-weight: bold;
+                }
+
+                &:last-child {
+                    border-bottom: 1px solid var(--surface-d);
+                }
+            }
+        }
+    }
+}
+
+@media (min-width: 992px) {
+    .layout-menu-slim {
+        .layout-inline-menu {
+            .layout-inline-menu-action {
+                justify-content: center;
+
+                > span,
+                > i {
+                    display: none !important;
+                }
+            }
+
+            .layout-inline-menu-action-panel {
+                .layout-inline-menu-action-item {
+                    > a {
+                        justify-content: center;
+
+                        > i {
+                            font-size: 1.5rem;
+                            margin-right: 0 !important;
+                        }
+
+                        > span {
+                            display: none;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+

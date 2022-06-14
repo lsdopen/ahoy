@@ -14,48 +14,32 @@
  *    limitations under the License.
  */
 
-.p-multiselect {
-    .p-multiselect-label, .p-multiselect-trigger {
+.p-treeselect {
+    .p-treeselect-label, .p-treeselect-trigger {
         background-image: none;
         background: transparent;
     }
 
-    .p-multiselect-label {
+    .p-treeselect-label {
         border: 0 none;
     }
 
     &:not(.p-disabled).p-focus {
         box-shadow: inset 0 0 0 1px $inputFocusBorderColor,inset 0 0 0 1px $inputFocusBorderColor,inset 0 0 0 1px $inputFocusBorderColor,inset 0 0 0 1px $inputFocusBorderColor;
     }
+}
 
-    .p-multiselect-items {
-        .p-multiselect-item {
-            .p-ink {
-                background-color: rgba($primaryColor, .16);
-            }
-
-            &:focus {
-                background: $emphasis-lower;
-
-                &.p-highlight {
-                    background: rgba($primaryColor, .24);
-                }
-            }
-        }
-    }
-
-    .p-multiselect-close {
-        &:focus {
-            background: $emphasis-lower;
-        }
+.p-treeselect-item {
+    .p-ink {
+        background-color: rgba($primaryColor, .16);
     }
 }
 
 .p-input-filled {
-    .p-multiselect {
+    .p-treeselect {
         @include filled-input-wrapper();
 
-        .p-multiselect-label {
+        .p-treeselect-label {
             &:hover {
                 background-image: none;
                 background: transparent;
@@ -65,8 +49,8 @@
 }
 
 .p-float-label {
-    .p-multiselect-label {
-        .p-multiselect-token {
+    .p-treeselect-label {
+        .p-treeselect-token {
             padding: .25rem 1rem;
             margin-top: .25rem;
             margin-bottom: .25rem;
@@ -76,26 +60,26 @@
 
 .p-input-filled {
     .p-float-label {
-        .p-multiselect {
-            .p-multiselect-label {
+        .p-treeselect {
+            .p-treeselect-label {
                 @include filled-input-float-label();
             }
         }
 
         .p-inputwrapper-filled {
-            .p-multiselect {
-                .p-multiselect-label {
+            .p-treeselect {
+                .p-treeselect-label {
                     @include filled-input-float-label();
                 }
 
-                &.p-multiselect-chip {
-                    .p-multiselect-token {
+                &.p-treeselect-chip {
+                    .p-treeselect-token {
                         padding-top: 0;
                         padding-bottom: 0;
                         margin-top: 0;
                         margin-bottom: 0;
 
-                        .p-multiselect-token-icon {
+                        .p-treeselect-token-icon {
                             font-size: 75%;
                         }
                     }
@@ -104,17 +88,13 @@
         }
     }
 
-    p-multiselect.ng-dirty.ng-invalid {
-        .p-multiselect {
-            @include invalid-filled-input-wrapper();
-        }
+    .p-treeselect.p-invalid {
+        @include invalid-filled-input-wrapper();
     }
 }
 
-p-multiselect.ng-dirty.ng-invalid {
-    .p-multiselect {
-        &:not(.p-disabled).p-focus {
-            box-shadow: inset 0 0 0 1px $inputErrorBorderColor,inset 0 0 0 1px $inputErrorBorderColor,inset 0 0 0 1px $inputErrorBorderColor,inset 0 0 0 1px $inputErrorBorderColor;
-        }
+.p-treeselect.p-invalid {
+    &:not(.p-disabled).p-focus {
+        box-shadow: inset 0 0 0 1px $inputErrorBorderColor,inset 0 0 0 1px $inputErrorBorderColor,inset 0 0 0 1px $inputErrorBorderColor,inset 0 0 0 1px $inputErrorBorderColor;
     }
 }

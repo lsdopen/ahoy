@@ -41,7 +41,7 @@
             flex-direction: row;
             flex: 1 1 auto;
             overflow: visible;
-            padding: 0 $inlineSpacing;
+            padding: 1rem $inlineSpacing;
 
             .p-steps-number {
                 background-color: #9e9d9e;
@@ -55,6 +55,10 @@
             .p-steps-title {
                 margin: 0;
                 padding-left: $inlineSpacing;
+            }
+
+            &:not(.p-disabled):focus {
+                background: $emphasis-lower;
             }
         }
 

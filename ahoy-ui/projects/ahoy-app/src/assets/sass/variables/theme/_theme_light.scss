@@ -16,16 +16,16 @@
 
 $colors: (
     "blue": #2196F3,
-    "green": #689F38,
+    "green": #4caf50,
     "yellow": #FBC02D,
     "cyan": #00BCD4,
     "pink": #E91E63,
-    "indigo": #4E5FBB,
+    "indigo": #3F51B5,
     "teal": #009688,
-    "orange": #FF9800,
+    "orange": #F57C00,
     "bluegray": #607D8B,
     "purple": #9C27B0
-);
+) !default;
 
 $emphasis-high:rgba(0,0,0,.87);
 $emphasis-medium:rgba(0,0,0,.60);
@@ -367,6 +367,7 @@ $panelHeaderTextHoverColor:$textColor;
 $panelContentBorderColor: #e0e0e0 !default;
 $panelContentBorder:1px solid #e0e0e0;
 $panelContentBg:#ffffff;
+$panelContentEvenRowBg:rgba(0,0,0,.02) !default;
 $panelContentTextColor:$textColor;
 $panelContentPadding:1rem;
 
@@ -846,6 +847,8 @@ $imagePreviewActionIconBorderRadius:50% !default;
     --text-color:#{$textColor};
     --text-color-secondary:#{$textSecondaryColor};
     --primary-color:#{$primaryColor};
+    --primary-menu-text-color:#{$primaryMenuTextColor};
+    --primary-lightest-color:#{$primaryLightestColor};
     --primary-color-text:#{$primaryTextColor};
     --font-family:#{$fontFamily};
     --surface-0: #ffffff;

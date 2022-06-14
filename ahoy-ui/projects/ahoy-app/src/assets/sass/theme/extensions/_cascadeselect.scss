@@ -42,6 +42,13 @@
         .p-inputtext {
             border: 0 none;
         }
+
+        .p-cascadeselect-label {
+          &:hover {
+              background-image: none;
+              background: transparent;
+          }
+      }
     }
 
     p-cascadeselect.ng-dirty.ng-invalid {
@@ -49,6 +56,28 @@
             @include invalid-filled-input-wrapper();
         }
     }
+}
+
+.p-input-filled {
+  .p-float-label {
+      .p-cascadeselect {
+          .p-cascadeselect-label {
+              @include filled-input-float-label();
+          }
+      }
+
+      .p-inputwrapper-filled {
+          .p-cascadeselect {
+              .p-cascadeselect-label {
+                  @include filled-input-float-label();
+              }
+          }
+      }
+  }
+
+  .p-cascadeselect.p-invalid {
+      @include invalid-filled-input-wrapper();
+  }
 }
 
 p-cascadeselect.ng-dirty.ng-invalid {

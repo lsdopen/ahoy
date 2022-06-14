@@ -51,7 +51,7 @@
                 }
 
                 &:focus {
-                    @include focused();
+                    @include focused-listitem();
                 }
 
                 &.p-highlight {

@@ -14,15 +14,11 @@
  *    limitations under the License.
  */
 
-.p-paginator {
-    justify-content: flex-end;
-
-    .p-paginator-element {
-        &:focus {
-            background: $emphasis-lower;
-
-            &.p-highlight {
-                background: rgba($primaryColor, .24);
+.p-menubar {
+    .p-menuitem {
+        .p-menuitem-link {
+            &:focus {
+                background: $emphasis-lower;
             }
         }
     }
