@@ -327,13 +327,13 @@ public class ReleaseControllerTest {
 	@WithMockUser(authorities = {Scope.ahoy, Role.releasemanager})
 	void duplicate() throws Exception {
 		// given
-		DuplicateOptions duplicateOptions = new DuplicateOptions("release-1-copy", false, false);
+		DuplicateOptions duplicateOptions = new DuplicateOptions(false, false);
 		Release duplicatedRelease = new Release(2L, "release-1-copy");
 
-		when(releaseService.duplicate(eq(1L), eq(duplicateOptions))).thenReturn(duplicatedRelease);
+		when(releaseService.duplicate(eq(1L), eq(2L), eq(duplicateOptions))).thenReturn(duplicatedRelease);
 
 		// when
-		mvc.perform(post("/api/releases/1/duplicate")
+		mvc.perform(post("/api/releases/duplicate/1/2")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(json(duplicateOptions)))
 			.andDo(print())
@@ -342,17 +342,17 @@ public class ReleaseControllerTest {
 			.andExpect(jsonPath("$.name").value("release-1-copy"));
 
 		// then
-		verify(releaseService, times(1)).duplicate(eq(1L), eq(duplicateOptions));
+		verify(releaseService, times(1)).duplicate(eq(1L), eq(2L), eq(duplicateOptions));
 	}
 
 	@Test
 	@WithMockUser(authorities = {Scope.ahoy, Role.developer})
 	void duplicateAsDeveloper() throws Exception {
 		// given
-		DuplicateOptions duplicateOptions = new DuplicateOptions("release-1-copy", false, false);
+		DuplicateOptions duplicateOptions = new DuplicateOptions(false, false);
 
 		// when
-		mvc.perform(post("/api/releases/1/duplicate")
+		mvc.perform(post("/api/releases/duplicate/1/2")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(json(duplicateOptions)))
 			.andDo(print())

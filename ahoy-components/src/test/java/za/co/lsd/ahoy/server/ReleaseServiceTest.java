@@ -331,11 +331,14 @@ public class ReleaseServiceTest {
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 
-		Release release = new Release(1L, "release1");
+		Release sourceRelease = new Release(1L, "release1");
 		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0");
-		release.addReleaseVersion(releaseVersion);
+		sourceRelease.addReleaseVersion(releaseVersion);
 		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
-		when(releaseRepository.findById(1L)).thenReturn(Optional.of(release));
+		Release destRelease = new Release(2L, "release1-copy");
+
+		when(releaseRepository.findById(1L)).thenReturn(Optional.of(sourceRelease));
+		when(releaseRepository.findById(2L)).thenReturn(Optional.of(destRelease));
 
 		when(releaseRepository.save(any(Release.class))).thenAnswer(i -> {
 			Release r = (Release) i.getArguments()[0];
@@ -349,10 +352,11 @@ public class ReleaseServiceTest {
 		});
 
 		// when
-		DuplicateOptions duplicateOptions = new DuplicateOptions("release1-copy", false, false);
-		Release duplicatedRelease = releaseService.duplicate(release.getId(), duplicateOptions);
+		DuplicateOptions duplicateOptions = new DuplicateOptions(false, false);
+		Release duplicatedRelease = releaseService.duplicate(sourceRelease.getId(), destRelease.getId(), duplicateOptions);
 
 		// then
+		assertNotNull(duplicatedRelease, "We should have returned the duplicated release");
 		assertEquals(2L, duplicatedRelease.getId(), "Id incorrect");
 		assertEquals("release1-copy", duplicatedRelease.getName(), "Name incorrect");
 		assertEquals(1, duplicatedRelease.getReleaseVersions().size(), "Versions incorrect");
@@ -363,10 +367,8 @@ public class ReleaseServiceTest {
 		assertTrue(duplicatedReleaseVersion.getReleaseHistories().isEmpty(), "Duplicated release version history incorrect");
 		assertEquals(releaseVersion.getApplicationVersions(), duplicatedReleaseVersion.getApplicationVersions(), "Duplicated released version doesn't have the application versions from the upgraded version");
 
-		ArgumentCaptor<Release> releaseCaptor = ArgumentCaptor.forClass(Release.class);
-		verify(releaseRepository, times(1)).save(releaseCaptor.capture());
-		Release savedRelease = releaseCaptor.getValue();
-		assertSame(savedRelease, duplicatedRelease, "Saved release should be the same as the duplicated release");
+		verify(releaseRepository, times(1)).findById(sourceRelease.getId());
+		verify(releaseRepository, times(1)).findById(destRelease.getId());
 
 		ArgumentCaptor<ReleaseVersion> releaseVersionCaptor = ArgumentCaptor.forClass(ReleaseVersion.class);
 		verify(releaseVersionRepository, times(1)).save(releaseVersionCaptor.capture());
@@ -387,14 +389,16 @@ public class ReleaseServiceTest {
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 
-		Release release = new Release(1L, "release1");
+		Release sourceRelease = new Release(1L, "release1");
 		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0");
-		release.addReleaseVersion(releaseVersion);
+		sourceRelease.addReleaseVersion(releaseVersion);
 		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
+		Release destRelease = new Release(2L, "release1-copy");
 
-		new EnvironmentRelease(environment, release);
+		new EnvironmentRelease(environment, sourceRelease);
 
-		when(releaseRepository.findById(1L)).thenReturn(Optional.of(release));
+		when(releaseRepository.findById(1L)).thenReturn(Optional.of(sourceRelease));
+		when(releaseRepository.findById(2L)).thenReturn(Optional.of(destRelease));
 
 		when(releaseRepository.save(any(Release.class))).thenAnswer(i -> {
 			Release r = (Release) i.getArguments()[0];
@@ -414,10 +418,11 @@ public class ReleaseServiceTest {
 		});
 
 		// when
-		DuplicateOptions duplicateOptions = new DuplicateOptions("release1-copy", true, true);
-		Release duplicatedRelease = releaseService.duplicate(release.getId(), duplicateOptions);
+		DuplicateOptions duplicateOptions = new DuplicateOptions(true, true);
+		Release duplicatedRelease = releaseService.duplicate(sourceRelease.getId(), destRelease.getId(), duplicateOptions);
 
 		// then
+		assertNotNull(duplicatedRelease, "We should have returned the duplicated release");
 		assertEquals(2L, duplicatedRelease.getId(), "Id incorrect");
 		assertEquals("release1-copy", duplicatedRelease.getName(), "Name incorrect");
 		assertEquals(1, duplicatedRelease.getReleaseVersions().size(), "Versions incorrect");
@@ -432,10 +437,8 @@ public class ReleaseServiceTest {
 		assertEquals(1L, duplicatedEnvironmentRelease.getEnvironment().getId(), "Duplicated environment release env incorrect");
 		assertEquals(2L, duplicatedEnvironmentRelease.getRelease().getId(), "Duplicated environment release release incorrect");
 
-		ArgumentCaptor<Release> releaseCaptor = ArgumentCaptor.forClass(Release.class);
-		verify(releaseRepository, times(1)).save(releaseCaptor.capture());
-		Release savedRelease = releaseCaptor.getValue();
-		assertSame(savedRelease, duplicatedRelease, "Saved release should be the same as the duplicated release");
+		verify(releaseRepository, times(1)).findById(sourceRelease.getId());
+		verify(releaseRepository, times(1)).findById(destRelease.getId());
 
 		ArgumentCaptor<ReleaseVersion> releaseVersionCaptor = ArgumentCaptor.forClass(ReleaseVersion.class);
 		verify(releaseVersionRepository, times(1)).save(releaseVersionCaptor.capture());
@@ -460,14 +463,16 @@ public class ReleaseServiceTest {
 		Application application = new Application("app1");
 		ApplicationVersion applicationVersion = new ApplicationVersion("1.0.0", application);
 
-		Release release = new Release(1L, "release1");
+		Release sourceRelease = new Release(1L, "release1");
 		ReleaseVersion releaseVersion = new ReleaseVersion(1L, "1.0.0");
-		release.addReleaseVersion(releaseVersion);
+		sourceRelease.addReleaseVersion(releaseVersion);
 		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
+		Release destRelease = new Release(2L, "release1-copy");
 
-		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, sourceRelease);
 
-		when(releaseRepository.findById(1L)).thenReturn(Optional.of(release));
+		when(releaseRepository.findById(1L)).thenReturn(Optional.of(sourceRelease));
+		when(releaseRepository.findById(2L)).thenReturn(Optional.of(destRelease));
 
 		when(releaseRepository.save(any(Release.class))).thenAnswer(i -> {
 			Release r = (Release) i.getArguments()[0];
@@ -494,10 +499,11 @@ public class ReleaseServiceTest {
 		when(environmentConfigProvider.environmentConfigFor(environmentRelease, releaseVersion, applicationVersion)).thenReturn(Optional.of(environmentConfig));
 
 		// when
-		DuplicateOptions duplicateOptions = new DuplicateOptions("release1-copy", true, true);
-		Release duplicatedRelease = releaseService.duplicate(release.getId(), duplicateOptions);
+		DuplicateOptions duplicateOptions = new DuplicateOptions(true, true);
+		Release duplicatedRelease = releaseService.duplicate(sourceRelease.getId(), destRelease.getId(), duplicateOptions);
 
 		// then
+		assertNotNull(duplicatedRelease, "We should have returned the duplicated release");
 		assertEquals(2L, duplicatedRelease.getId(), "Id incorrect");
 		assertEquals("release1-copy", duplicatedRelease.getName(), "Name incorrect");
 		assertEquals(1, duplicatedRelease.getReleaseVersions().size(), "Versions incorrect");
@@ -512,10 +518,8 @@ public class ReleaseServiceTest {
 		assertEquals(1L, duplicatedEnvironmentRelease.getEnvironment().getId(), "Duplicated environment release env incorrect");
 		assertEquals(2L, duplicatedEnvironmentRelease.getRelease().getId(), "Duplicated environment release release incorrect");
 
-		ArgumentCaptor<Release> releaseCaptor = ArgumentCaptor.forClass(Release.class);
-		verify(releaseRepository, times(1)).save(releaseCaptor.capture());
-		Release savedRelease = releaseCaptor.getValue();
-		assertSame(savedRelease, duplicatedRelease, "Saved release should be the same as the duplicated release");
+		verify(releaseRepository, times(1)).findById(sourceRelease.getId());
+		verify(releaseRepository, times(1)).findById(destRelease.getId());
 
 		ArgumentCaptor<ReleaseVersion> releaseVersionCaptor = ArgumentCaptor.forClass(ReleaseVersion.class);
 		verify(releaseVersionRepository, times(1)).save(releaseVersionCaptor.capture());

@@ -21,8 +21,9 @@
 
     <div class="card mb-3">
       <div class="card-header">
-        <h5 *ngIf="!environment">{{editMode ? "Edit" : "New"}} release</h5>
+        <h5 *ngIf="!environment && !sourceRelease">{{editMode ? "Edit" : "New"}} release</h5>
         <h5 *ngIf="environment">New release in {{environment.name}}</h5>
+        <h5 *ngIf="sourceRelease">Duplicate release {{sourceRelease.name}}</h5>
       </div>
 
       <p-toolbar>
@@ -54,7 +55,7 @@
             </small>
           </div>
 
-          <div class="field p-float-label" *ngIf="!editMode && releaseVersion">
+          <div class="field p-float-label" *ngIf="!editMode && releaseVersion && !sourceRelease">
             <input pInputText id="releaseVersion" [(ngModel)]="releaseVersion.version" name="version"
                    required
                    [appVersionUnique]="release.releaseVersions"
@@ -63,6 +64,17 @@
             <small class="p-error" *ngIf="releaseForm.form.controls.version?.hasError('versionNotUnique')">
               Version already exists
             </small>
+          </div>
+
+          <div *ngIf="sourceRelease">
+            <div class="field-checkbox">
+              <p-checkbox id="addToSameEnvironments" name="addToSameEnvironments" [(ngModel)]="duplicateOptions.addToSameEnvironments" binary="true"></p-checkbox>
+              <label for="addToSameEnvironments">Add the duplicated release to the same environments</label>
+            </div>
+            <div class="field-checkbox">
+              <p-checkbox id="copyEnvironmentConfig" name="copyEnvironmentConfig" [(ngModel)]="duplicateOptions.copyEnvironmentConfig" binary="true"></p-checkbox>
+              <label for="copyEnvironmentConfig">Copy environment config</label>
+            </div>
           </div>
 
         </div>

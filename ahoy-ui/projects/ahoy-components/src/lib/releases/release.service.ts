@@ -166,10 +166,10 @@ export class ReleaseService {
     );
   }
 
-  duplicate(release: Release, duplicateOptions: DuplicateOptions): Observable<Release> {
-    this.log.debug(`duplicating release: ${release.name} with options`, duplicateOptions);
+  duplicate(sourceRelease: Release, destRelease: Release, duplicateOptions: DuplicateOptions): Observable<Release> {
+    this.log.debug(`duplicating release: ${sourceRelease.name} with options`, duplicateOptions);
 
-    const url = `/api/releases/${release.id}/duplicate`;
+    const url = `/api/releases/duplicate/${sourceRelease.id}/${destRelease.id}`;
 
     return this.restClient.post<Release>(url, duplicateOptions, true).pipe(
       tap((duplicatedRelease) =>

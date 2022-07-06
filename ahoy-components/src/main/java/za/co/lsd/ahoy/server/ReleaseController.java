@@ -114,10 +114,11 @@ public class ReleaseController {
 		return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.OK);
 	}
 
-	@PostMapping("/releases/{releaseId}/duplicate")
-	public ResponseEntity<Release> duplicate(@PathVariable Long releaseId, @RequestBody DuplicateOptions duplicateOptions) {
+	@PostMapping("/releases/duplicate/{sourceReleaseId}/{destReleaseId}")
+	public ResponseEntity<Release> duplicate(@PathVariable Long sourceReleaseId, @PathVariable Long destReleaseId,
+											 @RequestBody DuplicateOptions duplicateOptions) {
 
-		Release duplicatedRelease = releaseService.duplicate(releaseId, duplicateOptions);
+		Release duplicatedRelease = releaseService.duplicate(sourceReleaseId, destReleaseId, duplicateOptions);
 		return new ResponseEntity<>(duplicatedRelease, new HttpHeaders(), HttpStatus.OK);
 	}
 

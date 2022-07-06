@@ -48,7 +48,6 @@ export class UpgradeAppOptions {
 }
 
 export class DuplicateOptions {
-  releaseName: string;
   addToSameEnvironments = true;
   copyEnvironmentConfig = false;
 }

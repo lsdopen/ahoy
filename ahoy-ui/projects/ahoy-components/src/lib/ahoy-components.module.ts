@@ -99,7 +99,6 @@ import {ReleaseManageComponent} from './release-manage/release-manage.component'
 import {ReleaseResourcesComponent} from './release-manage/release-resources/release-resources.component';
 import {UpgradeDialogComponent} from './release-manage/upgrade-dialog/upgrade-dialog.component';
 import {AddToEnvironmentDialogComponent} from './releases/add-to-environment-dialog/add-to-environment-dialog.component';
-import {DuplicateDialogComponent} from './releases/duplicate-dialog/duplicate-dialog.component';
 import {ReleaseDetailComponent} from './releases/release-detail/release-detail.component';
 import {ReleaseVersionDetailComponent} from './releases/release-version-detail/release-version-detail.component';
 import {ReleaseVersionsComponent} from './releases/release-versions/release-versions.component';
@@ -149,7 +148,6 @@ import {ContainerLogsComponent} from './release-manage/release-resources/contain
     DescriptionDialogComponent,
     DockerRegistriesComponent,
     DockerSettingsComponent,
-    DuplicateDialogComponent,
     EnvironmentDetailComponent,
     EnvironmentNameUniqueValidatorDirective,
     EnvironmentReleaseApplicationsStatusComponent,

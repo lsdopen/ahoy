@@ -228,16 +228,17 @@ public class ReleaseService {
 	}
 
 	@Transactional
-	public Release duplicate(Long releaseId, DuplicateOptions duplicateOptions) {
-		Release sourceRelease = releaseRepository.findById(releaseId)
-			.orElseThrow(() -> new ResourceNotFoundException("Could not find source release: " + releaseId));
+	public Release duplicate(Long sourceReleaseId, Long destReleaseId, DuplicateOptions duplicateOptions) {
+		Release sourceRelease = releaseRepository.findById(sourceReleaseId)
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find source release: " + sourceReleaseId));
 
-		Release duplicatedRelease = releaseRepository.save(new Release(duplicateOptions.getReleaseName()));
-		log.debug("Duplicated release: {} for source release: {}", duplicatedRelease, sourceRelease);
+		Release destRelease = releaseRepository.findById(destReleaseId)
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find destination release: " + sourceReleaseId));
+		log.debug("Duplicating release: {} to release: {} with options: {}", sourceRelease, destRelease, duplicateOptions);
 
 		for (ReleaseVersion sourceReleaseVersion : sourceRelease.getReleaseVersions()) {
 			ReleaseVersion duplicatedReleaseVersion = new ReleaseVersion(sourceReleaseVersion.getVersion());
-			duplicatedRelease.addReleaseVersion(duplicatedReleaseVersion);
+			destRelease.addReleaseVersion(duplicatedReleaseVersion);
 			duplicatedReleaseVersion.setApplicationVersions(new ArrayList<>(sourceReleaseVersion.getApplicationVersions()));
 			duplicatedReleaseVersion = releaseVersionRepository.save(duplicatedReleaseVersion);
 			log.debug("Duplicated release version: {} for source release version: {}", duplicatedReleaseVersion, sourceReleaseVersion);
@@ -245,12 +246,12 @@ public class ReleaseService {
 
 		if (duplicateOptions.isAddToSameEnvironments()) {
 			for (EnvironmentRelease sourceEnvRelease : sourceRelease.getEnvironmentReleases()) {
-				EnvironmentRelease duplicatedEnvRelease = new EnvironmentRelease(sourceEnvRelease.getEnvironment(), duplicatedRelease);
+				EnvironmentRelease duplicatedEnvRelease = new EnvironmentRelease(sourceEnvRelease.getEnvironment(), destRelease);
 				duplicatedEnvRelease = environmentReleaseRepository.save(duplicatedEnvRelease);
 				log.debug("Duplicated environment release: {} for source environment release: {}", duplicatedEnvRelease.getId(), sourceEnvRelease.getId());
 
 				if (duplicateOptions.isCopyEnvironmentConfig()) {
-					for (ReleaseVersion destReleaseVersion : duplicatedRelease.getReleaseVersions()) {
+					for (ReleaseVersion destReleaseVersion : destRelease.getReleaseVersions()) {
 						ReleaseVersion sourceReleaseVersion = sourceRelease.getReleaseVersions().stream()
 							.filter(rv -> rv.getVersion().equals(destReleaseVersion.getVersion()))
 							.findFirst()
@@ -265,7 +266,7 @@ public class ReleaseService {
 			}
 		}
 
-		return duplicatedRelease;
+		return destRelease;
 	}
 
 	@Transactional
