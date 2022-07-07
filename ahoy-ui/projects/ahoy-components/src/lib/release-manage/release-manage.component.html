@@ -31,7 +31,7 @@
 
         <p-toolbar>
           <ng-template pTemplate="left">
-            <p-dropdown [options]="environmentRelease.release.releaseVersions" [(ngModel)]="releaseVersion"
+            <p-dropdown [options]="environmentRelease.release.releaseVersions" [(ngModel)]="selectedReleaseVersion"
                         placeholder="Version" optionLabel="version" class="mr-2 mb-2"
                         (onChange)="releaseVersionChanged()">
             </p-dropdown>
