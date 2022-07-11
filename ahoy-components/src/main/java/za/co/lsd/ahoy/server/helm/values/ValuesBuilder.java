@@ -185,7 +185,7 @@ public class ValuesBuilder {
 
 		Map<String, ApplicationConfigFileValues> configFiles = new LinkedHashMap<>();
 
-		if (applicationSpec.configEnabled() && applicationSpec.hasConfigs()) {
+		if (applicationSpec.isConfigFilesEnabled() && applicationSpec.hasConfigs()) {
 			for (ApplicationConfigFile applicationConfigFile : applicationSpec.getConfigFiles()) {
 				configFiles.put(configName(applicationConfigFile), new ApplicationConfigFileValues(applicationConfigFile));
 			}
@@ -200,7 +200,7 @@ public class ValuesBuilder {
 		}
 
 		builder
-			.configFilesEnabled(applicationSpec.configEnabled() || (environmentConfig != null && environmentConfig.configEnabled()))
+			.configFilesEnabled(applicationSpec.isConfigFilesEnabled() || (environmentConfig != null && environmentConfig.configEnabled()))
 			.configPath(applicationSpec.getConfigPath())
 			.configFiles(configFiles)
 			.configFileHashes(hashes(configFiles));
@@ -210,7 +210,7 @@ public class ValuesBuilder {
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
 
-		if (applicationSpec.volumesEnabled() && applicationSpec.hasVolumes()) {
+		if (applicationSpec.isVolumesEnabled() && applicationSpec.hasVolumes()) {
 			for (ApplicationVolume applicationVolume : applicationSpec.getVolumes()) {
 				volumes.put(applicationVolume.getName(), new ApplicationVolumeValues(applicationVolume));
 			}
@@ -227,7 +227,7 @@ public class ValuesBuilder {
 		}
 
 		builder
-			.volumesEnabled(applicationSpec.volumesEnabled() || (environmentConfig != null && environmentConfig.volumesEnabled()))
+			.volumesEnabled(applicationSpec.isVolumesEnabled() || (environmentConfig != null && environmentConfig.volumesEnabled()))
 			.volumes(volumes);
 	}
 
@@ -235,7 +235,7 @@ public class ValuesBuilder {
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
 
-		if (applicationSpec.secretsEnabled() && applicationSpec.hasSecrets()) {
+		if (applicationSpec.isSecretsEnabled() && applicationSpec.hasSecrets()) {
 			for (ApplicationSecret applicationSecret : applicationSpec.getSecrets()) {
 				Map<String, String> encryptedData = secretDataSealedSecretProducer.produce(applicationSecret);
 				secrets.put(applicationSecret.getName(), new ApplicationSecretValues(applicationSecret.getName(), secretType(applicationSecret), encryptedData));
@@ -254,7 +254,7 @@ public class ValuesBuilder {
 		}
 
 		builder
-			.secretsEnabled(applicationSpec.secretsEnabled() || (environmentConfig != null && environmentConfig.secretsEnabled()))
+			.secretsEnabled(applicationSpec.isSecretsEnabled() || (environmentConfig != null && environmentConfig.secretsEnabled()))
 			.secrets(secrets);
 	}
 

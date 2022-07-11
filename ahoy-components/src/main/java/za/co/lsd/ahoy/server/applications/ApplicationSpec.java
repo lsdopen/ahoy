@@ -31,14 +31,14 @@ import java.util.List;
 public class ApplicationSpec extends ContainerSpec {
 	private String dockerRegistryName;
 
-	private Boolean configFilesEnabled;
+	private boolean configFilesEnabled;
 	private String configPath;
 	private List<ApplicationConfigFile> configFiles;
 
-	private Boolean volumesEnabled;
+	private boolean volumesEnabled;
 	private List<ApplicationVolume> volumes;
 
-	private Boolean secretsEnabled;
+	private boolean secretsEnabled;
 	private List<ApplicationSecret> secrets;
 
 	private List<ContainerSpec> containers = new ArrayList<>();
@@ -49,24 +49,12 @@ public class ApplicationSpec extends ContainerSpec {
 		this.dockerRegistryName = dockerRegistryName;
 	}
 
-	public boolean configEnabled() {
-		return configFilesEnabled != null && configFilesEnabled;
-	}
-
 	public boolean hasConfigs() {
 		return configFiles != null && configFiles.size() > 0;
 	}
 
-	public boolean volumesEnabled() {
-		return volumesEnabled != null && volumesEnabled;
-	}
-
 	public boolean hasVolumes() {
 		return volumes != null && volumes.size() > 0;
-	}
-
-	public boolean secretsEnabled() {
-		return secretsEnabled != null && secretsEnabled;
 	}
 
 	public boolean hasSecrets() {

@@ -26,25 +26,25 @@ import java.util.List;
 public class ApplicationEnvironmentSpec {
 	private Integer replicas;
 
-	private Boolean routeEnabled;
+	private boolean routeEnabled;
 	private String routeHostname;
 	private Integer routeTargetPort;
 	private boolean tls;
 	private String tlsSecretName;
 
-	private Boolean environmentVariablesEnabled;
+	private boolean environmentVariablesEnabled;
 	private List<ApplicationEnvironmentVariable> environmentVariables;
 
-	private Boolean configFilesEnabled;
+	private boolean configFilesEnabled;
 	private List<ApplicationConfigFile> configFiles;
 
-	private Boolean volumesEnabled;
+	private boolean volumesEnabled;
 	private List<ApplicationVolume> volumes;
 
-	private Boolean secretsEnabled;
+	private boolean secretsEnabled;
 	private List<ApplicationSecret> secrets;
 
-	private Boolean resourcesEnabled;
+	private boolean resourcesEnabled;
 	private ApplicationResources resources;
 
 	public static ApplicationEnvironmentSpec newSummarySpec(Boolean routeEnabled, String routeHostname) {

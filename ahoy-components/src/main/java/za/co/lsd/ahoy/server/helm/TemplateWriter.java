@@ -74,17 +74,17 @@ public class TemplateWriter {
 
 			ApplicationSpec applicationSpec = applicationVersion.getSpec();
 
-			if ((applicationSpec.configEnabled() && applicationSpec.hasConfigs()) ||
+			if ((applicationSpec.isConfigFilesEnabled() && applicationSpec.hasConfigs()) ||
 				applicationEnvironmentConfig.map(e -> e.configEnabled() && e.hasConfigs()).orElse(false)) {
 				addTemplate(application, "configmap", templatesPath, trackedTemplates);
 			}
 
-			if ((applicationSpec.volumesEnabled() && applicationSpec.hasVolumes()) ||
+			if ((applicationSpec.isVolumesEnabled() && applicationSpec.hasVolumes()) ||
 				applicationEnvironmentConfig.map(e -> e.volumesEnabled() && e.hasVolumes()).orElse(false)) {
 				addTemplate(application, "pvc", templatesPath, trackedTemplates);
 			}
 
-			if ((applicationSpec.secretsEnabled() && applicationSpec.hasSecrets()) ||
+			if ((applicationSpec.isSecretsEnabled() && applicationSpec.hasSecrets()) ||
 				applicationEnvironmentConfig.map(e -> e.secretsEnabled() && e.hasSecrets()).orElse(false)) {
 				addTemplate(application, "secret-generic", templatesPath, trackedTemplates);
 			}
