@@ -90,7 +90,7 @@ public class TemplateWriter {
 			}
 
 			Optional<DockerRegistry> dockerRegistry = dockerRegistryProvider.dockerRegistryFor(applicationSpec.getDockerRegistryName());
-			if (dockerRegistry.isPresent() && dockerRegistry.get().getSecure()) {
+			if (dockerRegistry.isPresent() && dockerRegistry.get().isSecure()) {
 				addTemplate(application, "secret-dockerconfig", templatesPath, trackedTemplates);
 			}
 

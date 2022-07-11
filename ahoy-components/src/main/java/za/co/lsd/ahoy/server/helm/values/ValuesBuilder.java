@@ -133,7 +133,7 @@ public class ValuesBuilder {
 
 	private void buildDockerRegistry(ApplicationValues.ApplicationValuesBuilder builder, ApplicationSpec applicationSpec) throws IOException {
 		Optional<DockerRegistry> dockerRegistry = dockerRegistryProvider.dockerRegistryFor(applicationSpec.getDockerRegistryName());
-		if (dockerRegistry.isPresent() && dockerRegistry.get().getSecure()) {
+		if (dockerRegistry.isPresent() && dockerRegistry.get().isSecure()) {
 			builder.dockerConfigJson(dockerConfigSealedSecretProducer.produce(dockerRegistry.get()));
 		}
 	}

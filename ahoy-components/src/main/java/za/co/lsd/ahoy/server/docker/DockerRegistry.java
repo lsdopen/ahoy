@@ -30,7 +30,7 @@ public class DockerRegistry {
 	@ToString.Exclude
 	private String password;
 	@ToString.Exclude
-	private Boolean secure;
+	private boolean secure;
 
 	public DockerRegistry(String name, String server, String username, String password) {
 		this.name = name;
