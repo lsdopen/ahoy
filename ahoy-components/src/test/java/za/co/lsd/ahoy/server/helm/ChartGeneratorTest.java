@@ -484,9 +484,9 @@ public class ChartGeneratorTest {
 		volumes.put("my-env-secret-volume", new ApplicationVolumeValues("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret"));
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
-		secrets.put("my-secret", new ApplicationSecretValues("my-secret", "Opague", Collections.singletonMap("secret-key", "secret-value")));
+		secrets.put("my-secret", new ApplicationSecretValues("my-secret", "Opaque", Collections.singletonMap("secret-key", "secret-value")));
 		secrets.put("my-tls-secret", new ApplicationSecretValues("my-tls-secret", "kubernetes.io/tls", Collections.singletonMap("cert", "my-cert")));
-		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", "Opague", Collections.singletonMap("env-secret-key", "env-secret-value")));
+		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", "Opaque", Collections.singletonMap("env-secret-key", "env-secret-value")));
 
 		ApplicationValues expectedApplicationValues = ApplicationValues.builder()
 			.name("app1")
@@ -704,9 +704,9 @@ public class ChartGeneratorTest {
 		volumes.put("my-env-secret-volume", new ApplicationVolumeValues("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret"));
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
-		secrets.put("my-secret", new ApplicationSecretValues("my-secret", "Opague", Collections.singletonMap("secret-key", "secret-value")));
+		secrets.put("my-secret", new ApplicationSecretValues("my-secret", "Opaque", Collections.singletonMap("secret-key", "secret-value")));
 		secrets.put("my-tls-secret", new ApplicationSecretValues("my-tls-secret", "kubernetes.io/tls", Collections.singletonMap("cert", "my-cert")));
-		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", "Opague", Collections.singletonMap("env-secret-key", "env-secret-value")));
+		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", "Opaque", Collections.singletonMap("env-secret-key", "env-secret-value")));
 
 		Map<String, ContainerValues> containers = new LinkedHashMap<>();
 		containers.put("default", ContainerValues.builder()
@@ -946,9 +946,9 @@ public class ChartGeneratorTest {
 		volumes.put("my-env-secret-volume", new ApplicationVolumeValues("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret"));
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
-		secrets.put("my-secret", new ApplicationSecretValues("my-secret", "Opague", Collections.singletonMap("secret-key", "secret-value")));
+		secrets.put("my-secret", new ApplicationSecretValues("my-secret", "Opaque", Collections.singletonMap("secret-key", "secret-value")));
 		secrets.put("my-tls-secret", new ApplicationSecretValues("my-tls-secret", "kubernetes.io/tls", Collections.singletonMap("cert", "my-cert")));
-		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", "Opague", Collections.singletonMap("env-secret-key", "env-secret-value")));
+		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", "Opaque", Collections.singletonMap("env-secret-key", "env-secret-value")));
 
 		ApplicationValues expectedApplicationValues = ApplicationValues.builder()
 			.name("app1")
@@ -1125,7 +1125,7 @@ public class ChartGeneratorTest {
 		volumes.put("my-env-secret-volume", new ApplicationVolumeValues("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret"));
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
-		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", "Opague", Collections.singletonMap("env-secret-key", "env-secret-value")));
+		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", "Opaque", Collections.singletonMap("env-secret-key", "env-secret-value")));
 		secrets.put("my-tls-secret", new ApplicationSecretValues("my-tls-secret", "kubernetes.io/tls", Collections.singletonMap("cert", "my-cert")));
 
 		ApplicationValues expectedApplicationValues = ApplicationValues.builder()
