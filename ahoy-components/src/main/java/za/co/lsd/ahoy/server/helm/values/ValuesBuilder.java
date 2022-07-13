@@ -42,6 +42,9 @@ import java.util.Optional;
 @Component
 @Slf4j
 public class ValuesBuilder {
+	private static final String SECRET_TYPE_GENERIC = "Opaque";
+	private static final String SECRET_TYPE_TLS = "kubernetes.io/tls";
+
 	private final DockerRegistryProvider dockerRegistryProvider;
 	private final ApplicationEnvironmentConfigProvider environmentConfigProvider;
 	private final DockerConfigSealedSecretProducer dockerConfigSealedSecretProducer;
@@ -115,7 +118,7 @@ public class ValuesBuilder {
 			buildEnvironmentVariables(containerValuesBuilder, containerSpec, environmentConfig);
 			buildResources(containerValuesBuilder, containerSpec, environmentConfig);
 
-			switch(containerSpec.getType()) {
+			switch (containerSpec.getType()) {
 				case Container:
 					buildHealthChecks(containerValuesBuilder, containerSpec);
 					containerValues.put(containerSpec.getName(), containerValuesBuilder.build());
@@ -322,16 +325,15 @@ public class ValuesBuilder {
 
 	private String configName(ApplicationConfigFile configFile) {
 		return "application-config-file-" + Hashing.crc32()
-			.hashString(configFile.getName(), StandardCharsets.UTF_8)
-			.toString();
+			.hashString(configFile.getName(), StandardCharsets.UTF_8);
 	}
 
 	private String secretType(ApplicationSecret applicationSecret) {
 		switch (applicationSecret.getType()) {
 			case Generic:
-				return "Opague";
+				return SECRET_TYPE_GENERIC;
 			case Tls:
-				return "kubernetes.io/tls";
+				return SECRET_TYPE_TLS;
 			default:
 				throw new IllegalStateException("Unhandled secret type");
 		}

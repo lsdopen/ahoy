@@ -30,9 +30,9 @@ export class EnvironmentReleaseStatusComponent {
       case 'Healthy':
         return 'status-success';
       case 'Progressing':
-        return 'status-warn';
       case 'Missing':
         return 'status-warn';
+      case 'Degraded':
       case 'Unknown':
         return 'status-error';
     }
