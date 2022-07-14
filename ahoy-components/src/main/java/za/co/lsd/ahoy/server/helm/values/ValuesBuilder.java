@@ -42,6 +42,9 @@ import java.util.Optional;
 @Component
 @Slf4j
 public class ValuesBuilder {
+	private static final String SECRET_TYPE_GENERIC = "Opaque";
+	private static final String SECRET_TYPE_TLS = "kubernetes.io/tls";
+
 	private final DockerRegistryProvider dockerRegistryProvider;
 	private final ApplicationEnvironmentConfigProvider environmentConfigProvider;
 	private final DockerConfigSealedSecretProducer dockerConfigSealedSecretProducer;
@@ -115,7 +118,7 @@ public class ValuesBuilder {
 			buildEnvironmentVariables(containerValuesBuilder, containerSpec, environmentConfig);
 			buildResources(containerValuesBuilder, containerSpec, environmentConfig);
 
-			switch(containerSpec.getType()) {
+			switch (containerSpec.getType()) {
 				case Container:
 					buildHealthChecks(containerValuesBuilder, containerSpec);
 					containerValues.put(containerSpec.getName(), containerValuesBuilder.build());
@@ -133,7 +136,7 @@ public class ValuesBuilder {
 
 	private void buildDockerRegistry(ApplicationValues.ApplicationValuesBuilder builder, ApplicationSpec applicationSpec) throws IOException {
 		Optional<DockerRegistry> dockerRegistry = dockerRegistryProvider.dockerRegistryFor(applicationSpec.getDockerRegistryName());
-		if (dockerRegistry.isPresent() && dockerRegistry.get().getSecure()) {
+		if (dockerRegistry.isPresent() && dockerRegistry.get().isSecure()) {
 			builder.dockerConfigJson(dockerConfigSealedSecretProducer.produce(dockerRegistry.get()));
 		}
 	}
@@ -185,7 +188,7 @@ public class ValuesBuilder {
 
 		Map<String, ApplicationConfigFileValues> configFiles = new LinkedHashMap<>();
 
-		if (applicationSpec.configEnabled() && applicationSpec.hasConfigs()) {
+		if (applicationSpec.isConfigFilesEnabled() && applicationSpec.hasConfigs()) {
 			for (ApplicationConfigFile applicationConfigFile : applicationSpec.getConfigFiles()) {
 				configFiles.put(configName(applicationConfigFile), new ApplicationConfigFileValues(applicationConfigFile));
 			}
@@ -200,7 +203,7 @@ public class ValuesBuilder {
 		}
 
 		builder
-			.configFilesEnabled(applicationSpec.configEnabled() || (environmentConfig != null && environmentConfig.configEnabled()))
+			.configFilesEnabled(applicationSpec.isConfigFilesEnabled() || (environmentConfig != null && environmentConfig.configEnabled()))
 			.configPath(applicationSpec.getConfigPath())
 			.configFiles(configFiles)
 			.configFileHashes(hashes(configFiles));
@@ -210,7 +213,7 @@ public class ValuesBuilder {
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
 
-		if (applicationSpec.volumesEnabled() && applicationSpec.hasVolumes()) {
+		if (applicationSpec.isVolumesEnabled() && applicationSpec.hasVolumes()) {
 			for (ApplicationVolume applicationVolume : applicationSpec.getVolumes()) {
 				volumes.put(applicationVolume.getName(), new ApplicationVolumeValues(applicationVolume));
 			}
@@ -227,7 +230,7 @@ public class ValuesBuilder {
 		}
 
 		builder
-			.volumesEnabled(applicationSpec.volumesEnabled() || (environmentConfig != null && environmentConfig.volumesEnabled()))
+			.volumesEnabled(applicationSpec.isVolumesEnabled() || (environmentConfig != null && environmentConfig.volumesEnabled()))
 			.volumes(volumes);
 	}
 
@@ -235,7 +238,7 @@ public class ValuesBuilder {
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
 
-		if (applicationSpec.secretsEnabled() && applicationSpec.hasSecrets()) {
+		if (applicationSpec.isSecretsEnabled() && applicationSpec.hasSecrets()) {
 			for (ApplicationSecret applicationSecret : applicationSpec.getSecrets()) {
 				Map<String, String> encryptedData = secretDataSealedSecretProducer.produce(applicationSecret);
 				secrets.put(applicationSecret.getName(), new ApplicationSecretValues(applicationSecret.getName(), secretType(applicationSecret), encryptedData));
@@ -254,7 +257,7 @@ public class ValuesBuilder {
 		}
 
 		builder
-			.secretsEnabled(applicationSpec.secretsEnabled() || (environmentConfig != null && environmentConfig.secretsEnabled()))
+			.secretsEnabled(applicationSpec.isSecretsEnabled() || (environmentConfig != null && environmentConfig.secretsEnabled()))
 			.secrets(secrets);
 	}
 
@@ -322,16 +325,15 @@ public class ValuesBuilder {
 
 	private String configName(ApplicationConfigFile configFile) {
 		return "application-config-file-" + Hashing.crc32()
-			.hashString(configFile.getName(), StandardCharsets.UTF_8)
-			.toString();
+			.hashString(configFile.getName(), StandardCharsets.UTF_8);
 	}
 
 	private String secretType(ApplicationSecret applicationSecret) {
 		switch (applicationSecret.getType()) {
 			case Generic:
-				return "Opague";
+				return SECRET_TYPE_GENERIC;
 			case Tls:
-				return "kubernetes.io/tls";
+				return SECRET_TYPE_TLS;
 			default:
 				throw new IllegalStateException("Unhandled secret type");
 		}

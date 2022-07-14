@@ -25,8 +25,8 @@ import {EnvironmentRelease, EnvironmentReleaseId} from '../../environment-releas
 import {EnvironmentReleaseService} from '../../environment-release/environment-release.service';
 import {Environment} from '../../environments/environment';
 import {EnvironmentService} from '../../environments/environment.service';
-import {Release, ReleaseVersion} from '../../releases/release';
-import {ReleaseService} from '../../releases/release.service';
+import {DuplicateOptions, Release, ReleaseVersion} from '../release';
+import {ReleaseService} from '../release.service';
 import {TaskEvent} from '../../taskevents/task-events';
 import {LoggerService} from '../../util/logger.service';
 
@@ -41,6 +41,8 @@ export class ReleaseDetailComponent implements OnInit {
   releasesForValidation: Release[];
   editMode = false;
   environment: Environment;
+  sourceRelease: Release;
+  duplicateOptions: DuplicateOptions;
 
   constructor(
     private log: LoggerService,
@@ -56,12 +58,12 @@ export class ReleaseDetailComponent implements OnInit {
 
   ngOnInit() {
     const releaseId = this.route.snapshot.paramMap.get('releaseId');
-    const environmentId = +this.route.snapshot.queryParamMap.get('environmentId');
 
     if (releaseId === 'new') {
       this.release = new Release();
       this.releaseVersion = new ReleaseVersion();
 
+      const environmentId = +this.route.snapshot.queryParamMap.get('environmentId');
       if (environmentId) {
         this.environmentService.get(environmentId)
           .subscribe(env => {
@@ -70,6 +72,16 @@ export class ReleaseDetailComponent implements OnInit {
           });
       } else {
         this.setBreadcrumb();
+      }
+
+      const sourceReleaseId = +this.route.snapshot.queryParamMap.get('sourceReleaseId');
+      if (sourceReleaseId) {
+        this.releaseService.get(sourceReleaseId)
+          .subscribe((rel) => {
+            this.duplicateOptions = new DuplicateOptions();
+            this.sourceRelease = rel;
+            this.setBreadcrumb();
+          });
       }
 
     } else {
@@ -96,6 +108,12 @@ export class ReleaseDetailComponent implements OnInit {
         {label: this.release.name},
         {label: 'edit'}
       ]);
+    } else if (this.sourceRelease) {
+      this.breadcrumbService.setItems([
+        {label: 'releases', routerLink: '/releases'},
+        {label: this.sourceRelease.name},
+        {label: 'duplicate'}
+      ]);
     } else if (this.environment) {
       this.breadcrumbService.setItems([
         {label: this.environment.name, routerLink: '/environments'},
@@ -113,14 +131,21 @@ export class ReleaseDetailComponent implements OnInit {
     this.releaseService.save(this.release)
       .pipe(
         mergeMap(release => {
+          if (this.sourceRelease) {
+            // we're duplicating a source release
+            return this.releaseService.duplicate(this.sourceRelease, release, this.duplicateOptions);
+          }
+          return of(release);
+        }),
+        mergeMap(release => {
           this.release = release;
-          if (!this.editMode) {
+          if (!this.editMode && !this.sourceRelease) {
             this.releaseVersion.release = this.releaseService.link(release.id);
             return this.releaseService.saveVersion(this.releaseVersion);
           }
           return of(release);
         }),
-        mergeMap(releaseVersion => {
+        mergeMap(release => {
           if (this.environment) {
             const environmentRelease = new EnvironmentRelease();
             environmentRelease.id = new EnvironmentReleaseId();
@@ -129,7 +154,7 @@ export class ReleaseDetailComponent implements OnInit {
 
             return this.environmentReleaseService.save(environmentRelease);
           }
-          return of(releaseVersion);
+          return of(release);
         })
       )
       .subscribe(() => this.location.back());

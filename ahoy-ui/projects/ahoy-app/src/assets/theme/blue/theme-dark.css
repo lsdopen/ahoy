@@ -139,16 +139,16 @@
   --blue-700:#1769aa;
   --blue-800:#125386;
   --blue-900:#0d3c61;
-  --green-50:#f7faf5;
-  --green-100:#dbe8cf;
-  --green-200:#bed6a9;
-  --green-300:#a1c384;
-  --green-400:#85b15e;
-  --green-500:#689f38;
-  --green-600:#588730;
-  --green-700:#496f27;
-  --green-800:#39571f;
-  --green-900:#2a4016;
+  --green-50:#f6fbf6;
+  --green-100:#d4ecd5;
+  --green-200:#b2ddb4;
+  --green-300:#90cd93;
+  --green-400:#6ebe71;
+  --green-500:#4caf50;
+  --green-600:#419544;
+  --green-700:#357b38;
+  --green-800:#2a602c;
+  --green-900:#1e4620;
   --yellow-50:#fffcf5;
   --yellow-100:#fef0cd;
   --yellow-200:#fde4a5;
@@ -179,16 +179,16 @@
   --pink-700:#a31545;
   --pink-800:#801136;
   --pink-900:#5d0c28;
-  --indigo-50:#f6f7fc;
-  --indigo-100:#d5d9ef;
-  --indigo-200:#b3bae2;
-  --indigo-300:#919cd5;
-  --indigo-400:#707dc8;
-  --indigo-500:#4e5fbb;
-  --indigo-600:#42519f;
-  --indigo-700:#374383;
-  --indigo-800:#2b3467;
-  --indigo-900:#1f264b;
+  --indigo-50:#f5f6fb;
+  --indigo-100:#d1d5ed;
+  --indigo-200:#acb4df;
+  --indigo-300:#8893d1;
+  --indigo-400:#6372c3;
+  --indigo-500:#3f51b5;
+  --indigo-600:#36459a;
+  --indigo-700:#2c397f;
+  --indigo-800:#232d64;
+  --indigo-900:#192048;
   --teal-50:#f2faf9;
   --teal-100:#c2e6e2;
   --teal-200:#91d2cc;
@@ -199,16 +199,16 @@
   --teal-700:#00695f;
   --teal-800:#00534b;
   --teal-900:#003c36;
-  --orange-50:#fffaf2;
-  --orange-100:#ffe6c2;
-  --orange-200:#ffd391;
-  --orange-300:#ffbf61;
-  --orange-400:#ffac30;
-  --orange-500:#ff9800;
-  --orange-600:#d98100;
-  --orange-700:#b36a00;
-  --orange-800:#8c5400;
-  --orange-900:#663d00;
+  --orange-50:#fff8f2;
+  --orange-100:#fde0c2;
+  --orange-200:#fbc791;
+  --orange-300:#f9ae61;
+  --orange-400:#f79530;
+  --orange-500:#f57c00;
+  --orange-600:#d06900;
+  --orange-700:#ac5700;
+  --orange-800:#874400;
+  --orange-900:#623200;
   --bluegray-50:#f7f9f9;
   --bluegray-100:#d9e0e3;
   --bluegray-200:#bbc7cd;
@@ -848,6 +848,9 @@ p-dropdown.ng-dirty.ng-invalid > .p-dropdown {
 }
 .p-input-filled .p-dropdown:not(.p-disabled).p-focus {
   background-color: rgba(255, 255, 255, 0.1);
+}
+.p-input-filled .p-dropdown:not(.p-disabled).p-focus .p-inputtext {
+  background-color: transparent;
 }
 
 .p-editor-container .p-editor-toolbar {
@@ -2371,7 +2374,6 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
   background: #1e1e1e;
   color: rgba(255, 255, 255, 0.87);
   transition: none;
-  outline-color: transparent;
 }
 .p-datatable .p-datatable-tbody > tr > td {
   text-align: left;
@@ -2409,6 +2411,10 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
 }
 .p-datatable .p-datatable-tbody > tr > td .p-row-editor-save {
   margin-right: 0.5rem;
+}
+.p-datatable .p-datatable-tbody > tr:focus {
+  outline: 0.15rem solid transparent;
+  outline-offset: 0.15rem;
 }
 .p-datatable .p-datatable-tbody > tr.p-highlight {
   background: rgba(100, 181, 246, 0.16);
@@ -3455,7 +3461,6 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
   background: #1e1e1e;
   color: rgba(255, 255, 255, 0.87);
   transition: none;
-  outline-color: transparent;
 }
 .p-treetable .p-treetable-tbody > tr > td {
   text-align: left;
@@ -3488,6 +3493,10 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
 }
 .p-treetable .p-treetable-tbody > tr > td p-treetablecheckbox .p-checkbox .p-indeterminate .p-checkbox-icon {
   color: rgba(255, 255, 255, 0.87);
+}
+.p-treetable .p-treetable-tbody > tr:focus {
+  outline: 0.15rem solid transparent;
+  outline-offset: -0.15rem;
 }
 .p-treetable .p-treetable-tbody > tr.p-highlight {
   background: rgba(100, 181, 246, 0.16);

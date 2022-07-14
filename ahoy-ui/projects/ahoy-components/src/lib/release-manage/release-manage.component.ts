@@ -54,6 +54,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   selectedEnvironmentRelease: EnvironmentRelease;
   releaseVersion: ReleaseVersion;
   menuItems: MenuItem[];
+  selectedReleaseVersion: ReleaseVersion;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -110,6 +111,8 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
       mergeMap(environmentReleases => {
         this.environmentReleases = environmentReleases;
         this.setupMenuItems();
+
+        this.selectedReleaseVersion = this.releaseVersion;
 
         return of(this.environmentRelease);
       })
@@ -265,24 +268,12 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   }
 
   releaseVersionChanged() {
-    this.router.navigate(['/release', this.environmentRelease.id.environmentId, this.environmentRelease.id.releaseId, 'version', this.releaseVersion.id]);
+    this.router.navigate(['/release', this.environmentRelease.id.environmentId, this.environmentRelease.id.releaseId, 'version', this.selectedReleaseVersion.id]);
   }
 
   private isCurrent() {
     return this.environmentRelease.currentReleaseVersion
       && this.releaseVersion.version === this.environmentRelease.currentReleaseVersion.version;
-  }
-
-  compareReleaseVersions(r1: ReleaseVersion, r2: ReleaseVersion): boolean {
-    if (r1 === null) {
-      return r2 === null;
-    }
-
-    if (r2 === null) {
-      return false;
-    }
-
-    return r1.version === r2.version;
   }
 
   canRollback() {
@@ -329,10 +320,6 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
         }, 1000);
       }
     }
-  }
-
-  isCurrentEnvironmentRelease(environmentRelease: EnvironmentRelease) {
-    return EnvironmentReleaseService.environmentReleaseEquals(this.environmentRelease, environmentRelease);
   }
 
   applicationVersionsChanged() {

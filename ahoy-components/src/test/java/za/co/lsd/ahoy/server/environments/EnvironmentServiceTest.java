@@ -33,6 +33,7 @@ import za.co.lsd.ahoy.server.cluster.Cluster;
 import za.co.lsd.ahoy.server.cluster.ClusterRepository;
 import za.co.lsd.ahoy.server.cluster.ClusterType;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
+import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
 import za.co.lsd.ahoy.server.releases.Release;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 
@@ -54,6 +55,8 @@ class EnvironmentServiceTest {
 	private ClusterRepository clusterRepository;
 	@MockBean
 	private ReleaseService releaseService;
+	@MockBean
+	private EnvironmentReleaseRepository environmentReleaseRepository;
 	@Autowired
 	private EnvironmentService environmentService;
 
@@ -64,6 +67,64 @@ class EnvironmentServiceTest {
 
 		// then
 		verify(environmentRepository, times(1)).updateOrderIndex(eq(1L), eq(500.0));
+	}
+
+	@Test
+	void duplicate() {
+		// given
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes1.default.svc", ClusterType.KUBERNETES);
+
+		Environment sourceEnvironment = new Environment(1L, "dev");
+		Environment destEnvironment = new Environment(2L, "qa");
+		cluster.addEnvironment(sourceEnvironment);
+
+		Release release = new Release(1L, "release1");
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(sourceEnvironment, release);
+		environmentRelease.setCurrentReleaseVersion(null);
+
+		when(environmentRepository.findById(1L)).thenReturn(Optional.of(sourceEnvironment));
+		when(environmentRepository.findById(2L)).thenReturn(Optional.of(destEnvironment));
+
+		// when
+		environmentService.duplicate(sourceEnvironment.getId(), destEnvironment.getId(), new DuplicateOptions(false));
+
+		// then
+		verify(environmentRepository, times(1)).findById(sourceEnvironment.getId());
+		verify(environmentRepository, times(1)).findById(destEnvironment.getId());
+		EnvironmentRelease expectedEnvironmentRelease = new EnvironmentRelease(destEnvironment, release);
+		verify(environmentReleaseRepository, times(1)).save(eq(expectedEnvironmentRelease));
+
+		verifyNoMoreInteractions(environmentRepository, environmentReleaseRepository, releaseService);
+	}
+
+	@Test
+	void duplicateWithEnvironmentConfig() {
+		// given
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes1.default.svc", ClusterType.KUBERNETES);
+
+		Environment sourceEnvironment = new Environment(1L, "dev");
+		Environment destEnvironment = new Environment(2L, "qa");
+		cluster.addEnvironment(sourceEnvironment);
+
+		Release release = new Release(1L, "release1");
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(sourceEnvironment, release);
+		environmentRelease.setCurrentReleaseVersion(null);
+
+		when(environmentRepository.findById(1L)).thenReturn(Optional.of(sourceEnvironment));
+		when(environmentRepository.findById(2L)).thenReturn(Optional.of(destEnvironment));
+
+		// when
+		DuplicateOptions duplicateOptionsWithCopyEnvConfig = new DuplicateOptions(true);
+		environmentService.duplicate(sourceEnvironment.getId(), destEnvironment.getId(), duplicateOptionsWithCopyEnvConfig);
+
+		// then
+		verify(environmentRepository, times(1)).findById(sourceEnvironment.getId());
+		verify(environmentRepository, times(1)).findById(destEnvironment.getId());
+		EnvironmentRelease expectedEnvironmentRelease = new EnvironmentRelease(destEnvironment, release);
+		verify(environmentReleaseRepository, times(1)).save(eq(expectedEnvironmentRelease));
+		verify(releaseService, times(1)).copyEnvironmentConfig(same(environmentRelease), eq(expectedEnvironmentRelease));
+
+		verifyNoMoreInteractions(environmentRepository, environmentReleaseRepository, releaseService);
 	}
 
 	@Test

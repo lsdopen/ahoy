@@ -62,4 +62,24 @@
             }
         }
     }
+
+    .p-tabmenu-left-icon {
+        margin-right: $inlineSpacing;
+    }
+
+    .p-tabmenu-right-icon {
+        margin-left: $inlineSpacing;
+    }
+
+    .p-tabmenu-nav-btn.p-link {
+        background: $tabviewHeaderActiveBg;
+        color: $tabviewHeaderTextActiveColor;
+        width: $buttonIconOnlyWidth;
+        box-shadow: $raisedButtonShadow;
+        border-radius: 0;
+
+        &:focus {
+            @include focused-inset();
+        }
+    }
 }

@@ -26,8 +26,8 @@
         }
     }
 
-    &.p-inputswitch-focus,
-    &.p-inputswitch-focus:not(.p-disabled):hover  {
+    &.p-focus,
+    &.p-focus:not(.p-disabled):hover  {
         .p-inputswitch-slider:before {
             box-shadow: 0 0 1px 10px rgba($overlayColor, .12), 0px 3px 1px -2px rgba($overlayColor, 0.2), 0px 2px 2px 0px rgba($overlayColor, 0.14), 0px 1px 5px 0px rgba($overlayColor,.12);
         }
@@ -39,8 +39,8 @@
         }
     }
 
-    &.p-inputswitch-checked.p-inputswitch-focus,
-    &.p-inputswitch-checked.p-inputswitch-focus:not(.p-disabled):hover {
+    &.p-inputswitch-checked.p-focus,
+    &.p-inputswitch-checked.p-focus:not(.p-disabled):hover {
         .p-inputswitch-slider:before {
             box-shadow: 0 0 1px 10px rgba($inputSwitchHandleOnBg, .12), 0px 3px 1px -2px rgba($overlayColor, 0.2), 0px 2px 2px 0px rgba($overlayColor, 0.14), 0px 1px 5px 0px rgba($overlayColor,.12);
         }

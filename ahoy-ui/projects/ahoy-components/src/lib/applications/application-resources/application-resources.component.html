@@ -20,19 +20,19 @@
     <h5>Limits</h5>
     <div class="formgroup-inline">
       <div class="field p-float-label">
-        <p-inputNumber id="resourcesLimitCpu" name="resourcesLimitCpu" mode="decimal" [min]="0" [(ngModel)]="resources.limitCpu"></p-inputNumber>
-        <label for="resourcesLimitCpu">CPU</label>
+        <p-inputNumber id="resourcesLimitCpu{{containerSpecIndex}}" name="resourcesLimitCpu{{containerSpecIndex}}" mode="decimal" [min]="0" [(ngModel)]="resources.limitCpu"></p-inputNumber>
+        <label for="resourcesLimitCpu{{containerSpecIndex}}">CPU</label>
       </div>
       <h6>m</h6>
     </div>
 
     <div class="formgroup-inline">
       <div class="field p-float-label">
-        <p-inputNumber id="resourcesLimitMemory" name="resourcesLimitMemory" [min]="0" [(ngModel)]="resources.limitMemory"></p-inputNumber>
-        <label for="resourcesLimitMemory">Memory</label>
+        <p-inputNumber id="resourcesLimitMemory{{containerSpecIndex}}" name="resourcesLimitMemory{{containerSpecIndex}}" [min]="0" [(ngModel)]="resources.limitMemory"></p-inputNumber>
+        <label for="resourcesLimitMemory{{containerSpecIndex}}">Memory</label>
       </div>
       <div class="field p-float-label">
-        <p-dropdown name="resourcesLimitMemoryUnit" [options]="quantityUnits" [(ngModel)]="resources.limitMemoryUnit" required></p-dropdown>
+        <p-dropdown name="resourcesLimitMemoryUnit{{containerSpecIndex}}" [options]="quantityUnits" [(ngModel)]="resources.limitMemoryUnit" required></p-dropdown>
         <label>Unit</label>
       </div>
     </div>
@@ -40,19 +40,19 @@
     <h5>Requests</h5>
     <div class="formgroup-inline">
       <div class="field p-float-label">
-        <p-inputNumber id="resourcesRequestCpu" name="resourcesRequestCpu" [min]="0" [(ngModel)]="resources.requestCpu"></p-inputNumber>
-        <label for="resourcesRequestCpu">CPU</label>
+        <p-inputNumber id="resourcesRequestCpu{{containerSpecIndex}}" name="resourcesRequestCpu{{containerSpecIndex}}" [min]="0" [(ngModel)]="resources.requestCpu"></p-inputNumber>
+        <label for="resourcesRequestCpu{{containerSpecIndex}}">CPU</label>
       </div>
       <h6>m</h6>
     </div>
 
     <div class="formgroup-inline">
       <div class="field p-float-label">
-        <p-inputNumber id="resourcesRequestMemory" name="resourcesRequestMemory" [min]="0" [(ngModel)]="resources.requestMemory"></p-inputNumber>
-        <label for="resourcesRequestMemory">Memory</label>
+        <p-inputNumber id="resourcesRequestMemory{{containerSpecIndex}}" name="resourcesRequestMemory{{containerSpecIndex}}" [min]="0" [(ngModel)]="resources.requestMemory"></p-inputNumber>
+        <label for="resourcesRequestMemory{{containerSpecIndex}}">Memory</label>
       </div>
       <div class="field p-float-label">
-        <p-dropdown name="resourcesRequestMemoryUnit" [options]="quantityUnits" [(ngModel)]="resources.requestMemoryUnit" required></p-dropdown>
+        <p-dropdown name="resourcesRequestMemoryUnit{{containerSpecIndex}}" [options]="quantityUnits" [(ngModel)]="resources.requestMemoryUnit" required></p-dropdown>
         <label>Unit</label>
       </div>
     </div>

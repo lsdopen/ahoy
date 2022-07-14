@@ -47,6 +47,7 @@ import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.environments.EnvironmentRepository;
+import za.co.lsd.ahoy.server.environments.EnvironmentService;
 import za.co.lsd.ahoy.server.git.GitSettings;
 import za.co.lsd.ahoy.server.git.LocalRepo;
 import za.co.lsd.ahoy.server.releases.*;
@@ -92,6 +93,8 @@ class ReleaseServiceIntegrationTest {
 
 	@Autowired
 	private ReleaseService releaseService;
+	@Autowired
+	private EnvironmentService environmentService;
 	@Autowired
 	private SettingsProvider settingsProvider;
 	@Autowired
@@ -568,5 +571,71 @@ class ReleaseServiceIntegrationTest {
 		assertEquals(release, releaseHistory.getRelease());
 		assertEquals(ReleaseHistoryAction.PROMOTE, releaseHistory.getAction());
 		assertEquals(ReleaseHistoryStatus.SUCCESS, releaseHistory.getStatus());
+	}
+
+	/**
+	 * Tests that we can successfully delete an environment after it has been deployed.
+	 * This should undeploy the currently deployed release as well as cascade delete all related entities.
+	 */
+	@Test
+	@WithMockUser(authorities = {Scope.ahoy, Role.admin, Role.user})
+	@DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+	void deleteEnvironmentWithDeployedRelease() throws Exception {
+		// given
+		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
+		Environment environment = new Environment("dev");
+		cluster.addEnvironment(environment);
+		environment = environmentRepository.save(environment);
+		Release release = releaseRepository.save(new Release("release1"));
+		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
+		environmentRelease = environmentReleaseRepository.save(environmentRelease);
+
+		Application application = applicationRepository.save(new Application("app1"));
+		ApplicationVersion applicationVersion = applicationVersionRepository.save(new ApplicationVersion("1.0.0", application));
+
+		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0");
+		release.addReleaseVersion(releaseVersion);
+		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
+		releaseVersion = releaseVersionRepository.save(releaseVersion);
+
+		DeployOptions deployOptions = new DeployOptions(releaseVersion.getId(), "This is a test commit message");
+
+		String argoApplicationName = "minikube-dev-release1";
+		String argoUid = UUID.randomUUID().toString();
+		when(argoClient.getApplication(eq(argoApplicationName)))
+			.thenReturn(
+				Optional.empty(),
+				Optional.of(ArgoApplication.builder()
+					.metadata(ArgoMetadata.builder()
+						.name(argoApplicationName)
+						.uid(argoUid)
+						.build()).build()));
+		when(argoClient.createApplication(any())).thenAnswer(invocationOnMock -> {
+			ArgoApplication argoApplication = invocationOnMock.getArgument(0);
+			argoApplication.getMetadata().setUid(argoUid);
+			return argoApplication;
+		});
+		releaseService.deploy(environmentRelease.getId(), deployOptions).get();
+
+		// when
+		environmentService.destroy(environment.getId());
+
+		// then
+		// verify external collaborators
+		verify(clusterManager, times(1)).createNamespace("release1-dev");
+		verify(argoClient, times(1)).upsertRepository();
+		verify(argoClient, times(1)).createRepositoryCertificates();
+		verify(argoClient, times(2)).getApplication(eq(argoApplicationName));
+		verify(argoClient, times(1)).createApplication(any(ArgoApplication.class));
+		verify(argoClient, times(1)).deleteApplication(argoApplicationName);
+		verifyNoMoreInteractions(clusterManager, argoClient);
+
+		// verify environment release
+		Optional<EnvironmentRelease> retrievedEnvironmentRelease = environmentReleaseRepository.findById(environmentRelease.getId());
+		assertTrue(retrievedEnvironmentRelease.isEmpty());
+
+		// verify release history
+		List<ReleaseHistory> releaseHistories = StreamSupport.stream(releaseHistoryRepository.findAll().spliterator(), false).collect(Collectors.toList());
+		assertEquals(0, releaseHistories.size());
 	}
 }

@@ -4326,6 +4326,109 @@ body a {
   z-index: 999;
 }
 
+.layout-topbar .notifications .layout-topbar-action-panel img {
+  width: 32px;
+  height: 32px;
+}
+.layout-topbar .notifications .layout-topbar-action-panel .layout-topbar-action-item {
+  border-bottom: 1px solid var(--divider-color);
+}
+.layout-topbar .notifications .layout-topbar-action-panel .layout-topbar-action-item:last-child {
+  border-bottom: 0 none;
+}
+.layout-topbar .app .layout-topbar-action-panel a {
+  padding: 0.5rem 0;
+}
+.layout-topbar .app .layout-topbar-action-panel a i {
+  width: 42px;
+  height: 42px;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  margin: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.layout-rightmenu .header {
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.714rem;
+  border-bottom: 1px solid var(--divider-color);
+}
+.layout-rightmenu .online-members img {
+  width: 32px;
+}
+.layout-rightmenu .online-members b {
+  color: var(--primary-color);
+}
+.layout-rightmenu .latest-activity i {
+  border: 1px solid transparent;
+  border-radius: 50px;
+  background-color: var(--surface-d);
+}
+.layout-rightmenu .next-events ul {
+  margin: 0;
+  list-style-type: none;
+  padding: 0;
+}
+.layout-rightmenu .next-events ul > li {
+  padding: 0.875rem 0.5rem;
+}
+
+.layout-help-page .questions.p-accordion p-accordiontab .p-accordion-tab {
+  margin-top: 1rem;
+}
+.layout-help-page .questions.p-accordion p-accordiontab:first-child .p-accordion-tab {
+  margin-top: 0;
+}
+
+.layout-invoice-page .p-invoice-datatable-responsive .p-datatable-tbody > tr > td .p-column-title {
+  display: none;
+}
+@media screen and (max-width: 40rem) {
+  .layout-invoice-page .p-invoice-datatable-responsive .p-datatable-thead > tr > th,
+.layout-invoice-page .p-invoice-datatable-responsive .p-datatable-tfoot > tr > td {
+    display: none !important;
+  }
+  .layout-invoice-page .p-invoice-datatable-responsive .p-datatable-tbody > tr > td {
+    text-align: left;
+    display: block;
+    width: 100%;
+    float: left;
+    clear: left;
+    border: 0 none;
+  }
+  .layout-invoice-page .p-invoice-datatable-responsive .p-datatable-tbody > tr > td .p-column-title {
+    padding: 0.4rem;
+    min-width: 30%;
+    display: inline-block;
+    margin: -0.4em 1em -0.4em -0.4rem;
+    font-weight: bold;
+  }
+  .layout-invoice-page .p-invoice-datatable-responsive .p-datatable-tbody > tr > td:last-child {
+    border-bottom: 1px solid var(--surface-d);
+  }
+}
+
+@media (min-width: 992px) {
+  .layout-menu-slim .layout-inline-menu .layout-inline-menu-action {
+    justify-content: center;
+  }
+  .layout-menu-slim .layout-inline-menu .layout-inline-menu-action > span,
+.layout-menu-slim .layout-inline-menu .layout-inline-menu-action > i {
+    display: none !important;
+  }
+  .layout-menu-slim .layout-inline-menu .layout-inline-menu-action-panel .layout-inline-menu-action-item > a {
+    justify-content: center;
+  }
+  .layout-menu-slim .layout-inline-menu .layout-inline-menu-action-panel .layout-inline-menu-action-item > a > i {
+    font-size: 1.5rem;
+    margin-right: 0 !important;
+  }
+  .layout-menu-slim .layout-inline-menu .layout-inline-menu-action-panel .layout-inline-menu-action-item > a > span {
+    display: none;
+  }
+}
 .layout-footer {
   background-color: #ffffff;
 }

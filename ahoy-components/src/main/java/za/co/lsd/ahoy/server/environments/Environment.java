@@ -24,6 +24,7 @@ import lombok.ToString;
 import org.hibernate.Hibernate;
 import za.co.lsd.ahoy.server.cluster.Cluster;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
+import za.co.lsd.ahoy.server.releases.ReleaseHistory;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -60,6 +61,12 @@ public class Environment implements Serializable {
 	@JsonIgnore
 	@ToString.Exclude
 	private List<EnvironmentRelease> environmentReleases = new ArrayList<>();
+
+	@OneToMany(mappedBy = "environment", cascade = CascadeType.REMOVE, orphanRemoval = true)
+	@OrderBy("id")
+	@JsonIgnore
+	@ToString.Exclude
+	private List<ReleaseHistory> releaseHistories = new ArrayList<>();
 
 	public Environment(@NotNull String name) {
 		this.name = name;

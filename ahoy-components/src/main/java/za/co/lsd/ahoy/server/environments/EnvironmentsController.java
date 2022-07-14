@@ -45,15 +45,17 @@ public class EnvironmentsController {
 	}
 
 	@PostMapping("/duplicate/{sourceEnvironmentId}/{destEnvironmentId}")
-	public ResponseEntity<Environment> duplicate(@PathVariable Long sourceEnvironmentId, @PathVariable Long destEnvironmentId) {
+	public ResponseEntity<Environment> duplicate(@PathVariable Long sourceEnvironmentId, @PathVariable Long destEnvironmentId,
+												 @RequestBody DuplicateOptions duplicateOptions) {
 
-		Environment destEnvironment = environmentService.duplicate(sourceEnvironmentId, destEnvironmentId);
+		Environment destEnvironment = environmentService.duplicate(sourceEnvironmentId, destEnvironmentId, duplicateOptions);
 
 		return new ResponseEntity<>(destEnvironment, new HttpHeaders(), HttpStatus.OK);
 	}
 
 	@PostMapping("/{environmentId}/move")
-	public ResponseEntity<Environment> move(@PathVariable Long environmentId, @RequestBody MoveOptions moveOptions) {
+	public ResponseEntity<Environment> move(@PathVariable Long environmentId,
+											@RequestBody MoveOptions moveOptions) {
 
 		Environment destEnvironment = environmentService.move(environmentId, moveOptions);
 

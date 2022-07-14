@@ -69,20 +69,24 @@ public class EnvironmentService {
 	}
 
 	@Transactional
-	public Environment duplicate(Long sourceEnvironmentId, Long destEnvironmentId) {
+	public Environment duplicate(Long sourceEnvironmentId, Long destEnvironmentId, DuplicateOptions duplicateOptions) {
 		Environment sourceEnvironment = environmentRepository.findById(sourceEnvironmentId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find source environment: " + sourceEnvironmentId));
 
 		Environment destEnvironment = environmentRepository.findById(destEnvironmentId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find destination environment: " + destEnvironmentId));
 
-		log.info("Duplicating environment {} to environment {}", sourceEnvironment, destEnvironment);
+		log.info("Duplicating environment {} to environment {} with options {}", sourceEnvironment, destEnvironment, duplicateOptions);
 
 		List<EnvironmentRelease> sourceEnvironmentReleases = sourceEnvironment.getEnvironmentReleases();
 		for (EnvironmentRelease sourceEnvironmentRelease : sourceEnvironmentReleases) {
 
 			EnvironmentRelease newEnvironmentRelease = new EnvironmentRelease(destEnvironment, sourceEnvironmentRelease.getRelease());
 			environmentReleaseRepository.save(newEnvironmentRelease);
+
+			if (duplicateOptions.isCopyEnvironmentConfig()) {
+				releaseService.copyEnvironmentConfig(sourceEnvironmentRelease, newEnvironmentRelease);
+			}
 		}
 		return destEnvironment;
 	}

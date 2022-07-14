@@ -52,6 +52,11 @@
                         placeholder="Cluster" optionLabel="name" required></p-dropdown>
           </div>
 
+          <div class="field-checkbox" *ngIf="sourceEnvironment">
+            <p-checkbox id="copyEnvironmentConfig" name="copyEnvironmentConfig" [(ngModel)]="duplicateOptions.copyEnvironmentConfig" binary="true"></p-checkbox>
+            <label for="copyEnvironmentConfig">Copy environment config</label>
+          </div>
+
         </div>
       </form>
     </div>

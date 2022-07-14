@@ -31,6 +31,14 @@
                     background-color: rgba($primaryColor, .12);
                 }
             }
+
+            &.p-highlight {
+                .p-menuitem-link {
+                    &:focus {
+                        background-color: rgba($primaryColor, .12);
+                    }
+                }
+            }
         }
 
         .p-tabmenu-ink-bar {

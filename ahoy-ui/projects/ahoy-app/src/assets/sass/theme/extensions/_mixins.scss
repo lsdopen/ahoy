@@ -74,13 +74,18 @@
 }
 
 @mixin invalid-filled-input-wrapper() {
-    border-color: transparent;
-    background-image: linear-gradient(to bottom, $inputErrorBorderColor, $inputErrorBorderColor), linear-gradient(to bottom, $inputErrorBorderColor, $inputErrorBorderColor);
+  border-color: transparent;
+  background-image: linear-gradient(to bottom, $inputErrorBorderColor, $inputErrorBorderColor), linear-gradient(to bottom, $inputErrorBorderColor, $inputErrorBorderColor);
 
-    &:not(.p-disabled).p-focus {
-        box-shadow: none;
-        border-color: transparent;
-    }
+  &:not(.p-disabled):hover {
+      background-image: linear-gradient(to bottom, $inputErrorBorderColor, $inputErrorBorderColor), linear-gradient(to bottom, $inputErrorBorderColor, $inputErrorBorderColor);
+  }
+
+  &:not(.p-disabled).p-focus,
+  &:not(.p-disabled).p-inputwrapper-focus {
+      box-shadow: none;
+      background-image: linear-gradient(to bottom, $inputErrorBorderColor, $inputErrorBorderColor), linear-gradient(to bottom, $inputErrorBorderColor, $inputErrorBorderColor);
+  }
 }
 
 @mixin filled-input-wrapper-interaction() {

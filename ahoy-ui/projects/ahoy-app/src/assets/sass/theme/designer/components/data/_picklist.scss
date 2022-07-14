@@ -93,6 +93,18 @@
             }
         }
     }
+
+    &.p-picklist-striped {
+        .p-picklist-list {
+            .p-picklist-item:nth-child(even) {
+                background: $panelContentEvenRowBg;
+
+                &:hover {
+                    background: $inputListItemHoverBg;
+                }
+            }
+        }
+    }
 }
 
 .p-picklist-item {

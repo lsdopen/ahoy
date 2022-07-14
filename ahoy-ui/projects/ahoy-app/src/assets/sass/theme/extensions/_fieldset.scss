@@ -18,4 +18,14 @@
     .p-fieldset-legend {
         border: 0 none;
     }
+
+    &.p-fieldset-toggleable {
+        .p-fieldset-legend {
+            a {
+                &:focus {
+                    background: $emphasis-lower;
+                }
+            }
+        }
+    }
 }

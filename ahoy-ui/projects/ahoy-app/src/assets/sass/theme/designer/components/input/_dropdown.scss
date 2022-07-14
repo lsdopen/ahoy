@@ -148,6 +148,10 @@ p-dropdown.ng-dirty.ng-invalid > .p-dropdown {
 
         &:not(.p-disabled).p-focus {
             background-color: $inputFilledFocusBg;
+
+            .p-inputtext {
+                background-color: transparent;
+            }
         }
     }
 }

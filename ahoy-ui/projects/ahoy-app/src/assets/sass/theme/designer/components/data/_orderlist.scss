@@ -93,6 +93,18 @@
             }
         }
     }
+
+    &.p-orderlist-striped {
+        .p-orderlist-list {
+            .p-orderlist-item:nth-child(even) {
+                background: $panelContentEvenRowBg;
+
+                &:hover {
+                    background: $inputListItemHoverBg;
+                }
+            }
+        }
+    }
 }
 
 .p-orderlist-item {

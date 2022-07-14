@@ -60,7 +60,7 @@ public class ApplicationEnvironmentConfig {
 	}
 
 	public boolean routeEnabled() {
-		return spec != null && spec.getRouteEnabled() != null && spec.getRouteEnabled();
+		return spec != null && spec.isRouteEnabled();
 	}
 
 	public boolean hasRoute() {
@@ -68,7 +68,7 @@ public class ApplicationEnvironmentConfig {
 	}
 
 	public boolean environmentVariablesEnabled() {
-		return spec != null && spec.getEnvironmentVariablesEnabled() != null && spec.getEnvironmentVariablesEnabled();
+		return spec != null && spec.isEnvironmentVariablesEnabled();
 	}
 
 	public boolean hasEnvironmentVariables() {
@@ -76,7 +76,7 @@ public class ApplicationEnvironmentConfig {
 	}
 
 	public boolean configEnabled() {
-		return spec != null && spec.getConfigFilesEnabled() != null && spec.getConfigFilesEnabled();
+		return spec != null && spec.isConfigFilesEnabled();
 	}
 
 	public boolean hasConfigs() {
@@ -84,7 +84,7 @@ public class ApplicationEnvironmentConfig {
 	}
 
 	public boolean volumesEnabled() {
-		return spec != null && spec.getVolumesEnabled() != null && spec.getVolumesEnabled();
+		return spec != null && spec.isVolumesEnabled();
 	}
 
 	public boolean hasVolumes() {
@@ -92,7 +92,7 @@ public class ApplicationEnvironmentConfig {
 	}
 
 	public boolean secretsEnabled() {
-		return spec != null && spec.getSecretsEnabled() != null && spec.getSecretsEnabled();
+		return spec != null && spec.isSecretsEnabled();
 	}
 
 	public boolean hasSecrets() {
@@ -100,7 +100,7 @@ public class ApplicationEnvironmentConfig {
 	}
 
 	public boolean resourcesEnabled() {
-		return spec != null && spec.getResourcesEnabled() != null && spec.getResourcesEnabled();
+		return spec != null && spec.isResourcesEnabled();
 	}
 
 	public boolean hasResources() {
@@ -108,7 +108,7 @@ public class ApplicationEnvironmentConfig {
 	}
 
 	public ApplicationEnvironmentSpec summarySpec() {
-		return ApplicationEnvironmentSpec.newSummarySpec(spec.getRouteEnabled(), spec.getRouteHostname());
+		return ApplicationEnvironmentSpec.newSummarySpec(spec.isRouteEnabled(), spec.getRouteHostname());
 	}
 
 	@Override

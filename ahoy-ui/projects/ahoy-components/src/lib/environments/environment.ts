@@ -27,3 +27,7 @@ export class MoveOptions {
   destClusterId: number;
   redeployReleases = true;
 }
+
+export class DuplicateOptions {
+  copyEnvironmentConfig = false;
+}
