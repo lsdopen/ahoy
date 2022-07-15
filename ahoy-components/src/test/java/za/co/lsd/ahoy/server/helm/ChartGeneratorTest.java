@@ -114,6 +114,7 @@ public class ChartGeneratorTest {
 			"values.yaml");
 
 		assertFilesExist(templatesPath, "template",
+			"namespace.yaml",
 			"configmap.yaml",
 			"pvc.yaml",
 			"deployment.yaml",
@@ -195,6 +196,7 @@ public class ChartGeneratorTest {
 			"values.yaml");
 
 		assertFilesExist(templatesPath, "template",
+			"namespace.yaml",
 			"configmap.yaml",
 			"pvc.yaml",
 			"deployment.yaml",
@@ -287,6 +289,7 @@ public class ChartGeneratorTest {
 			"values.yaml");
 
 		assertFilesExist(templatesPath, "template",
+			"namespace.yaml",
 			"configmap.yaml",
 			"pvc.yaml",
 			"deployment.yaml",
@@ -443,6 +446,7 @@ public class ChartGeneratorTest {
 			"values.yaml");
 
 		assertFilesExist(templatesPath, "template",
+			"namespace.yaml",
 			"configmap.yaml",
 			"configmap-app1.yaml",
 			"pvc.yaml",
@@ -663,6 +667,7 @@ public class ChartGeneratorTest {
 			"values.yaml");
 
 		assertFilesExist(templatesPath, "template",
+			"namespace.yaml",
 			"configmap.yaml",
 			"configmap-app1.yaml",
 			"pvc.yaml",
@@ -905,6 +910,7 @@ public class ChartGeneratorTest {
 			"values.yaml");
 
 		assertFilesExist(templatesPath, "template",
+			"namespace.yaml",
 			"configmap.yaml",
 			"configmap-app1.yaml",
 			"pvc.yaml",
@@ -1091,6 +1097,7 @@ public class ChartGeneratorTest {
 			"values.yaml");
 
 		assertFilesExist(templatesPath, "template",
+			"namespace.yaml",
 			"configmap.yaml",
 			"configmap-app1.yaml",
 			"pvc.yaml",
@@ -1207,6 +1214,7 @@ public class ChartGeneratorTest {
 			"values.yaml");
 
 		assertFilesExist(templatesPath, "template",
+			"namespace.yaml",
 			"configmap.yaml",
 			"pvc.yaml",
 			"deployment.yaml",
@@ -1217,7 +1225,7 @@ public class ChartGeneratorTest {
 			"secret-generic.yaml");
 	}
 
-	private void assertFilesExist(Path path, String fileType, String... files) throws IOException {
+	private void 	assertFilesExist(Path path, String fileType, String... files) throws IOException {
 		for (String file : files) {
 			assertTrue(Files.exists(path.resolve(file)), "We should have a " + file + " " + fileType);
 		}

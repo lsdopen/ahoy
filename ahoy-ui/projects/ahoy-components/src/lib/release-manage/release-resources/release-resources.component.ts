@@ -142,6 +142,8 @@ export class ReleaseResourcesComponent implements OnInit {
         return 'pi pi-fw pi-list';
       case 'PersistentVolumeClaim':
         return 'pi pi-fw pi-database';
+      case 'Namespace':
+        return 'pi pi-fw pi-stop';
       default:
         return undefined;
     }

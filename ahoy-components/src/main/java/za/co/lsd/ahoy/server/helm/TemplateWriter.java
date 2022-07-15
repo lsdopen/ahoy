@@ -64,6 +64,7 @@ public class TemplateWriter {
 
 		final List<Path> trackedTemplates = new ArrayList<>();
 		copyBaseTemplates(templatesPath, trackedTemplates);
+		addTemplate("namespace", templatesPath, trackedTemplates);
 
 		for (ApplicationVersion applicationVersion : releaseVersion.getApplicationVersions()) {
 			Application application = applicationVersion.getApplication();
@@ -114,6 +115,15 @@ public class TemplateWriter {
 			Files.copy(resource.getInputStream(), templatePath, StandardCopyOption.REPLACE_EXISTING);
 			track(trackedTemplates, templatePath);
 		}
+	}
+
+	private void addTemplate(String templateName, Path templatesPath, List<Path> trackedTemplates) throws IOException {
+		String fileName = templateName + ".yaml";
+
+		Path templatePath = templatesPath.resolve(fileName);
+		track(trackedTemplates, templatePath);
+
+		log.debug("Added template '{}'", templateName);
 	}
 
 	private void addTemplate(Application application, String templateName, Path templatesPath, List<Path> trackedTemplates) throws IOException {

@@ -22,8 +22,6 @@ import reactor.core.publisher.Flux;
 import za.co.lsd.ahoy.server.argocd.ApplicationNameResolver;
 import za.co.lsd.ahoy.server.argocd.ArgoClient;
 import za.co.lsd.ahoy.server.argocd.model.*;
-import za.co.lsd.ahoy.server.clustermanager.ClusterManager;
-import za.co.lsd.ahoy.server.clustermanager.ClusterManagerFactory;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.git.GitSettings;
@@ -43,15 +41,13 @@ public class ReleaseManager {
 	private final ArgoClient argoClient;
 	private final SettingsProvider settingsProvider;
 	private final ApplicationNameResolver applicationNameResolver;
-	private final ClusterManagerFactory clusterManagerFactory;
 
-	public ReleaseManager(LocalRepo localRepo, ChartGenerator chartGenerator, ArgoClient argoClient, SettingsProvider settingsProvider, ApplicationNameResolver applicationNameResolver, ClusterManagerFactory clusterManagerFactory) {
+	public ReleaseManager(LocalRepo localRepo, ChartGenerator chartGenerator, ArgoClient argoClient, SettingsProvider settingsProvider, ApplicationNameResolver applicationNameResolver) {
 		this.localRepo = localRepo;
 		this.chartGenerator = chartGenerator;
 		this.argoClient = argoClient;
 		this.settingsProvider = settingsProvider;
 		this.applicationNameResolver = applicationNameResolver;
-		this.clusterManagerFactory = clusterManagerFactory;
 	}
 
 	public ArgoApplication deploy(EnvironmentRelease environmentRelease, ReleaseVersion releaseVersion, DeployOptions deployOptions) throws ReleaseManagerException {
@@ -68,10 +64,6 @@ public class ReleaseManager {
 			if (commit.isPresent()) {
 				localRepo.push();
 			}
-
-			Environment environment = environmentRelease.getEnvironment();
-			ClusterManager clusterManager = clusterManagerFactory.newManager(environment.getCluster());
-			clusterManager.createNamespace(environmentRelease.getNamespace());
 
 			argoClient.upsertRepository();
 			argoClient.createRepositoryCertificates();
