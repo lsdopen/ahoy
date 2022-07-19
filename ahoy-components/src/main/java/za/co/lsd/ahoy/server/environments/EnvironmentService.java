@@ -51,16 +51,16 @@ public class EnvironmentService {
 	}
 
 	@Transactional
-	public Environment destroy(Long environmentId) {
+	public Environment delete(Long environmentId) {
 		Environment environment = environmentRepository.findById(environmentId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment: " + environmentId));
 
-		return destroy(environment);
+		return delete(environment);
 	}
 
 	@Transactional
-	public Environment destroy(Environment environment) {
-		log.info("Destroying environment: {}", environment);
+	public Environment delete(Environment environment) {
+		log.info("Deleting environment: {}", environment);
 
 		undeployReleasesFrom(environment);
 

@@ -43,16 +43,15 @@ public class ClusterService {
 	}
 
 	@Transactional
-	public Cluster destroy(Long clusterId) {
+	public Cluster delete(Long clusterId) {
 		Cluster cluster = clusterRepository.findById(clusterId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find cluster: " + clusterId));
 
+		log.info("Deleting cluster: {}", cluster);
 		clusterRepository.delete(cluster);
 
-		log.info("Destroying cluster: {}", cluster);
-
 		for (Environment environment : cluster.getEnvironments()) {
-			environmentService.destroy(environment);
+			environmentService.delete(environment);
 		}
 
 		return cluster;

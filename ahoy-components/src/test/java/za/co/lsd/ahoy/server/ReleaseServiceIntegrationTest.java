@@ -615,7 +615,7 @@ class ReleaseServiceIntegrationTest {
 		releaseService.deploy(environmentRelease.getId(), deployOptions).get();
 
 		// when
-		environmentService.destroy(environment.getId());
+		environmentService.delete(environment.getId());
 
 		// then
 		// verify external collaborators

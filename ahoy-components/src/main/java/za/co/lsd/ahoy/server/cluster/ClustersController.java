@@ -42,9 +42,9 @@ public class ClustersController {
 		return new ResponseEntity<>(clusterService.count(), new HttpHeaders(), HttpStatus.OK);
 	}
 
-	@DeleteMapping("/destroy/{clusterId}")
-	public ResponseEntity<Cluster> destroy(@PathVariable Long clusterId) {
-		Cluster cluster = clusterService.destroy(clusterId);
+	@DeleteMapping("/delete/{clusterId}")
+	public ResponseEntity<Cluster> delete(@PathVariable Long clusterId) {
+		Cluster cluster = clusterService.delete(clusterId);
 
 		return new ResponseEntity<>(cluster, new HttpHeaders(), HttpStatus.OK);
 	}

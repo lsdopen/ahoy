@@ -77,11 +77,11 @@ export class EnvironmentService {
     }
   }
 
-  destroy(environment: Environment): Observable<Environment> {
+  deleteCascading(environment: Environment): Observable<Environment> {
     this.log.debug('deleting environment: ', environment);
 
     const id = environment.id;
-    const url = `/data/environments/destroy/${id}`;
+    const url = `/data/environments/delete/${id}`;
 
     return this.restClient.delete<Environment>(url, true).pipe(
       tap((deletedEnvironment) => {
