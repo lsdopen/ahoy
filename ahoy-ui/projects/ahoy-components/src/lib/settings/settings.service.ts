@@ -141,6 +141,16 @@ export class SettingsService {
     );
   }
 
+  updateArgoKnownHosts(): Observable<void> {
+    this.log.debug('updating argo knownhosts..');
+
+    return this.restClient.post<void>('/api/settings/argo/updateKnownHosts').pipe(
+      tap(() => {
+        this.log.debug('updated argo knownhosts');
+      })
+    );
+  }
+
   getDockerSettings(): Observable<DockerSettings> {
     const url = `/api/settings/docker`;
     return this.restClient.get<DockerSettings>(url, false, () => {

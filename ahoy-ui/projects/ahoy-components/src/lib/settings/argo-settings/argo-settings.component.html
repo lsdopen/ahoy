@@ -23,6 +23,8 @@
       </ng-template>
       <ng-template pTemplate="right">
         <button pButton pRipple label="Save" icon="pi pi-save" class="p-button-success mr-2 mb-2" (click)="save()" [disabled]="settingsForm.invalid"></button>
+        <button pButton pRipple label="Update SSH Known Hosts" icon="pi pi-globe" class="p-button-plain mr-2 mb-2" (click)="updateKnownHosts()" [disabled]="settingsForm.invalid"
+                pTooltip="Updates SSH Known Hosts in Argo CD to what has been saved in Ahoy git settings"></button>
         <button pButton pRipple label="Test" icon="pi pi-question" class="p-button-info mr-2 mb-2" (click)="test()" [disabled]="settingsForm.invalid"></button>
       </ng-template>
     </p-toolbar>

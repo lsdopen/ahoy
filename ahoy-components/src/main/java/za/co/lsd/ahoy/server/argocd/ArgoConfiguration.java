@@ -27,6 +27,7 @@ import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContexts;
@@ -65,6 +66,7 @@ public class ArgoConfiguration {
 		CloseableHttpClient httpClient = HttpClients.custom()
 			.setSSLSocketFactory(socketFactory)
 			.setConnectionManager(connectionManager)
+			.setRetryHandler(new DefaultHttpRequestRetryHandler(3, true))
 			.build();
 
 		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);

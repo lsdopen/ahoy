@@ -66,7 +66,6 @@ public class ReleaseManager {
 			}
 
 			argoClient.upsertRepository();
-			argoClient.createRepositoryCertificates();
 
 			ArgoApplication argoApplication = buildApplication(environmentRelease, releaseVersion);
 			String applicationName = argoApplication.getMetadata().getName();
