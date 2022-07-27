@@ -321,8 +321,9 @@ public class ReleaseServiceTest {
 		ApplicationEnvironmentConfig savedEnvironmentConfig = applicationEnvironmentConfigArgumentCaptor.getValue();
 		assertEquals(new ApplicationDeploymentId(environmentRelease.getId(), resultReleaseVersion.getId(), applicationVersion.getId()), savedEnvironmentConfig.getId(),
 			"Environment config deployment ID incorrect; this means the config is not related to the correct entity");
-		assertEquals("myapp1-route", savedEnvironmentConfig.getSpec().getRouteHostname(), "Environment config route incorrect");
-		assertEquals(8080, savedEnvironmentConfig.getSpec().getRouteTargetPort(), "Environment config port incorrect");
+		assertEquals(1, savedEnvironmentConfig.getSpec().getRoutes().size(), "Environment config should have 1 route");
+		assertEquals("myapp1-route", savedEnvironmentConfig.getSpec().getRoutes().get(0).getHostname(), "Environment config route incorrect");
+		assertEquals(8080, savedEnvironmentConfig.getSpec().getRoutes().get(0).getTargetPort(), "Environment config port incorrect");
 	}
 
 	@Test
@@ -537,8 +538,9 @@ public class ReleaseServiceTest {
 
 		assertEquals(new ApplicationDeploymentId(duplicatedEnvironmentRelease.getId(), duplicatedReleaseVersion.getId(), applicationVersion.getId()), savedEnvironmentConfig.getId(),
 			"Environment config deployment ID incorrect; this means the config is not related to the correct entity");
-		assertEquals("myapp1-route", savedEnvironmentConfig.getSpec().getRouteHostname(), "Environment config route incorrect");
-		assertEquals(8080, savedEnvironmentConfig.getSpec().getRouteTargetPort(), "Environment config port incorrect");
+		assertEquals(1, savedEnvironmentConfig.getSpec().getRoutes().size(), "Environment config should have 1 route");
+		assertEquals("myapp1-route", savedEnvironmentConfig.getSpec().getRoutes().get(0).getHostname(), "Environment config route incorrect");
+		assertEquals(8080, savedEnvironmentConfig.getSpec().getRoutes().get(0).getTargetPort(), "Environment config port incorrect");
 	}
 
 	@Test
@@ -656,8 +658,9 @@ public class ReleaseServiceTest {
 		ApplicationEnvironmentConfig savedEnvironmentConfig = applicationEnvironmentConfigArgumentCaptor.getValue();
 		assertEquals(new ApplicationDeploymentId(resultEnvironmentRelease.getId(), releaseVersion.getId(), applicationVersion.getId()), savedEnvironmentConfig.getId(),
 			"Environment config deployment ID incorrect; this means the config is not related to the correct entity");
-		assertEquals("myapp1-route", savedEnvironmentConfig.getSpec().getRouteHostname(), "Environment config route incorrect");
-		assertEquals(8080, savedEnvironmentConfig.getSpec().getRouteTargetPort(), "Environment config port incorrect");
+		assertEquals(1, savedEnvironmentConfig.getSpec().getRoutes().size(), "Environment config should have 1 route");
+		assertEquals("myapp1-route", savedEnvironmentConfig.getSpec().getRoutes().get(0).getHostname(), "Environment config route incorrect");
+		assertEquals(8080, savedEnvironmentConfig.getSpec().getRoutes().get(0).getTargetPort(), "Environment config port incorrect");
 	}
 
 	@Test
@@ -696,8 +699,9 @@ public class ReleaseServiceTest {
 		ApplicationEnvironmentConfig savedEnvironmentConfig = applicationEnvironmentConfigArgumentCaptor.getValue();
 		assertEquals(new ApplicationDeploymentId(environmentRelease.getId(), releaseVersion.getId(), applicationVersion2.getId()), savedEnvironmentConfig.getId(),
 			"Environment config deployment ID incorrect; this means the config is not related to the correct entity");
-		assertEquals("myapp1-route", savedEnvironmentConfig.getSpec().getRouteHostname(), "Environment config route incorrect");
-		assertEquals(8080, savedEnvironmentConfig.getSpec().getRouteTargetPort(), "Environment config port incorrect");
+		assertEquals(1, savedEnvironmentConfig.getSpec().getRoutes().size(), "Environment config should have 1 route");
+		assertEquals("myapp1-route", savedEnvironmentConfig.getSpec().getRoutes().get(0).getHostname(), "Environment config route incorrect");
+		assertEquals(8080, savedEnvironmentConfig.getSpec().getRoutes().get(0).getTargetPort(), "Environment config port incorrect");
 	}
 
 	@Test

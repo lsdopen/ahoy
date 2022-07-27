@@ -16,9 +16,12 @@
 
 package za.co.lsd.ahoy.server.applications;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -27,8 +30,15 @@ public class ApplicationEnvironmentSpec {
 	private Integer replicas;
 
 	private boolean routeEnabled;
+	private List<ApplicationRoute> routes = new ArrayList<>();
+
+	@Deprecated(since = "0.16.0", forRemoval = true)
+	@JsonIgnore
 	private String routeHostname;
+	@Deprecated(since = "0.16.0", forRemoval = true)
+	@JsonIgnore
 	private Integer routeTargetPort;
+
 	private boolean tls;
 	private String tlsSecretName;
 
@@ -47,16 +57,15 @@ public class ApplicationEnvironmentSpec {
 	private boolean resourcesEnabled;
 	private ApplicationResources resources;
 
-	public static ApplicationEnvironmentSpec newSummarySpec(Boolean routeEnabled, String routeHostname) {
+	public static ApplicationEnvironmentSpec newSummarySpec(Boolean routeEnabled, List<ApplicationRoute> routes) {
 		ApplicationEnvironmentSpec newSummarySpec = new ApplicationEnvironmentSpec();
 		newSummarySpec.setRouteEnabled(routeEnabled);
-		newSummarySpec.setRouteHostname(routeHostname);
+		newSummarySpec.setRoutes(routes);
 		return newSummarySpec;
 	}
 
 	public ApplicationEnvironmentSpec(String routeHostname, Integer routeTargetPort) {
 		this.routeEnabled = routeHostname != null && routeTargetPort != null;
-		this.routeHostname = routeHostname;
-		this.routeTargetPort = routeTargetPort;
+		this.routes = Collections.singletonList(new ApplicationRoute(routeHostname, routeTargetPort));
 	}
 }

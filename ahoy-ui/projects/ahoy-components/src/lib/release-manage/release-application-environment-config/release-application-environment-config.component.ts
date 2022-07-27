@@ -28,7 +28,6 @@ import {Environment} from '../../environments/environment';
 import {Release, ReleaseVersion} from '../../releases/release';
 import {ReleaseService} from '../../releases/release.service';
 import {LoggerService} from '../../util/logger.service';
-import {RouteHostnameResolver} from '../route-hostname-resolver';
 
 @Component({
   selector: 'app-release-application-environment-config',
@@ -36,7 +35,6 @@ import {RouteHostnameResolver} from '../route-hostname-resolver';
   styleUrls: ['./release-application-environment-config.component.scss']
 })
 export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
-  private exampleRouteHost: string;
   environmentConfig: ApplicationEnvironmentConfig;
   environmentRelease: EnvironmentRelease;
   releaseVersion: ReleaseVersion;
@@ -78,13 +76,8 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
         }))
       .subscribe((config) => {
         this.environmentConfig = config;
-        this.exampleRouteHost = '${release_name}-${application_name}-${environment_name}.${cluster_host}';
         this.setBreadcrumb();
       });
-  }
-
-  public resolveRouteHostname(): string {
-    return RouteHostnameResolver.resolve(this.environmentRelease, this.applicationVersion, this.environmentConfig.spec.routeHostname);
   }
 
   private setBreadcrumb() {
@@ -108,12 +101,6 @@ export class ReleaseApplicationEnvironmentConfigComponent implements OnInit {
 
   cancel() {
     this.location.back();
-  }
-
-  routeSelectedChange() {
-    if (this.environmentConfig.spec.routeEnabled && !this.environmentConfig.spec.routeHostname) {
-      this.environmentConfig.spec.routeHostname = this.exampleRouteHost;
-    }
   }
 
   tlsSecrets(): ApplicationSecret[] {

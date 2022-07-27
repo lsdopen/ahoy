@@ -119,8 +119,7 @@ export class ApplicationEnvironmentConfig {
 export class ApplicationEnvironmentSpec {
   replicas = 1;
   routeEnabled = false;
-  routeHostname: string;
-  routeTargetPort: number;
+  routes: ApplicationRoute[] = [];
   tls: boolean;
   tlsSecretName: string;
   environmentVariablesEnabled = false;
@@ -133,6 +132,16 @@ export class ApplicationEnvironmentSpec {
   secrets: ApplicationSecret[] = [];
   resourcesEnabled = false;
   resources = new ApplicationResources();
+}
+
+export class ApplicationRoute {
+  hostname: string;
+  targetPort: number;
+
+  constructor(hostname: string, targetPort: number) {
+    this.hostname = hostname;
+    this.targetPort = targetPort;
+  }
 }
 
 export class ApplicationEnvironmentConfigId {

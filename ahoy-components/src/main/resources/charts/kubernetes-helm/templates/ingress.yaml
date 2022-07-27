@@ -16,14 +16,16 @@ spec:
     secretName: {{ .glob.releaseName }}-{{ .app.name }}-{{ .app.tlsSecretName }}
   {{- end }}
   rules:
-  - host: {{ .app.routeHostname }}
+  {{- range $route := .app.routes }}
+  - host: {{ $route.hostname }}
     http:
       paths:
         - path: /
           pathType: Prefix
           backend:
             service:
-              name: {{ .glob.releaseName }}-{{ .app.name }}
+              name: {{ $.glob.releaseName }}-{{ $.app.name }}
               port:
-                number: {{ .app.routeTargetPort }}
+                number: {{ $route.targetPort }}
+  {{- end }}
 {{- end -}}

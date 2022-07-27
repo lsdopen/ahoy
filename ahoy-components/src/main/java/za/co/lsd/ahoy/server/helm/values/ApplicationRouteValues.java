@@ -17,34 +17,13 @@
 package za.co.lsd.ahoy.server.helm.values;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-import java.util.Map;
-
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApplicationValues {
-	public String name;
-	public String version;
-	public String dockerConfigJson;
-	public Integer replicas;
-	public Boolean routeEnabled;
-	public List<ApplicationRouteValues> routes;
-	public Boolean tls;
-	public String tlsSecretName;
-	public Boolean configFilesEnabled;
-	public Map<String, ApplicationConfigFileValues> configFiles;
-	public String configFileHashes;
-	public String configPath;
-	public Boolean volumesEnabled;
-	public Map<String, ApplicationVolumeValues> volumes;
-	public Boolean secretsEnabled;
-	public Map<String, ApplicationSecretValues> secrets;
-	public Map<String, ContainerValues> containers;
-	public Map<String, ContainerValues> initContainers;
+public class ApplicationRouteValues {
+	public String hostname;
+	public Integer targetPort;
 }

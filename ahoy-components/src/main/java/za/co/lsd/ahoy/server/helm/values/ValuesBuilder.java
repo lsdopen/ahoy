@@ -35,9 +35,7 @@ import za.co.lsd.ahoy.server.util.HashUtil;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -296,12 +294,20 @@ public class ValuesBuilder {
 
 	private void buildRoute(ApplicationValues.ApplicationValuesBuilder builder, EnvironmentRelease environmentRelease, ApplicationVersion applicationVersion, ApplicationEnvironmentConfig environmentConfig) {
 		if (environmentConfig != null) {
-			if (environmentConfig.routeEnabled() && environmentConfig.hasRoute()) {
+			if (environmentConfig.routeEnabled() && environmentConfig.hasRoutes()) {
 
 				ApplicationEnvironmentSpec environmentSpec = environmentConfig.getSpec();
+				List<ApplicationRoute> routes = environmentSpec.getRoutes();
+				List<ApplicationRouteValues> routeValues = new ArrayList<>();
+				for (ApplicationRoute applicationRoute : routes) {
+					routeValues.add(
+						new ApplicationRouteValues(
+							routeHostnameResolver.resolve(environmentRelease, applicationVersion.getApplication(), applicationRoute.getHostname()),
+							applicationRoute.getTargetPort()));
+				}
+
 				builder
-					.routeHostname(routeHostnameResolver.resolve(environmentRelease, applicationVersion.getApplication(), environmentSpec.getRouteHostname()))
-					.routeTargetPort(environmentSpec.getRouteTargetPort())
+					.routes(routeValues)
 					.tls(environmentSpec.isTls())
 					.tlsSecretName(environmentSpec.getTlsSecretName());
 			}

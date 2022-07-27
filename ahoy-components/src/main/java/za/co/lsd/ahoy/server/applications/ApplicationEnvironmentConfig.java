@@ -63,8 +63,8 @@ public class ApplicationEnvironmentConfig {
 		return spec != null && spec.isRouteEnabled();
 	}
 
-	public boolean hasRoute() {
-		return spec != null && spec.getRouteHostname() != null && !spec.getRouteHostname().trim().isEmpty() && spec.getRouteTargetPort() != null;
+	public boolean hasRoutes() {
+		return spec != null && spec.getRoutes() != null && !spec.getRoutes().isEmpty();
 	}
 
 	public boolean environmentVariablesEnabled() {
@@ -108,7 +108,7 @@ public class ApplicationEnvironmentConfig {
 	}
 
 	public ApplicationEnvironmentSpec summarySpec() {
-		return ApplicationEnvironmentSpec.newSummarySpec(spec.isRouteEnabled(), spec.getRouteHostname());
+		return ApplicationEnvironmentSpec.newSummarySpec(spec.isRouteEnabled(), spec.getRoutes());
 	}
 
 	@Override

@@ -100,7 +100,7 @@ public class TemplateWriter {
 				addTemplate(application, "service", templatesPath, trackedTemplates);
 			}
 
-			if (applicationEnvironmentConfig.map(e -> e.routeEnabled() && e.hasRoute()).orElse(false)) {
+			if (applicationEnvironmentConfig.map(e -> e.routeEnabled() && e.hasRoutes()).orElse(false)) {
 				addTemplate(application, "ingress", templatesPath, trackedTemplates);
 			}
 		}
