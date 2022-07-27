@@ -16,6 +16,7 @@
 
 package za.co.lsd.ahoy.server.applications;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -23,6 +24,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class ApplicationVolume {
 	@NotNull
 	private String name;
@@ -40,20 +42,15 @@ public class ApplicationVolume {
 	// Secret
 	private String secretName;
 
-	public ApplicationVolume(String name, String mountPath, String storageClassName, VolumeAccessMode accessMode, Long size, StorageUnit sizeStorageUnit) {
-		this.name = name;
-		this.mountPath = mountPath;
-		this.type = VolumeType.PersistentVolume;
-		this.storageClassName = storageClassName;
-		this.accessMode = accessMode;
-		this.size = size;
-		this.sizeStorageUnit = sizeStorageUnit;
+	public static ApplicationVolume createPersistentVolume(String name, String mountPath, String storageClassName, VolumeAccessMode accessMode, Long size, StorageUnit sizeStorageUnit) {
+		return new ApplicationVolume(name, mountPath, VolumeType.PersistentVolume, storageClassName, accessMode, size, sizeStorageUnit, null);
 	}
 
-	public ApplicationVolume(String name, String mountPath, String secretName) {
-		this.name = name;
-		this.mountPath = mountPath;
-		this.type = VolumeType.Secret;
-		this.secretName = secretName;
+	public static ApplicationVolume createSecretVolume(String name, String mountPath, String secretName) {
+		return new ApplicationVolume(name, mountPath, VolumeType.Secret, null, null, null, null, secretName);
+	}
+
+	public static ApplicationVolume createEmptyDirVolume(String name, String mountPath, Long size, StorageUnit sizeStorageUnit) {
+		return new ApplicationVolume(name, mountPath, VolumeType.EmptyDir, null, null, size, sizeStorageUnit, null);
 	}
 }

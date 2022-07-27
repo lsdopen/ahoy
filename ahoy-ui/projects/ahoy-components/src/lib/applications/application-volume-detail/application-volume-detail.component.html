@@ -39,7 +39,7 @@
     </div>
 
     <div class="field p-float-label">
-      <p-dropdown [options]="[{label: 'Persistent Volume', value: 'PersistentVolume'}, {label: 'Secret', value: 'Secret'}]"
+      <p-dropdown [options]="[{label: 'Persistent Volume', value: 'PersistentVolume'}, {label: 'Secret', value: 'Secret'}, {label: 'Empty Directory', value: 'EmptyDir'}]"
                   optionLabel="label" optionValue="value" [(ngModel)]="volume.type"
                   name="volumeType{{volumeIndex}}" required [autoDisplayFirst]="false"></p-dropdown>
       <label>Type</label>
@@ -56,6 +56,10 @@
         <p-dropdown [options]="['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany']" [(ngModel)]="volume.accessMode" name="volumeAccessMode{{volumeIndex}}" required></p-dropdown>
         <label>Access Mode</label>
       </div>
+
+    </div>
+
+    <div *ngIf="volume.type === 'PersistentVolume' || volume.type === 'EmptyDir'">
 
       <div class="p-formgroup-inline">
         <div class="field p-float-label">

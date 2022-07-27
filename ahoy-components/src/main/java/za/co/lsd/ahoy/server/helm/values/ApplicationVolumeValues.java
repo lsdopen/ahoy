@@ -42,24 +42,24 @@ public class ApplicationVolumeValues {
 			this.storageClassName = volume.getStorageClassName();
 			this.accessMode = volume.getAccessMode().name();
 			this.size = volume.getSize() == null ? null : volume.getSize() + volume.getSizeStorageUnit().name();
+
 		} else if (volume.getType().equals(VolumeType.Secret)) {
 			this.secretName = volume.getSecretName();
+
+		} else if (volume.getType().equals(VolumeType.EmptyDir)) {
+			this.size = volume.getSize() == null ? null : volume.getSize() + volume.getSizeStorageUnit().name();
 		}
 	}
 
-	public ApplicationVolumeValues(String name, String mountPath, String storageClassName, String accessMode, String size) {
-		this.name = name;
-		this.mountPath = mountPath;
-		this.type = VolumeType.PersistentVolume.name();
-		this.storageClassName = storageClassName;
-		this.accessMode = accessMode;
-		this.size = size;
+	public static ApplicationVolumeValues createPersistentVolumeValues(String name, String mountPath, String storageClassName, String accessMode, String size) {
+		return new ApplicationVolumeValues(name, mountPath, VolumeType.PersistentVolume.name(), storageClassName, accessMode, size, null);
 	}
 
-	public ApplicationVolumeValues(String name, String mountPath, String secretName) {
-		this.name = name;
-		this.mountPath = mountPath;
-		this.type = VolumeType.Secret.name();
-		this.secretName = secretName;
+	public static ApplicationVolumeValues createSecretVolumeValues(String name, String mountPath, String secretName) {
+		return new ApplicationVolumeValues(name, mountPath, VolumeType.Secret.name(), null, null, null, secretName);
+	}
+
+	public static ApplicationVolumeValues createEmptyDirVolumeValues(String name, String mountPath, String size) {
+		return new ApplicationVolumeValues(name, mountPath, VolumeType.EmptyDir.name(), null, null, size, null);
 	}
 }
