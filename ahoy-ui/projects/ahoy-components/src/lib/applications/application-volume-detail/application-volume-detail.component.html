@@ -47,9 +47,12 @@
 
     <div *ngIf="volume.type === 'PersistentVolume'">
 
-      <div class="field p-float-label">
-        <input pInputText id="volumeStorageClassName{{volumeIndex}}" [(ngModel)]="volume.storageClassName" name="volumeStorageClassName{{volumeIndex}}">
-        <label for="volumeStorageClassName{{volumeIndex}}">Storage class name</label>
+      <div class="field">
+        <div class="p-float-label">
+          <input pInputText id="volumeStorageClassName{{volumeIndex}}" [(ngModel)]="volume.storageClassName" name="volumeStorageClassName{{volumeIndex}}">
+          <label for="volumeStorageClassName{{volumeIndex}}">Storage class name</label>
+        </div>
+        <small class="p-message p-message-info">Default storage class is used if not set</small>
       </div>
 
       <div class="field p-float-label">

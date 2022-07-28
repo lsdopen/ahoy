@@ -12,7 +12,9 @@ metadata:
     environment: {{ $.glob.environment }}
   name: {{ $.glob.releaseName }}-{{ $.app.name }}-{{ $volume.name }}
 spec:
+  {{- if $volume.storageClassName }}
   storageClassName: {{ $volume.storageClassName }}
+  {{- end }}
   accessModes:
     - {{ $volume.accessMode }}
   resources:

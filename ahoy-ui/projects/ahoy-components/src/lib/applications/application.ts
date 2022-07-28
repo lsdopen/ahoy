@@ -98,7 +98,7 @@ export class ApplicationVolume {
   name: string;
   mountPath: string;
   type: string;
-  storageClassName = 'standard';
+  storageClassName;
   accessMode = 'ReadWriteOnce';
   size: number;
   sizeStorageUnit = 'Gi';
