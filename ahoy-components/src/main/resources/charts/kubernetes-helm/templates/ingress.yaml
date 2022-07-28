@@ -12,8 +12,12 @@ spec:
   {{- if .app.tls }}
   tls:
   - hosts:
-      - {{ .app.routeHostname }}
+      {{- range $route := .app.routes }}
+      - {{ $route.hostname }}
+      {{- end }}
+    {{- if .app.tlsSecretName }}
     secretName: {{ .glob.releaseName }}-{{ .app.name }}-{{ .app.tlsSecretName }}
+    {{- end }}
   {{- end }}
   rules:
   {{- range $route := .app.routes }}

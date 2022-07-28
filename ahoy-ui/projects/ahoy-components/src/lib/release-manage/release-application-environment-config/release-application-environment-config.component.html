@@ -66,7 +66,8 @@
 
                 <div class="field" *ngIf="environmentConfig.spec.tls">
                   <p-dropdown id="environmentConfigTlsSecretName" name="environmentConfigTlsSecretName" [options]="tlsSecrets()" [(ngModel)]="environmentConfig.spec.tlsSecretName"
-                              placeholder="Select Tls secret" optionLabel="name" optionValue="name" [showClear]="true" required></p-dropdown>
+                              placeholder="Select Tls secret" optionLabel="name" optionValue="name" [showClear]="true"></p-dropdown>
+                  <small class="p-message p-message-info">Default wildcard cert is used if not set</small>
                 </div>
 
               </div>
