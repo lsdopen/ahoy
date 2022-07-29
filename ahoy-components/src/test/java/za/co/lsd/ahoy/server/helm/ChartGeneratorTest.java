@@ -469,10 +469,10 @@ public class ChartGeneratorTest {
 		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
 
 		Map<String, EnvironmentVariableValues> expectedEnvironmentVariables = new LinkedHashMap<>();
-		expectedEnvironmentVariables.put("ENV", new EnvironmentVariableValues("ENV", "VAR"));
-		expectedEnvironmentVariables.put("SECRET_ENV", new EnvironmentVariableValues("SECRET_ENV", "my-secret", "secret-key"));
-		expectedEnvironmentVariables.put("DEV_ENV", new EnvironmentVariableValues("DEV_ENV", "VAR"));
-		expectedEnvironmentVariables.put("SECRET_DEV_ENV", new EnvironmentVariableValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
+		expectedEnvironmentVariables.put("ENV", EnvironmentVariableValues.createValues("ENV", "VAR"));
+		expectedEnvironmentVariables.put("SECRET_ENV", EnvironmentVariableValues.createSecretValues("SECRET_ENV", "my-secret", "secret-key"));
+		expectedEnvironmentVariables.put("DEV_ENV", EnvironmentVariableValues.createValues("DEV_ENV", "VAR"));
+		expectedEnvironmentVariables.put("SECRET_DEV_ENV", EnvironmentVariableValues.createSecretValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
 
 		Map<String, ApplicationConfigFileValues> configFiles = new LinkedHashMap<>();
 		configFiles.put("application-config-file-188deccf", new ApplicationConfigFileValues("application.properties", "greeting=hello"));
@@ -691,10 +691,10 @@ public class ChartGeneratorTest {
 		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
 
 		Map<String, EnvironmentVariableValues> expectedEnvironmentVariables = new LinkedHashMap<>();
-		expectedEnvironmentVariables.put("ENV", new EnvironmentVariableValues("ENV", "VAR"));
-		expectedEnvironmentVariables.put("SECRET_ENV", new EnvironmentVariableValues("SECRET_ENV", "my-secret", "secret-key"));
-		expectedEnvironmentVariables.put("DEV_ENV", new EnvironmentVariableValues("DEV_ENV", "VAR"));
-		expectedEnvironmentVariables.put("SECRET_DEV_ENV", new EnvironmentVariableValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
+		expectedEnvironmentVariables.put("ENV", EnvironmentVariableValues.createValues("ENV", "VAR"));
+		expectedEnvironmentVariables.put("SECRET_ENV", EnvironmentVariableValues.createSecretValues("SECRET_ENV", "my-secret", "secret-key"));
+		expectedEnvironmentVariables.put("DEV_ENV", EnvironmentVariableValues.createValues("DEV_ENV", "VAR"));
+		expectedEnvironmentVariables.put("SECRET_DEV_ENV", EnvironmentVariableValues.createSecretValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
 
 		Map<String, ApplicationConfigFileValues> configFiles = new LinkedHashMap<>();
 		configFiles.put("application-config-file-188deccf", new ApplicationConfigFileValues("application.properties", "greeting=hello"));
@@ -933,10 +933,10 @@ public class ChartGeneratorTest {
 		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
 
 		Map<String, EnvironmentVariableValues> expectedEnvironmentVariables = new LinkedHashMap<>();
-		expectedEnvironmentVariables.put("ENV", new EnvironmentVariableValues("ENV", "VAR"));
-		expectedEnvironmentVariables.put("SECRET_ENV", new EnvironmentVariableValues("SECRET_ENV", "my-secret", "secret-key"));
-		expectedEnvironmentVariables.put("DEV_ENV", new EnvironmentVariableValues("DEV_ENV", "VAR"));
-		expectedEnvironmentVariables.put("SECRET_DEV_ENV", new EnvironmentVariableValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
+		expectedEnvironmentVariables.put("ENV", EnvironmentVariableValues.createValues("ENV", "VAR"));
+		expectedEnvironmentVariables.put("SECRET_ENV", EnvironmentVariableValues.createSecretValues("SECRET_ENV", "my-secret", "secret-key"));
+		expectedEnvironmentVariables.put("DEV_ENV", EnvironmentVariableValues.createValues("DEV_ENV", "VAR"));
+		expectedEnvironmentVariables.put("SECRET_DEV_ENV", EnvironmentVariableValues.createSecretValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
 
 		Map<String, ApplicationConfigFileValues> configFiles = new LinkedHashMap<>();
 		configFiles.put("application-config-file-188deccf", new ApplicationConfigFileValues("application.properties", "greeting=hello"));
@@ -1118,8 +1118,8 @@ public class ChartGeneratorTest {
 		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
 
 		Map<String, EnvironmentVariableValues> expectedEnvironmentVariables = new LinkedHashMap<>();
-		expectedEnvironmentVariables.put("DEV_ENV", new EnvironmentVariableValues("DEV_ENV", "VAR"));
-		expectedEnvironmentVariables.put("SECRET_DEV_ENV", new EnvironmentVariableValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
+		expectedEnvironmentVariables.put("DEV_ENV", EnvironmentVariableValues.createValues("DEV_ENV", "VAR"));
+		expectedEnvironmentVariables.put("SECRET_DEV_ENV", EnvironmentVariableValues.createSecretValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
 
 		Map<String, ApplicationConfigFileValues> configFiles = new LinkedHashMap<>();
 		configFiles.put("application-config-file-c1fcd7e5", new ApplicationConfigFileValues("application-dev.properties", "anothergreeting=hello"));

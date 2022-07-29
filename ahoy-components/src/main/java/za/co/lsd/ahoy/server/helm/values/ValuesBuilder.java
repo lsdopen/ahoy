@@ -264,21 +264,21 @@ public class ValuesBuilder {
 		ResourcesValues resourcesValues = new ResourcesValues();
 
 		if (containerSpec.resourcesEnabled() && containerSpec.hasResources()) {
-			resourcesValues.spec(containerSpec.getResources());
+			resourcesValues.setResources(containerSpec.getResources());
 		}
 
 		if (environmentConfig != null) {
 			ApplicationEnvironmentSpec environmentSpec = environmentConfig.getSpec();
 
 			if (environmentConfig.resourcesEnabled() && environmentConfig.hasResources()) {
-				resourcesValues.spec(environmentSpec.getResources());
+				resourcesValues.setResources(environmentSpec.getResources());
 			}
 		}
 
 		builder
 			.resourcesEnabled(containerSpec.resourcesEnabled() || (environmentConfig != null && environmentConfig.resourcesEnabled()));
 
-		if (resourcesValues.hasValues()) {
+		if (resourcesValues.hasResources()) {
 			builder.resources(resourcesValues);
 		}
 	}
@@ -321,7 +321,7 @@ public class ValuesBuilder {
 			Map<String, String> hashes = new LinkedHashMap<>();
 			for (Map.Entry<String, ApplicationConfigFileValues> entry : configFiles.entrySet()) {
 				ApplicationConfigFileValues configFile = entry.getValue();
-				hashes.put(configFile.name, HashUtil.hash(configFile.content));
+				hashes.put(configFile.getName(), HashUtil.hash(configFile.getContent()));
 			}
 			return objectMapper.writeValueAsString(hashes);
 		} else {

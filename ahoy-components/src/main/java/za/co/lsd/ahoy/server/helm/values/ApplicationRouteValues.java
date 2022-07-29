@@ -24,6 +24,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApplicationRouteValues {
-	public String hostname;
-	public Integer targetPort;
+	private String hostname;
+	private Integer targetPort;
 }
