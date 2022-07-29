@@ -20,21 +20,28 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class ApplicationEnvironmentSpec {
+public class ApplicationEnvironmentSpec implements Serializable {
 	private Integer replicas;
 
 	private boolean routeEnabled;
 	private List<ApplicationRoute> routes = new ArrayList<>();
 
+	/**
+	 * @deprecated no longer used in favout of list of routes
+	 */
 	@Deprecated(since = "0.16.0", forRemoval = true)
 	@JsonIgnore
 	private String routeHostname;
+	/**
+	 * @deprecated no longer used in favout of list of routes
+	 */
 	@Deprecated(since = "0.16.0", forRemoval = true)
 	@JsonIgnore
 	private Integer routeTargetPort;

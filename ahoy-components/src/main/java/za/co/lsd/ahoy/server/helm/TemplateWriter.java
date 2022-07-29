@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static za.co.lsd.ahoy.server.helm.HelmUtils.*;
 
@@ -143,13 +144,12 @@ public class TemplateWriter {
 	}
 
 	private void pruneTemplates(List<Path> trackedTemplates, Path templatesPath) throws IOException {
-		List<Path> extraTemplates = Files.list(templatesPath)
-			.filter(path -> !trackedTemplates.contains(path))
-			.collect(Collectors.toList());
-
-		for (Path extraTemplate : extraTemplates) {
-			log.debug("Deleting extra template file: {}", extraTemplate);
-			Files.deleteIfExists(extraTemplate);
+		try (Stream<Path> templates = Files.list(templatesPath)) {
+			List<Path> extraTemplates = templates.filter(path -> !trackedTemplates.contains(path)).collect(Collectors.toList());
+			for (Path extraTemplate : extraTemplates) {
+				log.debug("Deleting extra template file: {}", extraTemplate);
+				Files.deleteIfExists(extraTemplate);
+			}
 		}
 	}
 }

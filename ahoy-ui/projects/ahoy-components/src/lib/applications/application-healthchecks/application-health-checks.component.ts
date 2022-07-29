@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-import {AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {AfterContentChecked, ChangeDetectorRef, Component, Input} from '@angular/core';
 import {ControlContainer, NgForm} from '@angular/forms';
 import {ContainerSpec} from '../application';
 
@@ -24,7 +24,7 @@ import {ContainerSpec} from '../application';
   styleUrls: ['./application-health-checks.component.scss'],
   viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
 })
-export class ApplicationHealthChecksComponent implements OnInit, AfterContentChecked {
+export class ApplicationHealthChecksComponent implements AfterContentChecked {
   @Input() parentForm: NgForm;
   @Input() containerSpec: ContainerSpec;
   @Input() containerSpecIndex: number;
@@ -32,11 +32,7 @@ export class ApplicationHealthChecksComponent implements OnInit, AfterContentChe
   constructor(private cd: ChangeDetectorRef) {
   }
 
-  ngOnInit(): void {
-  }
-
   ngAfterContentChecked(): void {
     this.cd.detectChanges();
   }
-
 }

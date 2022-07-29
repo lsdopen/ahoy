@@ -25,6 +25,4 @@ export class ThemeService {
   inputStyle = 'filled';
   ripple = true;
   isRTL = false;
-
-  constructor() { }
 }

@@ -27,6 +27,7 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
@@ -34,7 +35,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class ApplicationReleaseStatus {
+public class ApplicationReleaseStatus implements Serializable {
 	@EmbeddedId
 	private ApplicationDeploymentId id;
 
