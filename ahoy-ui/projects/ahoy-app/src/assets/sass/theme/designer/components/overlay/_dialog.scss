@@ -46,6 +46,11 @@
         background: $overlayContentBg;
         color: $panelContentTextColor;
         padding: $dialogContentPadding;
+
+        &:last-of-type {
+            border-bottom-right-radius: $borderRadius;
+            border-bottom-left-radius: $borderRadius;
+        }
     }
 
     .p-dialog-footer {

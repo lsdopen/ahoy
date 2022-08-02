@@ -54,4 +54,8 @@
             margin: 0;
         }
     }
+
+    .p-menuitem-badge {
+        @include menuitem-badge();
+    }
 }

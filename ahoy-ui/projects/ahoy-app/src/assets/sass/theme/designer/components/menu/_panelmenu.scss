@@ -150,4 +150,7 @@
         }
     }
 
+    .p-menuitem-badge {
+        @include menuitem-badge();
+    }
 }

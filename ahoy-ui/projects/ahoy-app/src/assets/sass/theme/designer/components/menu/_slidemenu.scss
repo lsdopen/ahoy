@@ -68,4 +68,8 @@
         padding: $menuitemPadding;
 	    color: $menuitemTextColor;
     }
+
+    .p-menuitem-badge {
+        @include menuitem-badge();
+    }
 }

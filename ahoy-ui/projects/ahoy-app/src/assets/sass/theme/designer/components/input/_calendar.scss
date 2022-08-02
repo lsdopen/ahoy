@@ -250,6 +250,24 @@ p-calendar.ng-dirty.ng-invalid > .p-calendar > .p-inputtext {
 
 }
 
+p-calendar.p-calendar-clearable {
+    .p-inputtext {
+        padding-right: nth($inputPadding, 2) * 2 + $primeIconFontSize;
+    }
+
+    .p-calendar-clear-icon {
+        color: $inputIconColor;
+        right: nth($inputPadding, 2);
+    }
+}
+
+p-calendar.p-calendar-clearable.p-calendar-w-btn {
+    .p-calendar-clear-icon {
+        color: $inputIconColor;
+        right: $buttonIconOnlyWidth + nth($inputPadding, 2);
+    }
+}
+
 @media screen and (max-width: $calendarBreakpoint) {
     .p-datepicker {
         table {

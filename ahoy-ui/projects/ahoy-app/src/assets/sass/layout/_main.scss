@@ -155,6 +155,7 @@ body {
         &.p-accordion p-accordiontab {
             .p-accordion-tab {
                 margin-top: 1rem;
+                overflow: hidden;
             }
 
             &:first-child {

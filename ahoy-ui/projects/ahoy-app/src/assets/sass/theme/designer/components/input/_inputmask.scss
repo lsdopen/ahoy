@@ -14,6 +14,19 @@
  *    limitations under the License.
  */
 
+@use 'sass:math';
+
 p-inputmask.ng-dirty.ng-invalid > .p-inputtext {
     @include invalid-input();
+}
+
+p-inputmask.p-inputmask-clearable {
+    .p-inputtext {
+        padding-right: nth($inputPadding, 2) * 2 + $primeIconFontSize;
+    }
+
+    .p-inputmask-clear-icon {
+        color: $inputIconColor;
+        right: nth($inputPadding, 2);
+    }
 }
