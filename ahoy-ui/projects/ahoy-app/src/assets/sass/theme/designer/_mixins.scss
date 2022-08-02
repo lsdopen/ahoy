@@ -203,3 +203,17 @@
         @content;
     }
 }
+
+@mixin menuitem-badge {
+    background: $badgeBg;
+    color: $badgeTextColor;
+    font-size: $badgeFontSize;
+    font-weight: $badgeFontWeight;
+    min-width: $badgeMinWidth;
+    height: $badgeHeight;
+    line-height: $badgeHeight;
+    border-radius: $borderRadius;
+    margin-left: $inlineSpacing;
+    padding-left: $inlineSpacing;
+    padding-right: $inlineSpacing;
+}

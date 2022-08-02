@@ -79,6 +79,43 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
     border-radius: $borderRadius;
     box-shadow: $inputOverlayShadow;
 
+    .p-treeselect-header {
+        padding: $inputListHeaderPadding;
+        border-bottom: $inputListHeaderBorder;
+        color: $inputListHeaderTextColor;
+        background: $inputOverlayHeaderBg;
+        margin: $inputListHeaderMargin;
+        border-top-right-radius: $borderRadius;
+        border-top-left-radius: $borderRadius;
+
+        .p-treeselect-filter-container {
+            margin-right: $inlineSpacing;
+
+            .p-treeselect-filter {
+                padding-right: nth($inputPadding, 2) + $primeIconFontSize;
+            }
+
+            .p-treeselect-filter-icon {
+                right: nth($inputPadding, 2);
+                color: $inputIconColor;
+            }
+
+            &.p-treeselect-clearable-filter {
+                .p-treeselect-filter {
+                    padding-right: 2 * (nth($inputPadding, 2) + $primeIconFontSize);
+                }
+
+                .p-treeselect-filter-clear-icon {
+                    right: (2 * nth($inputPadding, 2)) + $primeIconFontSize;
+                }
+            }
+        }
+
+        .p-treeselect-close {
+            @include action-icon();
+        }
+    }
+
     .p-treeselect-items-wrapper {
         .p-tree {
             border: 0 none;
@@ -103,5 +140,16 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
         &:not(.p-disabled).p-focus {
             background-color: $inputFilledFocusBg;
         }
+    }
+}
+
+p-treeselect.p-treeselect-clearable {
+    .p-treeselect-label-container {
+        padding-right: nth($inputPadding, 2) + $primeIconFontSize;
+    }
+
+    .p-treeselect-clear-icon {
+        color: $inputIconColor;
+        right: $buttonIconOnlyWidth;
     }
 }
