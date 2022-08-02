@@ -5,7 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build-prod": "ng build --configuration production",
+    "build-prod": "ng build ahoy-app --configuration production",
     "build-components": "ng build ahoy-components",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
