@@ -19,12 +19,11 @@ package za.co.lsd.ahoy.server.applications;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class ContainerSpec implements Serializable {
+public class ContainerSpec {
 	protected ContainerType type = ContainerType.Container;
 	protected String name = "default";
 	protected String image;

@@ -20,12 +20,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApplicationRoute implements Serializable {
+public class ApplicationRoute {
 	private String hostname;
 	private Integer targetPort;
 }

@@ -29,7 +29,6 @@ import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,7 +37,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class EnvironmentRelease implements Serializable {
+public class EnvironmentRelease {
 
 	@EmbeddedId
 	private EnvironmentReleaseId id;

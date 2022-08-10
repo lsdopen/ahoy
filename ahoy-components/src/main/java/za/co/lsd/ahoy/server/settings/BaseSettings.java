@@ -18,10 +18,8 @@ package za.co.lsd.ahoy.server.settings;
 
 import lombok.Data;
 
-import java.io.Serializable;
-
 @Data
-public abstract class BaseSettings implements Serializable {
+public abstract class BaseSettings {
 	private final Settings.Type type;
 
 	protected BaseSettings(Settings.Type type) {

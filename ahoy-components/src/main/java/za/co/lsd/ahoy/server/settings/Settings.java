@@ -21,7 +21,6 @@ import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
@@ -30,7 +29,7 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class Settings implements Serializable {
+public class Settings {
 	@Id
 	@Enumerated(EnumType.STRING)
 	private Type type;

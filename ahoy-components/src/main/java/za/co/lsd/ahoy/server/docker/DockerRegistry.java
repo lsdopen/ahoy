@@ -20,11 +20,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.io.Serializable;
-
 @Data
 @NoArgsConstructor
-public class DockerRegistry implements Serializable {
+public class DockerRegistry {
 	private String name;
 	private String server;
 	@ToString.Exclude

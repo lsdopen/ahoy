@@ -28,7 +28,6 @@ import javax.persistence.Convert;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.*;
@@ -38,7 +37,7 @@ import static com.fasterxml.jackson.annotation.JsonProperty.Access.*;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class ApplicationEnvironmentConfig implements Serializable {
+public class ApplicationEnvironmentConfig {
 	@EmbeddedId
 	private ApplicationDeploymentId id;
 	@NotNull

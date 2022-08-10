@@ -20,14 +20,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class ApplicationEnvironmentSpec implements Serializable {
+public class ApplicationEnvironmentSpec {
 	private Integer replicas;
 
 	private boolean routeEnabled;

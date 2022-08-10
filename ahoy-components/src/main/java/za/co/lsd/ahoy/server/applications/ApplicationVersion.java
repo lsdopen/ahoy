@@ -27,7 +27,6 @@ import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -40,7 +39,7 @@ import static com.fasterxml.jackson.annotation.JsonProperty.Access.*;
 @ToString
 @RequiredArgsConstructor
 @Table(uniqueConstraints = @UniqueConstraint(name = "application_version", columnNames = {"application_id", "version"}))
-public class ApplicationVersion implements Serializable {
+public class ApplicationVersion {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

@@ -29,7 +29,6 @@ import za.co.lsd.ahoy.server.environments.Environment;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -41,7 +40,7 @@ import static com.fasterxml.jackson.annotation.JsonProperty.Access.*;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class Cluster implements Serializable {
+public class Cluster {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
