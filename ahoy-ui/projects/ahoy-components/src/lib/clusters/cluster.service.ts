@@ -89,11 +89,11 @@ export class ClusterService {
     );
   }
 
-  destroy(cluster: Cluster): Observable<Cluster> {
+  deleteCascading(cluster: Cluster): Observable<Cluster> {
     this.log.debug('deleting cluster: ', cluster);
 
     const id = cluster.id;
-    const url = `/data/clusters/destroy/${id}`;
+    const url = `/data/clusters/delete/${id}`;
 
     return this.restClient.delete<Cluster>(url, true).pipe(
       tap((deletedCluster) => {

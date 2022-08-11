@@ -112,3 +112,14 @@ p-cascadeselect.ng-dirty.ng-invalid > .p-cascadeselect {
         }
     }
 }
+
+p-cascadeselect.p-cascadeselect-clearable {
+    .p-cascadeselect-label {
+        padding-right: nth($inputPadding, 2);
+    }
+
+    .p-cascadeselect-clear-icon {
+        color: $inputIconColor;
+        right: $inputGroupAddOnMinWidth;
+    }
+}

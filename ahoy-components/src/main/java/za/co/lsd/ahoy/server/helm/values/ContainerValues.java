@@ -30,18 +30,18 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ContainerValues {
-	public String name;
-	public String image;
-	public Boolean commandArgsEnabled;
-	public String command;
-	public List<String> args;
-	public Boolean servicePortsEnabled;
-	public List<Integer> servicePorts;
-	public Boolean environmentVariablesEnabled;
-	public Map<String, EnvironmentVariableValues> environmentVariables;
-	public Boolean healthChecksEnabled;
-	public ApplicationProbe livenessProbe;
-	public ApplicationProbe readinessProbe;
-	public Boolean resourcesEnabled;
-	public ResourcesValues resources;
+	private String name;
+	private String image;
+	private Boolean commandArgsEnabled;
+	private String command;
+	private List<String> args;
+	private Boolean servicePortsEnabled;
+	private List<Integer> servicePorts;
+	private Boolean environmentVariablesEnabled;
+	private Map<String, EnvironmentVariableValues> environmentVariables;
+	private Boolean healthChecksEnabled;
+	private ApplicationProbe livenessProbe;
+	private ApplicationProbe readinessProbe;
+	private Boolean resourcesEnabled;
+	private ResourcesValues resources;
 }

@@ -18,5 +18,6 @@ package za.co.lsd.ahoy.server.applications;
 
 public enum VolumeType {
 	PersistentVolume,
-	Secret
+	Secret,
+	EmptyDir
 }

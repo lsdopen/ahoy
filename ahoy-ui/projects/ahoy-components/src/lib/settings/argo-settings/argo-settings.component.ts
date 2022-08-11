@@ -55,4 +55,11 @@ export class ArgoSettingsComponent implements OnInit {
   test() {
     this.settingsService.testArgoConnection(this.argoSettings).subscribe();
   }
+
+  updateKnownHosts() {
+    this.settingsService.updateArgoKnownHosts().subscribe(() => {
+      const text = `Updated SSH Known Hosts in Argo CD`;
+      this.notificationsService.notification(new Notification(text));
+    });
+  }
 }

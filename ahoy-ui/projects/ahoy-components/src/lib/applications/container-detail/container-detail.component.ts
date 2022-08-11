@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {ControlContainer, NgForm} from '@angular/forms';
 import {ApplicationSpec, ContainerSpec} from '../application';
 
@@ -24,7 +24,7 @@ import {ApplicationSpec, ContainerSpec} from '../application';
   styleUrls: ['./container-detail.component.css'],
   viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
 })
-export class ContainerDetailComponent implements OnInit {
+export class ContainerDetailComponent {
   @Input() parentForm: NgForm;
   @Input() applicationSpec: ApplicationSpec;
   @Input() containerSpec: ContainerSpec;
@@ -35,12 +35,6 @@ export class ContainerDetailComponent implements OnInit {
   editingArg: string;
   newServicePort: number;
   editingPort: number;
-
-  constructor() {
-  }
-
-  ngOnInit(): void {
-  }
 
   addArg() {
     if (this.newArg) {

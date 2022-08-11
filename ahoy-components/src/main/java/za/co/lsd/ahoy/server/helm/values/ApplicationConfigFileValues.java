@@ -25,8 +25,8 @@ import za.co.lsd.ahoy.server.applications.ApplicationConfigFile;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApplicationConfigFileValues {
-	public String name;
-	public String content;
+	private String name;
+	private String content;
 
 	public ApplicationConfigFileValues(ApplicationConfigFile content) {
 		this.name = content.getName();

@@ -24,15 +24,15 @@ import za.co.lsd.ahoy.server.applications.ApplicationResources;
 @Data
 @AllArgsConstructor
 public class ResourcesValues {
-	public final ResourceValue limits;
-	public final ResourceValue requests;
+	private ResourceValue limits;
+	private ResourceValue requests;
 
 	public ResourcesValues() {
 		limits = new ResourceValue();
 		requests = new ResourceValue();
 	}
 
-	public void spec(ApplicationResources resources) {
+	public void setResources(ApplicationResources resources) {
 		if (resources.getLimitCpu() != null)
 			limits.setCpu(resources.getLimitCpu() + "m");
 		if (resources.getLimitMemory() != null)
@@ -44,17 +44,20 @@ public class ResourcesValues {
 			requests.setMemory(resources.getRequestMemory() + resources.getRequestMemoryUnit().name());
 	}
 
-	public boolean hasValues() {
-		return limits.getCpu() != null || limits.getMemory() != null ||
-			requests.getCpu() != null || requests.getMemory() != null;
+	public boolean hasResources() {
+		return limits.hasResources() || requests.hasResources();
 	}
 
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
 	public static class ResourceValue {
-		public String cpu;
-		public String memory;
+		private String cpu;
+		private String memory;
+
+		public boolean hasResources() {
+			return cpu != null || memory != null;
+		}
 	}
 }
 

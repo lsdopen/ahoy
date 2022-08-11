@@ -59,6 +59,7 @@
             <th pSortableColumn="image">Image
               <p-sortIcon field="image"></p-sortIcon>
             </th>
+            <th>Routes</th>
             <th></th>
           </tr>
         </ng-template>
@@ -78,11 +79,14 @@
             <td><span class="p-column-title">Image</span>
               {{av.spec.image}}
             </td>
+            <td><span class="p-column-title">Routes</span>
+              <div *ngIf="hasRoute(av)">
+                <div *ngFor="let route of getRoutes(av)">
+                  <a [href]="route.url" target="_blank">{{route.hostname}}</a>
+                </div>
+              </div>
+            </td>
             <td>
-              <a *ngIf="hasRoute(av)" pButton pRipple icon="pi pi-external-link" class="p-button-rounded p-button-info mr-2"
-                 href="{{getRoute(av)}}" target="_blank"
-                 pTooltip="Open route: {{getRoute(av)}}"></a>
-
               <button pButton pRipple icon="pi pi-upload" class="p-button-rounded p-button-info mr-2"
                       (click)="upgradeApplication(av)"
                       pTooltip="Upgrade version"

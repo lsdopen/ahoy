@@ -28,9 +28,9 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Values {
-	public String host;
-	public String environment;
-	public String releaseName;
-	public String releaseVersion;
-	public Map<String, ApplicationValues> applications;
+	private String host;
+	private String environment;
+	private String releaseName;
+	private String releaseVersion;
+	private Map<String, ApplicationValues> applications;
 }

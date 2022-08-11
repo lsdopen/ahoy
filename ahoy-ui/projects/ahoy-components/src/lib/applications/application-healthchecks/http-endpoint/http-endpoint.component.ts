@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {ControlContainer, NgForm} from '@angular/forms';
 import {ApplicationProbe, ContainerSpec} from '../../application';
 
@@ -24,16 +24,10 @@ import {ApplicationProbe, ContainerSpec} from '../../application';
   styleUrls: ['./http-endpoint.component.scss'],
   viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
 })
-export class HttpEndpointComponent implements OnInit {
+export class HttpEndpointComponent {
   @Input() parentForm: NgForm;
   @Input() containerSpec: ContainerSpec;
   @Input() containerSpecIndex: number;
   @Input() probe: ApplicationProbe;
   @Input() probeName: string;
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
 }

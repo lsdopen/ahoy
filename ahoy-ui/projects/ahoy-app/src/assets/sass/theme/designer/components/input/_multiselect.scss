@@ -110,13 +110,7 @@
     }
 
     .p-multiselect-items {
-        &:not(.p-multiselect-virtualscroll) {
-            padding: $inputListPadding;
-        }
-
-        &.p-multiselect-virtualscroll .cdk-virtual-scroll-content-wrapper {
-            padding: $inputListPadding;
-        }
+        padding: $inputListPadding;
 
         .p-multiselect-item {
             margin: $inputListItemMargin;
@@ -178,5 +172,16 @@ p-multiselect.ng-dirty.ng-invalid > .p-multiselect {
         &:not(.p-disabled).p-focus {
             background-color: $inputFilledFocusBg;
         }
+    }
+}
+
+p-multiselect.p-multiselect-clearable {
+    .p-multiselect-label-container {
+        padding-right: nth($inputPadding, 2) + $primeIconFontSize;
+    }
+
+    .p-multiselect-clear-icon {
+        color: $inputIconColor;
+        right: $inputGroupAddOnMinWidth;
     }
 }

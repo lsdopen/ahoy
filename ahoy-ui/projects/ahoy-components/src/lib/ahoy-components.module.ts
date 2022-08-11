@@ -113,6 +113,7 @@ import {AutofocusDirective} from './util/autofocus.directive';
 import {UserRoleDirective} from './util/user-role.directive';
 import {ContainerDetailComponent} from './applications/container-detail/container-detail.component';
 import {ContainerLogsComponent} from './release-manage/release-resources/container-logs/container-logs.component';
+import {ApplicationRoutesComponent} from './release-manage/release-application-environment-config/application-routes/application-routes.component';
 
 @NgModule({
   declarations: [
@@ -129,6 +130,7 @@ import {ContainerLogsComponent} from './release-manage/release-resources/contain
     ApplicationEnvVariablesComponent,
     ApplicationHealthChecksComponent,
     ApplicationResourcesComponent,
+    ApplicationRoutesComponent,
     ApplicationSecretDataComponent,
     ApplicationSecretsComponent,
     ApplicationVersionDetailComponent,

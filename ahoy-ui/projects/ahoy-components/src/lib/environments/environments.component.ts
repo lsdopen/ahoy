@@ -82,7 +82,7 @@ export class EnvironmentsComponent implements OnInit {
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
-      this.environmentService.destroy(environment)
+      this.environmentService.deleteCascading(environment)
         .subscribe(() => this.getEnvironments());
     });
   }

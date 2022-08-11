@@ -21,6 +21,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -28,23 +29,22 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApplicationValues {
-	public String name;
-	public String version;
-	public String dockerConfigJson;
-	public Integer replicas;
-	public Boolean routeEnabled;
-	public String routeHostname;
-	public Integer routeTargetPort;
-	public Boolean tls;
-	public String tlsSecretName;
-	public Boolean configFilesEnabled;
-	public Map<String, ApplicationConfigFileValues> configFiles;
-	public String configFileHashes;
-	public String configPath;
-	public Boolean volumesEnabled;
-	public Map<String, ApplicationVolumeValues> volumes;
-	public Boolean secretsEnabled;
-	public Map<String, ApplicationSecretValues> secrets;
-	public Map<String, ContainerValues> containers;
-	public Map<String, ContainerValues> initContainers;
+	private String name;
+	private String version;
+	private String dockerConfigJson;
+	private Integer replicas;
+	private Boolean routeEnabled;
+	private List<ApplicationRouteValues> routes;
+	private Boolean tls;
+	private String tlsSecretName;
+	private Boolean configFilesEnabled;
+	private Map<String, ApplicationConfigFileValues> configFiles;
+	private String configFileHashes;
+	private String configPath;
+	private Boolean volumesEnabled;
+	private Map<String, ApplicationVolumeValues> volumes;
+	private Boolean secretsEnabled;
+	private Map<String, ApplicationSecretValues> secrets;
+	private Map<String, ContainerValues> containers;
+	private Map<String, ContainerValues> initContainers;
 }

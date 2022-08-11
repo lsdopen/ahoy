@@ -62,7 +62,7 @@ export class ClustersComponent implements OnInit {
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
-      this.clusterService.destroy(cluster)
+      this.clusterService.deleteCascading(cluster)
         .subscribe(() => this.getAllClusters());
     });
   }

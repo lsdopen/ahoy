@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    manager: ahoy
+    releaseName: {{ .Values.releaseName }}
+    environment: {{ .Values.environment }}
+  name: {{ .Values.releaseName }}-{{ .Values.environment }}

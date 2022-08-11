@@ -45,16 +45,11 @@ public class EnvironmentVariableValues {
 		}
 	}
 
-	public EnvironmentVariableValues(String key, String value) {
-		this.type = EnvironmentVariableType.Value.name();
-		this.key = key;
-		this.value = value;
+	public static EnvironmentVariableValues createValues(String key, String value) {
+		return new EnvironmentVariableValues(key, EnvironmentVariableType.Value.name(), value, null, null);
 	}
 
-	public EnvironmentVariableValues(String key, String secretName, String secretKey) {
-		this.type = EnvironmentVariableType.Secret.name();
-		this.key = key;
-		this.secretName = secretName;
-		this.secretKey = secretKey;
+	public static EnvironmentVariableValues createSecretValues(String key, String secretName, String secretKey) {
+		return new EnvironmentVariableValues(key, EnvironmentVariableType.Secret.name(), null, secretName, secretKey);
 	}
 }

@@ -373,37 +373,42 @@ public class ArgoClient {
 		}
 	}
 
-	public void createRepositoryCertificates() throws JSchException {
-		GitSettings gitSettings = settingsProvider.getGitSettings();
+	public void upsertSSHKnownHosts() {
+		try {
+			GitSettings gitSettings = settingsProvider.getGitSettings();
 
-		final JSch jsch = new JSch();
-		String knownHosts = gitSettings.getSshKnownHosts();
-		jsch.setKnownHosts(IOUtils.toInputStream(knownHosts, StandardCharsets.US_ASCII));
-		HostKeyRepository hostKeyRepository = jsch.getHostKeyRepository();
-		List<RepositoryCertificate> items = Arrays.stream(hostKeyRepository.getHostKey())
-			.map(hostKey -> RepositoryCertificate.builder()
-				.serverName(hostKey.getHost())
-				.certType("ssh")
-				.certData(Base64.getEncoder().encodeToString(hostKey.getKey().getBytes(StandardCharsets.US_ASCII)))
-				.certSubType(hostKey.getType())
-				.certInfo("")
-				.build()).collect(Collectors.toList());
-		createRepositoryCertificates(new RepositoryCertificates(items));
+			final JSch jsch = new JSch();
+			String knownHosts = gitSettings.getSshKnownHosts();
+			jsch.setKnownHosts(IOUtils.toInputStream(knownHosts, StandardCharsets.US_ASCII));
+			HostKeyRepository hostKeyRepository = jsch.getHostKeyRepository();
+			List<RepositoryCertificate> items = Arrays.stream(hostKeyRepository.getHostKey())
+				.map(hostKey -> RepositoryCertificate.builder()
+					.serverName(hostKey.getHost())
+					.certType("ssh")
+					.certData(Base64.getEncoder().encodeToString(hostKey.getKey().getBytes(StandardCharsets.US_ASCII)))
+					.certSubType(hostKey.getType())
+					.certInfo("")
+					.build()).collect(Collectors.toList());
+			upsertRepositoryCertificates(new RepositoryCertificates(items));
+		} catch (JSchException e) {
+			log.error("Failed to create repository certificates", e);
+			throw new ArgoException("Failed to create repository certificates, reason: " + e.getMessage(), e);
+		}
 	}
 
-	public RepositoryCertificates createRepositoryCertificates(RepositoryCertificates repositoryCertificates) {
+	public RepositoryCertificates upsertRepositoryCertificates(RepositoryCertificates repositoryCertificates) {
 		Objects.requireNonNull(repositoryCertificates, "repositoryCertificates is required");
 		log.info("Updating repository certificates: {}", repositoryCertificates);
 
 		try {
 			ArgoSettings settings = settingsProvider.getArgoSettings();
 			HttpHeaders httpHeaders = authHeaders(settings);
-			ResponseEntity<RepositoryCertificates> create = restClient.exchange(apiPath(settings) + "/certificates",
+			ResponseEntity<RepositoryCertificates> create = restClient.exchange(apiPath(settings) + "/certificates?upsert=true",
 				HttpMethod.POST,
 				new HttpEntity<>(repositoryCertificates, httpHeaders),
 				RepositoryCertificates.class);
 			RepositoryCertificates createdRepositoryCertificates = create.getBody();
-			log.info("Repository certificates updated");
+			log.info("Repository certificates updated: " + createdRepositoryCertificates);
 			return createdRepositoryCertificates;
 
 		} catch (RestClientResponseException e) {

@@ -98,6 +98,13 @@ public class SettingsController {
 		argoSettingsService.testConnection(argoSettings);
 	}
 
+	@PostMapping("/argo/updateKnownHosts")
+	@ResponseStatus(value = HttpStatus.OK)
+	@Secured({Role.admin, Role.releasemanager})
+	public void updateArgoKnownHosts() {
+		argoSettingsService.updateKnownHosts();
+	}
+
 	@PostMapping("/docker")
 	@ResponseStatus(value = HttpStatus.OK)
 	@Secured({Role.admin, Role.releasemanager, Role.developer})

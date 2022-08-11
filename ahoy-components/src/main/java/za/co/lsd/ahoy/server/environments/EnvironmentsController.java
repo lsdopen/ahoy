@@ -36,10 +36,10 @@ public class EnvironmentsController {
 		this.environmentService = environmentService;
 	}
 
-	@DeleteMapping("/destroy/{environmentId}")
-	public ResponseEntity<Environment> destroy(@PathVariable Long environmentId) {
+	@DeleteMapping("/delete/{environmentId}")
+	public ResponseEntity<Environment> delete(@PathVariable Long environmentId) {
 
-		Environment environment = environmentService.destroy(environmentId);
+		Environment environment = environmentService.delete(environmentId);
 
 		return new ResponseEntity<>(environment, new HttpHeaders(), HttpStatus.OK);
 	}

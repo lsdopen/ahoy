@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static za.co.lsd.ahoy.server.helm.HelmUtils.*;
 
@@ -64,6 +65,7 @@ public class TemplateWriter {
 
 		final List<Path> trackedTemplates = new ArrayList<>();
 		copyBaseTemplates(templatesPath, trackedTemplates);
+		addTemplate("namespace", templatesPath, trackedTemplates);
 
 		for (ApplicationVersion applicationVersion : releaseVersion.getApplicationVersions()) {
 			Application application = applicationVersion.getApplication();
@@ -99,7 +101,7 @@ public class TemplateWriter {
 				addTemplate(application, "service", templatesPath, trackedTemplates);
 			}
 
-			if (applicationEnvironmentConfig.map(e -> e.routeEnabled() && e.hasRoute()).orElse(false)) {
+			if (applicationEnvironmentConfig.map(e -> e.routeEnabled() && e.hasRoutes()).orElse(false)) {
 				addTemplate(application, "ingress", templatesPath, trackedTemplates);
 			}
 		}
@@ -114,6 +116,15 @@ public class TemplateWriter {
 			Files.copy(resource.getInputStream(), templatePath, StandardCopyOption.REPLACE_EXISTING);
 			track(trackedTemplates, templatePath);
 		}
+	}
+
+	private void addTemplate(String templateName, Path templatesPath, List<Path> trackedTemplates) throws IOException {
+		String fileName = templateName + ".yaml";
+
+		Path templatePath = templatesPath.resolve(fileName);
+		track(trackedTemplates, templatePath);
+
+		log.debug("Added template '{}'", templateName);
 	}
 
 	private void addTemplate(Application application, String templateName, Path templatesPath, List<Path> trackedTemplates) throws IOException {
@@ -133,13 +144,12 @@ public class TemplateWriter {
 	}
 
 	private void pruneTemplates(List<Path> trackedTemplates, Path templatesPath) throws IOException {
-		List<Path> extraTemplates = Files.list(templatesPath)
-			.filter(path -> !trackedTemplates.contains(path))
-			.collect(Collectors.toList());
-
-		for (Path extraTemplate : extraTemplates) {
-			log.debug("Deleting extra template file: {}", extraTemplate);
-			Files.deleteIfExists(extraTemplate);
+		try (Stream<Path> templates = Files.list(templatesPath)) {
+			List<Path> extraTemplates = templates.filter(path -> !trackedTemplates.contains(path)).collect(Collectors.toList());
+			for (Path extraTemplate : extraTemplates) {
+				log.debug("Deleting extra template file: {}", extraTemplate);
+				Files.deleteIfExists(extraTemplate);
+			}
 		}
 	}
 }

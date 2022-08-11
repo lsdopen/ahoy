@@ -33,6 +33,10 @@ public class ArgoSettingsService {
 	public void testConnection(ArgoSettings argoSettings) {
 		Objects.requireNonNull(argoSettings, "argoSettings is required");
 
-		this.argoClient.testConnection(argoSettings);
+		argoClient.testConnection(argoSettings);
+	}
+
+	public void updateKnownHosts() {
+		argoClient.upsertSSHKnownHosts();
 	}
 }

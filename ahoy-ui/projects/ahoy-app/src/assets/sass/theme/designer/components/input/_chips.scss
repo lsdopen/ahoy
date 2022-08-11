@@ -57,3 +57,14 @@
 p-chips.ng-dirty.ng-invalid > .p-chips > .p-inputtext {
     @include invalid-input();
 }
+
+p-chips.p-chips-clearable {
+    .p-inputtext {
+        padding-right: nth($inputPadding, 2) + $primeIconFontSize;
+    }
+
+    .p-chips-clear-icon {
+        color: $inputIconColor;
+        right: nth($inputPadding, 2);
+    }
+}

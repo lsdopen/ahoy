@@ -172,9 +172,7 @@ class ReleaseServiceIntegrationTest {
 
 		// then
 		// verify external collaborators
-		verify(clusterManager, times(1)).createNamespace("release1-dev");
 		verify(argoClient, times(1)).upsertRepository();
-		verify(argoClient, times(1)).createRepositoryCertificates();
 		verify(argoClient, times(1)).getApplication(eq(argoApplicationName));
 		verify(argoClient, times(1)).createApplication(any(ArgoApplication.class));
 		verifyNoMoreInteractions(clusterManager, argoClient);
@@ -253,9 +251,7 @@ class ReleaseServiceIntegrationTest {
 
 		// then
 		// verify external collaborators
-		verify(clusterManager, times(1)).createNamespace(eq("release1-dev"));
 		verify(argoClient, times(1)).upsertRepository();
-		verify(argoClient, times(1)).createRepositoryCertificates();
 		verify(argoClient, times(1)).getApplication(eq(argoApplicationName));
 		verify(argoClient, times(1)).updateApplication(any(ArgoApplication.class));
 		verify(argoClient, times(1)).getApplication(eq(argoApplicationName), eq(true));
@@ -329,9 +325,7 @@ class ReleaseServiceIntegrationTest {
 
 		// then
 		// verify external collaborators
-		verify(clusterManager, times(1)).createNamespace(eq("release1-dev"));
 		verify(argoClient, times(1)).upsertRepository();
-		verify(argoClient, times(1)).createRepositoryCertificates();
 		verify(argoClient, times(1)).getApplication(eq(argoApplicationName));
 		verify(argoClient, times(1)).updateApplication(any(ArgoApplication.class));
 		verify(argoClient, times(1)).getApplication(eq(argoApplicationName), eq(true));
@@ -618,13 +612,11 @@ class ReleaseServiceIntegrationTest {
 		releaseService.deploy(environmentRelease.getId(), deployOptions).get();
 
 		// when
-		environmentService.destroy(environment.getId());
+		environmentService.delete(environment.getId());
 
 		// then
 		// verify external collaborators
-		verify(clusterManager, times(1)).createNamespace("release1-dev");
 		verify(argoClient, times(1)).upsertRepository();
-		verify(argoClient, times(1)).createRepositoryCertificates();
 		verify(argoClient, times(2)).getApplication(eq(argoApplicationName));
 		verify(argoClient, times(1)).createApplication(any(ArgoApplication.class));
 		verify(argoClient, times(1)).deleteApplication(argoApplicationName);

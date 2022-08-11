@@ -1,0 +1,46 @@
+<!--
+  ~ Copyright  2022 LSD Information Technology (Pty) Ltd
+  ~
+  ~    Licensed under the Apache License, Version 2.0 (the "License");
+  ~    you may not use this file except in compliance with the License.
+  ~    You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~    Unless required by applicable law or agreed to in writing, software
+  ~    distributed under the License is distributed on an "AS IS" BASIS,
+  ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~    See the License for the specific language governing permissions and
+  ~    limitations under the License.
+  -->
+
+<div class="col-1">
+  <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-plain" (click)="addRoute()" pTooltip="Add a new route"></button>
+</div>
+
+<div class="p-fluid p-formgrid grid md:col-10" *ngFor="let route of routes; let i = index">
+
+  <div class="field p-float-label col-12 md:col-8">
+    <input pInputText id="routeHostname{{i}}" name="routeHostname{{i}}" [(ngModel)]="route.hostname"
+           required pTooltip="Available variables: ${release_name} ${application_name} ${environment_name} ${cluster_host}">
+    <label for="routeHostname{{i}}">Hostname</label>
+    <input pInputText id="routeHostnameResolved{{i}}" name="routeHostnameResolved{{i}}" ngModel="{{resolveRouteHostname(route)}}"
+           pattern="(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])"
+           [readonly]="true" [hidden]="true">
+    <small *ngIf="!parentForm.form.controls.environmentConfigRouteHostnameResolved?.hasError('pattern')">{{resolveRouteHostname(route)}}</small>
+    <small class="p-error" *ngIf="parentForm.form.controls.environmentConfigRouteHostnameResolved?.hasError('pattern')">invalid</small>
+  </div>
+
+  <div class="field col-10 md:col-3">
+    <p-dropdown id="routeTargetPort{{i}}" name="routeTargetPort{{i}}" [options]="applicationVersion.spec.servicePorts" [(ngModel)]="route.targetPort"
+                placeholder="Target Port" [showClear]="false" [editable]="true" required></p-dropdown>
+    <small class="p-message p-message-warn p-1" *ngIf="route.targetPort && applicationVersion.spec.servicePorts.indexOf(route.targetPort) === -1">
+      Warn: route port not configured in application configuration
+    </small>
+  </div>
+
+  <div class="col-2 md:col-1">
+    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning md:col-1" (click)="removeRoute(route)" pTooltip="Remove route"></button>
+  </div>
+
+</div>

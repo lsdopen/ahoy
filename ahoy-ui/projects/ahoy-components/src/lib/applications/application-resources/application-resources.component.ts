@@ -28,7 +28,4 @@ export class ApplicationResourcesComponent {
   @Input() resources: ApplicationResources;
   @Input() containerSpecIndex: number;
   quantityUnits = ['Ki', 'Mi', 'Gi', 'Ti'];
-
-  constructor() {
-  }
 }

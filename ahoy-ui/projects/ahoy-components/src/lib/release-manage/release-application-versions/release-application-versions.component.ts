@@ -157,12 +157,16 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
 
   hasRoute(applicationVersion: ApplicationVersion): boolean {
     const config = this.existingConfigs.get(applicationVersion.id);
-    return !!(config && config.spec.routeEnabled);
+    return !!(config && config.spec.routeEnabled && config.spec.routes.length > 0);
   }
 
-  getRoute(applicationVersion: ApplicationVersion): string {
+  getRoutes(applicationVersion: ApplicationVersion): any {
     const config = this.existingConfigs.get(applicationVersion.id);
-    const route = RouteHostnameResolver.resolve(this.environmentRelease, applicationVersion, config.spec.routeHostname);
-    return config.spec.tls ? `https://${route}` : `http://${route}`;
+    const routes = [];
+    for (const route of config.spec.routes) {
+      const resolvedHostname = RouteHostnameResolver.resolve(this.environmentRelease, applicationVersion, route.hostname);
+      routes.push({hostname: resolvedHostname, url: config.spec.tls ? `https://${resolvedHostname}` : `http://${resolvedHostname}`});
+    }
+    return routes;
   }
 }

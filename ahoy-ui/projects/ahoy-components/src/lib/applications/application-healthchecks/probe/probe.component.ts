@@ -24,7 +24,4 @@ import {ApplicationProbe} from '../../application';
 })
 export class ProbeComponent {
   @Input() probe: ApplicationProbe;
-
-  constructor() {
-  }
 }

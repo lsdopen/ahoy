@@ -181,6 +181,10 @@ spec:
           secret:
             secretName: {{ $.glob.releaseName }}-{{ $.app.name }}-{{ $volume.secretName }}
           {{- end }}
+          {{- if eq $volume.type "EmptyDir"}}
+          emptyDir:
+            sizeLimit: {{ $volume.size }}
+          {{- end }}
         {{- end }}
         {{- end }}
       {{- end }}

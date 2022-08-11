@@ -90,13 +90,7 @@
     }
 
     .p-dropdown-items {
-        &:not(.p-dropdown-virtualscroll) {
-            padding: $inputListPadding;
-        }
-
-        &.p-dropdown-virtualscroll .cdk-virtual-scroll-content-wrapper {
-            padding: $inputListPadding;
-        }
+        padding: $inputListPadding;
 
         .p-dropdown-item {
             margin: $inputListItemMargin;

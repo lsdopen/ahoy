@@ -39,7 +39,7 @@
     </div>
 
     <div class="field p-float-label">
-      <p-dropdown [options]="[{label: 'Persistent Volume', value: 'PersistentVolume'}, {label: 'Secret', value: 'Secret'}]"
+      <p-dropdown [options]="[{label: 'Persistent Volume', value: 'PersistentVolume'}, {label: 'Secret', value: 'Secret'}, {label: 'Empty Directory', value: 'EmptyDir'}]"
                   optionLabel="label" optionValue="value" [(ngModel)]="volume.type"
                   name="volumeType{{volumeIndex}}" required [autoDisplayFirst]="false"></p-dropdown>
       <label>Type</label>
@@ -47,15 +47,22 @@
 
     <div *ngIf="volume.type === 'PersistentVolume'">
 
-      <div class="field p-float-label">
-        <input pInputText id="volumeStorageClassName{{volumeIndex}}" [(ngModel)]="volume.storageClassName" name="volumeStorageClassName{{volumeIndex}}">
-        <label for="volumeStorageClassName{{volumeIndex}}">Storage class name</label>
+      <div class="field">
+        <div class="p-float-label">
+          <input pInputText id="volumeStorageClassName{{volumeIndex}}" [(ngModel)]="volume.storageClassName" name="volumeStorageClassName{{volumeIndex}}">
+          <label for="volumeStorageClassName{{volumeIndex}}">Storage class name</label>
+        </div>
+        <small class="p-message p-message-info">Default storage class is used if not set</small>
       </div>
 
       <div class="field p-float-label">
         <p-dropdown [options]="['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany']" [(ngModel)]="volume.accessMode" name="volumeAccessMode{{volumeIndex}}" required></p-dropdown>
         <label>Access Mode</label>
       </div>
+
+    </div>
+
+    <div *ngIf="volume.type === 'PersistentVolume' || volume.type === 'EmptyDir'">
 
       <div class="p-formgroup-inline">
         <div class="field p-float-label">

@@ -114,6 +114,7 @@ public class ChartGeneratorTest {
 			"values.yaml");
 
 		assertFilesExist(templatesPath, "template",
+			"namespace.yaml",
 			"configmap.yaml",
 			"pvc.yaml",
 			"deployment.yaml",
@@ -195,6 +196,7 @@ public class ChartGeneratorTest {
 			"values.yaml");
 
 		assertFilesExist(templatesPath, "template",
+			"namespace.yaml",
 			"configmap.yaml",
 			"pvc.yaml",
 			"deployment.yaml",
@@ -287,6 +289,7 @@ public class ChartGeneratorTest {
 			"values.yaml");
 
 		assertFilesExist(templatesPath, "template",
+			"namespace.yaml",
 			"configmap.yaml",
 			"pvc.yaml",
 			"deployment.yaml",
@@ -389,8 +392,9 @@ public class ChartGeneratorTest {
 
 		spec.setVolumesEnabled(true);
 		List<ApplicationVolume> appVolumes = Arrays.asList(
-			new ApplicationVolume("my-volume", "/opt/vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
-			new ApplicationVolume("my-secret-volume", "/opt/secret-vol", "my-secret")
+			ApplicationVolume.createPersistentVolume("my-volume", "/opt/vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
+			ApplicationVolume.createSecretVolume("my-secret-volume", "/opt/secret-vol", "my-secret"),
+			ApplicationVolume.createEmptyDirVolume("my-empty-dir", "/opt/empty-dir", 1L, StorageUnit.Gi)
 		);
 		spec.setVolumes(appVolumes);
 
@@ -414,8 +418,9 @@ public class ChartGeneratorTest {
 
 		environmentSpec.setVolumesEnabled(true);
 		List<ApplicationVolume> envVolumes = Arrays.asList(
-			new ApplicationVolume("my-env-volume", "/opt/env-vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
-			new ApplicationVolume("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret")
+			ApplicationVolume.createPersistentVolume("my-env-volume", "/opt/env-vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
+			ApplicationVolume.createSecretVolume("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret"),
+			ApplicationVolume.createEmptyDirVolume("my-env-empty-dir", "/opt/env-empty-dir", 1L, StorageUnit.Gi)
 		);
 		environmentSpec.setVolumes(envVolumes);
 
@@ -443,6 +448,7 @@ public class ChartGeneratorTest {
 			"values.yaml");
 
 		assertFilesExist(templatesPath, "template",
+			"namespace.yaml",
 			"configmap.yaml",
 			"configmap-app1.yaml",
 			"pvc.yaml",
@@ -463,10 +469,10 @@ public class ChartGeneratorTest {
 		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
 
 		Map<String, EnvironmentVariableValues> expectedEnvironmentVariables = new LinkedHashMap<>();
-		expectedEnvironmentVariables.put("ENV", new EnvironmentVariableValues("ENV", "VAR"));
-		expectedEnvironmentVariables.put("SECRET_ENV", new EnvironmentVariableValues("SECRET_ENV", "my-secret", "secret-key"));
-		expectedEnvironmentVariables.put("DEV_ENV", new EnvironmentVariableValues("DEV_ENV", "VAR"));
-		expectedEnvironmentVariables.put("SECRET_DEV_ENV", new EnvironmentVariableValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
+		expectedEnvironmentVariables.put("ENV", EnvironmentVariableValues.createValues("ENV", "VAR"));
+		expectedEnvironmentVariables.put("SECRET_ENV", EnvironmentVariableValues.createSecretValues("SECRET_ENV", "my-secret", "secret-key"));
+		expectedEnvironmentVariables.put("DEV_ENV", EnvironmentVariableValues.createValues("DEV_ENV", "VAR"));
+		expectedEnvironmentVariables.put("SECRET_DEV_ENV", EnvironmentVariableValues.createSecretValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
 
 		Map<String, ApplicationConfigFileValues> configFiles = new LinkedHashMap<>();
 		configFiles.put("application-config-file-188deccf", new ApplicationConfigFileValues("application.properties", "greeting=hello"));
@@ -478,10 +484,12 @@ public class ChartGeneratorTest {
 			+ "\"}";
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
-		volumes.put("my-volume", new ApplicationVolumeValues("my-volume", "/opt/vol", "standard", "ReadWriteOnce", "2Gi"));
-		volumes.put("my-secret-volume", new ApplicationVolumeValues("my-secret-volume", "/opt/secret-vol", "my-secret"));
-		volumes.put("my-env-volume", new ApplicationVolumeValues("my-env-volume", "/opt/env-vol", "standard", "ReadWriteOnce", "2Gi"));
-		volumes.put("my-env-secret-volume", new ApplicationVolumeValues("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret"));
+		volumes.put("my-volume", ApplicationVolumeValues.createPersistentVolumeValues("my-volume", "/opt/vol", "standard", "ReadWriteOnce", "2Gi"));
+		volumes.put("my-secret-volume", ApplicationVolumeValues.createSecretVolumeValues("my-secret-volume", "/opt/secret-vol", "my-secret"));
+		volumes.put("my-empty-dir", ApplicationVolumeValues.createEmptyDirVolumeValues("my-empty-dir", "/opt/empty-dir", "1Gi"));
+		volumes.put("my-env-volume", ApplicationVolumeValues.createPersistentVolumeValues("my-env-volume", "/opt/env-vol", "standard", "ReadWriteOnce", "2Gi"));
+		volumes.put("my-env-secret-volume", ApplicationVolumeValues.createSecretVolumeValues("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret"));
+		volumes.put("my-env-empty-dir", ApplicationVolumeValues.createEmptyDirVolumeValues("my-env-empty-dir", "/opt/env-empty-dir", "1Gi"));
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
 		secrets.put("my-secret", new ApplicationSecretValues("my-secret", "Opaque", Collections.singletonMap("secret-key", "secret-value")));
@@ -494,8 +502,7 @@ public class ChartGeneratorTest {
 			.dockerConfigJson("encrypted-docker-config")
 			.replicas(2)
 			.routeEnabled(true)
-			.routeHostname("myapp1-route")
-			.routeTargetPort(8080)
+			.routes(Collections.singletonList(new ApplicationRouteValues("myapp1-route", 8080)))
 			.tls(true)
 			.tlsSecretName("my-tls-secret")
 			.configPath("/opt/config")
@@ -613,8 +620,8 @@ public class ChartGeneratorTest {
 
 		spec.setVolumesEnabled(true);
 		List<ApplicationVolume> appVolumes = Arrays.asList(
-			new ApplicationVolume("my-volume", "/opt/vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
-			new ApplicationVolume("my-secret-volume", "/opt/secret-vol", "my-secret")
+			ApplicationVolume.createPersistentVolume("my-volume", "/opt/vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
+			ApplicationVolume.createSecretVolume("my-secret-volume", "/opt/secret-vol", "my-secret")
 		);
 		spec.setVolumes(appVolumes);
 
@@ -634,8 +641,8 @@ public class ChartGeneratorTest {
 
 		environmentSpec.setVolumesEnabled(true);
 		List<ApplicationVolume> envVolumes = Arrays.asList(
-			new ApplicationVolume("my-env-volume", "/opt/env-vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
-			new ApplicationVolume("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret")
+			ApplicationVolume.createPersistentVolume("my-env-volume", "/opt/env-vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
+			ApplicationVolume.createSecretVolume("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret")
 		);
 		environmentSpec.setVolumes(envVolumes);
 
@@ -663,6 +670,7 @@ public class ChartGeneratorTest {
 			"values.yaml");
 
 		assertFilesExist(templatesPath, "template",
+			"namespace.yaml",
 			"configmap.yaml",
 			"configmap-app1.yaml",
 			"pvc.yaml",
@@ -683,10 +691,10 @@ public class ChartGeneratorTest {
 		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
 
 		Map<String, EnvironmentVariableValues> expectedEnvironmentVariables = new LinkedHashMap<>();
-		expectedEnvironmentVariables.put("ENV", new EnvironmentVariableValues("ENV", "VAR"));
-		expectedEnvironmentVariables.put("SECRET_ENV", new EnvironmentVariableValues("SECRET_ENV", "my-secret", "secret-key"));
-		expectedEnvironmentVariables.put("DEV_ENV", new EnvironmentVariableValues("DEV_ENV", "VAR"));
-		expectedEnvironmentVariables.put("SECRET_DEV_ENV", new EnvironmentVariableValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
+		expectedEnvironmentVariables.put("ENV", EnvironmentVariableValues.createValues("ENV", "VAR"));
+		expectedEnvironmentVariables.put("SECRET_ENV", EnvironmentVariableValues.createSecretValues("SECRET_ENV", "my-secret", "secret-key"));
+		expectedEnvironmentVariables.put("DEV_ENV", EnvironmentVariableValues.createValues("DEV_ENV", "VAR"));
+		expectedEnvironmentVariables.put("SECRET_DEV_ENV", EnvironmentVariableValues.createSecretValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
 
 		Map<String, ApplicationConfigFileValues> configFiles = new LinkedHashMap<>();
 		configFiles.put("application-config-file-188deccf", new ApplicationConfigFileValues("application.properties", "greeting=hello"));
@@ -698,10 +706,10 @@ public class ChartGeneratorTest {
 			+ "\"}";
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
-		volumes.put("my-volume", new ApplicationVolumeValues("my-volume", "/opt/vol", "standard", "ReadWriteOnce", "2Gi"));
-		volumes.put("my-secret-volume", new ApplicationVolumeValues("my-secret-volume", "/opt/secret-vol", "my-secret"));
-		volumes.put("my-env-volume", new ApplicationVolumeValues("my-env-volume", "/opt/env-vol", "standard", "ReadWriteOnce", "2Gi"));
-		volumes.put("my-env-secret-volume", new ApplicationVolumeValues("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret"));
+		volumes.put("my-volume", ApplicationVolumeValues.createPersistentVolumeValues("my-volume", "/opt/vol", "standard", "ReadWriteOnce", "2Gi"));
+		volumes.put("my-secret-volume", ApplicationVolumeValues.createSecretVolumeValues("my-secret-volume", "/opt/secret-vol", "my-secret"));
+		volumes.put("my-env-volume", ApplicationVolumeValues.createPersistentVolumeValues("my-env-volume", "/opt/env-vol", "standard", "ReadWriteOnce", "2Gi"));
+		volumes.put("my-env-secret-volume", ApplicationVolumeValues.createSecretVolumeValues("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret"));
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
 		secrets.put("my-secret", new ApplicationSecretValues("my-secret", "Opaque", Collections.singletonMap("secret-key", "secret-value")));
@@ -752,8 +760,7 @@ public class ChartGeneratorTest {
 			.dockerConfigJson("encrypted-docker-config")
 			.replicas(2)
 			.routeEnabled(true)
-			.routeHostname("myapp1-route")
-			.routeTargetPort(8080)
+			.routes(Collections.singletonList(new ApplicationRouteValues("myapp1-route", 8080)))
 			.tls(true)
 			.tlsSecretName("my-tls-secret")
 			.configPath("/opt/config")
@@ -855,8 +862,8 @@ public class ChartGeneratorTest {
 
 		spec.setVolumesEnabled(true);
 		List<ApplicationVolume> appVolumes = Arrays.asList(
-			new ApplicationVolume("my-volume", "/opt/vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
-			new ApplicationVolume("my-secret-volume", "/opt/secret-vol", "my-secret")
+			ApplicationVolume.createPersistentVolume("my-volume", "/opt/vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
+			ApplicationVolume.createSecretVolume("my-secret-volume", "/opt/secret-vol", "my-secret")
 		);
 		spec.setVolumes(appVolumes);
 
@@ -876,8 +883,8 @@ public class ChartGeneratorTest {
 
 		environmentSpec.setVolumesEnabled(true);
 		List<ApplicationVolume> envVolumes = Arrays.asList(
-			new ApplicationVolume("my-env-volume", "/opt/env-vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
-			new ApplicationVolume("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret")
+			ApplicationVolume.createPersistentVolume("my-env-volume", "/opt/env-vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
+			ApplicationVolume.createSecretVolume("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret")
 		);
 		environmentSpec.setVolumes(envVolumes);
 
@@ -905,6 +912,7 @@ public class ChartGeneratorTest {
 			"values.yaml");
 
 		assertFilesExist(templatesPath, "template",
+			"namespace.yaml",
 			"configmap.yaml",
 			"configmap-app1.yaml",
 			"pvc.yaml",
@@ -925,10 +933,10 @@ public class ChartGeneratorTest {
 		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
 
 		Map<String, EnvironmentVariableValues> expectedEnvironmentVariables = new LinkedHashMap<>();
-		expectedEnvironmentVariables.put("ENV", new EnvironmentVariableValues("ENV", "VAR"));
-		expectedEnvironmentVariables.put("SECRET_ENV", new EnvironmentVariableValues("SECRET_ENV", "my-secret", "secret-key"));
-		expectedEnvironmentVariables.put("DEV_ENV", new EnvironmentVariableValues("DEV_ENV", "VAR"));
-		expectedEnvironmentVariables.put("SECRET_DEV_ENV", new EnvironmentVariableValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
+		expectedEnvironmentVariables.put("ENV", EnvironmentVariableValues.createValues("ENV", "VAR"));
+		expectedEnvironmentVariables.put("SECRET_ENV", EnvironmentVariableValues.createSecretValues("SECRET_ENV", "my-secret", "secret-key"));
+		expectedEnvironmentVariables.put("DEV_ENV", EnvironmentVariableValues.createValues("DEV_ENV", "VAR"));
+		expectedEnvironmentVariables.put("SECRET_DEV_ENV", EnvironmentVariableValues.createSecretValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
 
 		Map<String, ApplicationConfigFileValues> configFiles = new LinkedHashMap<>();
 		configFiles.put("application-config-file-188deccf", new ApplicationConfigFileValues("application.properties", "greeting=hello"));
@@ -940,10 +948,10 @@ public class ChartGeneratorTest {
 			+ "\"}";
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
-		volumes.put("my-volume", new ApplicationVolumeValues("my-volume", "/opt/vol", "standard", "ReadWriteOnce", "2Gi"));
-		volumes.put("my-secret-volume", new ApplicationVolumeValues("my-secret-volume", "/opt/secret-vol", "my-secret"));
-		volumes.put("my-env-volume", new ApplicationVolumeValues("my-env-volume", "/opt/env-vol", "standard", "ReadWriteOnce", "2Gi"));
-		volumes.put("my-env-secret-volume", new ApplicationVolumeValues("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret"));
+		volumes.put("my-volume", ApplicationVolumeValues.createPersistentVolumeValues("my-volume", "/opt/vol", "standard", "ReadWriteOnce", "2Gi"));
+		volumes.put("my-secret-volume", ApplicationVolumeValues.createSecretVolumeValues("my-secret-volume", "/opt/secret-vol", "my-secret"));
+		volumes.put("my-env-volume", ApplicationVolumeValues.createPersistentVolumeValues("my-env-volume", "/opt/env-vol", "standard", "ReadWriteOnce", "2Gi"));
+		volumes.put("my-env-secret-volume", ApplicationVolumeValues.createSecretVolumeValues("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret"));
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
 		secrets.put("my-secret", new ApplicationSecretValues("my-secret", "Opaque", Collections.singletonMap("secret-key", "secret-value")));
@@ -956,8 +964,7 @@ public class ChartGeneratorTest {
 			.dockerConfigJson("encrypted-docker-config")
 			.replicas(2)
 			.routeEnabled(true)
-			.routeHostname("myapp1-route")
-			.routeTargetPort(8080)
+			.routes(Collections.singletonList(new ApplicationRouteValues("myapp1-route", 8080)))
 			.tls(true)
 			.tlsSecretName("my-tls-secret")
 			.configPath("/opt/config")
@@ -1061,8 +1068,8 @@ public class ChartGeneratorTest {
 
 		environmentSpec.setVolumesEnabled(true);
 		List<ApplicationVolume> envVolumes = Arrays.asList(
-			new ApplicationVolume("my-env-volume", "/opt/env-vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
-			new ApplicationVolume("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret")
+			ApplicationVolume.createPersistentVolume("my-env-volume", "/opt/env-vol", "standard", VolumeAccessMode.ReadWriteOnce, 2L, StorageUnit.Gi),
+			ApplicationVolume.createSecretVolume("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret")
 		);
 		environmentSpec.setVolumes(envVolumes);
 
@@ -1091,6 +1098,7 @@ public class ChartGeneratorTest {
 			"values.yaml");
 
 		assertFilesExist(templatesPath, "template",
+			"namespace.yaml",
 			"configmap.yaml",
 			"configmap-app1.yaml",
 			"pvc.yaml",
@@ -1110,8 +1118,8 @@ public class ChartGeneratorTest {
 		Values actualValues = yaml.loadAs(Files.newInputStream(valuesPath), Values.class);
 
 		Map<String, EnvironmentVariableValues> expectedEnvironmentVariables = new LinkedHashMap<>();
-		expectedEnvironmentVariables.put("DEV_ENV", new EnvironmentVariableValues("DEV_ENV", "VAR"));
-		expectedEnvironmentVariables.put("SECRET_DEV_ENV", new EnvironmentVariableValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
+		expectedEnvironmentVariables.put("DEV_ENV", EnvironmentVariableValues.createValues("DEV_ENV", "VAR"));
+		expectedEnvironmentVariables.put("SECRET_DEV_ENV", EnvironmentVariableValues.createSecretValues("SECRET_DEV_ENV", "my-secret", "secret-key"));
 
 		Map<String, ApplicationConfigFileValues> configFiles = new LinkedHashMap<>();
 		configFiles.put("application-config-file-c1fcd7e5", new ApplicationConfigFileValues("application-dev.properties", "anothergreeting=hello"));
@@ -1121,8 +1129,8 @@ public class ChartGeneratorTest {
 			+ "\"}";
 
 		Map<String, ApplicationVolumeValues> volumes = new LinkedHashMap<>();
-		volumes.put("my-env-volume", new ApplicationVolumeValues("my-env-volume", "/opt/env-vol", "standard", "ReadWriteOnce", "2Gi"));
-		volumes.put("my-env-secret-volume", new ApplicationVolumeValues("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret"));
+		volumes.put("my-env-volume", ApplicationVolumeValues.createPersistentVolumeValues("my-env-volume", "/opt/env-vol", "standard", "ReadWriteOnce", "2Gi"));
+		volumes.put("my-env-secret-volume", ApplicationVolumeValues.createSecretVolumeValues("my-env-secret-volume", "/opt/env-secret-vol", "my-env-secret"));
 
 		Map<String, ApplicationSecretValues> secrets = new LinkedHashMap<>();
 		secrets.put("my-env-secret", new ApplicationSecretValues("my-env-secret", "Opaque", Collections.singletonMap("env-secret-key", "env-secret-value")));
@@ -1133,8 +1141,7 @@ public class ChartGeneratorTest {
 			.version("1.0.0")
 			.replicas(2)
 			.routeEnabled(true)
-			.routeHostname("myapp1-route")
-			.routeTargetPort(8080)
+			.routes(Collections.singletonList(new ApplicationRouteValues("myapp1-route", 8080)))
 			.tls(true)
 			.tlsSecretName("my-tls-secret")
 			.configFilesEnabled(true)
@@ -1207,6 +1214,7 @@ public class ChartGeneratorTest {
 			"values.yaml");
 
 		assertFilesExist(templatesPath, "template",
+			"namespace.yaml",
 			"configmap.yaml",
 			"pvc.yaml",
 			"deployment.yaml",

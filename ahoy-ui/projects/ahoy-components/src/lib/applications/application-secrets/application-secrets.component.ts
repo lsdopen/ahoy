@@ -31,9 +31,6 @@ export class ApplicationSecretsComponent {
   @Input() secretsForValidation: ApplicationSecret[];
   @Input() secretInUse: (secret) => boolean;
 
-  constructor() {
-  }
-
   secretAlreadyExists(secretIndex: number) {
     return this.parentForm.form.controls['secretName' + secretIndex]?.hasError('tabItemNameNotUnique');
   }
