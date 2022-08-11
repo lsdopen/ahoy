@@ -30,6 +30,7 @@ import {ReleaseManageService} from '../../release-manage/release-manage.service'
 import {Environment} from '../environment';
 import {EnvironmentService} from '../environment.service';
 import {EnvironmentDetailComponent} from './environment-detail.component';
+import {EnvironmentRelease} from '../../environment-release/environment-release';
 
 describe('EnvironmentDetailComponent', () => {
   let component: EnvironmentDetailComponent;
@@ -176,7 +177,7 @@ describe('EnvironmentDetailComponent', () => {
         queryParamMap.setParams({environmentId: '1', releaseId: '1', copyEnvironmentConfig: 'true'});
 
         environmentDuplicateSpy = spyOn(environmentService, 'duplicate').and.callFake((sourceEnv, destEnv) => of(destEnv));
-        releaseManagePromoteSpy = spyOn(releaseManageService, 'promote');
+        releaseManagePromoteSpy = spyOn(releaseManageService, 'promote').and.callFake((envRelId, promoteOptions) => of(new EnvironmentRelease()));
 
         fixture = TestBed.createComponent(EnvironmentDetailComponent);
         component = fixture.componentInstance;
