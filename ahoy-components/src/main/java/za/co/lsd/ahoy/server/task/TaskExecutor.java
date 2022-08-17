@@ -14,27 +14,28 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.security;
+package za.co.lsd.ahoy.server.task;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
-@Aspect
-public class RunAsRoleAspect {
+@Slf4j
+public class TaskExecutor {
+	private final TaskQueue taskQueue;
 
-	@Around("@annotation(runAsRole)")
-	public Object setRole(ProceedingJoinPoint joinPoint, RunAsRole runAsRole) throws Throwable {
-		Authentication originalAuth = SecurityContextHolder.getContext().getAuthentication();
-		try {
-			AuthUtility.runAs(runAsRole.value());
-			return joinPoint.proceed();
-		} finally {
-			SecurityContextHolder.getContext().setAuthentication(originalAuth);
+	public TaskExecutor(TaskQueue taskQueue) {
+		this.taskQueue = taskQueue;
+	}
+
+	public void execute(Task task, TaskContext context) throws InterruptedException {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null) {
+			context.setAuthentication(authentication);
 		}
+		log.debug("Enqueuing task: {}, with context: {}", task.getName(), context);
+		taskQueue.put(new TaskExecution(task, context));
 	}
 }
