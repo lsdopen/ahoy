@@ -19,11 +19,13 @@ package za.co.lsd.ahoy.server.taskevents;
 import lombok.Data;
 import za.co.lsd.ahoy.server.ReleaseStatusChangedEvent;
 import za.co.lsd.ahoy.server.argocd.ArgoConnectionEvent;
+import za.co.lsd.ahoy.server.task.TaskProgressEvent;
 
 @Data
 public class TaskEvent {
 	private ReleaseStatusChangedEvent releaseStatusChangedEvent;
 	private ArgoConnectionEvent argoConnectionEvent;
+	private TaskProgressEvent taskProgressEvent;
 
 	public TaskEvent(ReleaseStatusChangedEvent releaseStatusChangedEvent) {
 		this.releaseStatusChangedEvent = releaseStatusChangedEvent;
@@ -31,5 +33,9 @@ public class TaskEvent {
 
 	public TaskEvent(ArgoConnectionEvent argoConnectionEvent) {
 		this.argoConnectionEvent = argoConnectionEvent;
+	}
+
+	public TaskEvent(TaskProgressEvent taskProgressEvent) {
+		this.taskProgressEvent = taskProgressEvent;
 	}
 }

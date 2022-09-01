@@ -61,6 +61,7 @@ export * from './lib/settings/docker-settings/docker-settings.component';
 export * from './lib/settings/git-settings/git-settings.component';
 export * from './lib/settings/settings.component';
 export * from './lib/settings/settings.guard';
+export * from './lib/task/task';
 export * from './lib/taskevents/task-events';
 export * from './lib/taskevents/task-events-listener/task-events-listener.component';
 export * from './lib/taskevents/task-events.service';

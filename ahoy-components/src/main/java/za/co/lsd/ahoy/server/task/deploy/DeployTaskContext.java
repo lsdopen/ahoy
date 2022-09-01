@@ -14,31 +14,26 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.task;
+package za.co.lsd.ahoy.server.task.deploy;
 
 import lombok.Data;
-import org.springframework.security.core.Authentication;
-
-import java.util.UUID;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import za.co.lsd.ahoy.server.DeployOptions;
+import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
+import za.co.lsd.ahoy.server.task.TaskContext;
 
 @Data
-public abstract class TaskContext {
-	private final String id;
-	private Authentication authentication;
+@EqualsAndHashCode(callSuper = true)
+public class DeployTaskContext extends TaskContext {
+	@NonNull
+	private final EnvironmentReleaseId environmentReleaseId;
+	@NonNull
+	private final DeployOptions deployOptions;
 
-	protected TaskContext() {
-		this(UUID.randomUUID().toString());
-	}
-
-	protected TaskContext(String id) {
-		this.id = id;
-	}
-
-	protected Authentication getAuthentication() {
-		return authentication;
-	}
-
-	protected void setAuthentication(Authentication authentication) {
-		this.authentication = authentication;
+	public DeployTaskContext(EnvironmentReleaseId environmentReleaseId, DeployOptions deployOptions) {
+		super();
+		this.environmentReleaseId = environmentReleaseId;
+		this.deployOptions = deployOptions;
 	}
 }

@@ -73,19 +73,19 @@ public class ReleaseControllerTest {
 		EnvironmentReleaseId environmentReleaseId = environmentRelease.getId();
 		DeployOptions deployOptions = new DeployOptions(1L, "Please deploy");
 
-		when(releaseService.deploy(eq(environmentReleaseId), eq(deployOptions))).thenReturn(CompletableFuture.completedFuture(environmentRelease));
+		when(releaseService.deploy(eq(environmentReleaseId), eq(deployOptions))).thenReturn(environmentRelease);
 
 		// when
 		mvc.perform(post("/api/environmentReleases/2_3/deploy")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(json(deployOptions)))
 			.andDo(print())
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.id.environmentId").value(2L))
-			.andExpect(jsonPath("$.id.releaseId").value(3L));
+			.andExpect(status().isOk());
+//			.andExpect(jsonPath("$.id.environmentId").value(2L))
+//			.andExpect(jsonPath("$.id.releaseId").value(3L));
 
 		// then
-		verify(releaseService, times(1)).deploy(eq(environmentReleaseId), eq(deployOptions));
+		verify(releaseService, timeout(1000).times(1)).deploy(eq(environmentReleaseId), eq(deployOptions));
 	}
 
 	@Test

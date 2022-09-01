@@ -42,16 +42,13 @@ export class ReleaseManageService {
               private log: LoggerService) {
   }
 
-  deploy(environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion, deployOptions: DeployOptions): Observable<EnvironmentRelease> {
+  deploy(environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion, deployOptions: DeployOptions): Observable<void> {
     this.log.debug('deploying environment release', environmentRelease);
     const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentRelease.id)}/deploy`;
-    return this.restClient.post<EnvironmentRelease>(url, deployOptions, true).pipe(
-      tap((deployedEnvironmentRelease) => {
-        this.log.debug('deployed environment release', deployedEnvironmentRelease);
-        this.environmentReleaseChangedSubject.next(deployedEnvironmentRelease);
-        const text = `${(deployedEnvironmentRelease.release as Release).name} : ${deployedEnvironmentRelease.currentReleaseVersion.version} `
-          + `deployed to environment ${(deployedEnvironmentRelease.environment as Environment).name}`;
-        this.notificationsService.notification(new Notification(text));
+    return this.restClient.post<void>(url, deployOptions).pipe(
+      tap(() => {
+        this.log.debug('deployed environment release', environmentRelease);
+        this.environmentReleaseChangedSubject.next(environmentRelease);
       }),
       catchError((error) => {
         const text = `Failed to deploy ${(environmentRelease.release as Release).name} : ${releaseVersion.version} `

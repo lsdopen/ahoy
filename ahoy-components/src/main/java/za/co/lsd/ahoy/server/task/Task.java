@@ -16,9 +16,9 @@
 
 package za.co.lsd.ahoy.server.task;
 
-public interface Task {
+public interface Task<C extends TaskContext> {
 
 	String getName();
 
-	void execute(TaskContext context);
+	void execute(C context);
 }

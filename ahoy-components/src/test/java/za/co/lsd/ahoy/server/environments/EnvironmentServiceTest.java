@@ -185,7 +185,7 @@ class EnvironmentServiceTest {
 		when(clusterRepository.findById(2L)).thenReturn(Optional.of(cluster2));
 		when(releaseService.undeploy(same(environmentRelease.getId()))).thenReturn(environmentReleaseFuture);
 		when(environmentRepository.save(same(environment))).thenReturn(environment);
-		when(releaseService.deploy(same(environmentRelease.getId()), any(DeployOptions.class))).thenReturn(environmentReleaseFuture);
+		when(releaseService.deploy(same(environmentRelease.getId()), any(DeployOptions.class))).thenReturn(new EnvironmentRelease());
 
 		// when
 		MoveOptions moveOptions = new MoveOptions(2L, true);

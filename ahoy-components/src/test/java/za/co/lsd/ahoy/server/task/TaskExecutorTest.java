@@ -42,8 +42,8 @@ class TaskExecutorTest extends BaseAhoyTest {
 	@Test
 	void executeOne() throws Exception {
 		// given
-		TaskContext context = new TestTaskContext("my-task-id");
-		Task mockTask = mock(Task.class);
+		TestTaskContext context = new TestTaskContext("my-task-id");
+		TestTask mockTask = mockTask();
 
 		// when
 		taskExecutor.execute(mockTask, context);
@@ -58,10 +58,10 @@ class TaskExecutorTest extends BaseAhoyTest {
 	@Test
 	void executeMultipleSynchronously() throws Exception {
 		// given
-		TaskContext task1Context = new TestTaskContext("my-task-id-1");
-		TaskContext task2Context = new TestTaskContext("my-task-id-2");
-		TaskContext task3Context = new TestTaskContext("my-task-id-3");
-		Task mockTask = mock(Task.class);
+		TestTaskContext task1Context = new TestTaskContext("my-task-id-1");
+		TestTaskContext task2Context = new TestTaskContext("my-task-id-2");
+		TestTaskContext task3Context = new TestTaskContext("my-task-id-3");
+		TestTask mockTask = mockTask();
 
 		// when
 		taskExecutor.execute(mockTask, task1Context);
@@ -81,10 +81,10 @@ class TaskExecutorTest extends BaseAhoyTest {
 	@Test
 	void executeMultipleAfterThrowsException() throws Exception {
 		// given
-		TaskContext task1Context = new TestTaskContext("my-task-id-1");
-		TaskContext task2Context = new TestTaskContext("my-task-id-2");
-		Task mockTask1 = mock(Task.class);
-		Task mockTask2 = mock(Task.class);
+		TestTaskContext task1Context = new TestTaskContext("my-task-id-1");
+		TestTaskContext task2Context = new TestTaskContext("my-task-id-2");
+		TestTask mockTask1 = mockTask();
+		TestTask mockTask2 = mockTask();
 		doThrow(new RuntimeException("Test failure")).when(mockTask1).execute(any());
 
 		// when
@@ -103,7 +103,7 @@ class TaskExecutorTest extends BaseAhoyTest {
 	@WithMockUser(authorities = {Scope.ahoy, Role.admin})
 	void executeSecuredTask() throws Exception {
 		// given
-		TaskContext context = new TestTaskContext("my-secure-task-id");
+		TestTaskContext context = new TestTaskContext("my-secure-task-id");
 		securedTask.setExecutedLatch(new CountDownLatch(1));
 
 		// when
@@ -119,7 +119,7 @@ class TaskExecutorTest extends BaseAhoyTest {
 	@Test
 	void executeSecuredTaskWithoutAuth() throws Exception {
 		// given
-		TaskContext context = new TestTaskContext("my-secure-task-id");
+		TestTaskContext context = new TestTaskContext("my-secure-task-id");
 		securedTask.setExecutedLatch(new CountDownLatch(1));
 
 		// when
@@ -129,10 +129,28 @@ class TaskExecutorTest extends BaseAhoyTest {
 		assertFalse(securedTask.awaitExecution(1000, TimeUnit.MILLISECONDS), "Secured task should NOT have executed");
 	}
 
+	private TestTask mockTask() {
+		TestTask mockTask = mock(TestTask.class);
+		when(mockTask.getName()).thenReturn("mock-task");
+		return mockTask;
+	}
+
 	public static class TestTaskContext extends TaskContext {
 
 		public TestTaskContext(String id) {
 			super(id);
+		}
+	}
+
+	public static class TestTask implements Task<TestTaskContext> {
+
+		@Override
+		public String getName() {
+			return "test-task";
+		}
+
+		@Override
+		public void execute(TestTaskContext context) {
 		}
 	}
 }

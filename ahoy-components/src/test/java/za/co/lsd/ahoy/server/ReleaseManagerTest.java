@@ -40,6 +40,7 @@ import za.co.lsd.ahoy.server.helm.ChartGenerator;
 import za.co.lsd.ahoy.server.releases.Release;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 import za.co.lsd.ahoy.server.settings.SettingsProvider;
+import za.co.lsd.ahoy.server.task.TaskProgressService;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -64,6 +65,8 @@ public class ReleaseManagerTest {
 	private SettingsProvider settingsProvider;
 	@MockBean
 	private KubernetesClusterManager kubernetesClusterManager;
+	@MockBean
+	private TaskProgressService taskProgressService;
 	@Autowired
 	private ReleaseManager releaseManager;
 

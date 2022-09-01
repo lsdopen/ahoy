@@ -38,6 +38,7 @@ import za.co.lsd.ahoy.server.releases.resources.ResourceNode;
 import za.co.lsd.ahoy.server.releases.resources.ResourceTreeConverter;
 import za.co.lsd.ahoy.server.security.Role;
 import za.co.lsd.ahoy.server.security.RunAsRole;
+import za.co.lsd.ahoy.server.task.TaskProgressService;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -58,6 +59,7 @@ public class ReleaseService {
 	private final ReleaseManager releaseManager;
 	private final ResourceTreeConverter resourceTreeConverter;
 	private ApplicationEventPublisher eventPublisher;
+	private TaskProgressService taskProgressService;
 
 	public ReleaseService(EnvironmentRepository environmentRepository,
 						  EnvironmentReleaseRepository environmentReleaseRepository,
@@ -85,9 +87,13 @@ public class ReleaseService {
 		this.eventPublisher = eventPublisher;
 	}
 
-	@Async("deploymentTaskExecutor")
+	@Autowired
+	public void setTaskProgressService(TaskProgressService taskProgressService) {
+		this.taskProgressService = taskProgressService;
+	}
+
 	@Transactional
-	public Future<EnvironmentRelease> deploy(EnvironmentReleaseId environmentReleaseId, DeployOptions deployOptions) {
+	public EnvironmentRelease deploy(EnvironmentReleaseId environmentReleaseId, DeployOptions deployOptions) {
 		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
 
@@ -95,6 +101,8 @@ public class ReleaseService {
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find releaseVersion in release, releaseVersionId: " + deployOptions.getReleaseVersionId()));
 
 		log.info("Deploying environment release: {}, release version: {}", environmentRelease, releaseVersion);
+
+		taskProgressService.progress(String.format("Deploying %s:%s to %s", environmentRelease.getRelease().getName(), releaseVersion.getVersion(), environmentRelease.getEnvironment().getName()), null);
 
 		ReleaseVersion previousReleaseVersion = environmentRelease.getCurrentReleaseVersion();
 		boolean redeploy = releaseVersion.equals(previousReleaseVersion);
@@ -114,9 +122,10 @@ public class ReleaseService {
 		}
 
 		environmentReleaseRepository.save(environmentRelease);
+		taskProgressService.progress(String.format("%s:%s successfully deployed to %s", environmentRelease.getRelease().getName(), releaseVersion.getVersion(), environmentRelease.getEnvironment().getName()), null);
 		log.info("Deployed environment release: {}", environmentRelease);
 
-		return new AsyncResult<>(environmentRelease);
+		return environmentRelease;
 	}
 
 	@Async("deploymentTaskExecutor")

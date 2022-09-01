@@ -55,6 +55,7 @@ import za.co.lsd.ahoy.server.security.Role;
 import za.co.lsd.ahoy.server.security.Scope;
 import za.co.lsd.ahoy.server.settings.SettingsProvider;
 import za.co.lsd.ahoy.server.settings.SettingsService;
+import za.co.lsd.ahoy.server.task.TaskProgressService;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -107,6 +108,8 @@ class ReleaseServiceIntegrationTest {
 	private ClusterManager clusterManager;
 	@MockBean
 	private ArgoClient argoClient;
+	@MockBean
+	private TaskProgressService taskProgressService;
 
 	@TempDir
 	Path temporaryFolder;
@@ -168,7 +171,7 @@ class ReleaseServiceIntegrationTest {
 		});
 
 		// when
-		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions).get();
+		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions);
 
 		// then
 		// verify external collaborators
@@ -247,7 +250,7 @@ class ReleaseServiceIntegrationTest {
 		});
 
 		// when
-		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions).get();
+		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions);
 
 		// then
 		// verify external collaborators
@@ -321,7 +324,7 @@ class ReleaseServiceIntegrationTest {
 		});
 
 		// when
-		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions).get();
+		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions);
 
 		// then
 		// verify external collaborators
@@ -609,7 +612,7 @@ class ReleaseServiceIntegrationTest {
 			argoApplication.getMetadata().setUid(argoUid);
 			return argoApplication;
 		});
-		releaseService.deploy(environmentRelease.getId(), deployOptions).get();
+		releaseService.deploy(environmentRelease.getId(), deployOptions);
 
 		// when
 		environmentService.delete(environment.getId());

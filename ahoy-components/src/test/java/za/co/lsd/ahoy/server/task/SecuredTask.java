@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j
-public class SecuredTask implements Task {
+public class SecuredTask implements Task<TaskContext> {
 	private CountDownLatch executedLatch;
 
 	@Override

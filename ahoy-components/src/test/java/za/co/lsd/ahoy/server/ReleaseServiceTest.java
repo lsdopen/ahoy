@@ -35,6 +35,7 @@ import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.environments.EnvironmentRepository;
 import za.co.lsd.ahoy.server.releases.*;
+import za.co.lsd.ahoy.server.task.TaskProgressService;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -66,6 +67,8 @@ public class ReleaseServiceTest {
 	private ApplicationEnvironmentConfigProvider environmentConfigProvider;
 	@MockBean
 	private EnvironmentRepository environmentRepository;
+	@MockBean
+	private TaskProgressService taskProgressService;
 	@Autowired
 	private ReleaseService releaseService;
 
@@ -97,7 +100,7 @@ public class ReleaseServiceTest {
 					.build()).build());
 
 		// when
-		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions).get();
+		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions);
 
 		// then
 		assertEquals(releaseVersion, deployedEnvironmentRelease.getCurrentReleaseVersion(), "Release version should now be the current release version");
@@ -143,7 +146,7 @@ public class ReleaseServiceTest {
 					.build()).build());
 
 		// when
-		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions).get();
+		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions);
 
 		// then
 		assertEquals(upgradedReleaseVersion, deployedEnvironmentRelease.getCurrentReleaseVersion(), "Release version should now be the current release version");
@@ -189,7 +192,7 @@ public class ReleaseServiceTest {
 					.build()).build());
 
 		// when
-		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions).get();
+		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions);
 
 		// then
 		assertEquals(releaseVersion, deployedEnvironmentRelease.getCurrentReleaseVersion(), "Release version should now be the current release version");

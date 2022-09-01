@@ -34,6 +34,9 @@ import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
 import za.co.lsd.ahoy.server.releases.*;
 import za.co.lsd.ahoy.server.releases.resources.ResourceNode;
 import za.co.lsd.ahoy.server.security.Role;
+import za.co.lsd.ahoy.server.task.TaskExecutor;
+import za.co.lsd.ahoy.server.task.deploy.DeployTask;
+import za.co.lsd.ahoy.server.task.deploy.DeployTaskContext;
 import za.co.lsd.ahoy.server.util.SseEmitterSubscriber;
 
 import java.util.Optional;
@@ -47,10 +50,19 @@ import java.util.concurrent.Future;
 @Secured({Role.admin, Role.releasemanager})
 public class ReleaseController {
 	private final ReleaseService releaseService;
+	private final TaskExecutor taskExecutor;
+
+	private DeployTask deployTask;
 	private ExecutorService sseMvcExecutor;
 
-	public ReleaseController(ReleaseService releaseService) {
+	public ReleaseController(ReleaseService releaseService, TaskExecutor taskExecutor) {
 		this.releaseService = releaseService;
+		this.taskExecutor = taskExecutor;
+	}
+
+	@Autowired
+	public void setDeployTask(DeployTask deployTask) {
+		this.deployTask = deployTask;
 	}
 
 	@Autowired
@@ -59,11 +71,11 @@ public class ReleaseController {
 	}
 
 	@PostMapping("/environmentReleases/{environmentReleaseId}/deploy")
-	public ResponseEntity<EnvironmentRelease> deploy(@PathVariable EnvironmentReleaseId environmentReleaseId,
+	public ResponseEntity<Void> deploy(@PathVariable EnvironmentReleaseId environmentReleaseId,
 													 @RequestBody DeployOptions deployOptions) throws ExecutionException, InterruptedException {
 
-		Future<EnvironmentRelease> deployedEnvironmentRelease = releaseService.deploy(environmentReleaseId, deployOptions);
-		return new ResponseEntity<>(deployedEnvironmentRelease.get(), new HttpHeaders(), HttpStatus.OK);
+		taskExecutor.execute(deployTask, new DeployTaskContext(environmentReleaseId, deployOptions));
+		return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.OK);
 	}
 
 	@PostMapping("/environmentReleases/{environmentReleaseId}/undeploy")

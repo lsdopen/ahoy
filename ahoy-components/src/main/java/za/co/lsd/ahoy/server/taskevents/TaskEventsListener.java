@@ -21,6 +21,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import za.co.lsd.ahoy.server.ReleaseStatusChangedEvent;
 import za.co.lsd.ahoy.server.argocd.ArgoConnectionEvent;
+import za.co.lsd.ahoy.server.task.TaskProgressEvent;
 
 @Component
 @Slf4j
@@ -42,6 +43,13 @@ public class TaskEventsListener {
 	public void onArgoConnectionChanged(ArgoConnectionEvent argoConnectionEvent) {
 		TaskEvent taskEvent = new TaskEvent(argoConnectionEvent);
 		log.debug("Argo connection status changed, sending event: {}", taskEvent);
+		taskEventsService.sendTaskEvent(taskEvent);
+	}
+
+	@EventListener
+	public void onDeployTaskEvent(TaskProgressEvent taskProgressEvent) {
+		TaskEvent taskEvent = new TaskEvent(taskProgressEvent);
+		log.debug("Deploy task event, sending event: {}", taskEvent);
 		taskEventsService.sendTaskEvent(taskEvent);
 	}
 }
