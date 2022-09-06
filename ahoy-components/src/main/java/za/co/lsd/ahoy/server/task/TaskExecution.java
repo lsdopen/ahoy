@@ -20,9 +20,9 @@ import lombok.Data;
 import lombok.NonNull;
 
 @Data
-public class TaskExecution {
+public class TaskExecution<T extends Task<C>, C extends TaskContext> {
 	@NonNull
-	private final Task task;
+	private final T task;
 	@NonNull
-	private final TaskContext context;
+	private final C context;
 }

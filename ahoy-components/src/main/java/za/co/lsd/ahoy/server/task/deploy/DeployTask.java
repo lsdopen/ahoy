@@ -16,24 +16,16 @@
 
 package za.co.lsd.ahoy.server.task.deploy;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import za.co.lsd.ahoy.server.ReleaseService;
 import za.co.lsd.ahoy.server.task.Task;
-import za.co.lsd.ahoy.server.task.TaskProgressService;
 
 @Component
 public class DeployTask implements Task<DeployTaskContext> {
 	private final ReleaseService releaseService;
-	private TaskProgressService taskProgressService;
 
 	public DeployTask(ReleaseService releaseService) {
 		this.releaseService = releaseService;
-	}
-
-	@Autowired
-	public void setTaskProgressService(TaskProgressService taskProgressService) {
-		this.taskProgressService = taskProgressService;
 	}
 
 	@Override
@@ -43,12 +35,6 @@ public class DeployTask implements Task<DeployTaskContext> {
 
 	@Override
 	public void execute(DeployTaskContext context) {
-		taskProgressService.start(context, "Preparing to deploy release", null);
-		try {
-			releaseService.deploy(context.getEnvironmentReleaseId(), context.getDeployOptions());
-			taskProgressService.done();
-		} catch (Throwable t) {
-			taskProgressService.error(t);
-		}
+		releaseService.deploy(context.getEnvironmentReleaseId(), context.getDeployOptions());
 	}
 }

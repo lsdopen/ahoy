@@ -32,10 +32,12 @@ public class TaskProcessor implements Runnable {
 	private volatile boolean running = true;
 	private final TaskQueue taskQueue;
 	private final TaskExecutor synchronousTaskExecutor;
+	private final TaskProgressService taskProgressService;
 
-	public TaskProcessor(TaskQueue taskQueue, TaskExecutor synchronousTaskExecutor) {
+	public TaskProcessor(TaskQueue taskQueue, TaskExecutor synchronousTaskExecutor, TaskProgressService taskProgressService) {
 		this.taskQueue = taskQueue;
 		this.synchronousTaskExecutor = synchronousTaskExecutor;
+		this.taskProgressService = taskProgressService;
 	}
 
 	@PostConstruct
@@ -52,28 +54,37 @@ public class TaskProcessor implements Runnable {
 	public void run() {
 		try {
 			while (running) {
-				TaskExecution taskExecution = taskQueue.poll(100, TimeUnit.MILLISECONDS);
+				TaskExecution<?, ?> taskExecution = taskQueue.poll(100, TimeUnit.MILLISECONDS);
 				if (taskExecution != null) {
-					synchronousTaskExecutor.execute(() -> {
-						Task task = taskExecution.getTask();
-						try {
-							TaskContext context = taskExecution.getContext();
-							if (context.getAuthentication() != null) {
-								SecurityContextHolder.getContext().setAuthentication(context.getAuthentication());
-							}
-							task.execute(context);
-
-						} catch (Throwable t) {
-							log.error("Execution of task: " + task.getName() + " failed", t);
-
-						} finally {
-							SecurityContextHolder.getContext().setAuthentication(null);
-						}
-					});
+					TaskContext context = taskExecution.getContext();
+					taskProgressService.waiting(taskExecution.getContext(), "Waiting to " + context.getMessage());
+					synchronousTaskExecutor.execute(() -> execute(taskExecution));
 				}
 			}
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
+	}
+
+	private <T extends Task<C>, C extends TaskContext> TaskExecution<T, C> execute(TaskExecution<T, C> taskExecution) {
+		T task = taskExecution.getTask();
+		C context = taskExecution.getContext();
+		taskProgressService.start(context, "Preparing to " + context.getMessage(), null);
+		try {
+
+			if (context.getAuthentication() != null) {
+				SecurityContextHolder.getContext().setAuthentication(context.getAuthentication());
+			}
+			task.execute(context);
+			taskProgressService.done();
+
+		} catch (Throwable t) {
+			log.error("Execution of " + context.getMessage() + " failed", t);
+			taskProgressService.error(t);
+
+		} finally {
+			SecurityContextHolder.getContext().setAuthentication(null);
+		}
+		return taskExecution;
 	}
 }

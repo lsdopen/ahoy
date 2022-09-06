@@ -193,7 +193,8 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
-      const deployOptions = new DeployOptions(this.releaseVersion.id, conf.input);
+      const deployOptions = new DeployOptions(this.releaseVersion.id, conf.input,
+        `deploy ${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} to ${(this.environmentRelease.environment as Environment).name}`);
       this.releaseManageService.deploy(this.environmentRelease, this.releaseVersion, deployOptions).subscribe();
     });
   }
@@ -295,7 +296,10 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
-      const deployOptions = new DeployOptions(this.environmentRelease.previousReleaseVersion.id, conf.input);
+      const deployOptions = new DeployOptions(this.environmentRelease.previousReleaseVersion.id, conf.input,
+        `rolling back ` +
+        `${(this.environmentRelease.release as Release).name}:${this.environmentRelease.currentReleaseVersion.version} to ` +
+        `${(this.environmentRelease.release as Release).name}:${this.environmentRelease.previousReleaseVersion.version}`);
       this.releaseManageService.deploy(this.environmentRelease, this.environmentRelease.previousReleaseVersion, deployOptions)
         .subscribe(() => this.log.debug('rolled back release:', this.environmentRelease));
     });

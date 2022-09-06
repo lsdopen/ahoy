@@ -140,6 +140,11 @@ class TaskExecutorTest extends BaseAhoyTest {
 		public TestTaskContext(String id) {
 			super(id);
 		}
+
+		@Override
+		public String getMessage() {
+			return "test";
+		}
 	}
 
 	public static class TestTask implements Task<TestTaskContext> {

@@ -36,4 +36,9 @@ public class DeployTaskContext extends TaskContext {
 		this.environmentReleaseId = environmentReleaseId;
 		this.deployOptions = deployOptions;
 	}
+
+	@Override
+	public String getMessage() {
+		return deployOptions.getMessage();
+	}
 }

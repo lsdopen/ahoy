@@ -30,12 +30,14 @@ public class TaskExecutor {
 		this.taskQueue = taskQueue;
 	}
 
-	public void execute(Task task, TaskContext context) throws InterruptedException {
+	public <T extends Task<C>, C extends TaskContext> TaskExecution<T, C> execute(T task, C context) throws InterruptedException {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null) {
 			context.setAuthentication(authentication);
 		}
 		log.debug("Enqueuing task: {}, with context: {}", task.getName(), context);
-		taskQueue.put(new TaskExecution(task, context));
+		TaskExecution<T, C> taskExecution = new TaskExecution<>(task, context);
+		taskQueue.put(taskExecution);
+		return taskExecution;
 	}
 }

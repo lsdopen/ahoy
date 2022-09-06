@@ -39,6 +39,10 @@ public class TaskProgressService {
 		this.eventPublisher = eventPublisher;
 	}
 
+	public void waiting(TaskContext context, String status) {
+		eventPublisher.publishEvent(TaskProgressEvent.createWaiting(this, context.getId(), status));
+	}
+
 	public void start(TaskContext context, String status, String message) {
 		threadTaskContext.set(context);
 		eventPublisher.publishEvent(TaskProgressEvent.createInProgressUpdate(this, context.getId(), status, message));

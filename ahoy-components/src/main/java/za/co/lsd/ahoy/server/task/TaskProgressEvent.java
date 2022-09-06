@@ -43,6 +43,10 @@ public class TaskProgressEvent extends ApplicationEvent {
 		this.time = LocalDateTime.now();
 	}
 
+	public static TaskProgressEvent createWaiting(Object source, String id, String status) {
+		return new TaskProgressEvent(source, id, State.WAITING, status, null, null);
+	}
+
 	public static TaskProgressEvent createInProgressUpdate(Object source, String id, String status, String message) {
 		return new TaskProgressEvent(source, id, State.IN_PROGRESS, status, message, null);
 	}
@@ -60,6 +64,7 @@ public class TaskProgressEvent extends ApplicationEvent {
 	}
 
 	public enum State {
+		WAITING,
 		IN_PROGRESS,
 		NOTIFICATION,
 		DONE,

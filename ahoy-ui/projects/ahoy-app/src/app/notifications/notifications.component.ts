@@ -131,6 +131,8 @@ export class NotificationsComponent implements OnInit, OnDestroy {
       case State.NOTIFICATION:
       case State.DONE:
         return 'Info';
+      case State.WAITING:
+        return 'Queued';
       case State.IN_PROGRESS:
         return 'Task';
       case State.ERROR:
@@ -143,6 +145,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
       case State.NOTIFICATION:
       case State.DONE:
         return 'pi-info-circle';
+      case State.WAITING:
       case State.IN_PROGRESS:
         return 'pi-spin pi-spinner';
       case State.ERROR:

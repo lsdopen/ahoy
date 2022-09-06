@@ -24,6 +24,7 @@ import lombok.NoArgsConstructor;
 public class DeployOptions {
 	private Long releaseVersionId;
 	private String commitMessage;
+	private String message;
 
 	public DeployOptions(Long releaseVersionId, String commitMessage) {
 		this.releaseVersionId = releaseVersionId;

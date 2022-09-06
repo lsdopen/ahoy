@@ -41,4 +41,6 @@ public abstract class TaskContext {
 	protected void setAuthentication(Authentication authentication) {
 		this.authentication = authentication;
 	}
+
+	public abstract String getMessage();
 }

@@ -68,7 +68,7 @@ public class ReleaseManager {
 			try (LocalRepo.WorkingTree workingTree = localRepo.requestWorkingTree()) {
 				taskProgressService.progress("Generating helm chart");
 				chartGenerator.generate(environmentRelease, releaseVersion, workingTree.getPath());
-				taskProgressService.progress("Pusing chart to working tree");
+				taskProgressService.progress("Committing chart to working tree");
 				commit = workingTree.push(deployOptions.getCommitMessage());
 			}
 

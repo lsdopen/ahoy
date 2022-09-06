@@ -24,6 +24,7 @@ export class TaskProgressEvent {
 }
 
 export enum State {
+  WAITING = 'WAITING',
   IN_PROGRESS = 'IN_PROGRESS',
   NOTIFICATION = 'NOTIFICATION',
   DONE = 'DONE',
