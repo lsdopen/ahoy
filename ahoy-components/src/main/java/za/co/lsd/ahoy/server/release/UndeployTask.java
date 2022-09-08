@@ -14,10 +14,9 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.task.deploy;
+package za.co.lsd.ahoy.server.release;
 
 import org.springframework.stereotype.Component;
-import za.co.lsd.ahoy.server.ReleaseService;
 import za.co.lsd.ahoy.server.task.Task;
 
 @Component

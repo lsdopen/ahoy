@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server;
+package za.co.lsd.ahoy.server.release;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,14 +31,11 @@ import za.co.lsd.ahoy.server.argocd.model.ArgoEvents;
 import za.co.lsd.ahoy.server.argocd.model.Resource;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
-import za.co.lsd.ahoy.server.releases.*;
+import za.co.lsd.ahoy.server.releases.Release;
+import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 import za.co.lsd.ahoy.server.releases.resources.ResourceNode;
 import za.co.lsd.ahoy.server.security.Role;
 import za.co.lsd.ahoy.server.task.TaskExecutor;
-import za.co.lsd.ahoy.server.task.deploy.DeployTask;
-import za.co.lsd.ahoy.server.task.deploy.DeployTaskContext;
-import za.co.lsd.ahoy.server.task.deploy.UndeployTask;
-import za.co.lsd.ahoy.server.task.deploy.UndeployTaskContext;
 import za.co.lsd.ahoy.server.util.SseEmitterSubscriber;
 
 import java.util.Optional;

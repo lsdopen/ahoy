@@ -19,8 +19,8 @@ package za.co.lsd.ahoy.server.taskevents;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import za.co.lsd.ahoy.server.ReleaseStatusChangedEvent;
 import za.co.lsd.ahoy.server.argocd.ArgoConnectionEvent;
+import za.co.lsd.ahoy.server.release.ReleaseStatusChangedEvent;
 import za.co.lsd.ahoy.server.task.TaskProgressEvent;
 
 @Component

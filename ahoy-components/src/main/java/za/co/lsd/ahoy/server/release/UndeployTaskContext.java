@@ -14,31 +14,22 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.task.deploy;
+package za.co.lsd.ahoy.server.release;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
-import za.co.lsd.ahoy.server.DeployOptions;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
 import za.co.lsd.ahoy.server.task.TaskContext;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class DeployTaskContext extends TaskContext {
+public class UndeployTaskContext extends TaskContext {
 	@NonNull
 	private final EnvironmentReleaseId environmentReleaseId;
-	@NonNull
-	private final DeployOptions deployOptions;
-
-	public DeployTaskContext(EnvironmentReleaseId environmentReleaseId, DeployOptions deployOptions) {
-		super();
-		this.environmentReleaseId = environmentReleaseId;
-		this.deployOptions = deployOptions;
-	}
 
 	@Override
 	public String getMessage() {
-		return deployOptions.getMessage();
+		return "undeploy";
 	}
 }

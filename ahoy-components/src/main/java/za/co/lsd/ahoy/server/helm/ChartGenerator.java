@@ -21,10 +21,10 @@ import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
-import za.co.lsd.ahoy.server.ReleaseUtils;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.helm.values.Values;
 import za.co.lsd.ahoy.server.helm.values.ValuesBuilder;
+import za.co.lsd.ahoy.server.release.ReleaseUtils;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 
 import java.io.IOException;

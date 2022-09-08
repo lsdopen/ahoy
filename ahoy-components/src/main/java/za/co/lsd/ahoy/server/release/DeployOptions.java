@@ -14,16 +14,20 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.releases;
+package za.co.lsd.ahoy.server.release;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class PromoteOptions {
-	private Long destEnvironmentId;
-	private boolean copyEnvironmentConfig;
+public class DeployOptions {
+	private Long releaseVersionId;
+	private String commitMessage;
+	private String message;
+
+	public DeployOptions(Long releaseVersionId, String commitMessage) {
+		this.releaseVersionId = releaseVersionId;
+		this.commitMessage = commitMessage;
+	}
 }

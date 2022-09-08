@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.releases;
+package za.co.lsd.ahoy.server.release;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

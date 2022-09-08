@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server;
+package za.co.lsd.ahoy.server.release;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,10 @@ import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.environments.EnvironmentException;
 import za.co.lsd.ahoy.server.environments.EnvironmentRepository;
-import za.co.lsd.ahoy.server.releases.*;
+import za.co.lsd.ahoy.server.releases.Release;
+import za.co.lsd.ahoy.server.releases.ReleaseRepository;
+import za.co.lsd.ahoy.server.releases.ReleaseVersion;
+import za.co.lsd.ahoy.server.releases.ReleaseVersionRepository;
 import za.co.lsd.ahoy.server.releases.resources.ResourceNode;
 import za.co.lsd.ahoy.server.releases.resources.ResourceTreeConverter;
 import za.co.lsd.ahoy.server.security.Role;

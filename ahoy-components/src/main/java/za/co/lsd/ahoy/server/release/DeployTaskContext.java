@@ -14,20 +14,30 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server;
+package za.co.lsd.ahoy.server.release;
 
-import lombok.Getter;
-import org.springframework.context.ApplicationEvent;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
+import za.co.lsd.ahoy.server.task.TaskContext;
 
-@Getter
-public class ReleaseStatusChangedEvent extends ApplicationEvent {
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class DeployTaskContext extends TaskContext {
+	@NonNull
 	private final EnvironmentReleaseId environmentReleaseId;
-	private final Long releaseVersionId;
+	@NonNull
+	private final DeployOptions deployOptions;
 
-	public ReleaseStatusChangedEvent(Object source, EnvironmentReleaseId environmentReleaseId, Long releaseVersionId) {
-		super(source);
+	public DeployTaskContext(EnvironmentReleaseId environmentReleaseId, DeployOptions deployOptions) {
+		super();
 		this.environmentReleaseId = environmentReleaseId;
-		this.releaseVersionId = releaseVersionId;
+		this.deployOptions = deployOptions;
+	}
+
+	@Override
+	public String getMessage() {
+		return deployOptions.getMessage();
 	}
 }

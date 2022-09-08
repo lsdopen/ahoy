@@ -25,8 +25,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import za.co.lsd.ahoy.server.AhoyTestServerApplication;
-import za.co.lsd.ahoy.server.DeployOptions;
-import za.co.lsd.ahoy.server.ReleaseService;
 import za.co.lsd.ahoy.server.applications.Application;
 import za.co.lsd.ahoy.server.applications.ApplicationVersion;
 import za.co.lsd.ahoy.server.cluster.Cluster;
@@ -34,6 +32,8 @@ import za.co.lsd.ahoy.server.cluster.ClusterRepository;
 import za.co.lsd.ahoy.server.cluster.ClusterType;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
+import za.co.lsd.ahoy.server.release.DeployOptions;
+import za.co.lsd.ahoy.server.release.ReleaseService;
 import za.co.lsd.ahoy.server.releases.Release;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 

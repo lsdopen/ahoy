@@ -14,22 +14,16 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.task.deploy;
+package za.co.lsd.ahoy.server.release;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
-import za.co.lsd.ahoy.server.task.TaskContext;
+import lombok.NoArgsConstructor;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class UndeployTaskContext extends TaskContext {
-	@NonNull
-	private final EnvironmentReleaseId environmentReleaseId;
-
-	@Override
-	public String getMessage() {
-		return "undeploy";
-	}
+@NoArgsConstructor
+@AllArgsConstructor
+public class PromoteOptions {
+	private Long destEnvironmentId;
+	private boolean copyEnvironmentConfig;
 }
