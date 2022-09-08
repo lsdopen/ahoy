@@ -121,7 +121,7 @@ public class ReleaseControllerTest {
 			.andExpect(status().isOk());
 
 		// then
-		verify(releaseService, times(1)).undeploy(eq(environmentReleaseId));
+		verify(releaseService, timeout(1000).times(1)).undeploy(eq(environmentReleaseId));
 	}
 
 	@Test
