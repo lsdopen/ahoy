@@ -15,7 +15,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {EMPTY, Observable, Subject} from 'rxjs';
+import {EMPTY, Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {DeployOptions, EnvironmentRelease, EnvironmentReleaseId} from '../environment-release/environment-release';
 import {Environment} from '../environments/environment';
@@ -33,7 +33,6 @@ import {ArgoEvents, Resource, ResourceNode} from './resource';
   providedIn: 'root'
 })
 export class ReleaseManageService {
-  private environmentReleaseChangedSubject = new Subject<EnvironmentRelease>();
 
   constructor(private restClient: RestClientService,
               private eventSourceService: EventSourceService,
@@ -46,10 +45,6 @@ export class ReleaseManageService {
     this.log.debug('deploying environment release', environmentRelease);
     const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentRelease.id)}/deploy`;
     return this.restClient.post<void>(url, deployOptions).pipe(
-      tap(() => {
-        this.log.debug('deployed environment release', environmentRelease);
-        this.environmentReleaseChangedSubject.next(environmentRelease);
-      }),
       catchError((error) => {
         const text = `Failed to deploy ${(environmentRelease.release as Release).name} : ${releaseVersion.version} `
           + `to environment ${(environmentRelease.environment as Environment).name}`;
@@ -59,17 +54,10 @@ export class ReleaseManageService {
     );
   }
 
-  undeploy(environmentRelease: EnvironmentRelease): Observable<EnvironmentRelease> {
+  undeploy(environmentRelease: EnvironmentRelease): Observable<void> {
     this.log.debug('undeploying environment release:', environmentRelease);
     const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentRelease.id)}/undeploy`;
-    return this.restClient.post<EnvironmentRelease>(url, null, true).pipe(
-      tap((unDeployedEnvironmentRelease) => {
-        this.log.debug('undeployed environment release', unDeployedEnvironmentRelease);
-        this.environmentReleaseChangedSubject.next(unDeployedEnvironmentRelease);
-        const text = `${(unDeployedEnvironmentRelease.release as Release).name} `
-          + `was undeployed from environment ${(unDeployedEnvironmentRelease.environment as Environment).name}`;
-        this.notificationsService.notification(new Notification(text));
-      }),
+    return this.restClient.post<void>(url, null).pipe(
       catchError((error) => {
         const text = `Failed to undeploy ${(environmentRelease.release as Release).name} `
           + `from environment ${(environmentRelease.environment as Environment).name}`;
@@ -179,9 +167,5 @@ export class ReleaseManageService {
     return this.restClient.get<Resource>(url).pipe(
       tap((resource) => this.log.debug('fetched resource', resource))
     );
-  }
-
-  public environmentReleaseChanged(): Observable<EnvironmentRelease> {
-    return this.environmentReleaseChangedSubject.asObservable();
   }
 }

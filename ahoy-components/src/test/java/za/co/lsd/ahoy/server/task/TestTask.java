@@ -16,14 +16,21 @@
 
 package za.co.lsd.ahoy.server.task;
 
-import lombok.Data;
-import lombok.NonNull;
+public class TestTask implements Task<TestTaskContext> {
 
-@Data
-public class TaskExecution<T extends Task<C>, C extends TaskContext> {
-	@NonNull
-	private final T task;
-	@NonNull
-	private final C context;
-	private final boolean async;
+	@Override
+	public String getName() {
+		return "test-task";
+	}
+
+	@Override
+	public void execute(TestTaskContext context) {
+		if (context.getSleep() > 0) {
+			try {
+				Thread.sleep(context.getSleep());
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
 }

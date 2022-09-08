@@ -47,9 +47,9 @@ public class TaskEventsListener {
 	}
 
 	@EventListener
-	public void onDeployTaskEvent(TaskProgressEvent taskProgressEvent) {
+	public void onTaskProgressEvent(TaskProgressEvent taskProgressEvent) {
 		TaskEvent taskEvent = new TaskEvent(taskProgressEvent);
-		log.debug("Deploy task event, sending event: {}", taskEvent);
+		log.debug("Task progress event, sending event: {}", taskEvent);
 		taskEventsService.sendTaskEvent(taskEvent);
 	}
 }

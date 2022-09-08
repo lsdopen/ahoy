@@ -16,14 +16,28 @@
 
 package za.co.lsd.ahoy.server.task;
 
-import lombok.Data;
-import lombok.NonNull;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-@Data
-public class TaskExecution<T extends Task<C>, C extends TaskContext> {
-	@NonNull
-	private final T task;
-	@NonNull
-	private final C context;
-	private final boolean async;
+import java.util.Objects;
+
+public class DelegatingTaskSecurityContextRunnable implements Runnable {
+	private final Runnable task;
+	private final TaskContext taskContext;
+
+	public DelegatingTaskSecurityContextRunnable(Runnable task, TaskContext taskContext) {
+		this.task = Objects.requireNonNull(task);
+		this.taskContext = Objects.requireNonNull(taskContext);
+	}
+
+	@Override
+	public void run() {
+		try {
+			if (taskContext.getSecurityContext() != null) {
+				SecurityContextHolder.setContext(taskContext.getSecurityContext());
+			}
+			task.run();
+		} finally {
+			SecurityContextHolder.clearContext();
+		}
+	}
 }

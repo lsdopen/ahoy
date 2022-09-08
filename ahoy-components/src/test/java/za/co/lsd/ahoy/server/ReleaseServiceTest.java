@@ -224,7 +224,7 @@ public class ReleaseServiceTest {
 		when(environmentReleaseRepository.findById(environmentRelease.getId())).thenReturn(Optional.of(environmentRelease));
 
 		// when
-		EnvironmentRelease undeployedEnvironmentRelease = releaseService.undeploy(environmentRelease.getId()).get();
+		EnvironmentRelease undeployedEnvironmentRelease = releaseService.undeploy(environmentRelease.getId());
 
 		// then
 		assertNull(undeployedEnvironmentRelease.getCurrentReleaseVersion(), "Release version should be null");

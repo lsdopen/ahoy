@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -128,15 +127,15 @@ public class ReleaseService {
 		return environmentRelease;
 	}
 
-	@Async("deploymentTaskExecutor")
 	@Transactional
-	public Future<EnvironmentRelease> undeploy(EnvironmentReleaseId environmentReleaseId) {
+	public EnvironmentRelease undeploy(EnvironmentReleaseId environmentReleaseId) {
 		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
 
 		log.info("Undeploying environment release: {}", environmentRelease);
 
 		ReleaseVersion currentReleaseVersion = environmentRelease.getCurrentReleaseVersion();
+		taskProgressService.progress(String.format("Undeploying %s:%s from %s", environmentRelease.getRelease().getName(), currentReleaseVersion.getVersion(), environmentRelease.getEnvironment().getName()), null);
 
 		releaseManager.undeploy(environmentRelease);
 
@@ -151,9 +150,10 @@ public class ReleaseService {
 		purgeReleaseStatus(environmentRelease, currentReleaseVersion);
 
 		environmentReleaseRepository.save(environmentRelease);
+		taskProgressService.progress(String.format("%s:%s successfully undeployed from %s", environmentRelease.getRelease().getName(), currentReleaseVersion.getVersion(), environmentRelease.getEnvironment().getName()), null);
 		log.info("Undeployed environment release: {}", environmentRelease);
 
-		return new AsyncResult<>(environmentRelease);
+		return environmentRelease;
 	}
 
 	@Transactional
@@ -166,7 +166,7 @@ public class ReleaseService {
 		if (environmentRelease.hasCurrentReleaseVersion()) {
 			log.info("{} is currently deployed in {}, undeploying...", environmentRelease.getRelease().getName(), environmentRelease.getEnvironment().getName());
 			try {
-				undeploy(environmentReleaseId).get();
+				undeploy(environmentReleaseId);
 			} catch (Exception e) {
 				throw new EnvironmentException("Failed to undeploy " + environmentRelease + " from " + environmentRelease.getEnvironment(), e);
 			}
@@ -413,7 +413,6 @@ public class ReleaseService {
 		}
 	}
 
-	@Async("deploymentTaskExecutor")
 	@Transactional
 	@RunAsRole(Role.admin)
 	public void updateStatus(ArgoApplication application) {

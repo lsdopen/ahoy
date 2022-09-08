@@ -17,6 +17,7 @@
 package za.co.lsd.ahoy.server.task;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import za.co.lsd.ahoy.server.security.Role;
@@ -26,8 +27,11 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j
-public class SecuredTask implements Task<TaskContext> {
+public class SecuredTask implements Task<TestTaskContext> {
 	private CountDownLatch executedLatch;
+
+	@Autowired
+	private SecuredCollaborator securedCollaborator;
 
 	@Override
 	public String getName() {
@@ -40,7 +44,16 @@ public class SecuredTask implements Task<TaskContext> {
 
 	@Override
 	@Secured(Role.admin)
-	public void execute(TaskContext context) {
+	public void execute(TestTaskContext context) {
+		log.info("Executing secured task: " + context.getId());
+		if (context.getSleep() > 0) {
+			try {
+				Thread.sleep(context.getSleep());
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		securedCollaborator.secureMethod();
 		log.info("Executed secured task: " + context.getId());
 		executedLatch.countDown();
 	}

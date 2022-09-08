@@ -37,16 +37,16 @@ class TaskExecutorTest extends BaseAhoyTest {
 	private SecuredTask securedTask;
 
 	/**
-	 * Tests executing a single task.
+	 * Tests executing a single synchronous task.
 	 */
 	@Test
-	void executeOne() throws Exception {
+	void executeSyncOne() throws Exception {
 		// given
 		TestTaskContext context = new TestTaskContext("my-task-id");
 		TestTask mockTask = mockTask();
 
 		// when
-		taskExecutor.execute(mockTask, context);
+		taskExecutor.executeSync(mockTask, context);
 
 		// then
 		verify(mockTask, timeout(1000).times(1)).execute(same(context));
@@ -56,7 +56,7 @@ class TaskExecutorTest extends BaseAhoyTest {
 	 * Tests that executing multiple tasks are executed in sequence when using the synchronous executor.
 	 */
 	@Test
-	void executeMultipleSynchronously() throws Exception {
+	void executeSyncMultiple() throws Exception {
 		// given
 		TestTaskContext task1Context = new TestTaskContext("my-task-id-1");
 		TestTaskContext task2Context = new TestTaskContext("my-task-id-2");
@@ -64,9 +64,9 @@ class TaskExecutorTest extends BaseAhoyTest {
 		TestTask mockTask = mockTask();
 
 		// when
-		taskExecutor.execute(mockTask, task1Context);
-		taskExecutor.execute(mockTask, task2Context);
-		taskExecutor.execute(mockTask, task3Context);
+		taskExecutor.executeSync(mockTask, task1Context);
+		taskExecutor.executeSync(mockTask, task2Context);
+		taskExecutor.executeSync(mockTask, task3Context);
 
 		// then
 		InOrder inOrder = inOrder(mockTask);
@@ -79,7 +79,7 @@ class TaskExecutorTest extends BaseAhoyTest {
 	 * Tests that when executing multiple tasks, if an earlier task fails, subsequent tasks are still executed.
 	 */
 	@Test
-	void executeMultipleAfterThrowsException() throws Exception {
+	void executeSyncMultipleAfterThrowsException() throws Exception {
 		// given
 		TestTaskContext task1Context = new TestTaskContext("my-task-id-1");
 		TestTaskContext task2Context = new TestTaskContext("my-task-id-2");
@@ -88,8 +88,8 @@ class TaskExecutorTest extends BaseAhoyTest {
 		doThrow(new RuntimeException("Test failure")).when(mockTask1).execute(any());
 
 		// when
-		taskExecutor.execute(mockTask1, task1Context);
-		taskExecutor.execute(mockTask2, task2Context);
+		taskExecutor.executeSync(mockTask1, task1Context);
+		taskExecutor.executeSync(mockTask2, task2Context);
 
 		// then
 		verify(mockTask1, timeout(1000).times(1)).execute(same(task1Context));
@@ -107,7 +107,7 @@ class TaskExecutorTest extends BaseAhoyTest {
 		securedTask.setExecutedLatch(new CountDownLatch(1));
 
 		// when
-		taskExecutor.execute(securedTask, context);
+		taskExecutor.executeSync(securedTask, context);
 
 		// then
 		assertTrue(securedTask.awaitExecution(1000, TimeUnit.MILLISECONDS), "Secured task should have executed");
@@ -123,10 +123,104 @@ class TaskExecutorTest extends BaseAhoyTest {
 		securedTask.setExecutedLatch(new CountDownLatch(1));
 
 		// when
-		taskExecutor.execute(securedTask, context);
+		taskExecutor.executeSync(securedTask, context);
 
 		// then
 		assertFalse(securedTask.awaitExecution(1000, TimeUnit.MILLISECONDS), "Secured task should NOT have executed");
+	}
+
+	/**
+	 * Tests executing a single asynchronous task.
+	 */
+	@Test
+	void executeAsyncOne() throws Exception {
+		// given
+		TestTaskContext context = new TestTaskContext("my-task-id");
+		TestTask mockTask = mockTask();
+
+		// when
+		taskExecutor.executeAsync(mockTask, context);
+
+		// then
+		verify(mockTask, timeout(1000).times(1)).execute(same(context));
+	}
+
+	/**
+	 * Tests that executing multiple tasks are executed in parallel when using the asynchronous executor.
+	 */
+	@Test
+	void executeAsyncMultiple() throws Exception {
+		// given
+		TestTaskContext task1Context = new TestTaskContext("my-task-id-1");
+		TestTaskContext task2Context = new TestTaskContext("my-task-id-2");
+		TestTaskContext task3Context = new TestTaskContext("my-task-id-3");
+		TestTask mockTask = mockTask(1000);
+
+		// when
+		taskExecutor.executeAsync(mockTask, task1Context);
+		taskExecutor.executeAsync(mockTask, task2Context);
+		taskExecutor.executeAsync(mockTask, task3Context);
+
+		// then
+		verify(mockTask, timeout(2000).times(3)).execute(any());
+	}
+
+	/**
+	 * Tests that when executing multiple tasks asynchronously, if an earlier task fails, subsequent tasks are still executed.
+	 */
+	@Test
+	void executeAsyncMultipleAfterThrowsException() throws Exception {
+		// given
+		TestTaskContext task1Context = new TestTaskContext("my-task-id-1");
+		TestTaskContext task2Context = new TestTaskContext("my-task-id-2");
+		TestTask mockTask1 = mockTask();
+		TestTask mockTask2 = mockTask();
+		doThrow(new RuntimeException("Test failure")).when(mockTask1).execute(any());
+
+		// when
+		taskExecutor.executeAsync(mockTask1, task1Context);
+		taskExecutor.executeAsync(mockTask2, task2Context);
+
+		// then
+		verify(mockTask1, timeout(1000).times(1)).execute(same(task1Context));
+		verify(mockTask2, timeout(1000).times(1)).execute(same(task2Context));
+	}
+
+	/**
+	 * Tests when executing a @Secured task; one with authentication and role required, that the task executes if the correct auth and role are provided.
+	 */
+	@Test
+	@WithMockUser(authorities = {Scope.ahoy, Role.admin})
+	void executeAsyncSecuredTask() throws Exception {
+		// given
+		TestTaskContext context = new TestTaskContext("my-secure-task-id");
+		securedTask.setExecutedLatch(new CountDownLatch(1));
+
+		// when
+		taskExecutor.executeAsync(securedTask, context);
+
+		// then
+		assertTrue(securedTask.awaitExecution(1000, TimeUnit.MILLISECONDS), "Secured task should have executed");
+	}
+
+	/**
+	 * Tests when executing multiple @Secured tasks; with authentication and roles required, that all tasks execute without interfering with each other's auth.
+	 */
+	@Test
+	@WithMockUser(authorities = {Scope.ahoy, Role.admin})
+	void executeAsyncMultipleSecuredTasks() throws Exception {
+		// given
+		TestTaskContext syncContext = new TestTaskContext("my-sync-secure-task-id");
+		syncContext.setSleep(1000);
+		TestTaskContext asyncContext = new TestTaskContext("my-async-secure-task-id");
+		securedTask.setExecutedLatch(new CountDownLatch(2));
+
+		// when
+		taskExecutor.executeSync(securedTask, syncContext);
+		taskExecutor.executeAsync(securedTask, asyncContext);
+
+		// then
+		assertTrue(securedTask.awaitExecution(2000, TimeUnit.MILLISECONDS), "Secured task should have executed");
 	}
 
 	private TestTask mockTask() {
@@ -135,27 +229,13 @@ class TaskExecutorTest extends BaseAhoyTest {
 		return mockTask;
 	}
 
-	public static class TestTaskContext extends TaskContext {
-
-		public TestTaskContext(String id) {
-			super(id);
-		}
-
-		@Override
-		public String getMessage() {
-			return "test";
-		}
-	}
-
-	public static class TestTask implements Task<TestTaskContext> {
-
-		@Override
-		public String getName() {
-			return "test-task";
-		}
-
-		@Override
-		public void execute(TestTaskContext context) {
-		}
+	private TestTask mockTask(long sleep) {
+		TestTask mockTask = mock(TestTask.class);
+		when(mockTask.getName()).thenReturn("mock-task");
+		doAnswer((invocation) -> {
+			Thread.sleep(sleep);
+			return null;
+		}).when(mockTask).execute(any(TestTaskContext.class));
+		return mockTask;
 	}
 }

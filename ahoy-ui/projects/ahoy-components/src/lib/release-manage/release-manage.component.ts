@@ -15,11 +15,11 @@
  */
 
 import {Location} from '@angular/common';
-import {Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MenuItem} from 'primeng/api';
 import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
-import {Observable, of, Subscription} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {filter, mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Cluster} from '../clusters/cluster';
@@ -45,9 +45,8 @@ import {UpgradeDialogComponent} from './upgrade-dialog/upgrade-dialog.component'
   templateUrl: './release-manage.component.html',
   styleUrls: ['./release-manage.component.scss']
 })
-export class ReleaseManageComponent implements OnInit, OnDestroy {
+export class ReleaseManageComponent implements OnInit {
   Role = Role;
-  private environmentReleaseChangedSubscription: Subscription;
   environmentReleases: EnvironmentRelease[];
   releaseChanged = new EventEmitter<{ environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion }>();
   environmentRelease: EnvironmentRelease;
@@ -79,14 +78,6 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
         this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
       });
     });
-
-    this.subscribeToEnvironmentReleaseChanged();
-  }
-
-  ngOnDestroy(): void {
-    if (this.environmentReleaseChangedSubscription) {
-      this.environmentReleaseChangedSubscription.unsubscribe();
-    }
   }
 
   private getEnvironmentRelease(environmentId: number, releaseId: number, releaseVersionId: number): Observable<EnvironmentRelease> {
@@ -140,21 +131,6 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
       {label: rel.name},
       {label: this.releaseVersion.version}
     ]);
-  }
-
-  private subscribeToEnvironmentReleaseChanged() {
-    if (!this.environmentReleaseChangedSubscription) {
-      // TODO nested subscribes
-      this.environmentReleaseChangedSubscription = this.releaseManageService.environmentReleaseChanged()
-        .subscribe((environmentRelease) => {
-          if (EnvironmentReleaseService.environmentReleaseEquals(this.environmentRelease, environmentRelease)) {
-            this.getEnvironmentRelease(environmentRelease.id.environmentId, environmentRelease.id.releaseId, this.releaseVersion.id)
-              .subscribe(() => {
-                this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
-              });
-          }
-        });
-    }
   }
 
   reloadCurrent() {

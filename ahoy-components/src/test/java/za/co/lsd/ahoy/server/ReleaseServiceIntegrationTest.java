@@ -392,7 +392,7 @@ class ReleaseServiceIntegrationTest {
 				.build()).build()));
 
 		// when
-		EnvironmentRelease undeployedEnvironmentRelease = releaseService.undeploy(environmentRelease.getId()).get();
+		EnvironmentRelease undeployedEnvironmentRelease = releaseService.undeploy(environmentRelease.getId());
 
 		// then
 		// verify external collaborators
@@ -447,7 +447,7 @@ class ReleaseServiceIntegrationTest {
 		when(argoClient.getApplication(eq(argoApplicationName))).thenReturn(Optional.empty());
 
 		// when
-		EnvironmentRelease undeployedEnvironmentRelease = releaseService.undeploy(environmentRelease.getId()).get();
+		EnvironmentRelease undeployedEnvironmentRelease = releaseService.undeploy(environmentRelease.getId());
 
 		// then
 		// verify external collaborators

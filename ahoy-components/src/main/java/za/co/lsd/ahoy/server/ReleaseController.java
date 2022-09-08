@@ -37,6 +37,8 @@ import za.co.lsd.ahoy.server.security.Role;
 import za.co.lsd.ahoy.server.task.TaskExecutor;
 import za.co.lsd.ahoy.server.task.deploy.DeployTask;
 import za.co.lsd.ahoy.server.task.deploy.DeployTaskContext;
+import za.co.lsd.ahoy.server.task.deploy.UndeployTask;
+import za.co.lsd.ahoy.server.task.deploy.UndeployTaskContext;
 import za.co.lsd.ahoy.server.util.SseEmitterSubscriber;
 
 import java.util.Optional;
@@ -53,6 +55,7 @@ public class ReleaseController {
 	private final TaskExecutor taskExecutor;
 
 	private DeployTask deployTask;
+	private UndeployTask undeployTask;
 	private ExecutorService sseMvcExecutor;
 
 	public ReleaseController(ReleaseService releaseService, TaskExecutor taskExecutor) {
@@ -66,6 +69,11 @@ public class ReleaseController {
 	}
 
 	@Autowired
+	public void setUndeployTask(UndeployTask undeployTask) {
+		this.undeployTask = undeployTask;
+	}
+
+	@Autowired
 	public void setSseMvcExecutor(ExecutorService sseMvcExecutor) {
 		this.sseMvcExecutor = sseMvcExecutor;
 	}
@@ -74,15 +82,15 @@ public class ReleaseController {
 	public ResponseEntity<Void> deploy(@PathVariable EnvironmentReleaseId environmentReleaseId,
 													 @RequestBody DeployOptions deployOptions) throws ExecutionException, InterruptedException {
 
-		taskExecutor.execute(deployTask, new DeployTaskContext(environmentReleaseId, deployOptions));
+		taskExecutor.executeSync(deployTask, new DeployTaskContext(environmentReleaseId, deployOptions));
 		return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.OK);
 	}
 
 	@PostMapping("/environmentReleases/{environmentReleaseId}/undeploy")
 	public ResponseEntity<EnvironmentRelease> undeploy(@PathVariable EnvironmentReleaseId environmentReleaseId) throws ExecutionException, InterruptedException {
 
-		Future<EnvironmentRelease> undeployedEnvironmentRelease = releaseService.undeploy(environmentReleaseId);
-		return new ResponseEntity<>(undeployedEnvironmentRelease.get(), new HttpHeaders(), HttpStatus.OK);
+		taskExecutor.executeAsync(undeployTask, new UndeployTaskContext(environmentReleaseId));
+		return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.OK);
 	}
 
 	@PostMapping("/environmentReleases/{environmentReleaseId}/promote")

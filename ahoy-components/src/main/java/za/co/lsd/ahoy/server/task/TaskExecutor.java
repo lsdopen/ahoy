@@ -17,7 +17,6 @@
 package za.co.lsd.ahoy.server.task;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -30,13 +29,18 @@ public class TaskExecutor {
 		this.taskQueue = taskQueue;
 	}
 
-	public <T extends Task<C>, C extends TaskContext> TaskExecution<T, C> execute(T task, C context) throws InterruptedException {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication != null) {
-			context.setAuthentication(authentication);
-		}
+	public <T extends Task<C>, C extends TaskContext> TaskExecution<T, C> executeSync(T task, C context) throws InterruptedException {
+		context.setSecurityContext(SecurityContextHolder.getContext());
 		log.debug("Enqueuing task: {}, with context: {}", task.getName(), context);
-		TaskExecution<T, C> taskExecution = new TaskExecution<>(task, context);
+		TaskExecution<T, C> taskExecution = new TaskExecution<>(task, context, false);
+		taskQueue.put(taskExecution);
+		return taskExecution;
+	}
+
+	public <T extends Task<C>, C extends TaskContext> TaskExecution<T, C> executeAsync(T task, C context) throws InterruptedException {
+		context.setSecurityContext(SecurityContextHolder.getContext());
+		log.debug("Enqueuing async task: {}, with context: {}", task.getName(), context);
+		TaskExecution<T, C> taskExecution = new TaskExecution<>(task, context, true);
 		taskQueue.put(taskExecution);
 		return taskExecution;
 	}

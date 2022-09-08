@@ -16,14 +16,23 @@
 
 package za.co.lsd.ahoy.server.task;
 
-import lombok.Data;
-import lombok.NonNull;
+public class TestTaskContext extends TaskContext {
+	private long sleep = 0;
 
-@Data
-public class TaskExecution<T extends Task<C>, C extends TaskContext> {
-	@NonNull
-	private final T task;
-	@NonNull
-	private final C context;
-	private final boolean async;
+	public TestTaskContext(String id) {
+		super(id);
+	}
+
+	public void setSleep(long sleep) {
+		this.sleep = sleep;
+	}
+
+	public long getSleep() {
+		return sleep;
+	}
+
+	@Override
+	public String getMessage() {
+		return "test";
+	}
 }

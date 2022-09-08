@@ -18,7 +18,6 @@ package za.co.lsd.ahoy.server.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -32,11 +31,13 @@ public class TaskProcessor implements Runnable {
 	private volatile boolean running = true;
 	private final TaskQueue taskQueue;
 	private final TaskExecutor synchronousTaskExecutor;
+	private final TaskExecutor asynchronousTaskExecutor;
 	private final TaskProgressService taskProgressService;
 
-	public TaskProcessor(TaskQueue taskQueue, TaskExecutor synchronousTaskExecutor, TaskProgressService taskProgressService) {
+	public TaskProcessor(TaskQueue taskQueue, TaskExecutor synchronousTaskExecutor, TaskExecutor asynchronousTaskExecutor, TaskProgressService taskProgressService) {
 		this.taskQueue = taskQueue;
 		this.synchronousTaskExecutor = synchronousTaskExecutor;
+		this.asynchronousTaskExecutor = asynchronousTaskExecutor;
 		this.taskProgressService = taskProgressService;
 	}
 
@@ -58,7 +59,8 @@ public class TaskProcessor implements Runnable {
 				if (taskExecution != null) {
 					TaskContext context = taskExecution.getContext();
 					taskProgressService.waiting(taskExecution.getContext(), "Waiting to " + context.getMessage());
-					synchronousTaskExecutor.execute(() -> execute(taskExecution));
+					TaskExecutor taskExecutor = taskExecution.isAsync() ? asynchronousTaskExecutor : synchronousTaskExecutor;
+					taskExecutor.execute(new DelegatingTaskSecurityContextRunnable(() -> execute(taskExecution), context));
 				}
 			}
 		} catch (InterruptedException e) {
@@ -71,19 +73,12 @@ public class TaskProcessor implements Runnable {
 		C context = taskExecution.getContext();
 		taskProgressService.start(context, "Preparing to " + context.getMessage(), null);
 		try {
-
-			if (context.getAuthentication() != null) {
-				SecurityContextHolder.getContext().setAuthentication(context.getAuthentication());
-			}
 			task.execute(context);
 			taskProgressService.done();
 
 		} catch (Throwable t) {
 			log.error("Execution of " + context.getMessage() + " failed", t);
 			taskProgressService.error(t);
-
-		} finally {
-			SecurityContextHolder.getContext().setAuthentication(null);
 		}
 		return taskExecution;
 	}

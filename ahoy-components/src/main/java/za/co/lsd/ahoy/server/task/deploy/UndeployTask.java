@@ -14,16 +14,27 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.task;
+package za.co.lsd.ahoy.server.task.deploy;
 
-import lombok.Data;
-import lombok.NonNull;
+import org.springframework.stereotype.Component;
+import za.co.lsd.ahoy.server.ReleaseService;
+import za.co.lsd.ahoy.server.task.Task;
 
-@Data
-public class TaskExecution<T extends Task<C>, C extends TaskContext> {
-	@NonNull
-	private final T task;
-	@NonNull
-	private final C context;
-	private final boolean async;
+@Component
+public class UndeployTask implements Task<UndeployTaskContext> {
+	private final ReleaseService releaseService;
+
+	public UndeployTask(ReleaseService releaseService) {
+		this.releaseService = releaseService;
+	}
+
+	@Override
+	public String getName() {
+		return "undeploy";
+	}
+
+	@Override
+	public void execute(UndeployTaskContext context) {
+		releaseService.undeploy(context.getEnvironmentReleaseId());
+	}
 }

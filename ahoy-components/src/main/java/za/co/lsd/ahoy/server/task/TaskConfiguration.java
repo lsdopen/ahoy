@@ -20,7 +20,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.security.task.DelegatingSecurityContextTaskExecutor;
 
 @Configuration
 public class TaskConfiguration {
@@ -33,6 +32,17 @@ public class TaskConfiguration {
 		executor.setThreadNamePrefix("sync-task-");
 		executor.initialize();
 
-		return new DelegatingSecurityContextTaskExecutor(executor);
+		return executor;
+	}
+
+	@Bean
+	public TaskExecutor asynchronousTaskExecutor() {
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+		executor.setCorePoolSize(5);
+		executor.setMaxPoolSize(10);
+		executor.setThreadNamePrefix("async-task-");
+		executor.initialize();
+
+		return executor;
 	}
 }

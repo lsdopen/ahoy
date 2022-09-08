@@ -17,14 +17,14 @@
 package za.co.lsd.ahoy.server.task;
 
 import lombok.Data;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 
 import java.util.UUID;
 
 @Data
 public abstract class TaskContext {
 	private final String id;
-	private Authentication authentication;
+	private SecurityContext securityContext;
 
 	protected TaskContext() {
 		this(UUID.randomUUID().toString());
@@ -34,12 +34,12 @@ public abstract class TaskContext {
 		this.id = id;
 	}
 
-	protected Authentication getAuthentication() {
-		return authentication;
+	protected SecurityContext getSecurityContext() {
+		return securityContext;
 	}
 
-	protected void setAuthentication(Authentication authentication) {
-		this.authentication = authentication;
+	protected void setSecurityContext(SecurityContext securityContext) {
+		this.securityContext = securityContext;
 	}
 
 	public abstract String getMessage();

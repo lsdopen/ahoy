@@ -20,10 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.security.task.DelegatingSecurityContextAsyncTaskExecutor;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,17 +30,6 @@ import java.util.concurrent.Executors;
 @EnableAspectJAutoProxy
 @Slf4j
 public class AhoyServerConfiguration {
-
-	@Bean
-	public TaskExecutor deploymentTaskExecutor() {
-		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-		executor.setCorePoolSize(1);
-		executor.setMaxPoolSize(1);
-		executor.setThreadNamePrefix("deployment-");
-		executor.initialize();
-
-		return new DelegatingSecurityContextAsyncTaskExecutor(executor);
-	}
 
 	@Bean
 	public ExecutorService sseMvcExecutor() {

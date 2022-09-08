@@ -81,8 +81,6 @@ public class ReleaseControllerTest {
 				.content(json(deployOptions)))
 			.andDo(print())
 			.andExpect(status().isOk());
-//			.andExpect(jsonPath("$.id.environmentId").value(2L))
-//			.andExpect(jsonPath("$.id.releaseId").value(3L));
 
 		// then
 		verify(releaseService, timeout(1000).times(1)).deploy(eq(environmentReleaseId), eq(deployOptions));
@@ -112,15 +110,13 @@ public class ReleaseControllerTest {
 		EnvironmentRelease environmentRelease = testEnvRelease(1L, 2L, 3L);
 		EnvironmentReleaseId environmentReleaseId = environmentRelease.getId();
 
-		when(releaseService.undeploy(eq(environmentReleaseId))).thenReturn(CompletableFuture.completedFuture(environmentRelease));
+		when(releaseService.undeploy(eq(environmentReleaseId))).thenReturn(environmentRelease);
 
 		// when
 		mvc.perform(post("/api/environmentReleases/2_3/undeploy")
 				.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.id.environmentId").value(2L))
-			.andExpect(jsonPath("$.id.releaseId").value(3L));
+			.andExpect(status().isOk());
 
 		// then
 		verify(releaseService, times(1)).undeploy(eq(environmentReleaseId));

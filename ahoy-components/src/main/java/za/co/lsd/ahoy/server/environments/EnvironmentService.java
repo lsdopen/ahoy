@@ -129,7 +129,7 @@ public class EnvironmentService {
 				previouslyDeployedReleases.put(environmentRelease.getId(), environmentRelease.getCurrentReleaseVersion());
 
 				try {
-					releaseService.undeploy(environmentRelease.getId()).get();
+					releaseService.undeploy(environmentRelease.getId());
 				} catch (Exception e) {
 					throw new EnvironmentException("Failed to undeploy " + environmentRelease + " from " + environment, e);
 				}
