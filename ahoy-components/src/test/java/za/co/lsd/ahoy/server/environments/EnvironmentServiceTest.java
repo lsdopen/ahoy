@@ -25,8 +25,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import za.co.lsd.ahoy.server.AhoyTestServerApplication;
-import za.co.lsd.ahoy.server.DeployOptions;
-import za.co.lsd.ahoy.server.ReleaseService;
 import za.co.lsd.ahoy.server.applications.Application;
 import za.co.lsd.ahoy.server.applications.ApplicationVersion;
 import za.co.lsd.ahoy.server.cluster.Cluster;
@@ -34,13 +32,14 @@ import za.co.lsd.ahoy.server.cluster.ClusterRepository;
 import za.co.lsd.ahoy.server.cluster.ClusterType;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
+import za.co.lsd.ahoy.server.release.DeployOptions;
+import za.co.lsd.ahoy.server.release.ReleaseService;
 import za.co.lsd.ahoy.server.releases.Release;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 
 import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -177,15 +176,11 @@ class EnvironmentServiceTest {
 
 		environmentRelease.setCurrentReleaseVersion(releaseVersion);
 
-		// The future is needed for deploy/undeploy but the value is never used
-		Future<EnvironmentRelease> environmentReleaseFuture = mock(Future.class);
-		when(environmentReleaseFuture.get()).thenReturn(new EnvironmentRelease());
-
 		when(environmentRepository.findById(1L)).thenReturn(Optional.of(environment));
 		when(clusterRepository.findById(2L)).thenReturn(Optional.of(cluster2));
-		when(releaseService.undeploy(same(environmentRelease.getId()))).thenReturn(environmentReleaseFuture);
+		when(releaseService.undeploy(same(environmentRelease.getId()))).thenReturn(new EnvironmentRelease());
 		when(environmentRepository.save(same(environment))).thenReturn(environment);
-		when(releaseService.deploy(same(environmentRelease.getId()), any(DeployOptions.class))).thenReturn(environmentReleaseFuture);
+		when(releaseService.deploy(same(environmentRelease.getId()), any(DeployOptions.class))).thenReturn(new EnvironmentRelease());
 
 		// when
 		MoveOptions moveOptions = new MoveOptions(2L, true);
@@ -223,13 +218,9 @@ class EnvironmentServiceTest {
 
 		environmentRelease.setCurrentReleaseVersion(releaseVersion);
 
-		// The future is needed for deploy/undeploy but the value is never used
-		Future<EnvironmentRelease> environmentReleaseFuture = mock(Future.class);
-		when(environmentReleaseFuture.get()).thenReturn(new EnvironmentRelease());
-
 		when(environmentRepository.findById(1L)).thenReturn(Optional.of(environment));
 		when(clusterRepository.findById(2L)).thenReturn(Optional.of(cluster2));
-		when(releaseService.undeploy(same(environmentRelease.getId()))).thenReturn(environmentReleaseFuture);
+		when(releaseService.undeploy(same(environmentRelease.getId()))).thenReturn(new EnvironmentRelease());
 		when(environmentRepository.save(same(environment))).thenReturn(environment);
 
 		// when

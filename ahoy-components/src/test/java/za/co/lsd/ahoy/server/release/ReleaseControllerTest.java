@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server;
+package za.co.lsd.ahoy.server.release;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,13 +32,15 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import za.co.lsd.ahoy.server.AhoyTestServerApplication;
 import za.co.lsd.ahoy.server.argocd.model.ArgoEvents;
 import za.co.lsd.ahoy.server.cluster.Cluster;
 import za.co.lsd.ahoy.server.cluster.ClusterType;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
 import za.co.lsd.ahoy.server.environments.Environment;
-import za.co.lsd.ahoy.server.releases.*;
+import za.co.lsd.ahoy.server.releases.Release;
+import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 import za.co.lsd.ahoy.server.releases.resources.ResourceNode;
 import za.co.lsd.ahoy.server.security.Role;
 import za.co.lsd.ahoy.server.security.Scope;
@@ -73,19 +75,17 @@ public class ReleaseControllerTest {
 		EnvironmentReleaseId environmentReleaseId = environmentRelease.getId();
 		DeployOptions deployOptions = new DeployOptions(1L, "Please deploy");
 
-		when(releaseService.deploy(eq(environmentReleaseId), eq(deployOptions))).thenReturn(CompletableFuture.completedFuture(environmentRelease));
+		when(releaseService.deploy(eq(environmentReleaseId), eq(deployOptions))).thenReturn(environmentRelease);
 
 		// when
 		mvc.perform(post("/api/environmentReleases/2_3/deploy")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(json(deployOptions)))
 			.andDo(print())
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.id.environmentId").value(2L))
-			.andExpect(jsonPath("$.id.releaseId").value(3L));
+			.andExpect(status().isOk());
 
 		// then
-		verify(releaseService, times(1)).deploy(eq(environmentReleaseId), eq(deployOptions));
+		verify(releaseService, timeout(1000).times(1)).deploy(eq(environmentReleaseId), eq(deployOptions));
 	}
 
 	@Test
@@ -112,18 +112,16 @@ public class ReleaseControllerTest {
 		EnvironmentRelease environmentRelease = testEnvRelease(1L, 2L, 3L);
 		EnvironmentReleaseId environmentReleaseId = environmentRelease.getId();
 
-		when(releaseService.undeploy(eq(environmentReleaseId))).thenReturn(CompletableFuture.completedFuture(environmentRelease));
+		when(releaseService.undeploy(eq(environmentReleaseId))).thenReturn(environmentRelease);
 
 		// when
 		mvc.perform(post("/api/environmentReleases/2_3/undeploy")
 				.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.id.environmentId").value(2L))
-			.andExpect(jsonPath("$.id.releaseId").value(3L));
+			.andExpect(status().isOk());
 
 		// then
-		verify(releaseService, times(1)).undeploy(eq(environmentReleaseId));
+		verify(releaseService, timeout(1000).times(1)).undeploy(eq(environmentReleaseId));
 	}
 
 	@Test

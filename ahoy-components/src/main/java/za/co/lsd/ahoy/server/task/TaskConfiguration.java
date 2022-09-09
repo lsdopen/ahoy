@@ -14,25 +14,35 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server;
+package za.co.lsd.ahoy.server.task;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.scheduling.annotation.EnableAsync;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
-@EnableAsync
-@EnableAspectJAutoProxy
-@Slf4j
-public class AhoyServerConfiguration {
+public class TaskConfiguration {
 
 	@Bean
-	public ExecutorService sseMvcExecutor() {
-		return Executors.newCachedThreadPool(r -> new Thread(r, "sseMvc"));
+	public TaskExecutor synchronousTaskExecutor() {
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+		executor.setCorePoolSize(1);
+		executor.setMaxPoolSize(1);
+		executor.setThreadNamePrefix("sync-task-");
+		executor.initialize();
+
+		return executor;
+	}
+
+	@Bean
+	public TaskExecutor asynchronousTaskExecutor() {
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+		executor.setCorePoolSize(5);
+		executor.setMaxPoolSize(10);
+		executor.setThreadNamePrefix("async-task-");
+		executor.initialize();
+
+		return executor;
 	}
 }

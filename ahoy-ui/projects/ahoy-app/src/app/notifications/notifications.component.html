@@ -15,28 +15,33 @@
   -->
 
 <p-toast></p-toast>
+<app-task-events-listener (taskEventEmitter)="taskEventOccurred($event)"></app-task-events-listener>
 
 <a class="layout-topbar-action rounded-circle" (click)="appMain.onTopbarItemClick($event, 'notifications')" pRipple>
     <span class="p-overlay-badge">
-        <i class="pi pi-bell fs-large"></i>
+        <i class="pi {{notificationsInProgress() ? 'pi-spin pi-spinner': 'pi-bell'}} fs-large"></i>
         <span class="p-badge p-badge-warning p-badge-dot" *ngIf="showBadge()"></span>
     </span>
 </a>
 
 <ul class="layout-topbar-action-panel shadow-6" [@topbarActionPanelAnimation]="'visible'" *ngIf="appMain.activeTopbarItem === 'notifications'">
+
   <li class="mb-3">
     <span class="px-3 fs-small">You have <b>{{unreadNotifications()}}</b> new notifications</span>
   </li>
-  <li *ngFor="let notification of notifications" class="layout-topbar-action-item" (click)="showDescription(notification)">
+
+  <li *ngFor="let notification of notifications | keyvalue: timeOrder" class="layout-topbar-action-item" (click)="showDescription(notification.value)">
     <div class="flex flex-row align-items-center">
-      <i class="pi pi-{{notification.error ? 'exclamation-triangle' : 'info-circle'}} fs-large"></i>
+      <i class="pi {{notificationIcon(notification.value)}} fs-large"></i>
       <div class="flex flex-column" [ngClass]="{'ml-3': !app.themeService.isRTL, 'mr-3': app.themeService.isRTL}" style="flex-grow: 1;">
         <div class="flex align-items-center justify-content-between mb-1">
-          <span class="fs-small font-bold">{{notification.error ? 'Warn' : 'Info'}}</span>
-          <small [class.unread]="!notification.viewed">{{notification.minutesAgo()}} mins ago</small>
+          <span class="fs-normal font-bold">{{notificationType(notification.value)}}</span>
+          <small [class.unread]="!notification.value.viewed">{{notification.value.minutesAgo()}} mins ago</small>
         </div>
-        <span class="fs-small">{{notification.text}}</span>
+        <span class="fs-normal">{{notification.value.text}}</span>
+        <small>{{notification.value.message}}</small>
       </div>
     </div>
   </li>
+
 </ul>

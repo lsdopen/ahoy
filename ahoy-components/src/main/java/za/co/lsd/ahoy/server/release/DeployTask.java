@@ -14,12 +14,26 @@
  *    limitations under the License.
  */
 
-import {ReleaseStatusChangedEvent} from '../environment-release/environment-release';
-import {ArgoConnectionEvent} from '../util/argo';
-import {TaskProgressEvent} from '../task/task';
+package za.co.lsd.ahoy.server.release;
 
-export class TaskEvent {
-  releaseStatusChangedEvent: ReleaseStatusChangedEvent;
-  argoConnectionEvent: ArgoConnectionEvent;
-  taskProgressEvent: TaskProgressEvent;
+import org.springframework.stereotype.Component;
+import za.co.lsd.ahoy.server.task.Task;
+
+@Component
+public class DeployTask implements Task<DeployTaskContext> {
+	private final ReleaseService releaseService;
+
+	public DeployTask(ReleaseService releaseService) {
+		this.releaseService = releaseService;
+	}
+
+	@Override
+	public String getName() {
+		return "deploy";
+	}
+
+	@Override
+	public void execute(DeployTaskContext context) {
+		releaseService.deploy(context.getEnvironmentReleaseId(), context.getDeployOptions());
+	}
 }

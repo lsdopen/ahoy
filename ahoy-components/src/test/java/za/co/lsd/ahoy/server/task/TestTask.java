@@ -14,19 +14,23 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server;
+package za.co.lsd.ahoy.server.task;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+public class TestTask implements Task<TestTaskContext> {
 
-@Data
-@NoArgsConstructor
-public class DeployOptions {
-	private Long releaseVersionId;
-	private String commitMessage;
+	@Override
+	public String getName() {
+		return "test-task";
+	}
 
-	public DeployOptions(Long releaseVersionId, String commitMessage) {
-		this.releaseVersionId = releaseVersionId;
-		this.commitMessage = commitMessage;
+	@Override
+	public void execute(TestTaskContext context) {
+		if (context.getSleep() > 0) {
+			try {
+				Thread.sleep(context.getSleep());
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		}
 	}
 }

@@ -22,12 +22,14 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
-import za.co.lsd.ahoy.server.DeployOptions;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.environments.EnvironmentRepository;
+import za.co.lsd.ahoy.server.release.DeployOptions;
+import za.co.lsd.ahoy.server.release.PromoteOptions;
+import za.co.lsd.ahoy.server.release.UpgradeOptions;
 
 import java.time.LocalDateTime;
 

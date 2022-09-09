@@ -14,12 +14,11 @@
  *    limitations under the License.
  */
 
-import {ReleaseStatusChangedEvent} from '../environment-release/environment-release';
-import {ArgoConnectionEvent} from '../util/argo';
-import {TaskProgressEvent} from '../task/task';
+package za.co.lsd.ahoy.server.task;
 
-export class TaskEvent {
-  releaseStatusChangedEvent: ReleaseStatusChangedEvent;
-  argoConnectionEvent: ArgoConnectionEvent;
-  taskProgressEvent: TaskProgressEvent;
+public interface Task<C extends TaskContext> {
+
+	String getName();
+
+	void execute(C context);
 }

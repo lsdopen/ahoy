@@ -14,27 +14,30 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.security;
+package za.co.lsd.ahoy.server.task;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 
-@Component
-@Aspect
-public class RunAsRoleAspect {
+import java.util.Objects;
 
-	@Around("@annotation(runAsRole)")
-	public Object setRole(ProceedingJoinPoint joinPoint, RunAsRole runAsRole) throws Throwable {
-		Authentication originalAuth = SecurityContextHolder.getContext().getAuthentication();
+public class DelegatingTaskSecurityContextRunnable implements Runnable {
+	private final Runnable task;
+	private final TaskContext taskContext;
+
+	public DelegatingTaskSecurityContextRunnable(Runnable task, TaskContext taskContext) {
+		this.task = Objects.requireNonNull(task);
+		this.taskContext = Objects.requireNonNull(taskContext);
+	}
+
+	@Override
+	public void run() {
 		try {
-			AuthUtility.runAs(runAsRole.value());
-			return joinPoint.proceed();
+			if (taskContext.getSecurityContext() != null) {
+				SecurityContextHolder.setContext(taskContext.getSecurityContext());
+			}
+			task.run();
 		} finally {
-			SecurityContextHolder.getContext().setAuthentication(originalAuth);
+			SecurityContextHolder.clearContext();
 		}
 	}
 }

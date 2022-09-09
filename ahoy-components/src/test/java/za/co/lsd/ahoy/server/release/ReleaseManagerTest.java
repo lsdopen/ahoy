@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server;
+package za.co.lsd.ahoy.server.release;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import za.co.lsd.ahoy.server.AhoyTestServerApplication;
 import za.co.lsd.ahoy.server.applications.Application;
 import za.co.lsd.ahoy.server.applications.ApplicationVersion;
 import za.co.lsd.ahoy.server.argocd.ArgoClient;
@@ -40,6 +41,7 @@ import za.co.lsd.ahoy.server.helm.ChartGenerator;
 import za.co.lsd.ahoy.server.releases.Release;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 import za.co.lsd.ahoy.server.settings.SettingsProvider;
+import za.co.lsd.ahoy.server.task.TaskProgressService;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -64,6 +66,8 @@ public class ReleaseManagerTest {
 	private SettingsProvider settingsProvider;
 	@MockBean
 	private KubernetesClusterManager kubernetesClusterManager;
+	@MockBean
+	private TaskProgressService taskProgressService;
 	@Autowired
 	private ReleaseManager releaseManager;
 

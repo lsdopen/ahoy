@@ -14,15 +14,20 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server;
+package za.co.lsd.ahoy.server.release;
 
-public class ReleaseManagerException extends RuntimeException {
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-	public ReleaseManagerException(String message) {
-		super(message);
-	}
+@Data
+@NoArgsConstructor
+public class DeployOptions {
+	private Long releaseVersionId;
+	private String commitMessage;
+	private String message;
 
-	public ReleaseManagerException(String message, Throwable cause) {
-		super(message, cause);
+	public DeployOptions(Long releaseVersionId, String commitMessage) {
+		this.releaseVersionId = releaseVersionId;
+		this.commitMessage = commitMessage;
 	}
 }

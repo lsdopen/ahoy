@@ -14,16 +14,16 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.releases;
+package za.co.lsd.ahoy.server.task;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class PromoteOptions {
-	private Long destEnvironmentId;
-	private boolean copyEnvironmentConfig;
+public class TaskExecution<T extends Task<C>, C extends TaskContext> {
+	@NonNull
+	private final T task;
+	@NonNull
+	private final C context;
+	private final boolean async;
 }

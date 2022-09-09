@@ -14,12 +14,19 @@
  *    limitations under the License.
  */
 
-import {ReleaseStatusChangedEvent} from '../environment-release/environment-release';
-import {ArgoConnectionEvent} from '../util/argo';
-import {TaskProgressEvent} from '../task/task';
+export class TaskProgressEvent {
+  id: string;
+  status: string;
+  message: string;
+  trace: string;
+  time: Date;
+  state: State;
+}
 
-export class TaskEvent {
-  releaseStatusChangedEvent: ReleaseStatusChangedEvent;
-  argoConnectionEvent: ArgoConnectionEvent;
-  taskProgressEvent: TaskProgressEvent;
+export enum State {
+  WAITING = 'WAITING',
+  IN_PROGRESS = 'IN_PROGRESS',
+  NOTIFICATION = 'NOTIFICATION',
+  DONE = 'DONE',
+  ERROR = 'ERROR'
 }

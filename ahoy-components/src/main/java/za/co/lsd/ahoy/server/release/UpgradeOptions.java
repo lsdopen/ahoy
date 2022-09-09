@@ -14,12 +14,16 @@
  *    limitations under the License.
  */
 
-import {ReleaseStatusChangedEvent} from '../environment-release/environment-release';
-import {ArgoConnectionEvent} from '../util/argo';
-import {TaskProgressEvent} from '../task/task';
+package za.co.lsd.ahoy.server.release;
 
-export class TaskEvent {
-  releaseStatusChangedEvent: ReleaseStatusChangedEvent;
-  argoConnectionEvent: ArgoConnectionEvent;
-  taskProgressEvent: TaskProgressEvent;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class UpgradeOptions {
+	private String version;
+	private boolean copyEnvironmentConfig;
 }

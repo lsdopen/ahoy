@@ -15,11 +15,11 @@
  */
 
 import {Location} from '@angular/common';
-import {Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MenuItem} from 'primeng/api';
 import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
-import {Observable, of, Subscription} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {filter, mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Cluster} from '../clusters/cluster';
@@ -45,9 +45,8 @@ import {UpgradeDialogComponent} from './upgrade-dialog/upgrade-dialog.component'
   templateUrl: './release-manage.component.html',
   styleUrls: ['./release-manage.component.scss']
 })
-export class ReleaseManageComponent implements OnInit, OnDestroy {
+export class ReleaseManageComponent implements OnInit {
   Role = Role;
-  private environmentReleaseChangedSubscription: Subscription;
   environmentReleases: EnvironmentRelease[];
   releaseChanged = new EventEmitter<{ environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion }>();
   environmentRelease: EnvironmentRelease;
@@ -79,14 +78,6 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
         this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
       });
     });
-
-    this.subscribeToEnvironmentReleaseChanged();
-  }
-
-  ngOnDestroy(): void {
-    if (this.environmentReleaseChangedSubscription) {
-      this.environmentReleaseChangedSubscription.unsubscribe();
-    }
   }
 
   private getEnvironmentRelease(environmentId: number, releaseId: number, releaseVersionId: number): Observable<EnvironmentRelease> {
@@ -142,21 +133,6 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     ]);
   }
 
-  private subscribeToEnvironmentReleaseChanged() {
-    if (!this.environmentReleaseChangedSubscription) {
-      // TODO nested subscribes
-      this.environmentReleaseChangedSubscription = this.releaseManageService.environmentReleaseChanged()
-        .subscribe((environmentRelease) => {
-          if (EnvironmentReleaseService.environmentReleaseEquals(this.environmentRelease, environmentRelease)) {
-            this.getEnvironmentRelease(environmentRelease.id.environmentId, environmentRelease.id.releaseId, this.releaseVersion.id)
-              .subscribe(() => {
-                this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
-              });
-          }
-        });
-    }
-  }
-
   reloadCurrent() {
     if (this.selectedEnvironmentRelease) {
       this.reload(this.selectedEnvironmentRelease.id.environmentId, this.releaseVersion.id);
@@ -193,7 +169,8 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
-      const deployOptions = new DeployOptions(this.releaseVersion.id, conf.input);
+      const deployOptions = new DeployOptions(this.releaseVersion.id, conf.input,
+        `deploy ${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} to ${(this.environmentRelease.environment as Environment).name}`);
       this.releaseManageService.deploy(this.environmentRelease, this.releaseVersion, deployOptions).subscribe();
     });
   }
@@ -295,7 +272,10 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
-      const deployOptions = new DeployOptions(this.environmentRelease.previousReleaseVersion.id, conf.input);
+      const deployOptions = new DeployOptions(this.environmentRelease.previousReleaseVersion.id, conf.input,
+        `rolling back ` +
+        `${(this.environmentRelease.release as Release).name}:${this.environmentRelease.currentReleaseVersion.version} to ` +
+        `${(this.environmentRelease.release as Release).name}:${this.environmentRelease.previousReleaseVersion.version}`);
       this.releaseManageService.deploy(this.environmentRelease, this.environmentRelease.previousReleaseVersion, deployOptions)
         .subscribe(() => this.log.debug('rolled back release:', this.environmentRelease));
     });

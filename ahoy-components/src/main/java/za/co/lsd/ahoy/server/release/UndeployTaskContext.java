@@ -14,12 +14,22 @@
  *    limitations under the License.
  */
 
-import {ReleaseStatusChangedEvent} from '../environment-release/environment-release';
-import {ArgoConnectionEvent} from '../util/argo';
-import {TaskProgressEvent} from '../task/task';
+package za.co.lsd.ahoy.server.release;
 
-export class TaskEvent {
-  releaseStatusChangedEvent: ReleaseStatusChangedEvent;
-  argoConnectionEvent: ArgoConnectionEvent;
-  taskProgressEvent: TaskProgressEvent;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
+import za.co.lsd.ahoy.server.task.TaskContext;
+
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class UndeployTaskContext extends TaskContext {
+	@NonNull
+	private final EnvironmentReleaseId environmentReleaseId;
+
+	@Override
+	public String getMessage() {
+		return "undeploy";
+	}
 }

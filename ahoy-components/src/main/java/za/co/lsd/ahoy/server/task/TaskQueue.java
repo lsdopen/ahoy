@@ -14,12 +14,23 @@
  *    limitations under the License.
  */
 
-import {ReleaseStatusChangedEvent} from '../environment-release/environment-release';
-import {ArgoConnectionEvent} from '../util/argo';
-import {TaskProgressEvent} from '../task/task';
+package za.co.lsd.ahoy.server.task;
 
-export class TaskEvent {
-  releaseStatusChangedEvent: ReleaseStatusChangedEvent;
-  argoConnectionEvent: ArgoConnectionEvent;
-  taskProgressEvent: TaskProgressEvent;
+import org.springframework.stereotype.Component;
+
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+
+@Component
+public class TaskQueue {
+	private final BlockingQueue<TaskExecution> tasks = new LinkedBlockingQueue<>();
+
+	protected void put(TaskExecution taskExecution) throws InterruptedException {
+		tasks.put(taskExecution);
+	}
+
+	protected TaskExecution poll(long timeout, TimeUnit unit) throws InterruptedException {
+		return tasks.poll(timeout, unit);
+	}
 }

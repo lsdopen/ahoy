@@ -14,16 +14,33 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.releases;
+package za.co.lsd.ahoy.server.task;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.security.core.context.SecurityContext;
+
+import java.util.UUID;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class DuplicateOptions {
-	private boolean addToSameEnvironments;
-	private boolean copyEnvironmentConfig;
+public abstract class TaskContext {
+	private final String id;
+	private SecurityContext securityContext;
+
+	protected TaskContext() {
+		this(UUID.randomUUID().toString());
+	}
+
+	protected TaskContext(String id) {
+		this.id = id;
+	}
+
+	protected SecurityContext getSecurityContext() {
+		return securityContext;
+	}
+
+	protected void setSecurityContext(SecurityContext securityContext) {
+		this.securityContext = securityContext;
+	}
+
+	public abstract String getMessage();
 }

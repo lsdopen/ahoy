@@ -53,9 +53,11 @@ export class ReleaseStatusChangedEvent {
 export class DeployOptions {
   releaseVersionId: number;
   commitMessage: string;
+  message: string;
 
-  constructor(releaseVersionId: number, commitMessage: string) {
+  constructor(releaseVersionId: number, commitMessage: string, message: string) {
     this.releaseVersionId = releaseVersionId;
     this.commitMessage = commitMessage;
+    this.message = message;
   }
 }

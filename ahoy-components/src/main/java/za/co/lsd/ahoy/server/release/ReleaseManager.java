@@ -14,9 +14,10 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server;
+package za.co.lsd.ahoy.server.release;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import za.co.lsd.ahoy.server.argocd.ApplicationNameResolver;
@@ -30,6 +31,7 @@ import za.co.lsd.ahoy.server.helm.ChartGenerator;
 import za.co.lsd.ahoy.server.releases.Release;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 import za.co.lsd.ahoy.server.settings.SettingsProvider;
+import za.co.lsd.ahoy.server.task.TaskProgressService;
 
 import java.util.*;
 
@@ -41,6 +43,7 @@ public class ReleaseManager {
 	private final ArgoClient argoClient;
 	private final SettingsProvider settingsProvider;
 	private final ApplicationNameResolver applicationNameResolver;
+	private TaskProgressService taskProgressService;
 
 	public ReleaseManager(LocalRepo localRepo, ChartGenerator chartGenerator, ArgoClient argoClient, SettingsProvider settingsProvider, ApplicationNameResolver applicationNameResolver) {
 		this.localRepo = localRepo;
@@ -50,30 +53,42 @@ public class ReleaseManager {
 		this.applicationNameResolver = applicationNameResolver;
 	}
 
+	@Autowired
+	public void setTaskProgressService(TaskProgressService taskProgressService) {
+		this.taskProgressService = taskProgressService;
+	}
+
 	public ArgoApplication deploy(EnvironmentRelease environmentRelease, ReleaseVersion releaseVersion, DeployOptions deployOptions) throws ReleaseManagerException {
 		Objects.requireNonNull(environmentRelease, "environmentRelease is required");
 		Objects.requireNonNull(releaseVersion, "releaseVersion is required");
 
 		try {
+			taskProgressService.progress("Requesting new working tree");
 			Optional<String> commit;
 			try (LocalRepo.WorkingTree workingTree = localRepo.requestWorkingTree()) {
+				taskProgressService.progress("Generating helm chart");
 				chartGenerator.generate(environmentRelease, releaseVersion, workingTree.getPath());
+				taskProgressService.progress("Committing chart to working tree");
 				commit = workingTree.push(deployOptions.getCommitMessage());
 			}
 
 			if (commit.isPresent()) {
+				taskProgressService.progress("Pushing to git repository");
 				localRepo.push();
 			}
 
+			taskProgressService.progress("Updating repository in ArgoCD");
 			argoClient.upsertRepository();
 
 			ArgoApplication argoApplication = buildApplication(environmentRelease, releaseVersion);
 			String applicationName = argoApplication.getMetadata().getName();
 			Optional<ArgoApplication> existingApplication = argoClient.getApplication(applicationName);
 			if (existingApplication.isPresent()) {
+				taskProgressService.progress("Updating ArgoCd application");
 				argoApplication = argoClient.updateApplication(argoApplication);
 				argoClient.getApplication(applicationName, true); // refresh app
 			} else {
+				taskProgressService.progress("Creating ArgoCd application");
 				argoApplication = argoClient.createApplication(argoApplication);
 			}
 

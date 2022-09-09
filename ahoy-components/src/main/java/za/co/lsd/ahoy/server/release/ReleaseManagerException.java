@@ -14,12 +14,15 @@
  *    limitations under the License.
  */
 
-import {ReleaseStatusChangedEvent} from '../environment-release/environment-release';
-import {ArgoConnectionEvent} from '../util/argo';
-import {TaskProgressEvent} from '../task/task';
+package za.co.lsd.ahoy.server.release;
 
-export class TaskEvent {
-  releaseStatusChangedEvent: ReleaseStatusChangedEvent;
-  argoConnectionEvent: ArgoConnectionEvent;
-  taskProgressEvent: TaskProgressEvent;
+public class ReleaseManagerException extends RuntimeException {
+
+	public ReleaseManagerException(String message) {
+		super(message);
+	}
+
+	public ReleaseManagerException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

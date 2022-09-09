@@ -14,13 +14,12 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server;
+package za.co.lsd.ahoy.server.release;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,11 +32,15 @@ import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.environments.EnvironmentException;
 import za.co.lsd.ahoy.server.environments.EnvironmentRepository;
-import za.co.lsd.ahoy.server.releases.*;
+import za.co.lsd.ahoy.server.releases.Release;
+import za.co.lsd.ahoy.server.releases.ReleaseRepository;
+import za.co.lsd.ahoy.server.releases.ReleaseVersion;
+import za.co.lsd.ahoy.server.releases.ReleaseVersionRepository;
 import za.co.lsd.ahoy.server.releases.resources.ResourceNode;
 import za.co.lsd.ahoy.server.releases.resources.ResourceTreeConverter;
 import za.co.lsd.ahoy.server.security.Role;
 import za.co.lsd.ahoy.server.security.RunAsRole;
+import za.co.lsd.ahoy.server.task.TaskProgressService;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -58,6 +61,7 @@ public class ReleaseService {
 	private final ReleaseManager releaseManager;
 	private final ResourceTreeConverter resourceTreeConverter;
 	private ApplicationEventPublisher eventPublisher;
+	private TaskProgressService taskProgressService;
 
 	public ReleaseService(EnvironmentRepository environmentRepository,
 						  EnvironmentReleaseRepository environmentReleaseRepository,
@@ -85,9 +89,13 @@ public class ReleaseService {
 		this.eventPublisher = eventPublisher;
 	}
 
-	@Async("deploymentTaskExecutor")
+	@Autowired
+	public void setTaskProgressService(TaskProgressService taskProgressService) {
+		this.taskProgressService = taskProgressService;
+	}
+
 	@Transactional
-	public Future<EnvironmentRelease> deploy(EnvironmentReleaseId environmentReleaseId, DeployOptions deployOptions) {
+	public EnvironmentRelease deploy(EnvironmentReleaseId environmentReleaseId, DeployOptions deployOptions) {
 		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
 
@@ -95,6 +103,8 @@ public class ReleaseService {
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find releaseVersion in release, releaseVersionId: " + deployOptions.getReleaseVersionId()));
 
 		log.info("Deploying environment release: {}, release version: {}", environmentRelease, releaseVersion);
+
+		taskProgressService.progress(String.format("Deploying %s:%s to %s", environmentRelease.getRelease().getName(), releaseVersion.getVersion(), environmentRelease.getEnvironment().getName()), null);
 
 		ReleaseVersion previousReleaseVersion = environmentRelease.getCurrentReleaseVersion();
 		boolean redeploy = releaseVersion.equals(previousReleaseVersion);
@@ -114,20 +124,21 @@ public class ReleaseService {
 		}
 
 		environmentReleaseRepository.save(environmentRelease);
+		taskProgressService.progress(String.format("%s:%s successfully deployed to %s", environmentRelease.getRelease().getName(), releaseVersion.getVersion(), environmentRelease.getEnvironment().getName()), null);
 		log.info("Deployed environment release: {}", environmentRelease);
 
-		return new AsyncResult<>(environmentRelease);
+		return environmentRelease;
 	}
 
-	@Async("deploymentTaskExecutor")
 	@Transactional
-	public Future<EnvironmentRelease> undeploy(EnvironmentReleaseId environmentReleaseId) {
+	public EnvironmentRelease undeploy(EnvironmentReleaseId environmentReleaseId) {
 		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
 
 		log.info("Undeploying environment release: {}", environmentRelease);
 
 		ReleaseVersion currentReleaseVersion = environmentRelease.getCurrentReleaseVersion();
+		taskProgressService.progress(String.format("Undeploying %s:%s from %s", environmentRelease.getRelease().getName(), currentReleaseVersion.getVersion(), environmentRelease.getEnvironment().getName()), null);
 
 		releaseManager.undeploy(environmentRelease);
 
@@ -142,9 +153,10 @@ public class ReleaseService {
 		purgeReleaseStatus(environmentRelease, currentReleaseVersion);
 
 		environmentReleaseRepository.save(environmentRelease);
+		taskProgressService.progress(String.format("%s:%s successfully undeployed from %s", environmentRelease.getRelease().getName(), currentReleaseVersion.getVersion(), environmentRelease.getEnvironment().getName()), null);
 		log.info("Undeployed environment release: {}", environmentRelease);
 
-		return new AsyncResult<>(environmentRelease);
+		return environmentRelease;
 	}
 
 	@Transactional
@@ -157,7 +169,7 @@ public class ReleaseService {
 		if (environmentRelease.hasCurrentReleaseVersion()) {
 			log.info("{} is currently deployed in {}, undeploying...", environmentRelease.getRelease().getName(), environmentRelease.getEnvironment().getName());
 			try {
-				undeploy(environmentReleaseId).get();
+				undeploy(environmentReleaseId);
 			} catch (Exception e) {
 				throw new EnvironmentException("Failed to undeploy " + environmentRelease + " from " + environmentRelease.getEnvironment(), e);
 			}
@@ -404,7 +416,6 @@ public class ReleaseService {
 		}
 	}
 
-	@Async("deploymentTaskExecutor")
 	@Transactional
 	@RunAsRole(Role.admin)
 	public void updateStatus(ArgoApplication application) {
