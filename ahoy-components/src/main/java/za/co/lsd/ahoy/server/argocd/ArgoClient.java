@@ -75,7 +75,7 @@ public class ArgoClient {
 				new HttpEntity<>(httpHeaders),
 				ArgoApplication.class);
 			ArgoApplication application = get.getBody();
-			log.info("Application: {}", application);
+			log.debug("Retrieved application: {}", application);
 			return Optional.ofNullable(application);
 
 		} catch (RestClientResponseException e) {
@@ -286,7 +286,7 @@ public class ArgoClient {
 				new HttpEntity<>(httpHeaders),
 				ArgoRepositories.class);
 			ArgoRepositories argoRepositories = get.getBody();
-			log.info("Repositories: {}", argoRepositories);
+			log.debug("Retrieved repositories: {}", argoRepositories);
 			return argoRepositories;
 
 		} catch (RestClientResponseException e) {
@@ -420,13 +420,13 @@ public class ArgoClient {
 
 	public void testConnection(ArgoSettings settings) {
 		try {
-			log.info("Testing connection to argocd: {}", settings.getArgoServer());
+			log.debug("Testing connection to argocd: {}", settings.getArgoServer());
 			HttpHeaders httpHeaders = authHeaders(settings);
 			restClient.exchange(apiPath(settings) + "/clusters",
 				HttpMethod.GET,
 				new HttpEntity<>(httpHeaders),
 				String.class);
-			log.info("Connection to argocd successful: {}", settings.getArgoServer());
+			log.debug("Connection to argocd successful: {}", settings.getArgoServer());
 
 		} catch (RestClientResponseException e) {
 			String reason = getReasonMessage(e);

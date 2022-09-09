@@ -283,7 +283,7 @@ public class ReleaseService {
 
 	@Transactional
 	public EnvironmentRelease copyEnvConfig(EnvironmentReleaseId environmentReleaseId, Long sourceReleaseVersionId, Long destReleaseVersionId) {
-		log.info("Copying environment config for release: {} from sourceReleaseVersionId: {} to destReleaseVersionId: {}", environmentReleaseId, sourceReleaseVersionId, destReleaseVersionId);
+		log.debug("Copying environment config for release: {} from sourceReleaseVersionId: {} to destReleaseVersionId: {}", environmentReleaseId, sourceReleaseVersionId, destReleaseVersionId);
 
 		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
@@ -308,7 +308,7 @@ public class ReleaseService {
 	 */
 	@Transactional
 	public void copyApplicationVersionEnvConfig(Long releaseVersionId, Long sourceApplicationVersionId, Long destApplicationVersionId) {
-		log.info("Copying environment config for release version: {} from source application version: {} to dest application version: {}", releaseVersionId, sourceApplicationVersionId, destApplicationVersionId);
+		log.debug("Copying environment config for release version: {} from source application version: {} to dest application version: {}", releaseVersionId, sourceApplicationVersionId, destApplicationVersionId);
 
 		ReleaseVersion releaseVersion = releaseVersionRepository.findById(releaseVersionId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find releaseVersion: " + releaseVersionId));
@@ -410,7 +410,7 @@ public class ReleaseService {
 					destEnvironmentRelease.getId(),
 					destReleaseVersion.getId(),
 					destApplicationVersion.getId());
-				log.info("Saving new application env config for id {}", id);
+				log.debug("Saving new application env config for id {}", id);
 				applicationEnvironmentConfigRepository.save(new ApplicationEnvironmentConfig(id, sourceConfig.get()));
 			}
 		}
@@ -469,7 +469,7 @@ public class ReleaseService {
 				boolean changed = status.hash() != statusHash;
 				if (changed) {
 					applicationReleaseStatusRepository.save(status);
-					log.info("Status changed for application {} in release {} in environment {}: {}", applicationName, releaseName, environmentName, status);
+					log.trace("Status changed for application {} in release {} in environment {}: {}", applicationName, releaseName, environmentName, status);
 					environmentReleaseChanged = true;
 				}
 
