@@ -42,5 +42,14 @@ public abstract class TaskContext {
 		this.securityContext = securityContext;
 	}
 
+	/**
+	 * Set whether the task framework should send progress events for this task context.
+	 *
+	 * @return boolean true to send progress events; false otherwise
+	 */
+	public boolean sendProgress() {
+		return true;
+	}
+
 	public abstract String getMessage();
 }

@@ -24,17 +24,21 @@ import za.co.lsd.ahoy.server.BaseAhoyTest;
 import za.co.lsd.ahoy.server.security.Role;
 import za.co.lsd.ahoy.server.security.Scope;
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static za.co.lsd.ahoy.server.task.TaskProgressEvent.State.*;
 
 class TaskExecutorTest extends BaseAhoyTest {
 	@Autowired
 	private TaskExecutor taskExecutor;
 	@Autowired
 	private SecuredTask securedTask;
+	@Autowired
+	private TestTaskProgressListener taskProgressListener;
 
 	/**
 	 * Tests executing a single synchronous task.
@@ -50,6 +54,29 @@ class TaskExecutorTest extends BaseAhoyTest {
 
 		// then
 		verify(mockTask, timeout(1000).times(1)).execute(same(context));
+		List<TaskProgressEvent> events = taskProgressListener.getEvents(context.getId());
+		assertEquals(3, events.size());
+		assertEquals(WAITING, events.get(0).getState());
+		assertEquals(IN_PROGRESS, events.get(1).getState());
+		assertEquals(DONE, events.get(2).getState());
+	}
+
+	/**
+	 * Tests executing a single synchronous task without progress.
+	 */
+	@Test
+	void executeSyncOneNoProgress() throws Exception {
+		// given
+		TestTaskContext context = new TestTaskContext("my-task-id", false);
+		TestTask mockTask = mockTask();
+
+		// when
+		taskExecutor.executeSync(mockTask, context);
+
+		// then
+		verify(mockTask, timeout(1000).times(1)).execute(same(context));
+		List<TaskProgressEvent> events = taskProgressListener.getEvents(context.getId());
+		assertEquals(0, events.size());
 	}
 
 	/**

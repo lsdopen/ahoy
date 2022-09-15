@@ -14,38 +14,24 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.task;
+package za.co.lsd.ahoy.server.argocd;
 
-import java.util.UUID;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import za.co.lsd.ahoy.server.task.TaskContext;
 
-public class TestTaskContext extends TaskContext {
-	private long sleep = 0;
-	private boolean sendProgress;
-
-	public TestTaskContext(String id) {
-		this(id, true);
-	}
-
-	public TestTaskContext(String id, boolean sendProgress) {
-		super(id + UUID.randomUUID());
-		this.sendProgress = sendProgress;
-	}
-
-	public void setSleep(long sleep) {
-		this.sleep = sleep;
-	}
-
-	public long getSleep() {
-		return sleep;
-	}
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class RefreshApplicationTaskContext extends TaskContext {
+	private final String applicationName;
 
 	@Override
 	public boolean sendProgress() {
-		return sendProgress;
+		return false;
 	}
 
 	@Override
 	public String getMessage() {
-		return "test";
+		return "refresh-application";
 	}
 }

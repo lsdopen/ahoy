@@ -16,21 +16,33 @@
 
 package za.co.lsd.ahoy.server.task;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 @Component
-public class TaskQueue {
-	private final BlockingQueue<TaskExecution<?, ?>> tasks = new LinkedBlockingQueue<>();
+@Slf4j
+public class TestTaskProgressListener {
+	private Map<String, List<TaskProgressEvent>> eventsMap = new Hashtable<>();
 
-	protected void put(TaskExecution<?, ?> taskExecution) throws InterruptedException {
-		tasks.put(taskExecution);
+	@EventListener
+	public void onTaskProgressEvent(TaskProgressEvent event) {
+		if (eventsMap.containsKey(event.getId())) {
+			eventsMap.get(event.getId()).add(event);
+		} else {
+			eventsMap.put(event.getId(), new ArrayList<>(List.of(event)));
+		}
 	}
 
-	protected TaskExecution<?, ?> poll(long timeout, TimeUnit unit) throws InterruptedException {
-		return tasks.poll(timeout, unit);
+	public List<TaskProgressEvent> getEvents(String id) {
+		if (eventsMap.containsKey(id))
+			return eventsMap.get(id);
+
+		return List.of();
 	}
 }

@@ -14,38 +14,26 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.task;
+package za.co.lsd.ahoy.server.argocd;
 
-import java.util.UUID;
+import org.springframework.stereotype.Component;
+import za.co.lsd.ahoy.server.task.Task;
 
-public class TestTaskContext extends TaskContext {
-	private long sleep = 0;
-	private boolean sendProgress;
+@Component
+public class RefreshApplicationTask implements Task<RefreshApplicationTaskContext> {
+	private final ArgoClient argoClient;
 
-	public TestTaskContext(String id) {
-		this(id, true);
-	}
-
-	public TestTaskContext(String id, boolean sendProgress) {
-		super(id + UUID.randomUUID());
-		this.sendProgress = sendProgress;
-	}
-
-	public void setSleep(long sleep) {
-		this.sleep = sleep;
-	}
-
-	public long getSleep() {
-		return sleep;
+	public RefreshApplicationTask(ArgoClient argoClient) {
+		this.argoClient = argoClient;
 	}
 
 	@Override
-	public boolean sendProgress() {
-		return sendProgress;
+	public String getName() {
+		return "refresh-application";
 	}
 
 	@Override
-	public String getMessage() {
-		return "test";
+	public void execute(RefreshApplicationTaskContext context) {
+		argoClient.getApplication(context.getApplicationName(), true);
 	}
 }

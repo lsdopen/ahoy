@@ -22,6 +22,8 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import za.co.lsd.ahoy.server.argocd.ApplicationNameResolver;
 import za.co.lsd.ahoy.server.argocd.ArgoClient;
+import za.co.lsd.ahoy.server.argocd.RefreshApplicationTask;
+import za.co.lsd.ahoy.server.argocd.RefreshApplicationTaskContext;
 import za.co.lsd.ahoy.server.argocd.model.*;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environments.Environment;
@@ -31,6 +33,7 @@ import za.co.lsd.ahoy.server.helm.ChartGenerator;
 import za.co.lsd.ahoy.server.releases.Release;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 import za.co.lsd.ahoy.server.settings.SettingsProvider;
+import za.co.lsd.ahoy.server.task.TaskExecutor;
 import za.co.lsd.ahoy.server.task.TaskProgressService;
 
 import java.util.*;
@@ -44,6 +47,8 @@ public class ReleaseManager {
 	private final SettingsProvider settingsProvider;
 	private final ApplicationNameResolver applicationNameResolver;
 	private TaskProgressService taskProgressService;
+	private TaskExecutor taskExecutor;
+	private RefreshApplicationTask refreshApplicationTask;
 
 	public ReleaseManager(LocalRepo localRepo, ChartGenerator chartGenerator, ArgoClient argoClient, SettingsProvider settingsProvider, ApplicationNameResolver applicationNameResolver) {
 		this.localRepo = localRepo;
@@ -56,6 +61,16 @@ public class ReleaseManager {
 	@Autowired
 	public void setTaskProgressService(TaskProgressService taskProgressService) {
 		this.taskProgressService = taskProgressService;
+	}
+
+	@Autowired
+	public void setTaskExecutor(TaskExecutor taskExecutor) {
+		this.taskExecutor = taskExecutor;
+	}
+
+	@Autowired
+	public void setRefreshApplicationTask(RefreshApplicationTask refreshApplicationTask) {
+		this.refreshApplicationTask = refreshApplicationTask;
 	}
 
 	public ArgoApplication deploy(EnvironmentRelease environmentRelease, ReleaseVersion releaseVersion, DeployOptions deployOptions) throws ReleaseManagerException {
@@ -86,7 +101,7 @@ public class ReleaseManager {
 			if (existingApplication.isPresent()) {
 				taskProgressService.progress("Updating ArgoCd application");
 				argoApplication = argoClient.updateApplication(argoApplication);
-				argoClient.getApplication(applicationName, true); // refresh app
+				taskExecutor.executeSync(refreshApplicationTask, new RefreshApplicationTaskContext(applicationName));
 			} else {
 				taskProgressService.progress("Creating ArgoCd application");
 				argoApplication = argoClient.createApplication(argoApplication);

@@ -58,7 +58,9 @@ public class TaskProcessor implements Runnable {
 				TaskExecution<?, ?> taskExecution = taskQueue.poll(100, TimeUnit.MILLISECONDS);
 				if (taskExecution != null) {
 					TaskContext context = taskExecution.getContext();
-					taskProgressService.waiting(taskExecution.getContext(), "Waiting to " + context.getMessage());
+					if (context.sendProgress())
+						taskProgressService.waiting(taskExecution.getContext(), "Waiting to " + context.getMessage());
+
 					TaskExecutor taskExecutor = taskExecution.isAsync() ? asynchronousTaskExecutor : synchronousTaskExecutor;
 					taskExecutor.execute(new DelegatingTaskSecurityContextRunnable(() -> execute(taskExecution), context));
 				}
@@ -71,14 +73,19 @@ public class TaskProcessor implements Runnable {
 	private <T extends Task<C>, C extends TaskContext> TaskExecution<T, C> execute(TaskExecution<T, C> taskExecution) {
 		T task = taskExecution.getTask();
 		C context = taskExecution.getContext();
-		taskProgressService.start(context, "Preparing to " + context.getMessage(), null);
+		if (context.sendProgress())
+			taskProgressService.start(context, "Preparing to " + context.getMessage(), null);
+
 		try {
 			task.execute(context);
-			taskProgressService.done();
+
+			if (context.sendProgress())
+				taskProgressService.done();
 
 		} catch (Throwable t) {
 			log.error("Execution of " + context.getMessage() + " failed", t);
-			taskProgressService.error(t);
+			if (context.sendProgress())
+				taskProgressService.error(t);
 		}
 		return taskExecution;
 	}
