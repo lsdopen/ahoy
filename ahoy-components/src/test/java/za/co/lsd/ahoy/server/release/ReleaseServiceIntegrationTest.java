@@ -258,7 +258,7 @@ class ReleaseServiceIntegrationTest {
 		verify(argoClient, times(1)).upsertRepository();
 		verify(argoClient, times(1)).getApplication(eq(argoApplicationName));
 		verify(argoClient, times(1)).updateApplication(any(ArgoApplication.class));
-		verify(argoClient, times(1)).getApplication(eq(argoApplicationName), eq(true));
+		verify(argoClient, timeout(1000).times(1)).getApplication(eq(argoApplicationName), eq(true));
 		verifyNoMoreInteractions(clusterManager, argoClient);
 
 		// verify environment release
@@ -332,7 +332,7 @@ class ReleaseServiceIntegrationTest {
 		verify(argoClient, times(1)).upsertRepository();
 		verify(argoClient, times(1)).getApplication(eq(argoApplicationName));
 		verify(argoClient, times(1)).updateApplication(any(ArgoApplication.class));
-		verify(argoClient, times(1)).getApplication(eq(argoApplicationName), eq(true));
+		verify(argoClient, timeout(1000).times(1)).getApplication(eq(argoApplicationName), eq(true));
 		verifyNoMoreInteractions(clusterManager, argoClient);
 
 		// verify environment release
