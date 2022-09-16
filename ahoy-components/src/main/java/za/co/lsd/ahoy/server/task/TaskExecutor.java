@@ -29,7 +29,7 @@ public class TaskExecutor {
 		this.taskQueue = taskQueue;
 	}
 
-	public <T extends Task<C>, C extends TaskContext> TaskExecution<T, C> executeSync(T task, C context) throws InterruptedException {
+	public <T extends Task<C>, C extends TaskContext> TaskExecution<T, C> executeSync(T task, C context) {
 		context.setSecurityContext(SecurityContextHolder.getContext());
 		log.debug("Enqueuing task: {}, with context: {}", task.getName(), context);
 		TaskExecution<T, C> taskExecution = new TaskExecution<>(task, context, false);
@@ -37,7 +37,7 @@ public class TaskExecutor {
 		return taskExecution;
 	}
 
-	public <T extends Task<C>, C extends TaskContext> TaskExecution<T, C> executeAsync(T task, C context) throws InterruptedException {
+	public <T extends Task<C>, C extends TaskContext> TaskExecution<T, C> executeAsync(T task, C context) {
 		context.setSecurityContext(SecurityContextHolder.getContext());
 		log.debug("Enqueuing async task: {}, with context: {}", task.getName(), context);
 		TaskExecution<T, C> taskExecution = new TaskExecution<>(task, context, true);

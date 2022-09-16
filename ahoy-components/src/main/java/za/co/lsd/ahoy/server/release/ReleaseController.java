@@ -77,14 +77,14 @@ public class ReleaseController {
 
 	@PostMapping("/environmentReleases/{environmentReleaseId}/deploy")
 	public ResponseEntity<Void> deploy(@PathVariable EnvironmentReleaseId environmentReleaseId,
-													 @RequestBody DeployOptions deployOptions) throws ExecutionException, InterruptedException {
+									   @RequestBody DeployOptions deployOptions) {
 
 		taskExecutor.executeSync(deployTask, new DeployTaskContext(environmentReleaseId, deployOptions));
 		return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.OK);
 	}
 
 	@PostMapping("/environmentReleases/{environmentReleaseId}/undeploy")
-	public ResponseEntity<EnvironmentRelease> undeploy(@PathVariable EnvironmentReleaseId environmentReleaseId) throws ExecutionException, InterruptedException {
+	public ResponseEntity<EnvironmentRelease> undeploy(@PathVariable EnvironmentReleaseId environmentReleaseId) {
 
 		taskExecutor.executeAsync(undeployTask, new UndeployTaskContext(environmentReleaseId));
 		return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.OK);

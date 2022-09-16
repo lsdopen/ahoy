@@ -26,8 +26,8 @@ import java.util.concurrent.TimeUnit;
 public class TaskQueue {
 	private final BlockingQueue<TaskExecution<?, ?>> tasks = new LinkedBlockingQueue<>();
 
-	protected void put(TaskExecution<?, ?> taskExecution) throws InterruptedException {
-		tasks.put(taskExecution);
+	protected void put(TaskExecution<?, ?> taskExecution) {
+		tasks.add(taskExecution);
 	}
 
 	protected TaskExecution<?, ?> poll(long timeout, TimeUnit unit) throws InterruptedException {
