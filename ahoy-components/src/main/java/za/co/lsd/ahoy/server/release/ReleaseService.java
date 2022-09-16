@@ -145,8 +145,6 @@ public class ReleaseService {
 		environmentRelease.setCurrentReleaseVersion(null);
 		environmentRelease.setApplicationsReady(null);
 		environmentRelease.setStatus(null);
-		environmentRelease.setArgoCdName(null);
-		environmentRelease.setArgoCdUid(null);
 
 		environmentRelease.setPreviousReleaseVersion(null);
 
@@ -421,22 +419,37 @@ public class ReleaseService {
 	public void updateStatus(ArgoApplication application) {
 		Objects.requireNonNull(application, "application is required");
 
-		log.trace("Updating status for argo application {}", application);
+		if (application.getStatus().hasResources()) {
+			log.trace("Updating status for argo application {}", application);
 
+			Optional<EnvironmentRelease> environmentReleaseOptional = environmentReleaseRepository.findByArgoCdUid(application.getMetadata().getUid());
+			if (environmentReleaseOptional.isPresent()) {
+				EnvironmentRelease environmentRelease = environmentReleaseOptional.get();
+
+				if (environmentRelease.hasCurrentReleaseVersion() &&
+					environmentRelease.getCurrentReleaseVersion().getVersion().equals(application.getMetadata().getLabels().get(ArgoMetadata.RELEASE_VERSION_LABEL))) {
+
+					if (updateStatus(application, environmentRelease)) {
+						eventPublisher.publishEvent(
+							new ReleaseStatusChangedEvent(this,
+								environmentRelease.getId(),
+								environmentRelease.getCurrentReleaseVersion().getId()));
+					}
+				}
+			}
+		}
+	}
+
+	@RunAsRole(Role.admin)
+	public void updateDeleted(ArgoApplication application) {
 		Optional<EnvironmentRelease> environmentReleaseOptional = environmentReleaseRepository.findByArgoCdUid(application.getMetadata().getUid());
 		if (environmentReleaseOptional.isPresent()) {
 			EnvironmentRelease environmentRelease = environmentReleaseOptional.get();
 
-			if (environmentRelease.hasCurrentReleaseVersion() &&
-				environmentRelease.getCurrentReleaseVersion().getVersion().equals(application.getMetadata().getLabels().get(ArgoMetadata.RELEASE_VERSION_LABEL))) {
-
-				if (updateStatus(application, environmentRelease)) {
-					eventPublisher.publishEvent(
-						new ReleaseStatusChangedEvent(this,
-							environmentRelease.getId(),
-							environmentRelease.getCurrentReleaseVersion().getId()));
-				}
-			}
+			eventPublisher.publishEvent(
+				new ReleaseStatusChangedEvent(this,
+					environmentRelease.getId(),
+					null));
 		}
 	}
 

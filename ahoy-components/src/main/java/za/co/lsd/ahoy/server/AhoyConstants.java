@@ -14,22 +14,10 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.release;
+package za.co.lsd.ahoy.server;
 
-import lombok.Getter;
-import lombok.ToString;
-import org.springframework.context.ApplicationEvent;
-import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
+public final class AhoyConstants {
+	public static final String MANAGED_BY_LABEL_VALUE="ahoy";
 
-@Getter
-@ToString
-public class ReleaseStatusChangedEvent extends ApplicationEvent {
-	private final EnvironmentReleaseId environmentReleaseId;
-	private final Long releaseVersionId;
-
-	public ReleaseStatusChangedEvent(Object source, EnvironmentReleaseId environmentReleaseId, Long releaseVersionId) {
-		super(source);
-		this.environmentReleaseId = environmentReleaseId;
-		this.releaseVersionId = releaseVersionId;
-	}
+	private AhoyConstants() {}
 }

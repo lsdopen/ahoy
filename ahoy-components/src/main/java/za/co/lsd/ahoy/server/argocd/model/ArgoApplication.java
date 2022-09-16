@@ -22,6 +22,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Data
@@ -32,6 +33,15 @@ public class ArgoApplication {
 	private ArgoMetadata metadata;
 	private Spec spec;
 	private Status status;
+
+	public boolean labelValueEquals(String label, String value) {
+		Objects.requireNonNull(label, "label is required");
+		Objects.requireNonNull(value, "value is required");
+		if (metadata == null || metadata.getLabels() == null)
+			return false;
+
+		return value.equals(metadata.getLabels().get(label));
+	}
 
 	@Data
 	@Builder

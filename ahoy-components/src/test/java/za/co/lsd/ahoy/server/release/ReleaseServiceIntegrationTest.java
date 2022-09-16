@@ -376,6 +376,7 @@ class ReleaseServiceIntegrationTest {
 		ApplicationVersion applicationVersion = applicationVersionRepository.save(new ApplicationVersion("1.0.0", application));
 
 		String argoApplicationName = "minikube-dev-release1";
+		String argoUid = UUID.randomUUID().toString();
 		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0");
 		release.addReleaseVersion(releaseVersion);
 		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
@@ -383,9 +384,9 @@ class ReleaseServiceIntegrationTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 		environmentRelease.setCurrentReleaseVersion(releaseVersion); // this release version is deployed
 		environmentRelease.setArgoCdName(argoApplicationName);
+		environmentRelease.setArgoCdUid(argoUid);
 		environmentRelease = environmentReleaseRepository.save(environmentRelease);
 
-		String argoUid = UUID.randomUUID().toString();
 		when(argoClient.getApplication(eq(argoApplicationName))).thenReturn(Optional.of(ArgoApplication.builder()
 			.metadata(ArgoMetadata.builder()
 				.name(argoApplicationName)
@@ -404,8 +405,8 @@ class ReleaseServiceIntegrationTest {
 		// verify environment release
 		EnvironmentRelease retrievedEnvironmentRelease = environmentReleaseRepository.findById(undeployedEnvironmentRelease.getId()).orElseThrow();
 		assertNull(retrievedEnvironmentRelease.getCurrentReleaseVersion());
-		assertNull(retrievedEnvironmentRelease.getArgoCdName());
-		assertNull(retrievedEnvironmentRelease.getArgoCdUid());
+		assertEquals(argoApplicationName, retrievedEnvironmentRelease.getArgoCdName(), "ArgoCdName should be correct for undeploy status updates");
+		assertEquals(argoUid, retrievedEnvironmentRelease.getArgoCdUid(), "ArgoCdUid should be correct for undeploy status updates");
 
 		// verify release history
 		List<ReleaseHistory> releaseHistories = StreamSupport.stream(releaseHistoryRepository.findAll().spliterator(), false).collect(Collectors.toList());
@@ -436,6 +437,7 @@ class ReleaseServiceIntegrationTest {
 		ApplicationVersion applicationVersion = applicationVersionRepository.save(new ApplicationVersion("1.0.0", application));
 
 		String argoApplicationName = "minikube-dev-release1";
+		String argoUid = UUID.randomUUID().toString();
 		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0");
 		release.addReleaseVersion(releaseVersion);
 		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
@@ -443,6 +445,7 @@ class ReleaseServiceIntegrationTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 		environmentRelease.setCurrentReleaseVersion(releaseVersion); // this release version is deployed
 		environmentRelease.setArgoCdName(argoApplicationName);
+		environmentRelease.setArgoCdUid(argoUid);
 		environmentRelease = environmentReleaseRepository.save(environmentRelease);
 
 		when(argoClient.getApplication(eq(argoApplicationName))).thenReturn(Optional.empty());
@@ -459,8 +462,8 @@ class ReleaseServiceIntegrationTest {
 		// verify environment release
 		EnvironmentRelease retrievedEnvironmentRelease = environmentReleaseRepository.findById(undeployedEnvironmentRelease.getId()).orElseThrow();
 		assertNull(retrievedEnvironmentRelease.getCurrentReleaseVersion());
-		assertNull(retrievedEnvironmentRelease.getArgoCdName());
-		assertNull(retrievedEnvironmentRelease.getArgoCdUid());
+		assertEquals(argoApplicationName, retrievedEnvironmentRelease.getArgoCdName(), "ArgoCdName should be correct for undeploy status updates");
+		assertEquals(argoUid, retrievedEnvironmentRelease.getArgoCdUid(), "ArgoCdUid should be correct for undeploy status updates");
 
 		// verify release history
 		List<ReleaseHistory> releaseHistories = StreamSupport.stream(releaseHistoryRepository.findAll().spliterator(), false).collect(Collectors.toList());

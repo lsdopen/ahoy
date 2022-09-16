@@ -24,6 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import za.co.lsd.ahoy.server.AhoyConstants;
 import za.co.lsd.ahoy.server.AhoyTestServerApplication;
 import za.co.lsd.ahoy.server.applications.Application;
 import za.co.lsd.ahoy.server.applications.ApplicationVersion;
@@ -115,7 +116,7 @@ public class ReleaseManagerTest {
 		// labels
 		Map<String, String> labels = argoApplication.getMetadata().getLabels();
 		assertEquals(5, labels.size());
-		assertEquals("ahoy", labels.get(ArgoMetadata.MANAGED_BY_LABEL));
+		assertEquals(AhoyConstants.MANAGED_BY_LABEL_VALUE, labels.get(ArgoMetadata.MANAGED_BY_LABEL));
 		assertEquals("test-cluster", labels.get(ArgoMetadata.CLUSTER_NAME_LABEL));
 		assertEquals("dev", labels.get(ArgoMetadata.ENVIRONMENT_NAME_LABEL));
 		assertEquals("release1", labels.get(ArgoMetadata.RELEASE_NAME_LABEL));
@@ -185,7 +186,7 @@ public class ReleaseManagerTest {
 		// labels
 		Map<String, String> labels = argoApplication.getMetadata().getLabels();
 		assertEquals(5, labels.size());
-		assertEquals("ahoy", labels.get(ArgoMetadata.MANAGED_BY_LABEL));
+		assertEquals(AhoyConstants.MANAGED_BY_LABEL_VALUE, labels.get(ArgoMetadata.MANAGED_BY_LABEL));
 		assertEquals("test-cluster", labels.get(ArgoMetadata.CLUSTER_NAME_LABEL));
 		assertEquals("dev", labels.get(ArgoMetadata.ENVIRONMENT_NAME_LABEL));
 		assertEquals("release1", labels.get(ArgoMetadata.RELEASE_NAME_LABEL));

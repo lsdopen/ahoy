@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
+import za.co.lsd.ahoy.server.AhoyConstants;
 import za.co.lsd.ahoy.server.argocd.ApplicationNameResolver;
 import za.co.lsd.ahoy.server.argocd.ArgoClient;
 import za.co.lsd.ahoy.server.argocd.RefreshApplicationTask;
@@ -162,7 +163,7 @@ public class ReleaseManager {
 		Release release = environmentRelease.getRelease();
 
 		Map<String, String> labels = new HashMap<>();
-		labels.put(ArgoMetadata.MANAGED_BY_LABEL, "ahoy");
+		labels.put(ArgoMetadata.MANAGED_BY_LABEL, AhoyConstants.MANAGED_BY_LABEL_VALUE);
 		labels.put(ArgoMetadata.CLUSTER_NAME_LABEL, environment.getCluster().getName());
 		labels.put(ArgoMetadata.ENVIRONMENT_NAME_LABEL, environment.getName());
 		labels.put(ArgoMetadata.RELEASE_NAME_LABEL, release.getName());
