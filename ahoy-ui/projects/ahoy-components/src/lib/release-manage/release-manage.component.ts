@@ -70,13 +70,12 @@ export class ReleaseManageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.route.paramMap.subscribe(paramMap => {
-      const environmentId = +paramMap.get('environmentId');
-      const releaseId = +paramMap.get('releaseId');
-      const releaseVersionId = +paramMap.get('releaseVersionId');
-      this.getEnvironmentRelease(environmentId, releaseId, releaseVersionId).subscribe((environmentRelease) => {
-        this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
-      });
+    const paramMap = this.route.snapshot.paramMap;
+    const environmentId = +paramMap.get('environmentId');
+    const releaseId = +paramMap.get('releaseId');
+    const releaseVersionId = +paramMap.get('releaseVersionId');
+    this.getEnvironmentRelease(environmentId, releaseId, releaseVersionId).subscribe((environmentRelease) => {
+      this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
     });
   }
 
@@ -135,12 +134,15 @@ export class ReleaseManageComponent implements OnInit {
 
   reloadCurrent() {
     if (this.selectedEnvironmentRelease) {
-      this.reload(this.selectedEnvironmentRelease.id.environmentId, this.releaseVersion.id);
+      this.reload(this.selectedEnvironmentRelease, this.releaseVersion);
     }
   }
 
-  reload(environmentId: number, releaseVersionId: number) {
-    this.router.navigate(['/release', environmentId, this.environmentRelease.id.releaseId, 'version', releaseVersionId]);
+  reload(environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion) {
+    this.getEnvironmentRelease(environmentRelease.id.environmentId, environmentRelease.id.releaseId, releaseVersion.id).subscribe(() => {
+      this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
+      this.router.navigate(['/release', this.environmentRelease.id.environmentId, this.environmentRelease.id.releaseId, 'version', this.releaseVersion.id]);
+    });
   }
 
   canDeploy(): boolean {
@@ -205,7 +207,7 @@ export class ReleaseManageComponent implements OnInit {
       mergeMap((promoteOptions: PromoteOptions) => {
         return this.releaseManageService.promote(this.environmentRelease.id, promoteOptions);
       })
-    ).subscribe((newEnvironmentRelease: EnvironmentRelease) => this.reload(newEnvironmentRelease.id.environmentId, this.releaseVersion.id));
+    ).subscribe((newEnvironmentRelease: EnvironmentRelease) => this.reload(newEnvironmentRelease, this.releaseVersion));
   }
 
   canUpgrade() {
@@ -223,7 +225,7 @@ export class ReleaseManageComponent implements OnInit {
       mergeMap((upgradeOptions: UpgradeOptions) => {
         return this.releaseManageService.upgrade(this.environmentRelease, this.releaseVersion, upgradeOptions);
       })
-    ).subscribe((newReleaseVersion: ReleaseVersion) => this.reload(this.environmentRelease.id.environmentId, newReleaseVersion.id));
+    ).subscribe((newReleaseVersion: ReleaseVersion) => this.reload(this.environmentRelease, newReleaseVersion));
   }
 
   canCopyEnvConfig() {
@@ -241,11 +243,11 @@ export class ReleaseManageComponent implements OnInit {
       mergeMap((selectedReleaseVersion) => {
         return this.releaseManageService.copyEnvConfig(this.environmentRelease.id, selectedReleaseVersion.id, this.releaseVersion.id);
       })
-    ).subscribe(() => this.reload(this.environmentRelease.id.environmentId, this.releaseVersion.id));
+    ).subscribe(() => this.reload(this.environmentRelease, this.releaseVersion));
   }
 
   releaseVersionChanged() {
-    this.router.navigate(['/release', this.environmentRelease.id.environmentId, this.environmentRelease.id.releaseId, 'version', this.selectedReleaseVersion.id]);
+    this.reload(this.environmentRelease, this.selectedReleaseVersion);
   }
 
   private isCurrent() {
