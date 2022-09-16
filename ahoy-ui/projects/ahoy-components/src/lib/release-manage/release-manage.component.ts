@@ -291,7 +291,7 @@ export class ReleaseManageComponent implements OnInit {
   taskEventOccurred(event: TaskEvent) {
     if (event.releaseStatusChangedEvent) {
       const statusChangedEvent = event.releaseStatusChangedEvent;
-      if (EnvironmentReleaseService.environmentReleaseIdEquals(this.environmentRelease.id, statusChangedEvent.environmentReleaseId)) {
+      if (this.environmentRelease.id.releaseId === statusChangedEvent.environmentReleaseId.releaseId) {
         setTimeout(() => {
           this.getEnvironmentRelease(this.environmentRelease.id.environmentId, this.environmentRelease.id.releaseId, this.releaseVersion.id)
             .subscribe(() => {
