@@ -14,24 +14,12 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.argocd;
+package za.co.lsd.ahoy.server.release;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import za.co.lsd.ahoy.server.task.TaskContext;
+import za.co.lsd.ahoy.server.task.ProgressMessages;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class RefreshApplicationTaskContext extends TaskContext {
-	private final String applicationName;
-
-	@Override
-	public boolean sendProgress() {
-		return false;
-	}
-
-	@Override
-	public String getMessage() {
-		return "refresh-application";
-	}
+public class UndeployOptions {
+	private ProgressMessages progressMessages;
 }

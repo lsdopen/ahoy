@@ -21,28 +21,23 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 
 @Component
 @Slf4j
 public class TestTaskProgressListener {
-	private Map<String, List<TaskProgressEvent>> eventsMap = new Hashtable<>();
+	private final List<TaskProgressEvent> events = new ArrayList<>();
 
 	@EventListener
 	public void onTaskProgressEvent(TaskProgressEvent event) {
-		if (eventsMap.containsKey(event.getId())) {
-			eventsMap.get(event.getId()).add(event);
-		} else {
-			eventsMap.put(event.getId(), new ArrayList<>(List.of(event)));
-		}
+		events.add(event);
 	}
 
-	public List<TaskProgressEvent> getEvents(String id) {
-		if (eventsMap.containsKey(id))
-			return eventsMap.get(id);
+	public List<TaskProgressEvent> getEvents() {
+		return events;
+	}
 
-		return List.of();
+	public void clear() {
+		events.clear();
 	}
 }

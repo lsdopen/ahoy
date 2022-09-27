@@ -18,13 +18,14 @@ package za.co.lsd.ahoy.server.release;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import za.co.lsd.ahoy.server.task.ProgressMessages;
 
 @Data
 @NoArgsConstructor
 public class DeployOptions {
 	private Long releaseVersionId;
 	private String commitMessage;
-	private String message;
+	private ProgressMessages progressMessages;
 
 	public DeployOptions(Long releaseVersionId, String commitMessage) {
 		this.releaseVersionId = releaseVersionId;

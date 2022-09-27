@@ -33,7 +33,7 @@ public class TaskProgressEvent extends ApplicationEvent {
 	private final String trace;
 	private final LocalDateTime time;
 
-	public TaskProgressEvent(Object source, String id, State state, String status, String message, String trace) {
+	private TaskProgressEvent(Object source, String id, State state, String status, String message, String trace) {
 		super(source);
 		this.id = id;
 		this.state = state;
@@ -43,8 +43,8 @@ public class TaskProgressEvent extends ApplicationEvent {
 		this.time = LocalDateTime.now();
 	}
 
-	public static TaskProgressEvent createWaiting(Object source, String id, String status) {
-		return new TaskProgressEvent(source, id, State.WAITING, status, null, null);
+	public static TaskProgressEvent createWaiting(Object source, String id, String status, String message) {
+		return new TaskProgressEvent(source, id, State.WAITING, status, message, null);
 	}
 
 	public static TaskProgressEvent createInProgressUpdate(Object source, String id, String status, String message) {
@@ -55,12 +55,12 @@ public class TaskProgressEvent extends ApplicationEvent {
 		return new TaskProgressEvent(source, id, State.NOTIFICATION, status, message, null);
 	}
 
-	public static TaskProgressEvent createDone(Object source, String id) {
-		return new TaskProgressEvent(source, id, State.DONE, null, null, null);
+	public static TaskProgressEvent createDone(Object source, String id, String status) {
+		return new TaskProgressEvent(source, id, State.DONE, status, null, null);
 	}
 
-	public static TaskProgressEvent createError(Object source, String id, String status, String trace) {
-		return new TaskProgressEvent(source, id, State.ERROR, status, null, trace);
+	public static TaskProgressEvent createError(Object source, String id, String status, String message, String trace) {
+		return new TaskProgressEvent(source, id, State.ERROR, status, message, trace);
 	}
 
 	public enum State {

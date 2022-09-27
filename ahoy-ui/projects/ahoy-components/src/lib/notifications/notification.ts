@@ -14,8 +14,8 @@
  *    limitations under the License.
  */
 
-import {HttpErrorResponse} from '@angular/common/http';
 import {State, TaskProgressEvent} from '../task/task';
+import {ErrorUtil} from '../util/error-util';
 
 export class Notification {
   text: string;
@@ -34,7 +34,7 @@ export class Notification {
     this.time = new Date();
     this.id = this.time.getTime().toString();
 
-    if (error instanceof HttpErrorResponse && error.status === 500 && error.error) {
+    if (ErrorUtil.is500Error(error) && error.error) {
       error = error.error;
     }
 

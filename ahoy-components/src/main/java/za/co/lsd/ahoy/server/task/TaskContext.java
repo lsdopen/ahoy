@@ -17,39 +17,31 @@
 package za.co.lsd.ahoy.server.task;
 
 import lombok.Data;
-import org.springframework.security.core.context.SecurityContext;
+import org.springframework.lang.Nullable;
 
 import java.util.UUID;
 
 @Data
-public abstract class TaskContext {
+public class TaskContext {
 	private final String id;
-	private SecurityContext securityContext;
+	private ProgressMessages progressMessages;
 
-	protected TaskContext() {
-		this(UUID.randomUUID().toString());
-	}
-
-	protected TaskContext(String id) {
-		this.id = id;
-	}
-
-	protected SecurityContext getSecurityContext() {
-		return securityContext;
-	}
-
-	protected void setSecurityContext(SecurityContext securityContext) {
-		this.securityContext = securityContext;
+	protected TaskContext(@Nullable ProgressMessages progressMessages) {
+		this.id = UUID.randomUUID().toString();
+		this.progressMessages = progressMessages;
 	}
 
 	/**
-	 * Set whether the task framework should send progress events for this task context.
+	 * Returns whether this context has progress messages or not.
+	 * If there is progress messages, then it is safe to assume that progress events should be sent for the task.
 	 *
-	 * @return boolean true to send progress events; false otherwise
+	 * @return boolean true has progress messages; false otherwise
 	 */
-	public boolean sendProgress() {
-		return true;
+	public boolean hasProgressMessages() {
+		return progressMessages != null;
 	}
 
-	public abstract String getMessage();
+	public ProgressMessages getProgressMessages() {
+		return progressMessages;
+	}
 }

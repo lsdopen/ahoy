@@ -39,40 +39,55 @@ public class TaskProgressService {
 		this.eventPublisher = eventPublisher;
 	}
 
-	public void waiting(TaskContext context, String status) {
-		eventPublisher.publishEvent(TaskProgressEvent.createWaiting(this, context.getId(), status));
+	public void waiting(TaskContext context, String message) {
+		if (context.hasProgressMessages()) {
+			ProgressMessages progressMessages = context.getProgressMessages();
+			eventPublisher.publishEvent(TaskProgressEvent.createWaiting(this, context.getId(), progressMessages.getRunningMessage(), message));
+		}
 	}
 
-	public void start(TaskContext context, String status, String message) {
+	public void start(TaskContext context, String message) {
 		threadTaskContext.set(context);
-		eventPublisher.publishEvent(TaskProgressEvent.createInProgressUpdate(this, context.getId(), status, message));
-	}
-
-	public void progress(String status, String message) {
-		TaskContext context = threadTaskContext.get();
-		eventPublisher.publishEvent(TaskProgressEvent.createInProgressUpdate(this, context.getId(), status, message));
+		if (context.hasProgressMessages()) {
+			ProgressMessages progressMessages = context.getProgressMessages();
+			eventPublisher.publishEvent(TaskProgressEvent.createInProgressUpdate(this, context.getId(), progressMessages.getRunningMessage(), message));
+		}
 	}
 
 	public void progress(String message) {
 		TaskContext context = threadTaskContext.get();
-		eventPublisher.publishEvent(TaskProgressEvent.createInProgressUpdate(this, context.getId(), null, message));
-	}
-
-	public void notify(String status, String message) {
-		TaskContext context = threadTaskContext.get();
-		eventPublisher.publishEvent(TaskProgressEvent.createNotification(this, context.getId(), status, message));
-	}
-
-	public void error(Throwable t) {
-		TaskContext context = threadTaskContext.get();
-		String trace = ExceptionUtils.getStackTrace(t);
-		eventPublisher.publishEvent(TaskProgressEvent.createError(this, context.getId(), t.getMessage(), trace));
-		threadTaskContext.remove();
+		if (context != null && context.hasProgressMessages()) {
+			ProgressMessages progressMessages = context.getProgressMessages();
+			eventPublisher.publishEvent(TaskProgressEvent.createInProgressUpdate(this, context.getId(), progressMessages.getRunningMessage(), message));
+		}
 	}
 
 	public void done() {
 		TaskContext context = threadTaskContext.get();
-		eventPublisher.publishEvent(TaskProgressEvent.createDone(this, context.getId()));
-		threadTaskContext.remove();
+		if (context != null) {
+			if (context.hasProgressMessages()) {
+				ProgressMessages progressMessages = context.getProgressMessages();
+				eventPublisher.publishEvent(TaskProgressEvent.createDone(this, context.getId(), progressMessages.getSuccessMessage()));
+			}
+			threadTaskContext.remove();
+		}
+	}
+
+	public void error(Throwable t) {
+		TaskContext context = threadTaskContext.get();
+		if (context != null) {
+			if (context.hasProgressMessages()) {
+				ProgressMessages progressMessages = context.getProgressMessages();
+				String trace = ExceptionUtils.getStackTrace(t);
+				eventPublisher.publishEvent(TaskProgressEvent.createError(this, context.getId(), progressMessages.getFailedMessage(), t.getMessage(), trace));
+			}
+			threadTaskContext.remove();
+		}
+	}
+
+	public void notify(String status, String message) {
+		TaskContext context = threadTaskContext.get();
+		if (context != null)
+			eventPublisher.publishEvent(TaskProgressEvent.createNotification(this, context.getId(), status, message));
 	}
 }

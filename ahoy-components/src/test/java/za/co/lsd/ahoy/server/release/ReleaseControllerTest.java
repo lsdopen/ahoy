@@ -32,6 +32,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import za.co.lsd.ahoy.server.AhoyTestServerApplication;
 import za.co.lsd.ahoy.server.argocd.model.ArgoEvents;
 import za.co.lsd.ahoy.server.cluster.Cluster;
@@ -78,14 +79,19 @@ public class ReleaseControllerTest {
 		when(releaseService.deploy(eq(environmentReleaseId), eq(deployOptions))).thenReturn(environmentRelease);
 
 		// when
-		mvc.perform(post("/api/environmentReleases/2_3/deploy")
+		MvcResult result = mvc.perform(post("/api/environmentReleases/2_3/deploy")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(json(deployOptions)))
+			.andReturn();
+
+		mvc.perform(asyncDispatch(result))
 			.andDo(print())
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id.environmentId").value(2L))
+			.andExpect(jsonPath("$.id.releaseId").value(3L));
 
 		// then
-		verify(releaseService, timeout(1000).times(1)).deploy(eq(environmentReleaseId), eq(deployOptions));
+		verify(releaseService, times(1)).deploy(eq(environmentReleaseId), eq(deployOptions));
 	}
 
 	@Test
@@ -111,25 +117,35 @@ public class ReleaseControllerTest {
 		// given
 		EnvironmentRelease environmentRelease = testEnvRelease(1L, 2L, 3L);
 		EnvironmentReleaseId environmentReleaseId = environmentRelease.getId();
+		UndeployOptions undeployOptions = new UndeployOptions();
 
 		when(releaseService.undeploy(eq(environmentReleaseId))).thenReturn(environmentRelease);
 
 		// when
-		mvc.perform(post("/api/environmentReleases/2_3/undeploy")
-				.contentType(MediaType.APPLICATION_JSON))
-			.andDo(print())
-			.andExpect(status().isOk());
+		MvcResult result = mvc.perform(post("/api/environmentReleases/2_3/undeploy")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(json(undeployOptions)))
+			.andReturn();
+
+		mvc.perform(asyncDispatch(result)).andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id.environmentId").value(2L))
+			.andExpect(jsonPath("$.id.releaseId").value(3L));
 
 		// then
-		verify(releaseService, timeout(1000).times(1)).undeploy(eq(environmentReleaseId));
+		verify(releaseService, times(1)).undeploy(eq(environmentReleaseId));
 	}
 
 	@Test
 	@WithMockUser(authorities = {Scope.ahoy, Role.developer})
 	void undeployAsDeveloper() throws Exception {
+		// given
+		UndeployOptions undeployOptions = new UndeployOptions();
+
 		// when
 		mvc.perform(post("/api/environmentReleases/2_3/undeploy")
-				.contentType(MediaType.APPLICATION_JSON))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(json(undeployOptions)))
 			.andDo(print())
 			.andExpect(status().is(403));
 

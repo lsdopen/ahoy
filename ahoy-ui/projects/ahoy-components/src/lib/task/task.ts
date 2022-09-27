@@ -30,3 +30,15 @@ export enum State {
   DONE = 'DONE',
   ERROR = 'ERROR'
 }
+
+export class ProgressMessages {
+  runningMessage: string;
+  successMessage: string;
+  failedMessage: string;
+
+  constructor(runningMessage: string, successMessage: string, failedMessage: string) {
+    this.runningMessage = runningMessage;
+    this.successMessage = successMessage;
+    this.failedMessage = failedMessage;
+  }
+}

@@ -19,6 +19,7 @@ package za.co.lsd.ahoy.server.environments;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import za.co.lsd.ahoy.server.task.ProgressMessages;
 
 @Data
 @NoArgsConstructor
@@ -26,4 +27,5 @@ import lombok.NoArgsConstructor;
 public class MoveOptions {
 	private Long destClusterId;
 	private boolean redeployReleases;
+	private ProgressMessages progressMessages;
 }

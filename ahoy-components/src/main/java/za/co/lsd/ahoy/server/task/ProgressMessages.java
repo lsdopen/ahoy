@@ -16,14 +16,13 @@
 
 package za.co.lsd.ahoy.server.task;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 
 @Data
-public class TaskExecution<T extends Task<C>, C extends TaskContext> {
-	@NonNull
-	private final T task;
-	@NonNull
-	private final C context;
-	private final boolean async;
+@AllArgsConstructor
+public class ProgressMessages {
+	private String runningMessage;
+	private String successMessage;
+	private String failedMessage;
 }

@@ -15,6 +15,7 @@
  */
 
 import {Cluster} from '../clusters/cluster';
+import {ProgressMessages} from '../task/task';
 
 export class Environment {
   id: number;
@@ -26,6 +27,13 @@ export class Environment {
 export class MoveOptions {
   destClusterId: number;
   redeployReleases = true;
+  progressMessages: ProgressMessages;
+
+  constructor(destClusterId: number, redeployReleases: boolean, progressMessages: ProgressMessages) {
+    this.destClusterId = destClusterId;
+    this.redeployReleases = redeployReleases;
+    this.progressMessages = progressMessages;
+  }
 }
 
 export class DuplicateOptions {

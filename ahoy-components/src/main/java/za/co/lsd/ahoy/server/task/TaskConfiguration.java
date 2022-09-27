@@ -18,31 +18,31 @@ package za.co.lsd.ahoy.server.task;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.task.TaskExecutor;
+import org.springframework.core.task.AsyncListenableTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
 public class TaskConfiguration {
 
 	@Bean
-	public TaskExecutor synchronousTaskExecutor() {
+	public AsyncListenableTaskExecutor synchronousTaskExecutor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 		executor.setCorePoolSize(1);
 		executor.setMaxPoolSize(1);
 		executor.setThreadNamePrefix("sync-task-");
 		executor.initialize();
 
-		return executor;
+		return new DelegatingSecurityContextAsyncListenableTaskExecutor(executor);
 	}
 
 	@Bean
-	public TaskExecutor asynchronousTaskExecutor() {
+	public AsyncListenableTaskExecutor asynchronousTaskExecutor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 		executor.setCorePoolSize(5);
 		executor.setMaxPoolSize(10);
 		executor.setThreadNamePrefix("async-task-");
 		executor.initialize();
 
-		return executor;
+		return new DelegatingSecurityContextAsyncListenableTaskExecutor(executor);
 	}
 }

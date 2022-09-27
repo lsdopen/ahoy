@@ -36,6 +36,7 @@ import za.co.lsd.ahoy.server.release.DeployOptions;
 import za.co.lsd.ahoy.server.release.ReleaseService;
 import za.co.lsd.ahoy.server.releases.Release;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
+import za.co.lsd.ahoy.server.task.ProgressMessages;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -144,7 +145,7 @@ class EnvironmentServiceTest {
 		when(environmentRepository.save(same(environment))).thenReturn(environment);
 
 		// when
-		MoveOptions moveOptions = new MoveOptions(2L, true);
+		MoveOptions moveOptions = createTestMoveOptions(2L, true);
 		environmentService.move(1L, moveOptions);
 
 		// then
@@ -183,7 +184,7 @@ class EnvironmentServiceTest {
 		when(releaseService.deploy(same(environmentRelease.getId()), any(DeployOptions.class))).thenReturn(new EnvironmentRelease());
 
 		// when
-		MoveOptions moveOptions = new MoveOptions(2L, true);
+		MoveOptions moveOptions = createTestMoveOptions(2L, true);
 		environmentService.move(1L, moveOptions);
 
 		// then
@@ -224,7 +225,7 @@ class EnvironmentServiceTest {
 		when(environmentRepository.save(same(environment))).thenReturn(environment);
 
 		// when
-		MoveOptions moveOptions = new MoveOptions(2L, false);
+		MoveOptions moveOptions = createTestMoveOptions(2L, false);
 		environmentService.move(1L, moveOptions);
 
 		// then
@@ -236,5 +237,9 @@ class EnvironmentServiceTest {
 		assertEquals(2L, savedEnvironment.getCluster().getId());
 
 		verifyNoMoreInteractions(releaseService);
+	}
+
+	private MoveOptions createTestMoveOptions(Long destClusterId, boolean redeployReleases) {
+		return new MoveOptions(destClusterId, redeployReleases, new ProgressMessages("Moving environment", "Move successful", "Move failed"));
 	}
 }

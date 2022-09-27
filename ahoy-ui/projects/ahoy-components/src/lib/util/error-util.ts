@@ -14,23 +14,11 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.task;
+import {HttpErrorResponse} from '@angular/common/http';
 
-public class TestTask implements Task<TestTaskContext> {
+export class ErrorUtil {
 
-	@Override
-	public String getName() {
-		return "test-task";
-	}
-
-	@Override
-	public void execute(TestTaskContext context) {
-		if (context.getSleep() > 0) {
-			try {
-				Thread.sleep(context.getSleep());
-			} catch (InterruptedException e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
+  static is500Error(error: any): boolean {
+    return error instanceof HttpErrorResponse && error.status === 500;
+  }
 }

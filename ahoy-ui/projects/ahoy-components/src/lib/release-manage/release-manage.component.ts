@@ -25,7 +25,7 @@ import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Cluster} from '../clusters/cluster';
 import {Confirmation} from '../components/confirm-dialog/confirm';
 import {DialogUtilService} from '../components/dialog-util.service';
-import {DeployOptions, EnvironmentRelease} from '../environment-release/environment-release';
+import {DeployOptions, EnvironmentRelease, UndeployOptions} from '../environment-release/environment-release';
 import {EnvironmentReleaseService} from '../environment-release/environment-release.service';
 import {Environment} from '../environments/environment';
 import {EnvironmentService} from '../environments/environment.service';
@@ -39,6 +39,7 @@ import {PromoteDialogComponent} from './promote-dialog/promote-dialog.component'
 import {RecentReleasesService} from './recent-releases.service';
 import {ReleaseManageService} from './release-manage.service';
 import {UpgradeDialogComponent} from './upgrade-dialog/upgrade-dialog.component';
+import {ProgressMessages} from '../task/task';
 
 @Component({
   selector: 'app-release-manage',
@@ -171,8 +172,13 @@ export class ReleaseManageComponent implements OnInit {
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
+      const relToEnv = `${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} to environment ${(this.environmentRelease.environment as Environment).name}`;
       const deployOptions = new DeployOptions(this.releaseVersion.id, conf.input,
-        `deploy ${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} to ${(this.environmentRelease.environment as Environment).name}`);
+        new ProgressMessages(
+          `Deploying ${relToEnv}`,
+          `Deployed ${relToEnv}`,
+          `Failed to deploy ${relToEnv}`
+        ));
       this.releaseManageService.deploy(this.environmentRelease, this.releaseVersion, deployOptions).subscribe();
     });
   }
@@ -188,7 +194,15 @@ export class ReleaseManageComponent implements OnInit {
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
-      this.releaseManageService.undeploy(this.environmentRelease).subscribe();
+      const relFromEnv = `${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} from environment ${(this.environmentRelease.environment as Environment).name}`;
+      const undeployOptions = new UndeployOptions(
+        new ProgressMessages(
+          `Undeploying ${relFromEnv}`,
+          `Undeployed ${relFromEnv}`,
+          `Failed to undeploy ${relFromEnv}`
+        ));
+
+      this.releaseManageService.undeploy(this.environmentRelease, undeployOptions).subscribe();
     });
   }
 
@@ -274,10 +288,13 @@ export class ReleaseManageComponent implements OnInit {
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
+      const xToY = `${(this.environmentRelease.release as Release).name}:${this.environmentRelease.currentReleaseVersion.version} to ${(this.environmentRelease.release as Release).name}:${this.environmentRelease.previousReleaseVersion.version}`;
       const deployOptions = new DeployOptions(this.environmentRelease.previousReleaseVersion.id, conf.input,
-        `rolling back ` +
-        `${(this.environmentRelease.release as Release).name}:${this.environmentRelease.currentReleaseVersion.version} to ` +
-        `${(this.environmentRelease.release as Release).name}:${this.environmentRelease.previousReleaseVersion.version}`);
+        new ProgressMessages(
+          `Rolling back ${xToY}`,
+          `Rolled back ${xToY}`,
+          `Failed to roll back ${xToY}`
+        ));
       this.releaseManageService.deploy(this.environmentRelease, this.environmentRelease.previousReleaseVersion, deployOptions)
         .subscribe(() => this.log.debug('rolled back release:', this.environmentRelease));
     });

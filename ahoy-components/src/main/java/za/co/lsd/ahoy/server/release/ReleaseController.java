@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import za.co.lsd.ahoy.server.argocd.model.ArgoEvents;
@@ -51,8 +52,6 @@ public class ReleaseController {
 	private final ReleaseService releaseService;
 	private final TaskExecutor taskExecutor;
 
-	private DeployTask deployTask;
-	private UndeployTask undeployTask;
 	private ExecutorService sseMvcExecutor;
 
 	public ReleaseController(ReleaseService releaseService, TaskExecutor taskExecutor) {
@@ -61,33 +60,22 @@ public class ReleaseController {
 	}
 
 	@Autowired
-	public void setDeployTask(DeployTask deployTask) {
-		this.deployTask = deployTask;
-	}
-
-	@Autowired
-	public void setUndeployTask(UndeployTask undeployTask) {
-		this.undeployTask = undeployTask;
-	}
-
-	@Autowired
 	public void setSseMvcExecutor(ExecutorService sseMvcExecutor) {
 		this.sseMvcExecutor = sseMvcExecutor;
 	}
 
 	@PostMapping("/environmentReleases/{environmentReleaseId}/deploy")
-	public ResponseEntity<Void> deploy(@PathVariable EnvironmentReleaseId environmentReleaseId,
-									   @RequestBody DeployOptions deployOptions) {
+	public ListenableFuture<EnvironmentRelease> deploy(@PathVariable EnvironmentReleaseId environmentReleaseId,
+													   @RequestBody DeployOptions deployOptions) {
 
-		taskExecutor.executeSync(deployTask, new DeployTaskContext(environmentReleaseId, deployOptions));
-		return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.OK);
+		return taskExecutor.executeSync(() -> releaseService.deploy(environmentReleaseId, deployOptions), deployOptions.getProgressMessages());
 	}
 
 	@PostMapping("/environmentReleases/{environmentReleaseId}/undeploy")
-	public ResponseEntity<EnvironmentRelease> undeploy(@PathVariable EnvironmentReleaseId environmentReleaseId) {
+	public ListenableFuture<EnvironmentRelease> undeploy(@PathVariable EnvironmentReleaseId environmentReleaseId,
+														 @RequestBody UndeployOptions undeployOptions) {
 
-		taskExecutor.executeAsync(undeployTask, new UndeployTaskContext(environmentReleaseId));
-		return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.OK);
+		return taskExecutor.executeAsync(() -> releaseService.undeploy(environmentReleaseId), undeployOptions.getProgressMessages());
 	}
 
 	@PostMapping("/environmentReleases/{environmentReleaseId}/promote")

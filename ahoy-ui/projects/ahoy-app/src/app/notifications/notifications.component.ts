@@ -154,25 +154,14 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   }
 
   private showMessage(notification: Notification) {
-    let show = false;
-    let severity;
-    let summary;
     switch (notification.state) {
       case State.NOTIFICATION:
       case State.DONE:
-        show = true;
-        summary = 'Info';
-        severity = 'info';
+        this.messageService.add({summary: 'Info', severity: 'info', detail: notification.text});
         break;
       case State.ERROR:
-        show = true;
-        summary = 'Error';
-        severity = 'error';
+        this.messageService.add({summary: 'Error', severity: 'error', detail: notification.text});
         break;
-    }
-
-    if (show) {
-      this.messageService.add({summary, severity, detail: notification.text});
     }
   }
 }

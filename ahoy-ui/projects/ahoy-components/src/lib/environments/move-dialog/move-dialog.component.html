@@ -18,14 +18,13 @@
   <div class="p-fluid mt-2">
 
     <div class="field">
-      <p-dropdown id="cluster" name="cluster" [options]="clusters" [(ngModel)]="moveOptions.destClusterId"
-                  placeholder="Cluster" optionLabel="name" optionValue="id" required
-                  appendTo="body">
+      <p-dropdown id="cluster" name="cluster" [options]="clusters" [(ngModel)]="result.destCluster"
+                  placeholder="Cluster" optionLabel="name" required appendTo="body">
       </p-dropdown>
     </div>
 
     <div class="field-checkbox">
-      <p-checkbox id="redeployReleases" name="redeployReleases" [(ngModel)]="moveOptions.redeployReleases" binary="true"></p-checkbox>
+      <p-checkbox id="redeployReleases" name="redeployReleases" [(ngModel)]="result.redeployReleases" binary="true"></p-checkbox>
       <label for="redeployReleases">Redeploy releases</label>
     </div>
     <small>Please note: all currently deployed releases will be undeployed<br>from the current cluster and optionally redeployed to the new cluster</small>
@@ -35,5 +34,5 @@
 
 <div class="grid pt-3">
   <button pButton pRipple type="button" icon="pi pi-times" (click)="close(undefined)" label="Cancel" class="p-button-text ml-auto mr-2"></button>
-  <button pButton pRipple type="button" icon="pi pi-check" (click)="close(moveOptions)" label="Ok" class="p-button-text mr-2" [disabled]="f.invalid"></button>
+  <button pButton pRipple type="button" icon="pi pi-check" (click)="close(result)" label="Ok" class="p-button-text mr-2" [disabled]="f.invalid"></button>
 </div>

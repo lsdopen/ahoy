@@ -17,31 +17,54 @@
 package za.co.lsd.ahoy.server.task;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.core.task.AsyncListenableTaskExecutor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.util.concurrent.ListenableFutureCallback;
 
 @Component
 @Slf4j
 public class TaskExecutor {
-	private final TaskQueue taskQueue;
+	private final AsyncListenableTaskExecutor synchronousTaskExecutor;
+	private final AsyncListenableTaskExecutor asynchronousTaskExecutor;
 
-	public TaskExecutor(TaskQueue taskQueue) {
-		this.taskQueue = taskQueue;
+	private final TaskProgressService taskProgressService;
+
+	public TaskExecutor(AsyncListenableTaskExecutor synchronousTaskExecutor, AsyncListenableTaskExecutor asynchronousTaskExecutor, TaskProgressService taskProgressService) {
+		this.synchronousTaskExecutor = synchronousTaskExecutor;
+		this.asynchronousTaskExecutor = asynchronousTaskExecutor;
+		this.taskProgressService = taskProgressService;
 	}
 
-	public <T extends Task<C>, C extends TaskContext> TaskExecution<T, C> executeSync(T task, C context) {
-		context.setSecurityContext(SecurityContextHolder.getContext());
-		log.debug("Enqueuing task: {}, with context: {}", task.getName(), context);
-		TaskExecution<T, C> taskExecution = new TaskExecution<>(task, context, false);
-		taskQueue.put(taskExecution);
-		return taskExecution;
+	public <R> ListenableFuture<R> executeSync(Task<R> task, ProgressMessages progressMessages) {
+		return execute(synchronousTaskExecutor, task, progressMessages);
 	}
 
-	public <T extends Task<C>, C extends TaskContext> TaskExecution<T, C> executeAsync(T task, C context) {
-		context.setSecurityContext(SecurityContextHolder.getContext());
-		log.debug("Enqueuing async task: {}, with context: {}", task.getName(), context);
-		TaskExecution<T, C> taskExecution = new TaskExecution<>(task, context, true);
-		taskQueue.put(taskExecution);
-		return taskExecution;
+	public <R> ListenableFuture<R> executeAsync(Task<R> task, ProgressMessages progressMessages) {
+		return execute(asynchronousTaskExecutor, task, progressMessages);
+	}
+
+	private <R> ListenableFuture<R> execute(AsyncListenableTaskExecutor taskExecutor, Task<R> task, ProgressMessages progressMessages) {
+		TaskContext context = new TaskContext(progressMessages);
+
+		taskProgressService.waiting(context, "waiting");
+
+		ListenableFuture<R> future = taskExecutor.submitListenable(() -> {
+			taskProgressService.start(context, "preparing");
+			return task.execute();
+		});
+
+		future.addCallback(new ListenableFutureCallback<>() {
+			@Override
+			public void onFailure(Throwable ex) {
+				taskProgressService.error(ex);
+			}
+
+			@Override
+			public void onSuccess(R result) {
+				taskProgressService.done();
+			}
+		});
+		return future;
 	}
 }

@@ -18,7 +18,7 @@ import {Component, OnInit} from '@angular/core';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {Cluster} from '../../clusters/cluster';
 import {ClusterService} from '../../clusters/cluster.service';
-import {Environment, MoveOptions} from '../environment';
+import {Environment} from '../environment';
 
 @Component({
   selector: 'app-move-dialog',
@@ -26,24 +26,29 @@ import {Environment, MoveOptions} from '../environment';
   styleUrls: ['./move-dialog.component.scss']
 })
 export class MoveDialogComponent implements OnInit {
-  selectedEnvironment: Environment;
+  environment: Environment;
   clusters: Cluster[];
-  moveOptions = new MoveOptions();
+  result = new Result();
 
   constructor(public ref: DynamicDialogRef,
               public config: DynamicDialogConfig,
               private clusterService: ClusterService) {
     const data = config.data;
-    this.selectedEnvironment = data.selectedEnvironment;
+    this.environment = data.environment;
   }
 
   ngOnInit(): void {
     this.clusterService.getAll().subscribe((clusters) => {
-      this.clusters = clusters.filter(c => c.id !== (this.selectedEnvironment.cluster as Cluster).id);
+      this.clusters = clusters.filter(c => c.id !== (this.environment.cluster as Cluster).id);
     });
   }
 
   close(result: any) {
     this.ref.close(result);
   }
+}
+
+export class Result {
+  destCluster: Cluster;
+  redeployReleases = true;
 }

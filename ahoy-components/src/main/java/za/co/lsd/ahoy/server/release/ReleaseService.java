@@ -104,7 +104,7 @@ public class ReleaseService {
 
 		log.info("Deploying environment release: {}, release version: {}", environmentRelease, releaseVersion);
 
-		taskProgressService.progress(String.format("Deploying %s:%s to %s", environmentRelease.getRelease().getName(), releaseVersion.getVersion(), environmentRelease.getEnvironment().getName()), null);
+		taskProgressService.progress("deploying");
 
 		ReleaseVersion previousReleaseVersion = environmentRelease.getCurrentReleaseVersion();
 		boolean redeploy = releaseVersion.equals(previousReleaseVersion);
@@ -124,7 +124,6 @@ public class ReleaseService {
 		}
 
 		environmentReleaseRepository.save(environmentRelease);
-		taskProgressService.progress(String.format("%s:%s successfully deployed to %s", environmentRelease.getRelease().getName(), releaseVersion.getVersion(), environmentRelease.getEnvironment().getName()), null);
 		log.info("Deployed environment release: {}", environmentRelease);
 
 		return environmentRelease;
@@ -138,7 +137,7 @@ public class ReleaseService {
 		log.info("Undeploying environment release: {}", environmentRelease);
 
 		ReleaseVersion currentReleaseVersion = environmentRelease.getCurrentReleaseVersion();
-		taskProgressService.progress(String.format("Undeploying %s:%s from %s", environmentRelease.getRelease().getName(), currentReleaseVersion.getVersion(), environmentRelease.getEnvironment().getName()), null);
+		taskProgressService.progress("undeploying");
 
 		releaseManager.undeploy(environmentRelease);
 
@@ -151,7 +150,6 @@ public class ReleaseService {
 		purgeReleaseStatus(environmentRelease, currentReleaseVersion);
 
 		environmentReleaseRepository.save(environmentRelease);
-		taskProgressService.progress(String.format("%s:%s successfully undeployed from %s", environmentRelease.getRelease().getName(), currentReleaseVersion.getVersion(), environmentRelease.getEnvironment().getName()), null);
 		log.info("Undeployed environment release: {}", environmentRelease);
 
 		return environmentRelease;
