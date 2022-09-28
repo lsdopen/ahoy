@@ -66,7 +66,7 @@ class TaskExecutorTest extends BaseAhoyTest {
 		// then
 		assertEquals("test", future.get(1000, TimeUnit.MILLISECONDS));
 		verify(testTask, timeout(1000).times(1)).execute();
-		assertTrue(taskProgressListener.waitForEvents(1000, TimeUnit.MILLISECONDS));
+		assertTrue(taskProgressListener.waitForEvents(2000, TimeUnit.MILLISECONDS));
 		List<TaskProgressEvent> events = taskProgressListener.getEvents();
 		assertEquals(WAITING, events.get(0).getState());
 		assertEquals(IN_PROGRESS, events.get(1).getState());
@@ -89,7 +89,7 @@ class TaskExecutorTest extends BaseAhoyTest {
 		// then
 		assertThrows(ExecutionException.class, future::get, "Expected future.get() to throw an ExecutionException");
 		verify(testTask, timeout(1000).times(1)).execute();
-		assertTrue(taskProgressListener.waitForEvents(1000, TimeUnit.MILLISECONDS));
+		assertTrue(taskProgressListener.waitForEvents(2000, TimeUnit.MILLISECONDS));
 		List<TaskProgressEvent> events = taskProgressListener.getEvents();
 		assertEquals(ERROR, events.get(events.size() - 1).getState());
 	}
