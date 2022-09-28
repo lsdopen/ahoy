@@ -54,17 +54,20 @@ class TaskExecutorTest extends BaseAhoyTest {
 	 * Tests executing a single synchronous task.
 	 */
 	@Test
-	void executeSyncOne() {
+	void executeSyncOne() throws Exception {
 		// given
 		Task testTask = mock(Task.class);
+		doReturn("test").when(testTask).execute();
+		taskProgressListener.expectEvents(3);
 
 		// when
-		taskExecutor.executeSync(testTask, progressMessages);
+		ListenableFuture future = taskExecutor.executeSync(testTask, progressMessages);
 
 		// then
+		assertEquals("test", future.get(1000, TimeUnit.MILLISECONDS));
 		verify(testTask, timeout(1000).times(1)).execute();
+		assertTrue(taskProgressListener.waitForEvents(1000, TimeUnit.MILLISECONDS));
 		List<TaskProgressEvent> events = taskProgressListener.getEvents();
-		assertEquals(3, events.size());
 		assertEquals(WAITING, events.get(0).getState());
 		assertEquals(IN_PROGRESS, events.get(1).getState());
 		assertEquals(DONE, events.get(2).getState());
@@ -74,16 +77,19 @@ class TaskExecutorTest extends BaseAhoyTest {
 	 * Tests executing a single synchronous task which throws an Exception.
 	 */
 	@Test
-	void executeSyncOneThrowsException() {
+	void executeSyncOneThrowsException() throws Exception{
 		// given
 		Task testTask = mock(Task.class);
 		doThrow(new RuntimeException("Test failure")).when(testTask).execute();
+		taskProgressListener.expectEvents(3);
 
 		// when
-		taskExecutor.executeSync(testTask, progressMessages);
+		ListenableFuture future = taskExecutor.executeSync(testTask, progressMessages);
 
 		// then
+		assertThrows(ExecutionException.class, future::get, "Expected future.get() to throw an ExecutionException");
 		verify(testTask, timeout(1000).times(1)).execute();
+		assertTrue(taskProgressListener.waitForEvents(1000, TimeUnit.MILLISECONDS));
 		List<TaskProgressEvent> events = taskProgressListener.getEvents();
 		assertEquals(ERROR, events.get(events.size() - 1).getState());
 	}
@@ -92,14 +98,16 @@ class TaskExecutorTest extends BaseAhoyTest {
 	 * Tests executing a single synchronous task without progress.
 	 */
 	@Test
-	void executeSyncOneNoProgress() {
+	void executeSyncOneNoProgress() throws Exception {
 		// given
 		Task testTask = mock(Task.class);
+		doReturn("test").when(testTask).execute();
 
 		// when
-		taskExecutor.executeSync(testTask, null);
+		ListenableFuture future = taskExecutor.executeSync(testTask, null);
 
 		// then
+		assertEquals("test", future.get(1000, TimeUnit.MILLISECONDS));
 		verify(testTask, timeout(1000).times(1)).execute();
 		List<TaskProgressEvent> events = taskProgressListener.getEvents();
 		assertEquals(0, events.size());
@@ -220,12 +228,15 @@ class TaskExecutorTest extends BaseAhoyTest {
 		Task testTask2 = mock(Task.class);
 
 		doThrow(new RuntimeException("Test failure")).when(testTask1).execute();
+		doReturn("test").when(testTask2).execute();
 
 		// when
-		taskExecutor.executeAsync(testTask1, null);
-		taskExecutor.executeAsync(testTask2, null);
+		ListenableFuture future1 = taskExecutor.executeAsync(testTask1, null);
+		ListenableFuture future2 = taskExecutor.executeAsync(testTask2, null);
 
 		// then
+		assertThrows(ExecutionException.class, future1::get, "Expected future.get() to throw an ExecutionException");
+		doReturn("test").when(testTask2).execute();
 		verify(testTask1, timeout(1000).times(1)).execute();
 		verify(testTask2, timeout(1000).times(1)).execute();
 	}

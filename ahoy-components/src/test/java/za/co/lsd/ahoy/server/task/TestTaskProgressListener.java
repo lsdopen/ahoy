@@ -22,22 +22,37 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j
 public class TestTaskProgressListener {
 	private final List<TaskProgressEvent> events = new ArrayList<>();
+	private CountDownLatch eventsFiredLatch;
 
 	@EventListener
 	public void onTaskProgressEvent(TaskProgressEvent event) {
 		events.add(event);
+
+		if (eventsFiredLatch != null)
+			eventsFiredLatch.countDown();
 	}
 
 	public List<TaskProgressEvent> getEvents() {
 		return events;
 	}
 
+	public void expectEvents(int eventCount) {
+		eventsFiredLatch = new CountDownLatch(eventCount);
+	}
+
+	public boolean waitForEvents(long timeout, TimeUnit unit) throws InterruptedException {
+		return eventsFiredLatch.await(timeout, unit);
+	}
+
 	public void clear() {
+		eventsFiredLatch = null;
 		events.clear();
 	}
 }
