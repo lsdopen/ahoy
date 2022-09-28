@@ -16,23 +16,21 @@
 
 package za.co.lsd.ahoy.server.task;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.util.concurrent.ListenableFuture;
 import za.co.lsd.ahoy.server.BaseAhoyTest;
 import za.co.lsd.ahoy.server.security.Role;
 import za.co.lsd.ahoy.server.security.Scope;
 
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static za.co.lsd.ahoy.server.task.TaskProgressEvent.State.*;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 class TaskExecutorTest extends BaseAhoyTest {
@@ -40,15 +38,10 @@ class TaskExecutorTest extends BaseAhoyTest {
 	private TaskExecutor taskExecutor;
 	@Autowired
 	private SecuredCollaborator securedCollaborator;
-	@Autowired
-	private TestTaskProgressListener taskProgressListener;
+	@MockBean
+	private TaskProgressService taskProgressService;
 
 	private final ProgressMessages progressMessages = new ProgressMessages("test-running", "test-success", "test-failed");
-
-	@BeforeEach
-	public void clearProgressEvents() {
-		taskProgressListener.clear();
-	}
 
 	/**
 	 * Tests executing a single synchronous task.
@@ -58,7 +51,6 @@ class TaskExecutorTest extends BaseAhoyTest {
 		// given
 		Task testTask = mock(Task.class);
 		doReturn("test").when(testTask).execute();
-		taskProgressListener.expectEvents(3);
 
 		// when
 		ListenableFuture future = taskExecutor.executeSync(testTask, progressMessages);
@@ -66,22 +58,21 @@ class TaskExecutorTest extends BaseAhoyTest {
 		// then
 		assertEquals("test", future.get(1000, TimeUnit.MILLISECONDS));
 		verify(testTask, timeout(1000).times(1)).execute();
-		assertTrue(taskProgressListener.waitForEvents(2000, TimeUnit.MILLISECONDS));
-		List<TaskProgressEvent> events = taskProgressListener.getEvents();
-		assertEquals(WAITING, events.get(0).getState());
-		assertEquals(IN_PROGRESS, events.get(1).getState());
-		assertEquals(DONE, events.get(2).getState());
+		verify(taskProgressService, timeout(1000).times(1)).waiting(any(), anyString());
+		verify(taskProgressService, timeout(1000).times(1)).start(any(), anyString());
+		verify(taskProgressService, timeout(1000).times(1)).done();
+		verifyNoMoreInteractions(testTask, taskProgressService);
 	}
 
 	/**
 	 * Tests executing a single synchronous task which throws an Exception.
 	 */
 	@Test
-	void executeSyncOneThrowsException() throws Exception{
+	void executeSyncOneThrowsException() {
 		// given
 		Task testTask = mock(Task.class);
-		doThrow(new RuntimeException("Test failure")).when(testTask).execute();
-		taskProgressListener.expectEvents(3);
+		RuntimeException exception = new RuntimeException("Test failure");
+		doThrow(exception).when(testTask).execute();
 
 		// when
 		ListenableFuture future = taskExecutor.executeSync(testTask, progressMessages);
@@ -89,28 +80,10 @@ class TaskExecutorTest extends BaseAhoyTest {
 		// then
 		assertThrows(ExecutionException.class, future::get, "Expected future.get() to throw an ExecutionException");
 		verify(testTask, timeout(1000).times(1)).execute();
-		assertTrue(taskProgressListener.waitForEvents(2000, TimeUnit.MILLISECONDS));
-		List<TaskProgressEvent> events = taskProgressListener.getEvents();
-		assertEquals(ERROR, events.get(events.size() - 1).getState());
-	}
-
-	/**
-	 * Tests executing a single synchronous task without progress.
-	 */
-	@Test
-	void executeSyncOneNoProgress() throws Exception {
-		// given
-		Task testTask = mock(Task.class);
-		doReturn("test").when(testTask).execute();
-
-		// when
-		ListenableFuture future = taskExecutor.executeSync(testTask, null);
-
-		// then
-		assertEquals("test", future.get(1000, TimeUnit.MILLISECONDS));
-		verify(testTask, timeout(1000).times(1)).execute();
-		List<TaskProgressEvent> events = taskProgressListener.getEvents();
-		assertEquals(0, events.size());
+		verify(taskProgressService, timeout(1000).times(1)).waiting(any(), anyString());
+		verify(taskProgressService, timeout(1000).times(1)).start(any(), anyString());
+		verify(taskProgressService, timeout(1000).times(1)).error(same(exception));
+		verifyNoMoreInteractions(testTask, taskProgressService);
 	}
 
 	/**
@@ -222,7 +195,7 @@ class TaskExecutorTest extends BaseAhoyTest {
 	 * Tests that when executing multiple tasks asynchronously, if an earlier task fails, subsequent tasks are still executed.
 	 */
 	@Test
-	void executeAsyncMultipleAfterThrowsException() {
+	void executeAsyncMultipleAfterThrowsException() throws Exception {
 		// given
 		Task testTask1 = mock(Task.class);
 		Task testTask2 = mock(Task.class);
@@ -236,7 +209,7 @@ class TaskExecutorTest extends BaseAhoyTest {
 
 		// then
 		assertThrows(ExecutionException.class, future1::get, "Expected future.get() to throw an ExecutionException");
-		doReturn("test").when(testTask2).execute();
+		assertEquals("test", future2.get(1000, TimeUnit.MILLISECONDS));
 		verify(testTask1, timeout(1000).times(1)).execute();
 		verify(testTask2, timeout(1000).times(1)).execute();
 	}
