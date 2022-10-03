@@ -3,7 +3,11 @@
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=lsdopen_ahoy&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=lsdopen_ahoy)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=lsdopen_ahoy&metric=coverage)](https://sonarcloud.io/dashboard?id=lsdopen_ahoy)
 
-![Ahoy](./docs/images/logo-dark.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./docs/images/logo-light.png">
+  <source media="(prefers-color-scheme: light)" srcset="./docs/images/logo-dark.png">
+  <img alt="" src="./docs/images/logo-dark.png">
+</picture>
 
 # Ahoy - Release management for Kubernetes
 
@@ -21,11 +25,19 @@ Think Helm, Git, GitOps, Continuous Deployment using ArgoCD awesomeness, all don
 
 ### Dashboard
 
-![Dashboard](./docs/images/dashboard.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./docs/images/dashboard-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="./docs/images/dashboard-light.png">
+  <img alt="" src="./docs/images/dashboard-dark.png">
+</picture>
 
 ### Manage Release
 
-![Manage Release](./docs/images/manage-release.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./docs/images/manage-release-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="./docs/images/manage-release-light.png">
+  <img alt="" src="./docs/images/manage-release-dark.png">
+</picture>
 
 ## Documentation
 
