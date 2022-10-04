@@ -55,7 +55,7 @@
           </ng-template>
         </p-toolbar>
 
-        <p-table #dt [value]="environmentReleases" [(selection)]="selectedEnvironmentRelease" dataKey="id.environmentId" selectionMode="single" (selectionChange)="reloadCurrent()"
+        <p-table #dt [value]="environmentReleases" [(selection)]="selectedEnvironmentRelease" dataKey="id.environmentId" selectionMode="single" (selectionChange)="tableSelectionChanged()"
                  styleClass="p-datatable-releases p-datatable-striped p-datatable-sm"
                  [filterDelay]="0" [globalFilterFields]="['environment.name', 'environment.cluster.name']">
           <ng-template pTemplate="caption">

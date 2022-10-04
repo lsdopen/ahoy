@@ -15,11 +15,11 @@
  */
 
 import {Location} from '@angular/common';
-import {Component, EventEmitter, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MenuItem} from 'primeng/api';
 import {DialogService, DynamicDialogConfig} from 'primeng/dynamicdialog';
-import {Observable, of} from 'rxjs';
+import {Observable, of, Subscription} from 'rxjs';
 import {filter, mergeMap} from 'rxjs/operators';
 import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Cluster} from '../clusters/cluster';
@@ -46,7 +46,7 @@ import {ProgressMessages} from '../task/task';
   templateUrl: './release-manage.component.html',
   styleUrls: ['./release-manage.component.scss']
 })
-export class ReleaseManageComponent implements OnInit {
+export class ReleaseManageComponent implements OnInit, OnDestroy {
   Role = Role;
   environmentReleases: EnvironmentRelease[];
   releaseChanged = new EventEmitter<{ environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion }>();
@@ -55,6 +55,7 @@ export class ReleaseManageComponent implements OnInit {
   releaseVersion: ReleaseVersion;
   menuItems: MenuItem[];
   selectedReleaseVersion: ReleaseVersion;
+  private paramMapSubscription: Subscription;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -71,13 +72,21 @@ export class ReleaseManageComponent implements OnInit {
   }
 
   ngOnInit() {
-    const paramMap = this.route.snapshot.paramMap;
-    const environmentId = +paramMap.get('environmentId');
-    const releaseId = +paramMap.get('releaseId');
-    const releaseVersionId = +paramMap.get('releaseVersionId');
-    this.getEnvironmentRelease(environmentId, releaseId, releaseVersionId).subscribe((environmentRelease) => {
-      this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
+    this.paramMapSubscription = this.route.paramMap.subscribe((params) => {
+      const paramMap = this.route.snapshot.paramMap;
+      const environmentId = +paramMap.get('environmentId');
+      const releaseId = +paramMap.get('releaseId');
+      const releaseVersionId = +paramMap.get('releaseVersionId');
+      this.getEnvironmentRelease(environmentId, releaseId, releaseVersionId).subscribe((environmentRelease) => {
+        this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
+      });
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.paramMapSubscription) {
+      this.paramMapSubscription.unsubscribe();
+    }
   }
 
   private getEnvironmentRelease(environmentId: number, releaseId: number, releaseVersionId: number): Observable<EnvironmentRelease> {
@@ -133,17 +142,8 @@ export class ReleaseManageComponent implements OnInit {
     ]);
   }
 
-  reloadCurrent() {
-    if (this.selectedEnvironmentRelease) {
-      this.reload(this.selectedEnvironmentRelease, this.releaseVersion);
-    }
-  }
-
   reload(environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion) {
-    this.getEnvironmentRelease(environmentRelease.id.environmentId, environmentRelease.id.releaseId, releaseVersion.id).subscribe(() => {
-      this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
-      this.router.navigate(['/release', this.environmentRelease.id.environmentId, this.environmentRelease.id.releaseId, 'version', this.releaseVersion.id]);
-    });
+    this.router.navigate(['/release', environmentRelease.id.environmentId, environmentRelease.id.releaseId, 'version', releaseVersion.id]);
   }
 
   canDeploy(): boolean {
@@ -321,7 +321,15 @@ export class ReleaseManageComponent implements OnInit {
     }
   }
 
+  tableSelectionChanged() {
+    if (this.selectedEnvironmentRelease) {
+      this.reload(this.selectedEnvironmentRelease, this.releaseVersion);
+    }
+  }
+
   applicationVersionsChanged() {
-    this.reloadCurrent();
+    this.getEnvironmentRelease(this.environmentRelease.id.environmentId, this.environmentRelease.id.releaseId, this.releaseVersion.id).subscribe(() => {
+      this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
+    });
   }
 }
