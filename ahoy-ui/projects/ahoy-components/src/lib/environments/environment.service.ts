@@ -23,7 +23,7 @@ import {NotificationsService} from '../notifications/notifications.service';
 import {RecentReleasesService} from '../release-manage/recent-releases.service';
 import {LoggerService} from '../util/logger.service';
 import {RestClientService} from '../util/rest-client.service';
-import {DuplicateOptions, Environment, MoveOptions} from './environment';
+import {DeleteOptions, DuplicateOptions, Environment, MoveOptions} from './environment';
 import {ErrorUtil} from '../util/error-util';
 
 @Injectable({
@@ -78,22 +78,22 @@ export class EnvironmentService {
     }
   }
 
-  deleteCascading(environment: Environment): Observable<Environment> {
+  delete(environment: Environment, deleteOptions: DeleteOptions): Observable<Environment> {
     this.log.debug('deleting environment: ', environment);
 
     const id = environment.id;
     const url = `/api/environments/delete/${id}`;
 
-    return this.restClient.delete<Environment>(url, true).pipe(
+    return this.restClient.delete<Environment>(url, deleteOptions).pipe(
       tap((deletedEnvironment) => {
-        this.log.debug('deleted environment', environment);
-        const text = `${deletedEnvironment.name} ` + `was deleted from cluster ${(deletedEnvironment.cluster as Cluster).name}`;
-        this.notificationsService.notification(new Notification(text));
+        this.log.debug('deleted environment', deletedEnvironment);
         this.recentReleasesService.refresh();
       }),
       catchError((error) => {
-        const text = `Failed to delete environment ${environment.name}`;
-        this.notificationsService.notification(new Notification(text, error));
+        if (!ErrorUtil.is500Error(error)) {
+          const text = `Failed to delete environment ${environment.name}`;
+          this.notificationsService.notification(new Notification(text, error));
+        }
         return EMPTY;
       })
     );

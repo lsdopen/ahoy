@@ -39,3 +39,11 @@ export class MoveOptions {
 export class DuplicateOptions {
   copyEnvironmentConfig = false;
 }
+
+export class DeleteOptions {
+  progressMessages: ProgressMessages;
+
+  constructor(progressMessages: ProgressMessages) {
+    this.progressMessages = progressMessages;
+  }
+}

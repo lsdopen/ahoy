@@ -40,11 +40,10 @@ public class EnvironmentsController {
 	}
 
 	@DeleteMapping("/delete/{environmentId}")
-	public ResponseEntity<Environment> delete(@PathVariable Long environmentId) {
+	public ListenableFuture<Environment> delete(@PathVariable Long environmentId,
+												@RequestBody DeleteOptions deleteOptions) {
 
-		Environment environment = environmentService.delete(environmentId);
-
-		return new ResponseEntity<>(environment, new HttpHeaders(), HttpStatus.OK);
+		return taskExecutor.executeAsync(() -> environmentService.delete(environmentId), deleteOptions.getProgressMessages());
 	}
 
 	@PostMapping("/duplicate/{sourceEnvironmentId}/{destEnvironmentId}")

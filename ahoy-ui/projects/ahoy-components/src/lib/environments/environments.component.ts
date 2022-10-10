@@ -26,7 +26,7 @@ import {DialogUtilService} from '../components/dialog-util.service';
 import {Role} from '../util/auth';
 import {LoggerService} from '../util/logger.service';
 import {OrderUtil} from '../util/order-util';
-import {Environment, MoveOptions} from './environment';
+import {DeleteOptions, Environment, MoveOptions} from './environment';
 import {EnvironmentService} from './environment.service';
 import {MoveDialogComponent, Result} from './move-dialog/move-dialog.component';
 import {ProgressMessages} from '../task/task';
@@ -83,7 +83,14 @@ export class EnvironmentsComponent implements OnInit {
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
-      this.environmentService.deleteCascading(environment)
+      const envFromCluster = `${environment.name} from cluster ${(environment.cluster as Cluster).name}`;
+      const deleteOptions = new DeleteOptions(
+        new ProgressMessages(
+          `Deleting ${envFromCluster}`,
+          `Deleted ${envFromCluster}`,
+          `Failed to delete ${envFromCluster}`)
+      );
+      this.environmentService.delete(environment, deleteOptions)
         .subscribe(() => this.getEnvironments());
     });
   }

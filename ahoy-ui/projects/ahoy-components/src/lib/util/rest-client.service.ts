@@ -91,10 +91,12 @@ export class RestClientService {
     );
   }
 
-  delete<T>(path: string, progress = false): Observable<T> {
+  delete<T>(path: string, progress?: boolean): Observable<T>;
+  delete<T>(path: string, body?: T | any, progress?: boolean): Observable<T>;
+  delete<T>(path: string, body?: T | any, progress?: boolean): Observable<T> {
     this.log.trace('deleting at path: ' + path);
     this.startProgress(progress);
-    return this.http.delete<T>(this.appsUrl + path, this.createOptions()).pipe(
+    return this.http.delete<T>(this.appsUrl + path, this.createOptions({body})).pipe(
       tap(() => this.stopProgress(progress)),
       catchError(this.handleError<T>(progress))
     );
