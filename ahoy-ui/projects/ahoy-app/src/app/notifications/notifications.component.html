@@ -18,10 +18,10 @@
 <app-task-events-listener (taskEventEmitter)="taskEventOccurred($event)"></app-task-events-listener>
 
 <a class="layout-topbar-action rounded-circle" (click)="appMain.onTopbarItemClick($event, 'notifications')" pRipple>
-    <span class="p-overlay-badge">
-        <i class="pi {{notificationsInProgress() ? 'pi-spin pi-spinner': 'pi-bell'}} fs-large"></i>
-        <span class="p-badge p-badge-warning p-badge-dot" *ngIf="showBadge()"></span>
-    </span>
+  <span class="p-overlay-badge">
+    <i class="pi {{showProgress() ? 'pi-spin pi-spinner progress' : 'pi-bell'}} fs-large"></i>
+    <span class="p-badge p-badge-warning p-badge-dot" *ngIf="showBadge()"></span>
+  </span>
 </a>
 
 <ul class="layout-topbar-action-panel shadow-6" [@topbarActionPanelAnimation]="'visible'" *ngIf="appMain.activeTopbarItem === 'notifications'">

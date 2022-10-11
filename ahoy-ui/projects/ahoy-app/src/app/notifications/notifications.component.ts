@@ -17,7 +17,7 @@
 import {animate, style, transition, trigger} from '@angular/animations';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MessageService} from 'primeng/api';
-import {Description, DialogUtilService, LoggerService, Notification, NotificationsService, State, TaskEvent} from 'projects/ahoy-components/src/public-api';
+import {Description, DialogUtilService, LoggerService, Notification, NotificationsService, ProgressService, State, TaskEvent} from 'projects/ahoy-components/src/public-api';
 import {Subscription} from 'rxjs';
 import {AppComponent} from '../app.component';
 import {AppMainComponent} from '../app.main.component';
@@ -53,7 +53,8 @@ export class NotificationsComponent implements OnInit, OnDestroy {
               private log: LoggerService,
               private notificationsService: NotificationsService,
               private dialogUtilService: DialogUtilService,
-              private messageService: MessageService) {
+              private messageService: MessageService,
+              private progressService: ProgressService) {
   }
 
   ngOnInit() {
@@ -102,6 +103,10 @@ export class NotificationsComponent implements OnInit, OnDestroy {
 
   showBadge() {
     return !this.viewed && this.notifications.size > 0;
+  }
+
+  showProgress(): boolean {
+    return this.progressService.progress || this.notificationsInProgress();
   }
 
   showDescription(notification: Notification) {
