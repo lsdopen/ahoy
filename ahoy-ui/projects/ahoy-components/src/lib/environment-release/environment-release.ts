@@ -70,3 +70,11 @@ export class UndeployOptions {
     this.progressMessages = progressMessages;
   }
 }
+
+export class RemoveOptions {
+  progressMessages: ProgressMessages;
+
+  constructor(progressMessages: ProgressMessages) {
+    this.progressMessages = progressMessages;
+  }
+}

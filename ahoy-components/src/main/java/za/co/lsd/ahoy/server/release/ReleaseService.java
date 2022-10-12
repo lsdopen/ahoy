@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -45,7 +44,6 @@ import za.co.lsd.ahoy.server.task.TaskProgressService;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.Future;
 
 @Service
 @Slf4j
@@ -156,7 +154,7 @@ public class ReleaseService {
 	}
 
 	@Transactional
-	public Future<EnvironmentRelease> remove(EnvironmentReleaseId environmentReleaseId) {
+	public EnvironmentRelease remove(EnvironmentReleaseId environmentReleaseId) {
 		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
 
@@ -173,7 +171,7 @@ public class ReleaseService {
 
 		environmentReleaseRepository.delete(environmentRelease);
 
-		return new AsyncResult<>(environmentRelease);
+		return environmentRelease;
 	}
 
 	@Transactional

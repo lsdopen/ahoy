@@ -40,9 +40,7 @@ import za.co.lsd.ahoy.server.task.TaskExecutor;
 import za.co.lsd.ahoy.server.util.SseEmitterSubscriber;
 
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 @RestController
 @RequestMapping("/api")
@@ -95,10 +93,10 @@ public class ReleaseController {
 	}
 
 	@DeleteMapping("/environmentReleases/{environmentReleaseId}/remove")
-	public ResponseEntity<EnvironmentRelease> remove(@PathVariable EnvironmentReleaseId environmentReleaseId) throws ExecutionException, InterruptedException {
+	public ListenableFuture<EnvironmentRelease> remove(@PathVariable EnvironmentReleaseId environmentReleaseId,
+													   @RequestBody RemoveOptions removeOptions) {
 
-		Future<EnvironmentRelease> removedEnvironmentRelease = releaseService.remove(environmentReleaseId);
-		return new ResponseEntity<>(removedEnvironmentRelease.get(), new HttpHeaders(), HttpStatus.OK);
+		return taskExecutor.executeAsync(() -> releaseService.remove(environmentReleaseId), removeOptions.getProgressMessages());
 	}
 
 	@PostMapping("/environmentReleases/{environmentReleaseId}/copyEnvConfig")

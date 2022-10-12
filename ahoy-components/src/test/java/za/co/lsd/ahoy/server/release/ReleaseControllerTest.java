@@ -48,7 +48,6 @@ import za.co.lsd.ahoy.server.security.Scope;
 
 import java.util.Collections;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -127,7 +126,8 @@ public class ReleaseControllerTest {
 				.content(json(undeployOptions)))
 			.andReturn();
 
-		mvc.perform(asyncDispatch(result)).andDo(print())
+		mvc.perform(asyncDispatch(result))
+			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.id.environmentId").value(2L))
 			.andExpect(jsonPath("$.id.releaseId").value(3L));
@@ -241,12 +241,17 @@ public class ReleaseControllerTest {
 		// given
 		EnvironmentRelease environmentRelease = testEnvRelease(1L, 2L, 3L);
 		EnvironmentReleaseId environmentReleaseId = environmentRelease.getId();
+		RemoveOptions removeOptions = new RemoveOptions();
 
-		when(releaseService.remove(eq(environmentReleaseId))).thenReturn(CompletableFuture.completedFuture(environmentRelease));
+		when(releaseService.remove(eq(environmentReleaseId))).thenReturn(environmentRelease);
 
 		// when
-		mvc.perform(delete("/api/environmentReleases/2_3/remove")
-				.contentType(MediaType.APPLICATION_JSON))
+		MvcResult result = mvc.perform(delete("/api/environmentReleases/2_3/remove")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(json(removeOptions)))
+			.andReturn();
+
+		mvc.perform(asyncDispatch(result))
 			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.id.environmentId").value(2L))
@@ -259,9 +264,13 @@ public class ReleaseControllerTest {
 	@Test
 	@WithMockUser(authorities = {Scope.ahoy, Role.developer})
 	void removeAsDeveloper() throws Exception {
+		// given
+		RemoveOptions removeOptions = new RemoveOptions();
+
 		// when
 		mvc.perform(delete("/api/environmentReleases/2_3/remove")
-				.contentType(MediaType.APPLICATION_JSON))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(json(removeOptions)))
 			.andDo(print())
 			.andExpect(status().is(403));
 

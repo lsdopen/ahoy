@@ -17,7 +17,7 @@
 import {Injectable} from '@angular/core';
 import {EMPTY, Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
-import {DeployOptions, EnvironmentRelease, EnvironmentReleaseId, UndeployOptions} from '../environment-release/environment-release';
+import {DeployOptions, EnvironmentRelease, EnvironmentReleaseId, RemoveOptions, UndeployOptions} from '../environment-release/environment-release';
 import {Environment} from '../environments/environment';
 import {Notification} from '../notifications/notification';
 import {NotificationsService} from '../notifications/notifications.service';
@@ -72,21 +72,20 @@ export class ReleaseManageService {
     );
   }
 
-  remove(environmentRelease: EnvironmentRelease): Observable<EnvironmentRelease> {
+  remove(environmentRelease: EnvironmentRelease, removeOptions: RemoveOptions): Observable<EnvironmentRelease> {
     this.log.debug('removing environment release:', environmentRelease);
     const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentRelease.id)}/remove`;
-    return this.restClient.delete<EnvironmentRelease>(url, true).pipe(
+    return this.restClient.delete<EnvironmentRelease>(url, removeOptions).pipe(
       tap((removedEnvironmentRelease) => {
         this.log.debug('removed environment release', removedEnvironmentRelease);
-        const text = `${(removedEnvironmentRelease.release as Release).name} `
-          + `was removed from environment ${(removedEnvironmentRelease.environment as Environment).name}`;
-        this.notificationsService.notification(new Notification(text));
         this.recentReleasesService.refresh();
       }),
       catchError((error) => {
-        const text = `Failed to remove ${(environmentRelease.release as Release).name} `
-          + `from environment ${(environmentRelease.environment as Environment).name}`;
-        this.notificationsService.notification(new Notification(text, error));
+        if (!ErrorUtil.is500Error(error)) {
+          const text = `Failed to remove ${(environmentRelease.release as Release).name} `
+            + `from environment ${(environmentRelease.environment as Environment).name}`;
+          this.notificationsService.notification(new Notification(text, error));
+        }
         return EMPTY;
       })
     );
