@@ -38,6 +38,10 @@ export class MoveOptions {
 
 export class DuplicateOptions {
   copyEnvironmentConfig = false;
+
+  constructor(copyEnvironmentConfig: boolean) {
+    this.copyEnvironmentConfig = copyEnvironmentConfig;
+  }
 }
 
 export class DeleteOptions {
