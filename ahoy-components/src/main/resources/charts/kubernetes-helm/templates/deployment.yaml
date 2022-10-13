@@ -7,7 +7,7 @@ metadata:
     app: {{ .app.name }}
     releaseName: {{ .glob.releaseName }}
     environment: {{ .glob.environment }}
-  name: {{ .glob.releaseName }}-{{ .app.name }}
+  name: {{ .app.name }}
 spec:
   replicas: {{ .app.replicas }}
   selector:
@@ -31,7 +31,7 @@ spec:
     spec:
       {{- if .app.dockerConfigJson }}
       imagePullSecrets:
-        - name: {{ .glob.releaseName }}-{{ .app.name }}
+        - name: {{ .app.name }}
       {{- end }}
       initContainers:
         {{- range $containerName, $container := .app.initContainers }}
@@ -61,7 +61,7 @@ spec:
             - name: {{ $name }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ $.glob.releaseName }}-{{ $.app.name }}-{{ $envVariable.secretName }}
+                  name: {{ $.app.name }}-{{ $envVariable.secretName }}
                   key: {{ $envVariable.secretKey }}
             {{- end }}
             {{- end }}
@@ -121,7 +121,7 @@ spec:
             - name: {{ $name }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ $.glob.releaseName }}-{{ $.app.name }}-{{ $envVariable.secretName }}
+                  name: {{ $.app.name }}-{{ $envVariable.secretName }}
                   key: {{ $envVariable.secretKey }}
             {{- end }}
             {{- end }}
@@ -168,18 +168,18 @@ spec:
         {{- if and .app.configFilesEnabled .app.configFiles}}
         - name: application-config
           configMap:
-            name: {{ .glob.releaseName }}-{{ .app.name }}
+            name: {{ .app.name }}
         {{- end }}
         {{- if .app.volumesEnabled }}
         {{- range $name, $volume := .app.volumes }}
         - name: {{ $volume.name }}
           {{- if eq $volume.type "PersistentVolume"}}
           persistentVolumeClaim:
-            claimName: {{ $.glob.releaseName }}-{{ $.app.name }}-{{ $volume.name }}
+            claimName: {{ $.app.name }}-{{ $volume.name }}
           {{- end }}
           {{- if eq $volume.type "Secret"}}
           secret:
-            secretName: {{ $.glob.releaseName }}-{{ $.app.name }}-{{ $volume.secretName }}
+            secretName: {{ $.app.name }}-{{ $volume.secretName }}
           {{- end }}
           {{- if eq $volume.type "EmptyDir"}}
           emptyDir:

@@ -7,7 +7,7 @@ metadata:
     app: {{ .app.name }}
     releaseName: {{ .glob.releaseName }}
     environment: {{ .glob.environment }}
-  name: {{ .glob.releaseName }}-{{ .app.name }}
+  name: {{ .app.name }}
 spec:
   {{- if .app.tls }}
   tls:
@@ -16,7 +16,7 @@ spec:
       - {{ $route.hostname }}
       {{- end }}
     {{- if .app.tlsSecretName }}
-    secretName: {{ .glob.releaseName }}-{{ .app.name }}-{{ .app.tlsSecretName }}
+    secretName: {{ .app.name }}-{{ .app.tlsSecretName }}
     {{- end }}
   {{- end }}
   rules:
@@ -28,7 +28,7 @@ spec:
           pathType: Prefix
           backend:
             service:
-              name: {{ $.glob.releaseName }}-{{ $.app.name }}
+              name: {{ $.app.name }}
               port:
                 number: {{ $route.targetPort }}
   {{- end }}

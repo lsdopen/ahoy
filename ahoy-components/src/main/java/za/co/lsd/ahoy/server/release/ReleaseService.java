@@ -459,7 +459,7 @@ public class ReleaseService {
 			ArgoApplication.Status argoApplicationStatus = application.getStatus();
 			int applicationsHealthy = 0;
 			for (ApplicationVersion applicationVersion : currentReleaseVersion.getApplicationVersions()) {
-				String applicationName = releaseName + "-" + applicationVersion.getApplication().getName();
+				String applicationName = applicationVersion.getApplication().getName();
 
 				ApplicationDeploymentId id = new ApplicationDeploymentId(environmentRelease.getId(), currentReleaseVersion.getId(), applicationVersion.getId());
 				ApplicationReleaseStatus status = applicationReleaseStatusRepository.findById(id)
