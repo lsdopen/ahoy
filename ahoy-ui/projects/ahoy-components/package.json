@@ -1,6 +1,6 @@
 {
   "name": "@lsdopen/ahoy-components",
-  "version": "0.17.0",
+  "version": "1.0.0-SNAPSHOT",
   "repository": "git://github.com/lsdopen/ahoy.git",
   "publishConfig": {
     "@lsdopen:registry": "https://npm.pkg.github.com/"
