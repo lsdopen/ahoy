@@ -14,16 +14,16 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.releases;
+package za.co.lsd.ahoy.server.environments;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import za.co.lsd.ahoy.server.task.ProgressMessages;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PromoteOptions {
-	private Long destEnvironmentId;
-	private boolean copyEnvironmentConfig;
+public class DeleteOptions {
+	private ProgressMessages progressMessages;
 }

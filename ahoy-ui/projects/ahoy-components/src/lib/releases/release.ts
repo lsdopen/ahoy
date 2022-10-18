@@ -35,6 +35,13 @@ export class ReleaseVersion {
 export class PromoteOptions {
   destEnvironmentId: number;
   copyEnvironmentConfig = false;
+
+  constructor();
+  constructor(destEnvironmentId: number, copyEnvironmentConfig: boolean);
+  constructor(destEnvironmentId?: number, copyEnvironmentConfig?: boolean) {
+    this.destEnvironmentId = destEnvironmentId;
+    this.copyEnvironmentConfig = copyEnvironmentConfig;
+  }
 }
 
 export class UpgradeOptions {

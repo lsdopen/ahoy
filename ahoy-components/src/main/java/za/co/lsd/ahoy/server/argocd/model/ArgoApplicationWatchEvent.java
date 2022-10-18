@@ -33,6 +33,10 @@ public class ArgoApplicationWatchEvent {
 	@NoArgsConstructor
 	@AllArgsConstructor
 	public static class Result {
+		public static final String TYPE_ADDED="ADDED";
+		public static final String TYPE_MODIFIED="MODIFIED";
+		public static final String TYPE_DELETED="DELETED";
+
 		private String type;
 		private ArgoApplication application;
 	}

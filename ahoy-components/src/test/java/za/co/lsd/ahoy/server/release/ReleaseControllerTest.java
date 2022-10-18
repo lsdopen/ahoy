@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server;
+package za.co.lsd.ahoy.server.release;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,20 +32,22 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import za.co.lsd.ahoy.server.AhoyTestServerApplication;
 import za.co.lsd.ahoy.server.argocd.model.ArgoEvents;
 import za.co.lsd.ahoy.server.cluster.Cluster;
 import za.co.lsd.ahoy.server.cluster.ClusterType;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
 import za.co.lsd.ahoy.server.environments.Environment;
-import za.co.lsd.ahoy.server.releases.*;
+import za.co.lsd.ahoy.server.releases.Release;
+import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 import za.co.lsd.ahoy.server.releases.resources.ResourceNode;
 import za.co.lsd.ahoy.server.security.Role;
 import za.co.lsd.ahoy.server.security.Scope;
 
 import java.util.Collections;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -73,12 +75,15 @@ public class ReleaseControllerTest {
 		EnvironmentReleaseId environmentReleaseId = environmentRelease.getId();
 		DeployOptions deployOptions = new DeployOptions(1L, "Please deploy");
 
-		when(releaseService.deploy(eq(environmentReleaseId), eq(deployOptions))).thenReturn(CompletableFuture.completedFuture(environmentRelease));
+		when(releaseService.deploy(eq(environmentReleaseId), eq(deployOptions))).thenReturn(environmentRelease);
 
 		// when
-		mvc.perform(post("/api/environmentReleases/2_3/deploy")
+		MvcResult result = mvc.perform(post("/api/environmentReleases/2_3/deploy")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(json(deployOptions)))
+			.andReturn();
+
+		mvc.perform(asyncDispatch(result))
 			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.id.environmentId").value(2L))
@@ -111,12 +116,17 @@ public class ReleaseControllerTest {
 		// given
 		EnvironmentRelease environmentRelease = testEnvRelease(1L, 2L, 3L);
 		EnvironmentReleaseId environmentReleaseId = environmentRelease.getId();
+		UndeployOptions undeployOptions = new UndeployOptions();
 
-		when(releaseService.undeploy(eq(environmentReleaseId))).thenReturn(CompletableFuture.completedFuture(environmentRelease));
+		when(releaseService.undeploy(eq(environmentReleaseId))).thenReturn(environmentRelease);
 
 		// when
-		mvc.perform(post("/api/environmentReleases/2_3/undeploy")
-				.contentType(MediaType.APPLICATION_JSON))
+		MvcResult result = mvc.perform(post("/api/environmentReleases/2_3/undeploy")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(json(undeployOptions)))
+			.andReturn();
+
+		mvc.perform(asyncDispatch(result))
 			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.id.environmentId").value(2L))
@@ -129,9 +139,13 @@ public class ReleaseControllerTest {
 	@Test
 	@WithMockUser(authorities = {Scope.ahoy, Role.developer})
 	void undeployAsDeveloper() throws Exception {
+		// given
+		UndeployOptions undeployOptions = new UndeployOptions();
+
 		// when
 		mvc.perform(post("/api/environmentReleases/2_3/undeploy")
-				.contentType(MediaType.APPLICATION_JSON))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(json(undeployOptions)))
 			.andDo(print())
 			.andExpect(status().is(403));
 
@@ -227,12 +241,17 @@ public class ReleaseControllerTest {
 		// given
 		EnvironmentRelease environmentRelease = testEnvRelease(1L, 2L, 3L);
 		EnvironmentReleaseId environmentReleaseId = environmentRelease.getId();
+		RemoveOptions removeOptions = new RemoveOptions();
 
-		when(releaseService.remove(eq(environmentReleaseId))).thenReturn(CompletableFuture.completedFuture(environmentRelease));
+		when(releaseService.remove(eq(environmentReleaseId))).thenReturn(environmentRelease);
 
 		// when
-		mvc.perform(delete("/api/environmentReleases/2_3/remove")
-				.contentType(MediaType.APPLICATION_JSON))
+		MvcResult result = mvc.perform(delete("/api/environmentReleases/2_3/remove")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(json(removeOptions)))
+			.andReturn();
+
+		mvc.perform(asyncDispatch(result))
 			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.id.environmentId").value(2L))
@@ -245,9 +264,13 @@ public class ReleaseControllerTest {
 	@Test
 	@WithMockUser(authorities = {Scope.ahoy, Role.developer})
 	void removeAsDeveloper() throws Exception {
+		// given
+		RemoveOptions removeOptions = new RemoveOptions();
+
 		// when
 		mvc.perform(delete("/api/environmentReleases/2_3/remove")
-				.contentType(MediaType.APPLICATION_JSON))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(json(removeOptions)))
 			.andDo(print())
 			.andExpect(status().is(403));
 

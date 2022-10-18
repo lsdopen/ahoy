@@ -16,6 +16,7 @@
 
 import {Environment} from '../environments/environment';
 import {Release, ReleaseVersion} from '../releases/release';
+import {ProgressMessages} from '../task/task';
 
 export class EnvironmentRelease {
   id: EnvironmentReleaseId;
@@ -53,9 +54,27 @@ export class ReleaseStatusChangedEvent {
 export class DeployOptions {
   releaseVersionId: number;
   commitMessage: string;
+  progressMessages: ProgressMessages;
 
-  constructor(releaseVersionId: number, commitMessage: string) {
+  constructor(releaseVersionId: number, commitMessage: string, progressMessages: ProgressMessages) {
     this.releaseVersionId = releaseVersionId;
     this.commitMessage = commitMessage;
+    this.progressMessages = progressMessages;
+  }
+}
+
+export class UndeployOptions {
+  progressMessages: ProgressMessages;
+
+  constructor(progressMessages: ProgressMessages) {
+    this.progressMessages = progressMessages;
+  }
+}
+
+export class RemoveOptions {
+  progressMessages: ProgressMessages;
+
+  constructor(progressMessages: ProgressMessages) {
+    this.progressMessages = progressMessages;
   }
 }

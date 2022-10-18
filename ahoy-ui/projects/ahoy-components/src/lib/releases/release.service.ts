@@ -94,7 +94,10 @@ export class ReleaseService {
     } else {
       const url = `/data/releases/${release.id}`;
       return this.restClient.put(url, release).pipe(
-        tap((rel) => this.log.debug('updated release', rel))
+        tap((rel) => {
+          this.log.debug('updated release', rel);
+          this.recentReleasesService.releaseUpdated(rel);
+        })
       );
     }
   }

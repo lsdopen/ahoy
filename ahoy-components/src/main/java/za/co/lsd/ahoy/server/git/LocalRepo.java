@@ -146,7 +146,7 @@ public class LocalRepo {
 
 	public void testConnection(GitSettings testGitSettings) {
 		try {
-			log.info("Testing connection to git repo remote: {}", testGitSettings.getRemoteRepoUri());
+			log.debug("Testing connection to git repo remote: {}", testGitSettings.getRemoteRepoUri());
 			FetchResult fetchResult = configureCredentials(testGitSettings, gitRepo.fetch()
 				.setRemote(testGitSettings.getRemoteRepoUri())
 				.setForceUpdate(true)

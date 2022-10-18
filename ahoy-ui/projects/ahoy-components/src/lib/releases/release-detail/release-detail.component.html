@@ -43,6 +43,7 @@
             <input pInputText id="releaseName" [(ngModel)]="release.name" name="releaseName"
                    required
                    pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
+                   maxlength="53"
                    [disabled]="isDeployed()"
                    [appNameUnique]="releasesForValidation"
                    [ignoreOwnId]="release.id">

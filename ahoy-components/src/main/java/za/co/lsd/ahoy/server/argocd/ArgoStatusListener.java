@@ -27,9 +27,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.util.retry.Retry;
-import za.co.lsd.ahoy.server.ReleaseService;
+import za.co.lsd.ahoy.server.AhoyConstants;
 import za.co.lsd.ahoy.server.argocd.model.ArgoApplication;
 import za.co.lsd.ahoy.server.argocd.model.ArgoApplicationWatchEvent;
+import za.co.lsd.ahoy.server.argocd.model.ArgoMetadata;
+import za.co.lsd.ahoy.server.release.ReleaseService;
 import za.co.lsd.ahoy.server.security.Role;
 import za.co.lsd.ahoy.server.security.RunAsRole;
 import za.co.lsd.ahoy.server.settings.SettingsProvider;
@@ -139,8 +141,17 @@ public class ArgoStatusListener implements Subscriber<ArgoApplicationWatchEvent>
 		log.trace("ArgoCD application event occurred: {}", argoApplicationWatchEvent);
 
 		ArgoApplication application = argoApplicationWatchEvent.getResult().getApplication();
-		if (application.getStatus().hasResources()) {
-			releaseService.updateStatus(application);
+		if (application.labelValueEquals(ArgoMetadata.MANAGED_BY_LABEL, AhoyConstants.MANAGED_BY_LABEL_VALUE)) {
+
+			switch (argoApplicationWatchEvent.getResult().getType()) {
+				case ArgoApplicationWatchEvent.Result.TYPE_ADDED:
+				case ArgoApplicationWatchEvent.Result.TYPE_MODIFIED:
+					releaseService.updateStatus(application);
+					break;
+				case ArgoApplicationWatchEvent.Result.TYPE_DELETED:
+					releaseService.updateDeleted(application);
+					break;
+			}
 		}
 	}
 

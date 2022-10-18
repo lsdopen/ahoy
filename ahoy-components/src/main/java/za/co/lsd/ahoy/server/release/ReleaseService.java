@@ -14,14 +14,12 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server;
+package za.co.lsd.ahoy.server.release;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -33,16 +31,19 @@ import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.environments.EnvironmentException;
 import za.co.lsd.ahoy.server.environments.EnvironmentRepository;
-import za.co.lsd.ahoy.server.releases.*;
+import za.co.lsd.ahoy.server.releases.Release;
+import za.co.lsd.ahoy.server.releases.ReleaseRepository;
+import za.co.lsd.ahoy.server.releases.ReleaseVersion;
+import za.co.lsd.ahoy.server.releases.ReleaseVersionRepository;
 import za.co.lsd.ahoy.server.releases.resources.ResourceNode;
 import za.co.lsd.ahoy.server.releases.resources.ResourceTreeConverter;
 import za.co.lsd.ahoy.server.security.Role;
 import za.co.lsd.ahoy.server.security.RunAsRole;
+import za.co.lsd.ahoy.server.task.TaskProgressService;
 
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.Future;
 
 @Service
 @Slf4j
@@ -58,6 +59,7 @@ public class ReleaseService {
 	private final ReleaseManager releaseManager;
 	private final ResourceTreeConverter resourceTreeConverter;
 	private ApplicationEventPublisher eventPublisher;
+	private TaskProgressService taskProgressService;
 
 	public ReleaseService(EnvironmentRepository environmentRepository,
 						  EnvironmentReleaseRepository environmentReleaseRepository,
@@ -85,9 +87,13 @@ public class ReleaseService {
 		this.eventPublisher = eventPublisher;
 	}
 
-	@Async("deploymentTaskExecutor")
+	@Autowired
+	public void setTaskProgressService(TaskProgressService taskProgressService) {
+		this.taskProgressService = taskProgressService;
+	}
+
 	@Transactional
-	public Future<EnvironmentRelease> deploy(EnvironmentReleaseId environmentReleaseId, DeployOptions deployOptions) {
+	public EnvironmentRelease deploy(EnvironmentReleaseId environmentReleaseId, DeployOptions deployOptions) {
 		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
 
@@ -95,6 +101,8 @@ public class ReleaseService {
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find releaseVersion in release, releaseVersionId: " + deployOptions.getReleaseVersionId()));
 
 		log.info("Deploying environment release: {}, release version: {}", environmentRelease, releaseVersion);
+
+		taskProgressService.progress("deploying");
 
 		ReleaseVersion previousReleaseVersion = environmentRelease.getCurrentReleaseVersion();
 		boolean redeploy = releaseVersion.equals(previousReleaseVersion);
@@ -116,26 +124,24 @@ public class ReleaseService {
 		environmentReleaseRepository.save(environmentRelease);
 		log.info("Deployed environment release: {}", environmentRelease);
 
-		return new AsyncResult<>(environmentRelease);
+		return environmentRelease;
 	}
 
-	@Async("deploymentTaskExecutor")
 	@Transactional
-	public Future<EnvironmentRelease> undeploy(EnvironmentReleaseId environmentReleaseId) {
+	public EnvironmentRelease undeploy(EnvironmentReleaseId environmentReleaseId) {
 		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
 
 		log.info("Undeploying environment release: {}", environmentRelease);
 
 		ReleaseVersion currentReleaseVersion = environmentRelease.getCurrentReleaseVersion();
+		taskProgressService.progress("undeploying");
 
 		releaseManager.undeploy(environmentRelease);
 
 		environmentRelease.setCurrentReleaseVersion(null);
 		environmentRelease.setApplicationsReady(null);
 		environmentRelease.setStatus(null);
-		environmentRelease.setArgoCdName(null);
-		environmentRelease.setArgoCdUid(null);
 
 		environmentRelease.setPreviousReleaseVersion(null);
 
@@ -144,11 +150,11 @@ public class ReleaseService {
 		environmentReleaseRepository.save(environmentRelease);
 		log.info("Undeployed environment release: {}", environmentRelease);
 
-		return new AsyncResult<>(environmentRelease);
+		return environmentRelease;
 	}
 
 	@Transactional
-	public Future<EnvironmentRelease> remove(EnvironmentReleaseId environmentReleaseId) {
+	public EnvironmentRelease remove(EnvironmentReleaseId environmentReleaseId) {
 		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
 
@@ -157,7 +163,7 @@ public class ReleaseService {
 		if (environmentRelease.hasCurrentReleaseVersion()) {
 			log.info("{} is currently deployed in {}, undeploying...", environmentRelease.getRelease().getName(), environmentRelease.getEnvironment().getName());
 			try {
-				undeploy(environmentReleaseId).get();
+				undeploy(environmentReleaseId);
 			} catch (Exception e) {
 				throw new EnvironmentException("Failed to undeploy " + environmentRelease + " from " + environmentRelease.getEnvironment(), e);
 			}
@@ -165,7 +171,7 @@ public class ReleaseService {
 
 		environmentReleaseRepository.delete(environmentRelease);
 
-		return new AsyncResult<>(environmentRelease);
+		return environmentRelease;
 	}
 
 	@Transactional
@@ -271,7 +277,7 @@ public class ReleaseService {
 
 	@Transactional
 	public EnvironmentRelease copyEnvConfig(EnvironmentReleaseId environmentReleaseId, Long sourceReleaseVersionId, Long destReleaseVersionId) {
-		log.info("Copying environment config for release: {} from sourceReleaseVersionId: {} to destReleaseVersionId: {}", environmentReleaseId, sourceReleaseVersionId, destReleaseVersionId);
+		log.debug("Copying environment config for release: {} from sourceReleaseVersionId: {} to destReleaseVersionId: {}", environmentReleaseId, sourceReleaseVersionId, destReleaseVersionId);
 
 		EnvironmentRelease environmentRelease = environmentReleaseRepository.findById(environmentReleaseId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find environment release: " + environmentReleaseId));
@@ -296,7 +302,7 @@ public class ReleaseService {
 	 */
 	@Transactional
 	public void copyApplicationVersionEnvConfig(Long releaseVersionId, Long sourceApplicationVersionId, Long destApplicationVersionId) {
-		log.info("Copying environment config for release version: {} from source application version: {} to dest application version: {}", releaseVersionId, sourceApplicationVersionId, destApplicationVersionId);
+		log.debug("Copying environment config for release version: {} from source application version: {} to dest application version: {}", releaseVersionId, sourceApplicationVersionId, destApplicationVersionId);
 
 		ReleaseVersion releaseVersion = releaseVersionRepository.findById(releaseVersionId)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find releaseVersion: " + releaseVersionId));
@@ -398,34 +404,48 @@ public class ReleaseService {
 					destEnvironmentRelease.getId(),
 					destReleaseVersion.getId(),
 					destApplicationVersion.getId());
-				log.info("Saving new application env config for id {}", id);
+				log.debug("Saving new application env config for id {}", id);
 				applicationEnvironmentConfigRepository.save(new ApplicationEnvironmentConfig(id, sourceConfig.get()));
 			}
 		}
 	}
 
-	@Async("deploymentTaskExecutor")
 	@Transactional
 	@RunAsRole(Role.admin)
 	public void updateStatus(ArgoApplication application) {
 		Objects.requireNonNull(application, "application is required");
 
-		log.trace("Updating status for argo application {}", application);
+		if (application.getStatus().hasResources()) {
+			log.trace("Updating status for argo application {}", application);
 
+			Optional<EnvironmentRelease> environmentReleaseOptional = environmentReleaseRepository.findByArgoCdUid(application.getMetadata().getUid());
+			if (environmentReleaseOptional.isPresent()) {
+				EnvironmentRelease environmentRelease = environmentReleaseOptional.get();
+
+				if (environmentRelease.hasCurrentReleaseVersion() &&
+					environmentRelease.getCurrentReleaseVersion().getVersion().equals(application.getMetadata().getLabels().get(ArgoMetadata.RELEASE_VERSION_LABEL))) {
+
+					if (updateStatus(application, environmentRelease)) {
+						eventPublisher.publishEvent(
+							new ReleaseStatusChangedEvent(this,
+								environmentRelease.getId(),
+								environmentRelease.getCurrentReleaseVersion().getId()));
+					}
+				}
+			}
+		}
+	}
+
+	@RunAsRole(Role.admin)
+	public void updateDeleted(ArgoApplication application) {
 		Optional<EnvironmentRelease> environmentReleaseOptional = environmentReleaseRepository.findByArgoCdUid(application.getMetadata().getUid());
 		if (environmentReleaseOptional.isPresent()) {
 			EnvironmentRelease environmentRelease = environmentReleaseOptional.get();
 
-			if (environmentRelease.hasCurrentReleaseVersion() &&
-				environmentRelease.getCurrentReleaseVersion().getVersion().equals(application.getMetadata().getLabels().get(ArgoMetadata.RELEASE_VERSION_LABEL))) {
-
-				if (updateStatus(application, environmentRelease)) {
-					eventPublisher.publishEvent(
-						new ReleaseStatusChangedEvent(this,
-							environmentRelease.getId(),
-							environmentRelease.getCurrentReleaseVersion().getId()));
-				}
-			}
+			eventPublisher.publishEvent(
+				new ReleaseStatusChangedEvent(this,
+					environmentRelease.getId(),
+					null));
 		}
 	}
 
@@ -439,7 +459,7 @@ public class ReleaseService {
 			ArgoApplication.Status argoApplicationStatus = application.getStatus();
 			int applicationsHealthy = 0;
 			for (ApplicationVersion applicationVersion : currentReleaseVersion.getApplicationVersions()) {
-				String applicationName = releaseName + "-" + applicationVersion.getApplication().getName();
+				String applicationName = applicationVersion.getApplication().getName();
 
 				ApplicationDeploymentId id = new ApplicationDeploymentId(environmentRelease.getId(), currentReleaseVersion.getId(), applicationVersion.getId());
 				ApplicationReleaseStatus status = applicationReleaseStatusRepository.findById(id)
@@ -458,7 +478,7 @@ public class ReleaseService {
 				boolean changed = status.hash() != statusHash;
 				if (changed) {
 					applicationReleaseStatusRepository.save(status);
-					log.info("Status changed for application {} in release {} in environment {}: {}", applicationName, releaseName, environmentName, status);
+					log.trace("Status changed for application {} in release {} in environment {}: {}", applicationName, releaseName, environmentName, status);
 					environmentReleaseChanged = true;
 				}
 

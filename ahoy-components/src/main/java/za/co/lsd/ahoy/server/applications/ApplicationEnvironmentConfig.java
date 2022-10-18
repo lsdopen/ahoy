@@ -44,6 +44,7 @@ public class ApplicationEnvironmentConfig {
 	@Convert(converter = ApplicationEnvironmentSpecConverter.class)
 	@Column(length = 10485760)
 	@JsonProperty(access = WRITE_ONLY)
+	@ToString.Exclude
 	private ApplicationEnvironmentSpec spec;
 
 	public ApplicationEnvironmentConfig(ApplicationDeploymentId id, ApplicationEnvironmentConfig applicationEnvironmentConfig) {

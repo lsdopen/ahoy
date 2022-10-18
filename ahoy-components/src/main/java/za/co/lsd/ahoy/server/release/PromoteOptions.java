@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.releases;
+package za.co.lsd.ahoy.server.release;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DuplicateOptions {
-	private boolean addToSameEnvironments;
+public class PromoteOptions {
+	private Long destEnvironmentId;
 	private boolean copyEnvironmentConfig;
 }

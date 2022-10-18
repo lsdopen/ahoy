@@ -14,19 +14,22 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server;
+package za.co.lsd.ahoy.server.release;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
+import org.springframework.context.ApplicationEvent;
+import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
 
-@Data
-@NoArgsConstructor
-public class DeployOptions {
-	private Long releaseVersionId;
-	private String commitMessage;
+@Getter
+@ToString
+public class ReleaseStatusChangedEvent extends ApplicationEvent {
+	private final EnvironmentReleaseId environmentReleaseId;
+	private final Long releaseVersionId;
 
-	public DeployOptions(Long releaseVersionId, String commitMessage) {
+	public ReleaseStatusChangedEvent(Object source, EnvironmentReleaseId environmentReleaseId, Long releaseVersionId) {
+		super(source);
+		this.environmentReleaseId = environmentReleaseId;
 		this.releaseVersionId = releaseVersionId;
-		this.commitMessage = commitMessage;
 	}
 }

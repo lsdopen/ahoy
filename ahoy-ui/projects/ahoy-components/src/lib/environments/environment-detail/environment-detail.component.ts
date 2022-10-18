@@ -43,8 +43,7 @@ export class EnvironmentDetailComponent implements OnInit {
   clusters: Cluster[] = undefined;
   sourceEnvironment: Environment;
   promoteEnvironmentReleaseId: EnvironmentReleaseId;
-  promoteCopyEnvironmentConfig: boolean;
-  duplicateOptions: DuplicateOptions;
+  copyEnvironmentConfig: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -64,7 +63,6 @@ export class EnvironmentDetailComponent implements OnInit {
       if (sourceEnvironmentId) {
         this.environmentService.get(sourceEnvironmentId)
           .subscribe((env) => {
-            this.duplicateOptions = new DuplicateOptions();
             this.sourceEnvironment = env;
             this.setBreadcrumb();
           });
@@ -74,7 +72,7 @@ export class EnvironmentDetailComponent implements OnInit {
       const releaseId = +this.route.snapshot.queryParamMap.get('releaseId');
       if (environmentId && releaseId) {
         this.promoteEnvironmentReleaseId = EnvironmentReleaseId.new(environmentId, releaseId);
-        this.promoteCopyEnvironmentConfig = JSON.parse(this.route.snapshot.queryParamMap.get('copyEnvironmentConfig'));
+        this.copyEnvironmentConfig = JSON.parse(this.route.snapshot.queryParamMap.get('copyEnvironmentConfig'));
       }
 
       this.setBreadcrumb();
@@ -116,6 +114,10 @@ export class EnvironmentDetailComponent implements OnInit {
     }
   }
 
+  showCopyEnvironmentConfig(): boolean {
+    return !!this.sourceEnvironment || !!this.promoteEnvironmentReleaseId;
+  }
+
   save() {
     if (!this.editMode) {
       this.environment.orderIndex = OrderUtil.appendIndex(this.environmentsForValidation);
@@ -125,16 +127,15 @@ export class EnvironmentDetailComponent implements OnInit {
         mergeMap((environment: Environment) => {
           if (this.sourceEnvironment) {
             // we're duplicating a source environment
-            return this.environmentService.duplicate(this.sourceEnvironment, environment, this.duplicateOptions);
+            const duplicateOptions = new DuplicateOptions(this.copyEnvironmentConfig);
+            return this.environmentService.duplicate(this.sourceEnvironment, environment, duplicateOptions);
           }
           return of(environment);
         }),
         mergeMap((environment: Environment) => {
           if (this.promoteEnvironmentReleaseId) {
             // we're promoting to this new environment
-            const promoteOptions = new PromoteOptions();
-            promoteOptions.destEnvironmentId = environment.id;
-            promoteOptions.copyEnvironmentConfig = this.promoteCopyEnvironmentConfig;
+            const promoteOptions = new PromoteOptions(environment.id, this.copyEnvironmentConfig);
             return this.releaseManageService.promote(this.promoteEnvironmentReleaseId, promoteOptions);
           }
           return of(environment);

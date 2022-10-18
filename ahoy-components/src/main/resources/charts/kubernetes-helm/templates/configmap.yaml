@@ -7,10 +7,10 @@ metadata:
     app: {{ .app.name }}
     releaseName: {{ .glob.releaseName }}
     environment: {{ .glob.environment }}
-  name: {{ .glob.releaseName }}-{{ .app.name }}
+  name: {{ .app.name }}
 data:
   {{- range .app.configFiles }}
-  {{ .name }}: |-
-    {{ .content }}
+  {{ .name }}: |
+{{ .content | indent 4 }}
   {{- end }}
 {{- end -}}

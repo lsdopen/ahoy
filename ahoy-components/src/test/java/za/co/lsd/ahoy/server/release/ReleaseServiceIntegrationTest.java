@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server;
+package za.co.lsd.ahoy.server.release;
 
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
@@ -32,6 +32,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import za.co.lsd.ahoy.server.AhoyTestServerApplication;
 import za.co.lsd.ahoy.server.applications.Application;
 import za.co.lsd.ahoy.server.applications.ApplicationRepository;
 import za.co.lsd.ahoy.server.applications.ApplicationVersion;
@@ -55,6 +56,7 @@ import za.co.lsd.ahoy.server.security.Role;
 import za.co.lsd.ahoy.server.security.Scope;
 import za.co.lsd.ahoy.server.settings.SettingsProvider;
 import za.co.lsd.ahoy.server.settings.SettingsService;
+import za.co.lsd.ahoy.server.task.TaskProgressService;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -107,6 +109,8 @@ class ReleaseServiceIntegrationTest {
 	private ClusterManager clusterManager;
 	@MockBean
 	private ArgoClient argoClient;
+	@MockBean
+	private TaskProgressService taskProgressService;
 
 	@TempDir
 	Path temporaryFolder;
@@ -168,7 +172,7 @@ class ReleaseServiceIntegrationTest {
 		});
 
 		// when
-		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions).get();
+		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions);
 
 		// then
 		// verify external collaborators
@@ -247,14 +251,14 @@ class ReleaseServiceIntegrationTest {
 		});
 
 		// when
-		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions).get();
+		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions);
 
 		// then
 		// verify external collaborators
 		verify(argoClient, times(1)).upsertRepository();
 		verify(argoClient, times(1)).getApplication(eq(argoApplicationName));
 		verify(argoClient, times(1)).updateApplication(any(ArgoApplication.class));
-		verify(argoClient, times(1)).getApplication(eq(argoApplicationName), eq(true));
+		verify(argoClient, timeout(1000).times(1)).getApplication(eq(argoApplicationName), eq(true));
 		verifyNoMoreInteractions(clusterManager, argoClient);
 
 		// verify environment release
@@ -321,14 +325,14 @@ class ReleaseServiceIntegrationTest {
 		});
 
 		// when
-		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions).get();
+		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions);
 
 		// then
 		// verify external collaborators
 		verify(argoClient, times(1)).upsertRepository();
 		verify(argoClient, times(1)).getApplication(eq(argoApplicationName));
 		verify(argoClient, times(1)).updateApplication(any(ArgoApplication.class));
-		verify(argoClient, times(1)).getApplication(eq(argoApplicationName), eq(true));
+		verify(argoClient, timeout(1000).times(1)).getApplication(eq(argoApplicationName), eq(true));
 		verifyNoMoreInteractions(clusterManager, argoClient);
 
 		// verify environment release
@@ -372,6 +376,7 @@ class ReleaseServiceIntegrationTest {
 		ApplicationVersion applicationVersion = applicationVersionRepository.save(new ApplicationVersion("1.0.0", application));
 
 		String argoApplicationName = "minikube-dev-release1";
+		String argoUid = UUID.randomUUID().toString();
 		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0");
 		release.addReleaseVersion(releaseVersion);
 		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
@@ -379,9 +384,9 @@ class ReleaseServiceIntegrationTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 		environmentRelease.setCurrentReleaseVersion(releaseVersion); // this release version is deployed
 		environmentRelease.setArgoCdName(argoApplicationName);
+		environmentRelease.setArgoCdUid(argoUid);
 		environmentRelease = environmentReleaseRepository.save(environmentRelease);
 
-		String argoUid = UUID.randomUUID().toString();
 		when(argoClient.getApplication(eq(argoApplicationName))).thenReturn(Optional.of(ArgoApplication.builder()
 			.metadata(ArgoMetadata.builder()
 				.name(argoApplicationName)
@@ -389,7 +394,7 @@ class ReleaseServiceIntegrationTest {
 				.build()).build()));
 
 		// when
-		EnvironmentRelease undeployedEnvironmentRelease = releaseService.undeploy(environmentRelease.getId()).get();
+		EnvironmentRelease undeployedEnvironmentRelease = releaseService.undeploy(environmentRelease.getId());
 
 		// then
 		// verify external collaborators
@@ -400,8 +405,8 @@ class ReleaseServiceIntegrationTest {
 		// verify environment release
 		EnvironmentRelease retrievedEnvironmentRelease = environmentReleaseRepository.findById(undeployedEnvironmentRelease.getId()).orElseThrow();
 		assertNull(retrievedEnvironmentRelease.getCurrentReleaseVersion());
-		assertNull(retrievedEnvironmentRelease.getArgoCdName());
-		assertNull(retrievedEnvironmentRelease.getArgoCdUid());
+		assertEquals(argoApplicationName, retrievedEnvironmentRelease.getArgoCdName(), "ArgoCdName should be correct for undeploy status updates");
+		assertEquals(argoUid, retrievedEnvironmentRelease.getArgoCdUid(), "ArgoCdUid should be correct for undeploy status updates");
 
 		// verify release history
 		List<ReleaseHistory> releaseHistories = StreamSupport.stream(releaseHistoryRepository.findAll().spliterator(), false).collect(Collectors.toList());
@@ -432,6 +437,7 @@ class ReleaseServiceIntegrationTest {
 		ApplicationVersion applicationVersion = applicationVersionRepository.save(new ApplicationVersion("1.0.0", application));
 
 		String argoApplicationName = "minikube-dev-release1";
+		String argoUid = UUID.randomUUID().toString();
 		ReleaseVersion releaseVersion = new ReleaseVersion("1.0.0");
 		release.addReleaseVersion(releaseVersion);
 		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
@@ -439,12 +445,13 @@ class ReleaseServiceIntegrationTest {
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 		environmentRelease.setCurrentReleaseVersion(releaseVersion); // this release version is deployed
 		environmentRelease.setArgoCdName(argoApplicationName);
+		environmentRelease.setArgoCdUid(argoUid);
 		environmentRelease = environmentReleaseRepository.save(environmentRelease);
 
 		when(argoClient.getApplication(eq(argoApplicationName))).thenReturn(Optional.empty());
 
 		// when
-		EnvironmentRelease undeployedEnvironmentRelease = releaseService.undeploy(environmentRelease.getId()).get();
+		EnvironmentRelease undeployedEnvironmentRelease = releaseService.undeploy(environmentRelease.getId());
 
 		// then
 		// verify external collaborators
@@ -455,8 +462,8 @@ class ReleaseServiceIntegrationTest {
 		// verify environment release
 		EnvironmentRelease retrievedEnvironmentRelease = environmentReleaseRepository.findById(undeployedEnvironmentRelease.getId()).orElseThrow();
 		assertNull(retrievedEnvironmentRelease.getCurrentReleaseVersion());
-		assertNull(retrievedEnvironmentRelease.getArgoCdName());
-		assertNull(retrievedEnvironmentRelease.getArgoCdUid());
+		assertEquals(argoApplicationName, retrievedEnvironmentRelease.getArgoCdName(), "ArgoCdName should be correct for undeploy status updates");
+		assertEquals(argoUid, retrievedEnvironmentRelease.getArgoCdUid(), "ArgoCdUid should be correct for undeploy status updates");
 
 		// verify release history
 		List<ReleaseHistory> releaseHistories = StreamSupport.stream(releaseHistoryRepository.findAll().spliterator(), false).collect(Collectors.toList());
@@ -609,7 +616,7 @@ class ReleaseServiceIntegrationTest {
 			argoApplication.getMetadata().setUid(argoUid);
 			return argoApplication;
 		});
-		releaseService.deploy(environmentRelease.getId(), deployOptions).get();
+		releaseService.deploy(environmentRelease.getId(), deployOptions);
 
 		// when
 		environmentService.delete(environment.getId());

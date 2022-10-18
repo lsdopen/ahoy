@@ -20,20 +20,12 @@ import {map, tap} from 'rxjs/operators';
 import {NotificationsService} from '../notifications/notifications.service';
 import {LoggerService} from '../util/logger.service';
 import {RestClientService} from '../util/rest-client.service';
-import {EnvironmentRelease, EnvironmentReleaseId} from './environment-release';
+import {EnvironmentRelease} from './environment-release';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EnvironmentReleaseService {
-
-  public static environmentReleaseEquals(er1: EnvironmentRelease, er2: EnvironmentRelease): boolean {
-    return this.environmentReleaseIdEquals(er1.id, er2.id);
-  }
-
-  public static environmentReleaseIdEquals(er1: EnvironmentReleaseId, er2: EnvironmentReleaseId): boolean {
-    return er1.environmentId === er2.environmentId && er1.releaseId === er2.releaseId;
-  }
 
   constructor(private restClient: RestClientService,
               private notificationsService: NotificationsService,

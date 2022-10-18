@@ -10,7 +10,7 @@ metadata:
     app: {{ $.app.name }}
     releaseName: {{ $.glob.releaseName }}
     environment: {{ $.glob.environment }}
-  name: {{ $.glob.releaseName }}-{{ $.app.name }}-{{ $volume.name }}
+  name: {{ $.app.name }}-{{ $volume.name }}
 spec:
   {{- if $volume.storageClassName }}
   storageClassName: {{ $volume.storageClassName }}

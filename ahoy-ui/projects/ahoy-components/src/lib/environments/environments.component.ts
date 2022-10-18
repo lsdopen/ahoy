@@ -26,9 +26,10 @@ import {DialogUtilService} from '../components/dialog-util.service';
 import {Role} from '../util/auth';
 import {LoggerService} from '../util/logger.service';
 import {OrderUtil} from '../util/order-util';
-import {Environment, MoveOptions} from './environment';
+import {DeleteOptions, Environment, MoveOptions} from './environment';
 import {EnvironmentService} from './environment.service';
-import {MoveDialogComponent} from './move-dialog/move-dialog.component';
+import {MoveDialogComponent, Result} from './move-dialog/move-dialog.component';
+import {ProgressMessages} from '../task/task';
 
 @Component({
   selector: 'app-environments',
@@ -82,7 +83,14 @@ export class EnvironmentsComponent implements OnInit {
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
-      this.environmentService.deleteCascading(environment)
+      const envFromCluster = `${environment.name} from cluster ${(environment.cluster as Cluster).name}`;
+      const deleteOptions = new DeleteOptions(
+        new ProgressMessages(
+          `Deleting ${envFromCluster}`,
+          `Deleted ${envFromCluster}`,
+          `Failed to delete ${envFromCluster}`)
+      );
+      this.environmentService.delete(environment, deleteOptions)
         .subscribe(() => this.getEnvironments());
     });
   }
@@ -90,13 +98,20 @@ export class EnvironmentsComponent implements OnInit {
   move(event: Event, environment: Environment) {
     const dialogConfig = new DynamicDialogConfig();
     dialogConfig.header = `Move ${(environment.name)} from cluster ${(environment.cluster as Cluster).name} to cluster:`;
-    dialogConfig.data = {selectedEnvironment: environment};
+    dialogConfig.data = {environment};
 
     const dialogRef = this.dialogService.open(MoveDialogComponent, dialogConfig);
     dialogRef.onClose.pipe(
       filter((result) => result !== undefined), // cancelled
-      mergeMap((moveOptions: MoveOptions) => {
-        this.log.debug('moving environment to destination cluster', moveOptions);
+      mergeMap((result: Result) => {
+        this.log.debug('moving environment to destination cluster', result.destCluster);
+        const destCluster = result.destCluster;
+        const envFromXtoY = `${(environment.name)} from ${(environment.cluster as Cluster).name} to ${destCluster.name}`;
+        const moveOptions = new MoveOptions(result.destCluster.id, result.redeployReleases,
+          new ProgressMessages(
+            `Moving ${envFromXtoY}`,
+            `Moved ${envFromXtoY}`,
+            `Failed to move ${envFromXtoY}`));
         return this.environmentService.move(environment, moveOptions);
       })
     ).subscribe(() => this.getEnvironments());

@@ -21,10 +21,10 @@ import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
-import za.co.lsd.ahoy.server.ReleaseUtils;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.helm.values.Values;
 import za.co.lsd.ahoy.server.helm.values.ValuesBuilder;
+import za.co.lsd.ahoy.server.release.ReleaseUtils;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 
 import java.io.IOException;
@@ -73,19 +73,19 @@ public class ChartGenerator {
 			.name(environmentRelease.getRelease().getName())
 			.version(releaseVersion.getVersion())
 			.build();
-		log.debug("Writing chart: {}", chart);
+		log.trace("Writing chart: {}", chart);
 		Path chartPath = releasePath.resolve("Chart.yaml");
 		HelmUtils.dump(chart, chartPath, yaml);
 	}
 
 	private void writeTemplates(EnvironmentRelease environmentRelease, ReleaseVersion releaseVersion, Path templatesPath) throws IOException {
-		log.debug("Writing templates for {}, {} to {}", environmentRelease, releaseVersion, templatesPath);
+		log.trace("Writing templates for {}, {} to {}", environmentRelease, releaseVersion, templatesPath);
 		templateWriter.writeTemplates(environmentRelease, releaseVersion, templatesPath);
 	}
 
 	private void writeValues(EnvironmentRelease environmentRelease, ReleaseVersion releaseVersion, Path releasePath, Yaml yaml) throws IOException {
 		Values values = valuesBuilder.build(environmentRelease, releaseVersion);
-		log.debug("Writing values: {}", values);
+		log.trace("Writing values: {}", values);
 		Path valuesPath = releasePath.resolve("values.yaml");
 		HelmUtils.dump(values, valuesPath, yaml);
 	}

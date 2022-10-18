@@ -25,7 +25,7 @@ import {AppBreadcrumbService} from '../app.breadcrumb.service';
 import {Cluster} from '../clusters/cluster';
 import {Confirmation} from '../components/confirm-dialog/confirm';
 import {DialogUtilService} from '../components/dialog-util.service';
-import {DeployOptions, EnvironmentRelease} from '../environment-release/environment-release';
+import {DeployOptions, EnvironmentRelease, UndeployOptions} from '../environment-release/environment-release';
 import {EnvironmentReleaseService} from '../environment-release/environment-release.service';
 import {Environment} from '../environments/environment';
 import {EnvironmentService} from '../environments/environment.service';
@@ -39,6 +39,7 @@ import {PromoteDialogComponent} from './promote-dialog/promote-dialog.component'
 import {RecentReleasesService} from './recent-releases.service';
 import {ReleaseManageService} from './release-manage.service';
 import {UpgradeDialogComponent} from './upgrade-dialog/upgrade-dialog.component';
+import {ProgressMessages} from '../task/task';
 
 @Component({
   selector: 'app-release-manage',
@@ -47,7 +48,6 @@ import {UpgradeDialogComponent} from './upgrade-dialog/upgrade-dialog.component'
 })
 export class ReleaseManageComponent implements OnInit, OnDestroy {
   Role = Role;
-  private environmentReleaseChangedSubscription: Subscription;
   environmentReleases: EnvironmentRelease[];
   releaseChanged = new EventEmitter<{ environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion }>();
   environmentRelease: EnvironmentRelease;
@@ -55,6 +55,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   releaseVersion: ReleaseVersion;
   menuItems: MenuItem[];
   selectedReleaseVersion: ReleaseVersion;
+  private paramMapSubscription: Subscription;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -71,7 +72,8 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.route.paramMap.subscribe(paramMap => {
+    this.paramMapSubscription = this.route.paramMap.subscribe((params) => {
+      const paramMap = this.route.snapshot.paramMap;
       const environmentId = +paramMap.get('environmentId');
       const releaseId = +paramMap.get('releaseId');
       const releaseVersionId = +paramMap.get('releaseVersionId');
@@ -79,13 +81,11 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
         this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
       });
     });
-
-    this.subscribeToEnvironmentReleaseChanged();
   }
 
   ngOnDestroy(): void {
-    if (this.environmentReleaseChangedSubscription) {
-      this.environmentReleaseChangedSubscription.unsubscribe();
+    if (this.paramMapSubscription) {
+      this.paramMapSubscription.unsubscribe();
     }
   }
 
@@ -142,29 +142,8 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     ]);
   }
 
-  private subscribeToEnvironmentReleaseChanged() {
-    if (!this.environmentReleaseChangedSubscription) {
-      // TODO nested subscribes
-      this.environmentReleaseChangedSubscription = this.releaseManageService.environmentReleaseChanged()
-        .subscribe((environmentRelease) => {
-          if (EnvironmentReleaseService.environmentReleaseEquals(this.environmentRelease, environmentRelease)) {
-            this.getEnvironmentRelease(environmentRelease.id.environmentId, environmentRelease.id.releaseId, this.releaseVersion.id)
-              .subscribe(() => {
-                this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
-              });
-          }
-        });
-    }
-  }
-
-  reloadCurrent() {
-    if (this.selectedEnvironmentRelease) {
-      this.reload(this.selectedEnvironmentRelease.id.environmentId, this.releaseVersion.id);
-    }
-  }
-
-  reload(environmentId: number, releaseVersionId: number) {
-    this.router.navigate(['/release', environmentId, this.environmentRelease.id.releaseId, 'version', releaseVersionId]);
+  reload(environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion) {
+    this.router.navigate(['/release', environmentRelease.id.environmentId, environmentRelease.id.releaseId, 'version', releaseVersion.id]);
   }
 
   canDeploy(): boolean {
@@ -193,7 +172,13 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
-      const deployOptions = new DeployOptions(this.releaseVersion.id, conf.input);
+      const relToEnv = `${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} to environment ${(this.environmentRelease.environment as Environment).name}`;
+      const deployOptions = new DeployOptions(this.releaseVersion.id, conf.input,
+        new ProgressMessages(
+          `Deploying ${relToEnv}`,
+          `Deployed ${relToEnv}`,
+          `Failed to deploy ${relToEnv}`
+        ));
       this.releaseManageService.deploy(this.environmentRelease, this.releaseVersion, deployOptions).subscribe();
     });
   }
@@ -209,7 +194,15 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
-      this.releaseManageService.undeploy(this.environmentRelease).subscribe();
+      const relFromEnv = `${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} from environment ${(this.environmentRelease.environment as Environment).name}`;
+      const undeployOptions = new UndeployOptions(
+        new ProgressMessages(
+          `Undeploying ${relFromEnv}`,
+          `Undeployed ${relFromEnv}`,
+          `Failed to undeploy ${relFromEnv}`
+        ));
+
+      this.releaseManageService.undeploy(this.environmentRelease, undeployOptions).subscribe();
     });
   }
 
@@ -228,7 +221,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
       mergeMap((promoteOptions: PromoteOptions) => {
         return this.releaseManageService.promote(this.environmentRelease.id, promoteOptions);
       })
-    ).subscribe((newEnvironmentRelease: EnvironmentRelease) => this.reload(newEnvironmentRelease.id.environmentId, this.releaseVersion.id));
+    ).subscribe((newEnvironmentRelease: EnvironmentRelease) => this.reload(newEnvironmentRelease, this.releaseVersion));
   }
 
   canUpgrade() {
@@ -246,7 +239,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
       mergeMap((upgradeOptions: UpgradeOptions) => {
         return this.releaseManageService.upgrade(this.environmentRelease, this.releaseVersion, upgradeOptions);
       })
-    ).subscribe((newReleaseVersion: ReleaseVersion) => this.reload(this.environmentRelease.id.environmentId, newReleaseVersion.id));
+    ).subscribe((newReleaseVersion: ReleaseVersion) => this.reload(this.environmentRelease, newReleaseVersion));
   }
 
   canCopyEnvConfig() {
@@ -264,11 +257,11 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
       mergeMap((selectedReleaseVersion) => {
         return this.releaseManageService.copyEnvConfig(this.environmentRelease.id, selectedReleaseVersion.id, this.releaseVersion.id);
       })
-    ).subscribe(() => this.reload(this.environmentRelease.id.environmentId, this.releaseVersion.id));
+    ).subscribe(() => this.reload(this.environmentRelease, this.releaseVersion));
   }
 
   releaseVersionChanged() {
-    this.router.navigate(['/release', this.environmentRelease.id.environmentId, this.environmentRelease.id.releaseId, 'version', this.selectedReleaseVersion.id]);
+    this.reload(this.environmentRelease, this.selectedReleaseVersion);
   }
 
   private isCurrent() {
@@ -295,7 +288,13 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
-      const deployOptions = new DeployOptions(this.environmentRelease.previousReleaseVersion.id, conf.input);
+      const xToY = `${(this.environmentRelease.release as Release).name}:${this.environmentRelease.currentReleaseVersion.version} to ${(this.environmentRelease.release as Release).name}:${this.environmentRelease.previousReleaseVersion.version}`;
+      const deployOptions = new DeployOptions(this.environmentRelease.previousReleaseVersion.id, conf.input,
+        new ProgressMessages(
+          `Rolling back ${xToY}`,
+          `Rolled back ${xToY}`,
+          `Failed to roll back ${xToY}`
+        ));
       this.releaseManageService.deploy(this.environmentRelease, this.environmentRelease.previousReleaseVersion, deployOptions)
         .subscribe(() => this.log.debug('rolled back release:', this.environmentRelease));
     });
@@ -309,7 +308,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   taskEventOccurred(event: TaskEvent) {
     if (event.releaseStatusChangedEvent) {
       const statusChangedEvent = event.releaseStatusChangedEvent;
-      if (EnvironmentReleaseService.environmentReleaseIdEquals(this.environmentRelease.id, statusChangedEvent.environmentReleaseId)) {
+      if (this.environmentRelease.id.releaseId === statusChangedEvent.environmentReleaseId.releaseId) {
         setTimeout(() => {
           this.getEnvironmentRelease(this.environmentRelease.id.environmentId, this.environmentRelease.id.releaseId, this.releaseVersion.id)
             .subscribe(() => {
@@ -322,7 +321,15 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     }
   }
 
+  tableSelectionChanged() {
+    if (this.selectedEnvironmentRelease) {
+      this.reload(this.selectedEnvironmentRelease, this.releaseVersion);
+    }
+  }
+
   applicationVersionsChanged() {
-    this.reloadCurrent();
+    this.getEnvironmentRelease(this.environmentRelease.id.environmentId, this.environmentRelease.id.releaseId, this.releaseVersion.id).subscribe(() => {
+      this.releaseChanged.emit({environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion});
+    });
   }
 }

@@ -108,7 +108,6 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
     ).subscribe((upgradeAppOptions: UpgradeAppOptions) => {
       this.releaseService.associateApplication(this.releaseVersion.id, upgradeAppOptions.applicationVersion.id)
         .subscribe(() => {
-          this.getApplicationVersions();
           this.applicationVersionsChanged.next(null);
         });
     });
@@ -125,7 +124,6 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
     ).subscribe(() => {
       this.releaseService.removeAssociatedApplication(this.releaseVersion.id, applicationVersion.id)
         .subscribe(() => {
-            this.getApplicationVersions();
             this.applicationVersionsChanged.next(null);
           }
         );

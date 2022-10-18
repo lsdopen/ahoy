@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server;
+package za.co.lsd.ahoy.server.release;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,21 +25,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import za.co.lsd.ahoy.server.argocd.model.ArgoEvents;
 import za.co.lsd.ahoy.server.argocd.model.Resource;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
-import za.co.lsd.ahoy.server.releases.*;
+import za.co.lsd.ahoy.server.releases.Release;
+import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 import za.co.lsd.ahoy.server.releases.resources.ResourceNode;
 import za.co.lsd.ahoy.server.security.Role;
+import za.co.lsd.ahoy.server.task.TaskExecutor;
 import za.co.lsd.ahoy.server.util.SseEmitterSubscriber;
 
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 @RestController
 @RequestMapping("/api")
@@ -47,10 +48,13 @@ import java.util.concurrent.Future;
 @Secured({Role.admin, Role.releasemanager})
 public class ReleaseController {
 	private final ReleaseService releaseService;
+	private final TaskExecutor taskExecutor;
+
 	private ExecutorService sseMvcExecutor;
 
-	public ReleaseController(ReleaseService releaseService) {
+	public ReleaseController(ReleaseService releaseService, TaskExecutor taskExecutor) {
 		this.releaseService = releaseService;
+		this.taskExecutor = taskExecutor;
 	}
 
 	@Autowired
@@ -59,18 +63,17 @@ public class ReleaseController {
 	}
 
 	@PostMapping("/environmentReleases/{environmentReleaseId}/deploy")
-	public ResponseEntity<EnvironmentRelease> deploy(@PathVariable EnvironmentReleaseId environmentReleaseId,
-													 @RequestBody DeployOptions deployOptions) throws ExecutionException, InterruptedException {
+	public ListenableFuture<EnvironmentRelease> deploy(@PathVariable EnvironmentReleaseId environmentReleaseId,
+													   @RequestBody DeployOptions deployOptions) {
 
-		Future<EnvironmentRelease> deployedEnvironmentRelease = releaseService.deploy(environmentReleaseId, deployOptions);
-		return new ResponseEntity<>(deployedEnvironmentRelease.get(), new HttpHeaders(), HttpStatus.OK);
+		return taskExecutor.executeSync(() -> releaseService.deploy(environmentReleaseId, deployOptions), deployOptions.getProgressMessages());
 	}
 
 	@PostMapping("/environmentReleases/{environmentReleaseId}/undeploy")
-	public ResponseEntity<EnvironmentRelease> undeploy(@PathVariable EnvironmentReleaseId environmentReleaseId) throws ExecutionException, InterruptedException {
+	public ListenableFuture<EnvironmentRelease> undeploy(@PathVariable EnvironmentReleaseId environmentReleaseId,
+														 @RequestBody UndeployOptions undeployOptions) {
 
-		Future<EnvironmentRelease> undeployedEnvironmentRelease = releaseService.undeploy(environmentReleaseId);
-		return new ResponseEntity<>(undeployedEnvironmentRelease.get(), new HttpHeaders(), HttpStatus.OK);
+		return taskExecutor.executeAsync(() -> releaseService.undeploy(environmentReleaseId), undeployOptions.getProgressMessages());
 	}
 
 	@PostMapping("/environmentReleases/{environmentReleaseId}/promote")
@@ -90,10 +93,10 @@ public class ReleaseController {
 	}
 
 	@DeleteMapping("/environmentReleases/{environmentReleaseId}/remove")
-	public ResponseEntity<EnvironmentRelease> remove(@PathVariable EnvironmentReleaseId environmentReleaseId) throws ExecutionException, InterruptedException {
+	public ListenableFuture<EnvironmentRelease> remove(@PathVariable EnvironmentReleaseId environmentReleaseId,
+													   @RequestBody RemoveOptions removeOptions) {
 
-		Future<EnvironmentRelease> removedEnvironmentRelease = releaseService.remove(environmentReleaseId);
-		return new ResponseEntity<>(removedEnvironmentRelease.get(), new HttpHeaders(), HttpStatus.OK);
+		return taskExecutor.executeAsync(() -> releaseService.remove(environmentReleaseId), removeOptions.getProgressMessages());
 	}
 
 	@PostMapping("/environmentReleases/{environmentReleaseId}/copyEnvConfig")

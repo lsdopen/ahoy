@@ -27,6 +27,7 @@ import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -44,6 +45,7 @@ public class Release {
 	@NotNull
 	@Pattern(regexp = "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
 		message = "Name invalid: should start with and use lower case letters and numbers")
+	@Size(max = 53)
 	private String name;
 
 	@OneToMany(mappedBy = "release")

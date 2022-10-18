@@ -23,7 +23,8 @@ import {NotificationsService} from '../notifications/notifications.service';
 import {RecentReleasesService} from '../release-manage/recent-releases.service';
 import {LoggerService} from '../util/logger.service';
 import {RestClientService} from '../util/rest-client.service';
-import {DuplicateOptions, Environment, MoveOptions} from './environment';
+import {DeleteOptions, DuplicateOptions, Environment, MoveOptions} from './environment';
+import {ErrorUtil} from '../util/error-util';
 
 @Injectable({
   providedIn: 'root'
@@ -77,22 +78,22 @@ export class EnvironmentService {
     }
   }
 
-  deleteCascading(environment: Environment): Observable<Environment> {
+  delete(environment: Environment, deleteOptions: DeleteOptions): Observable<Environment> {
     this.log.debug('deleting environment: ', environment);
 
     const id = environment.id;
-    const url = `/data/environments/delete/${id}`;
+    const url = `/api/environments/delete/${id}`;
 
-    return this.restClient.delete<Environment>(url, true).pipe(
+    return this.restClient.delete<Environment>(url, deleteOptions).pipe(
       tap((deletedEnvironment) => {
-        this.log.debug('deleted environment', environment);
-        const text = `${deletedEnvironment.name} ` + `was deleted from cluster ${(deletedEnvironment.cluster as Cluster).name}`;
-        this.notificationsService.notification(new Notification(text));
+        this.log.debug('deleted environment', deletedEnvironment);
         this.recentReleasesService.refresh();
       }),
       catchError((error) => {
-        const text = `Failed to delete environment ${environment.name}`;
-        this.notificationsService.notification(new Notification(text, error));
+        if (!ErrorUtil.is500Error(error)) {
+          const text = `Failed to delete environment ${environment.name}`;
+          this.notificationsService.notification(new Notification(text, error));
+        }
         return EMPTY;
       })
     );
@@ -101,17 +102,17 @@ export class EnvironmentService {
   move(environment: Environment, moveOptions: MoveOptions): Observable<Environment> {
     this.log.debug(`moving environment: ${environment.name} to cluster: ${moveOptions.destClusterId}`);
 
-    const url = `/data/environments/${environment.id}/move`;
+    const url = `/api/environments/${environment.id}/move`;
 
     return this.restClient.post<Environment>(url, moveOptions, true).pipe(
-      tap((movedEnvironment) => {
-        this.log.debug('moved environment', movedEnvironment);
-        const text = `${movedEnvironment.name} ` + `was moved to cluster ${(movedEnvironment.cluster as Cluster).name}`;
-        this.notificationsService.notification(new Notification(text));
+      tap((destEnvironment) => {
+        this.log.debug('moved environment', destEnvironment);
       }),
       catchError((error) => {
-        const text = `Failed to move environment ${environment.name} to cluster`;
-        this.notificationsService.notification(new Notification(text, error));
+        if (!ErrorUtil.is500Error(error)) {
+          const text = `Failed to move environment ${environment.name} to cluster`;
+          this.notificationsService.notification(new Notification(text, error));
+        }
         return EMPTY;
       })
     );
@@ -120,7 +121,7 @@ export class EnvironmentService {
   duplicate(sourceEnvironment: Environment, destEnvironment: Environment, duplicateOptions: DuplicateOptions): Observable<Environment> {
     this.log.debug('duplicating environment: ', sourceEnvironment);
 
-    const url = `/data/environments/duplicate/${sourceEnvironment.id}/${destEnvironment.id}`;
+    const url = `/api/environments/duplicate/${sourceEnvironment.id}/${destEnvironment.id}`;
 
     return this.restClient.post<Environment>(url, duplicateOptions, true).pipe(
       tap((duplicatedEnvironment) => {
@@ -139,7 +140,7 @@ export class EnvironmentService {
   updateOrderIndex(environment: Environment): Observable<Environment> {
     this.log.debug('updating environment orderIndex: ', environment);
 
-    const url = `/data/environments/${environment.id}/updateOrderIndex?orderIndex=${environment.orderIndex}`;
+    const url = `/api/environments/${environment.id}/updateOrderIndex?orderIndex=${environment.orderIndex}`;
 
     return this.restClient.put<Environment>(url, null).pipe(
       tap(() => {

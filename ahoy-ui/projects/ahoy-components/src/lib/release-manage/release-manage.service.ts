@@ -15,9 +15,9 @@
  */
 
 import {Injectable} from '@angular/core';
-import {EMPTY, Observable, Subject} from 'rxjs';
+import {EMPTY, Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
-import {DeployOptions, EnvironmentRelease, EnvironmentReleaseId} from '../environment-release/environment-release';
+import {DeployOptions, EnvironmentRelease, EnvironmentReleaseId, RemoveOptions, UndeployOptions} from '../environment-release/environment-release';
 import {Environment} from '../environments/environment';
 import {Notification} from '../notifications/notification';
 import {NotificationsService} from '../notifications/notifications.service';
@@ -28,12 +28,12 @@ import {RestClientService} from '../util/rest-client.service';
 import {PodLog} from './log';
 import {RecentReleasesService} from './recent-releases.service';
 import {ArgoEvents, Resource, ResourceNode} from './resource';
+import {ErrorUtil} from '../util/error-util';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReleaseManageService {
-  private environmentReleaseChangedSubject = new Subject<EnvironmentRelease>();
 
   constructor(private restClient: RestClientService,
               private eventSourceService: EventSourceService,
@@ -45,58 +45,47 @@ export class ReleaseManageService {
   deploy(environmentRelease: EnvironmentRelease, releaseVersion: ReleaseVersion, deployOptions: DeployOptions): Observable<EnvironmentRelease> {
     this.log.debug('deploying environment release', environmentRelease);
     const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentRelease.id)}/deploy`;
-    return this.restClient.post<EnvironmentRelease>(url, deployOptions, true).pipe(
-      tap((deployedEnvironmentRelease) => {
-        this.log.debug('deployed environment release', deployedEnvironmentRelease);
-        this.environmentReleaseChangedSubject.next(deployedEnvironmentRelease);
-        const text = `${(deployedEnvironmentRelease.release as Release).name} : ${deployedEnvironmentRelease.currentReleaseVersion.version} `
-          + `deployed to environment ${(deployedEnvironmentRelease.environment as Environment).name}`;
-        this.notificationsService.notification(new Notification(text));
-      }),
+    return this.restClient.post<EnvironmentRelease>(url, deployOptions).pipe(
       catchError((error) => {
-        const text = `Failed to deploy ${(environmentRelease.release as Release).name} : ${releaseVersion.version} `
-          + `to environment ${(environmentRelease.environment as Environment).name}`;
-        this.notificationsService.notification(new Notification(text, error));
+        if (!ErrorUtil.is500Error(error)) {
+          const text = `Failed to deploy ${(environmentRelease.release as Release).name} : ${releaseVersion.version} `
+            + `to environment ${(environmentRelease.environment as Environment).name}`;
+          this.notificationsService.notification(new Notification(text, error));
+        }
         return EMPTY;
       })
     );
   }
 
-  undeploy(environmentRelease: EnvironmentRelease): Observable<EnvironmentRelease> {
+  undeploy(environmentRelease: EnvironmentRelease, undeployOptions: UndeployOptions): Observable<void> {
     this.log.debug('undeploying environment release:', environmentRelease);
     const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentRelease.id)}/undeploy`;
-    return this.restClient.post<EnvironmentRelease>(url, null, true).pipe(
-      tap((unDeployedEnvironmentRelease) => {
-        this.log.debug('undeployed environment release', unDeployedEnvironmentRelease);
-        this.environmentReleaseChangedSubject.next(unDeployedEnvironmentRelease);
-        const text = `${(unDeployedEnvironmentRelease.release as Release).name} `
-          + `was undeployed from environment ${(unDeployedEnvironmentRelease.environment as Environment).name}`;
-        this.notificationsService.notification(new Notification(text));
-      }),
+    return this.restClient.post<void>(url, undeployOptions).pipe(
       catchError((error) => {
-        const text = `Failed to undeploy ${(environmentRelease.release as Release).name} `
-          + `from environment ${(environmentRelease.environment as Environment).name}`;
-        this.notificationsService.notification(new Notification(text, error));
+        if (!ErrorUtil.is500Error(error)) {
+          const text = `Failed to undeploy ${(environmentRelease.release as Release).name} `
+            + `from environment ${(environmentRelease.environment as Environment).name}`;
+          this.notificationsService.notification(new Notification(text, error));
+        }
         return EMPTY;
       })
     );
   }
 
-  remove(environmentRelease: EnvironmentRelease): Observable<EnvironmentRelease> {
+  remove(environmentRelease: EnvironmentRelease, removeOptions: RemoveOptions): Observable<EnvironmentRelease> {
     this.log.debug('removing environment release:', environmentRelease);
     const url = `/api/environmentReleases/${EnvironmentReleaseId.pathValue(environmentRelease.id)}/remove`;
-    return this.restClient.delete<EnvironmentRelease>(url, true).pipe(
+    return this.restClient.delete<EnvironmentRelease>(url, removeOptions).pipe(
       tap((removedEnvironmentRelease) => {
         this.log.debug('removed environment release', removedEnvironmentRelease);
-        const text = `${(removedEnvironmentRelease.release as Release).name} `
-          + `was removed from environment ${(removedEnvironmentRelease.environment as Environment).name}`;
-        this.notificationsService.notification(new Notification(text));
         this.recentReleasesService.refresh();
       }),
       catchError((error) => {
-        const text = `Failed to remove ${(environmentRelease.release as Release).name} `
-          + `from environment ${(environmentRelease.environment as Environment).name}`;
-        this.notificationsService.notification(new Notification(text, error));
+        if (!ErrorUtil.is500Error(error)) {
+          const text = `Failed to remove ${(environmentRelease.release as Release).name} `
+            + `from environment ${(environmentRelease.environment as Environment).name}`;
+          this.notificationsService.notification(new Notification(text, error));
+        }
         return EMPTY;
       })
     );
@@ -182,9 +171,5 @@ export class ReleaseManageService {
     return this.restClient.get<Resource>(url).pipe(
       tap((resource) => this.log.debug('fetched resource', resource))
     );
-  }
-
-  public environmentReleaseChanged(): Observable<EnvironmentRelease> {
-    return this.environmentReleaseChangedSubject.asObservable();
   }
 }

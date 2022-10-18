@@ -27,7 +27,7 @@ import {LocalStorageService} from '../util/local-storage.service';
 export class RecentReleasesService {
   private readonly KEY = 'recent-releases';
   private readonly RECENTS_TO_SHOW = 5;
-  private recentReleases = new Map<string, RecentRelease>();
+  private recentReleases = new Map<number, RecentRelease>();
   private recentReleasesSubject = new Subject<RecentRelease[]>();
 
   constructor(private localStorageService: LocalStorageService,
@@ -37,15 +37,23 @@ export class RecentReleasesService {
     if (item) {
       const itemArr: RecentRelease[] = JSON.parse(item);
       for (const rr of itemArr) {
-        this.recentReleases.set(rr.name, rr);
+        this.recentReleases.set(rr.releaseId, rr);
       }
     }
   }
 
   public recent(environmentRelease: EnvironmentRelease, releaseVersionId: number) {
     const name = (environmentRelease.release as Release).name;
-    this.recentReleases.set(name, new RecentRelease(name, environmentRelease, releaseVersionId));
+    this.recentReleases.set(environmentRelease.id.releaseId, new RecentRelease(name, environmentRelease, releaseVersionId));
     this.deleteOldest();
+    this.recentReleasesUpdated();
+  }
+
+  public releaseUpdated(release: Release): void {
+    const recentRelease = this.recentReleases.get(release.id);
+    if (recentRelease) {
+      recentRelease.name = release.name;
+    }
     this.recentReleasesUpdated();
   }
 
@@ -63,8 +71,8 @@ export class RecentReleasesService {
       .subscribe((environmentReleases) => {
 
         let updated = false;
-        for (const releaseName of this.recentReleases.keys()) {
-          const recentRelease = this.recentReleases.get(releaseName);
+        for (const releaseId of this.recentReleases.keys()) {
+          const recentRelease = this.recentReleases.get(releaseId);
           const releaseFound = environmentReleases.find((environmentRelease) => {
             const releaseVersions = (environmentRelease.release as Release).releaseVersions;
             return environmentRelease.id.environmentId === recentRelease.environmentId &&
@@ -75,7 +83,7 @@ export class RecentReleasesService {
 
           if (!releaseFound) {
             updated = true;
-            this.recentReleases.delete(releaseName);
+            this.recentReleases.delete(releaseId);
           }
         }
 
@@ -97,7 +105,7 @@ export class RecentReleasesService {
         .sort((a, b) => b.timestamp - a.timestamp);
       const poppedRecentRelease = sortedReleases.pop();
       if (poppedRecentRelease) {
-        this.recentReleases.delete(poppedRecentRelease.name);
+        this.recentReleases.delete(poppedRecentRelease.releaseId);
       }
     }
   }

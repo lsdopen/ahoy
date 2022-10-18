@@ -59,7 +59,12 @@ export class AppMenuComponent implements OnInit, OnDestroy {
     ];
     this.recentReleasesChanged(this.recentReleasesService.getRecentReleases());
     this.recentReleasesChangedSubscription = this.recentReleasesService.recentReleasesChanged()
-      .subscribe((recentReleases) => this.recentReleasesChanged(recentReleases));
+      .subscribe((recentReleases) => {
+        // give the button animation some time before reloading the recent releases
+        setTimeout(() => {
+          this.recentReleasesChanged(recentReleases);
+        }, 500);
+      });
   }
 
   ngOnDestroy(): void {

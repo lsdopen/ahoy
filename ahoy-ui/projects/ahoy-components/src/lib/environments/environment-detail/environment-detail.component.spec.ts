@@ -192,7 +192,7 @@ describe('EnvironmentDetailComponent', () => {
         expect(component.environment).toBeTruthy();
         expect(component.sourceEnvironment).toBeFalsy();
         expect(component.promoteEnvironmentReleaseId).toBeTruthy();
-        expect(component.promoteCopyEnvironmentConfig).toBeTrue();
+        expect(component.copyEnvironmentConfig).toBeTrue();
 
         // given
         component.environment.name = 'new-promoted-environment';
@@ -232,7 +232,7 @@ describe('EnvironmentDetailComponent', () => {
       expect(component.environment).toBeTruthy();
       expect(component.sourceEnvironment).toBeFalsy();
       expect(component.promoteEnvironmentReleaseId).toBeFalsy();
-      expect(component.promoteCopyEnvironmentConfig).toBeFalsy();
+      expect(component.copyEnvironmentConfig).toBeFalsy();
 
       // given
       const save = spyOn(environmentService, 'save');

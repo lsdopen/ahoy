@@ -16,8 +16,10 @@
 
 import {ReleaseStatusChangedEvent} from '../environment-release/environment-release';
 import {ArgoConnectionEvent} from '../util/argo';
+import {TaskProgressEvent} from '../task/task';
 
 export class TaskEvent {
   releaseStatusChangedEvent: ReleaseStatusChangedEvent;
   argoConnectionEvent: ArgoConnectionEvent;
+  taskProgressEvent: TaskProgressEvent;
 }

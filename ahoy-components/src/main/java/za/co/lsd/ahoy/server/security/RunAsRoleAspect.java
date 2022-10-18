@@ -31,7 +31,7 @@ public class RunAsRoleAspect {
 	public Object setRole(ProceedingJoinPoint joinPoint, RunAsRole runAsRole) throws Throwable {
 		Authentication originalAuth = SecurityContextHolder.getContext().getAuthentication();
 		try {
-			AuthUtility.runAsSystemUser(runAsRole.value());
+			AuthUtility.runAs(runAsRole.value());
 			return joinPoint.proceed();
 		} finally {
 			SecurityContextHolder.getContext().setAuthentication(originalAuth);

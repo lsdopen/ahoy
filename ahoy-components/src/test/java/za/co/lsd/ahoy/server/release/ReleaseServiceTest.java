@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server;
+package za.co.lsd.ahoy.server.release;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import za.co.lsd.ahoy.server.AhoyTestServerApplication;
 import za.co.lsd.ahoy.server.applications.*;
 import za.co.lsd.ahoy.server.argocd.model.ArgoApplication;
 import za.co.lsd.ahoy.server.argocd.model.ArgoMetadata;
@@ -35,6 +36,7 @@ import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.environments.EnvironmentRepository;
 import za.co.lsd.ahoy.server.releases.*;
+import za.co.lsd.ahoy.server.task.TaskProgressService;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -66,6 +68,8 @@ public class ReleaseServiceTest {
 	private ApplicationEnvironmentConfigProvider environmentConfigProvider;
 	@MockBean
 	private EnvironmentRepository environmentRepository;
+	@MockBean
+	private TaskProgressService taskProgressService;
 	@Autowired
 	private ReleaseService releaseService;
 
@@ -97,7 +101,7 @@ public class ReleaseServiceTest {
 					.build()).build());
 
 		// when
-		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions).get();
+		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions);
 
 		// then
 		assertEquals(releaseVersion, deployedEnvironmentRelease.getCurrentReleaseVersion(), "Release version should now be the current release version");
@@ -143,7 +147,7 @@ public class ReleaseServiceTest {
 					.build()).build());
 
 		// when
-		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions).get();
+		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions);
 
 		// then
 		assertEquals(upgradedReleaseVersion, deployedEnvironmentRelease.getCurrentReleaseVersion(), "Release version should now be the current release version");
@@ -189,7 +193,7 @@ public class ReleaseServiceTest {
 					.build()).build());
 
 		// when
-		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions).get();
+		EnvironmentRelease deployedEnvironmentRelease = releaseService.deploy(environmentRelease.getId(), deployOptions);
 
 		// then
 		assertEquals(releaseVersion, deployedEnvironmentRelease.getCurrentReleaseVersion(), "Release version should now be the current release version");
@@ -221,7 +225,7 @@ public class ReleaseServiceTest {
 		when(environmentReleaseRepository.findById(environmentRelease.getId())).thenReturn(Optional.of(environmentRelease));
 
 		// when
-		EnvironmentRelease undeployedEnvironmentRelease = releaseService.undeploy(environmentRelease.getId()).get();
+		EnvironmentRelease undeployedEnvironmentRelease = releaseService.undeploy(environmentRelease.getId());
 
 		// then
 		assertNull(undeployedEnvironmentRelease.getCurrentReleaseVersion(), "Release version should be null");

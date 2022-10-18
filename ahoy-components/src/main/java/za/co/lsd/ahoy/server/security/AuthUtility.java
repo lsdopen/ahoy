@@ -17,6 +17,7 @@
 package za.co.lsd.ahoy.server.security;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -28,15 +29,21 @@ public final class AuthUtility {
 	private AuthUtility() {
 	}
 
-	public static void runAsSystemUser() {
-		runAsSystemUser(Role.admin);
-	}
-
-	public static void runAsSystemUser(String role) {
+	static void runAs(String role) {
 		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
 			SYSTEM_PRINCIPAL,
 			null,
 			List.of(new SimpleGrantedAuthority(role), new SimpleGrantedAuthority(Role.user)));
 		SecurityContextHolder.getContext().setAuthentication(auth);
+	}
+
+	public static void runAs(String role, Runnable runnable) {
+		Authentication originalAuth = SecurityContextHolder.getContext().getAuthentication();
+		try {
+			runAs(role);
+			runnable.run();
+		} finally {
+			SecurityContextHolder.getContext().setAuthentication(originalAuth);
+		}
 	}
 }

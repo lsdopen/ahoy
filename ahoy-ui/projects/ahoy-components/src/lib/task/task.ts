@@ -14,15 +14,31 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server;
+export class TaskProgressEvent {
+  id: string;
+  status: string;
+  message: string;
+  trace: string;
+  time: Date;
+  state: State;
+}
 
-public class ReleaseManagerException extends RuntimeException {
+export enum State {
+  WAITING = 'WAITING',
+  IN_PROGRESS = 'IN_PROGRESS',
+  NOTIFICATION = 'NOTIFICATION',
+  DONE = 'DONE',
+  ERROR = 'ERROR'
+}
 
-	public ReleaseManagerException(String message) {
-		super(message);
-	}
+export class ProgressMessages {
+  runningMessage: string;
+  successMessage: string;
+  failedMessage: string;
 
-	public ReleaseManagerException(String message, Throwable cause) {
-		super(message, cause);
-	}
+  constructor(runningMessage: string, successMessage: string, failedMessage: string) {
+    this.runningMessage = runningMessage;
+    this.successMessage = successMessage;
+    this.failedMessage = failedMessage;
+  }
 }

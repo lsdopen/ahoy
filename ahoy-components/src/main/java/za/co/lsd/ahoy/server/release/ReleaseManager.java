@@ -14,11 +14,13 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server;
+package za.co.lsd.ahoy.server.release;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
+import za.co.lsd.ahoy.server.AhoyConstants;
 import za.co.lsd.ahoy.server.argocd.ApplicationNameResolver;
 import za.co.lsd.ahoy.server.argocd.ArgoClient;
 import za.co.lsd.ahoy.server.argocd.model.*;
@@ -30,6 +32,8 @@ import za.co.lsd.ahoy.server.helm.ChartGenerator;
 import za.co.lsd.ahoy.server.releases.Release;
 import za.co.lsd.ahoy.server.releases.ReleaseVersion;
 import za.co.lsd.ahoy.server.settings.SettingsProvider;
+import za.co.lsd.ahoy.server.task.TaskExecutor;
+import za.co.lsd.ahoy.server.task.TaskProgressService;
 
 import java.util.*;
 
@@ -41,6 +45,8 @@ public class ReleaseManager {
 	private final ArgoClient argoClient;
 	private final SettingsProvider settingsProvider;
 	private final ApplicationNameResolver applicationNameResolver;
+	private TaskProgressService taskProgressService;
+	private TaskExecutor taskExecutor;
 
 	public ReleaseManager(LocalRepo localRepo, ChartGenerator chartGenerator, ArgoClient argoClient, SettingsProvider settingsProvider, ApplicationNameResolver applicationNameResolver) {
 		this.localRepo = localRepo;
@@ -50,30 +56,47 @@ public class ReleaseManager {
 		this.applicationNameResolver = applicationNameResolver;
 	}
 
+	@Autowired
+	public void setTaskProgressService(TaskProgressService taskProgressService) {
+		this.taskProgressService = taskProgressService;
+	}
+
+	@Autowired
+	public void setTaskExecutor(TaskExecutor taskExecutor) {
+		this.taskExecutor = taskExecutor;
+	}
+
 	public ArgoApplication deploy(EnvironmentRelease environmentRelease, ReleaseVersion releaseVersion, DeployOptions deployOptions) throws ReleaseManagerException {
 		Objects.requireNonNull(environmentRelease, "environmentRelease is required");
 		Objects.requireNonNull(releaseVersion, "releaseVersion is required");
 
 		try {
+			taskProgressService.progress("requesting new working tree");
 			Optional<String> commit;
 			try (LocalRepo.WorkingTree workingTree = localRepo.requestWorkingTree()) {
+				taskProgressService.progress("generating helm chart");
 				chartGenerator.generate(environmentRelease, releaseVersion, workingTree.getPath());
+				taskProgressService.progress("committing chart to working tree");
 				commit = workingTree.push(deployOptions.getCommitMessage());
 			}
 
 			if (commit.isPresent()) {
+				taskProgressService.progress("pushing to git repository");
 				localRepo.push();
 			}
 
+			taskProgressService.progress("updating repository in Argo CD");
 			argoClient.upsertRepository();
 
 			ArgoApplication argoApplication = buildApplication(environmentRelease, releaseVersion);
 			String applicationName = argoApplication.getMetadata().getName();
 			Optional<ArgoApplication> existingApplication = argoClient.getApplication(applicationName);
 			if (existingApplication.isPresent()) {
+				taskProgressService.progress("updating Argo CD application " + applicationName);
 				argoApplication = argoClient.updateApplication(argoApplication);
-				argoClient.getApplication(applicationName, true); // refresh app
+				taskExecutor.executeSync(() -> argoClient.getApplication(applicationName, true), null);
 			} else {
+				taskProgressService.progress("creating Argo CD application " + applicationName);
 				argoApplication = argoClient.createApplication(argoApplication);
 			}
 
@@ -90,6 +113,7 @@ public class ReleaseManager {
 		Objects.requireNonNull(environmentRelease, "environmentRelease is required");
 
 		String applicationName = environmentRelease.getArgoCdName();
+		taskProgressService.progress("deleting Argo CD application " + applicationName);
 		argoClient.getApplication(applicationName)
 			.ifPresent((existingApplication) -> argoClient.deleteApplication(applicationName));
 	}
@@ -132,7 +156,7 @@ public class ReleaseManager {
 		Release release = environmentRelease.getRelease();
 
 		Map<String, String> labels = new HashMap<>();
-		labels.put(ArgoMetadata.MANAGED_BY_LABEL, "ahoy");
+		labels.put(ArgoMetadata.MANAGED_BY_LABEL, AhoyConstants.MANAGED_BY_LABEL_VALUE);
 		labels.put(ArgoMetadata.CLUSTER_NAME_LABEL, environment.getCluster().getName());
 		labels.put(ArgoMetadata.ENVIRONMENT_NAME_LABEL, environment.getName());
 		labels.put(ArgoMetadata.RELEASE_NAME_LABEL, release.getName());

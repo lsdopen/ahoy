@@ -17,10 +17,11 @@
 import {animate, style, transition, trigger} from '@angular/animations';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MessageService} from 'primeng/api';
-import {Description, DialogUtilService, LoggerService, Notification, NotificationsService} from 'projects/ahoy-components/src/public-api';
+import {Description, DialogUtilService, LoggerService, Notification, NotificationsService, ProgressService, State, TaskEvent} from 'projects/ahoy-components/src/public-api';
 import {Subscription} from 'rxjs';
 import {AppComponent} from '../app.component';
 import {AppMainComponent} from '../app.main.component';
+import {KeyValue} from '@angular/common';
 
 @Component({
   selector: 'app-notifications',
@@ -42,20 +43,23 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   private notificationsSubscription: Subscription;
   private topBarMenuSubscription: Subscription;
   private readonly NOTIFICATIONS_TO_SHOW = 5;
-  notifications: Notification[];
+  notifications = new Map<string, Notification>();
   viewed = true;
+  timeOrder = (a: KeyValue<string, Notification>, b: KeyValue<string, Notification>): number => {
+    return b.value.time.getTime() - a.value.time.getTime();
+  }
 
   constructor(public appMain: AppMainComponent, public app: AppComponent,
               private log: LoggerService,
               private notificationsService: NotificationsService,
               private dialogUtilService: DialogUtilService,
-              private messageService: MessageService) {
-    this.notifications = [];
+              private messageService: MessageService,
+              private progressService: ProgressService) {
   }
 
   ngOnInit() {
     this.notificationsSubscription = this.notificationsService.notifications
-      .subscribe((notification) => this.onNotification(notification));
+      .subscribe((notification) => this.addNotification(notification));
 
     this.topBarMenuSubscription = this.appMain.topBarMenuChanged.subscribe(topBarEvent => {
       if (topBarEvent.item === 'notifications') {
@@ -74,36 +78,95 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     }
   }
 
-  private onNotification(notification: Notification) {
-    this.notifications.unshift(notification);
-    const length = this.notifications.length;
-    if (length > this.NOTIFICATIONS_TO_SHOW) {
-      this.notifications.pop();
+  private addNotification(notification: Notification) {
+    this.notifications.set(notification.id, notification);
+
+    const notificationsArr = Array.from(this.notifications.values());
+    notificationsArr.sort((a, b) => b.time.getTime() - a.time.getTime());
+    for (let i = this.NOTIFICATIONS_TO_SHOW; i < notificationsArr.length; i++) {
+      this.notifications.delete(notificationsArr[i].id);
     }
     this.viewed = false;
-    this.messageService.add({
-      severity: notification.error ? 'warn' : 'info',
-      summary: notification.error ? 'Warn' : 'Info',
-      detail: notification.text
-    });
+    this.showMessage(notification);
   }
 
   closedNotifications() {
-    for (const notification of this.notifications) {
+    for (const notification of this.notifications.values()) {
       notification.viewed = true;
     }
     this.viewed = true;
   }
 
   unreadNotifications(): number {
-    return this.notifications.filter((n) => !n.viewed).length;
+    return Array.from(this.notifications.values()).filter((n) => !n.viewed).length;
   }
 
   showBadge() {
-    return !this.viewed && this.notifications.length > 0;
+    return !this.viewed && this.notifications.size > 0;
+  }
+
+  showProgress(): boolean {
+    return this.progressService.progress || this.notificationsInProgress();
   }
 
   showDescription(notification: Notification) {
     this.dialogUtilService.showDescriptionDialog(new Description('Notification', notification.text, notification.errorTrace));
+  }
+
+  notificationsInProgress(): boolean {
+    return Array.from(this.notifications.values()).find(n => n.state === State.IN_PROGRESS) !== undefined;
+  }
+
+  taskEventOccurred(event: TaskEvent) {
+    const taskProgressEvent = event.taskProgressEvent;
+    if (taskProgressEvent) {
+      let notification = this.notifications.get(taskProgressEvent.id);
+      if (notification) {
+        notification.setProgress(taskProgressEvent);
+      } else {
+        notification = Notification.createFromProgress(taskProgressEvent);
+      }
+
+      this.addNotification(notification);
+    }
+  }
+
+  notificationType(notification: Notification): string {
+    switch (notification.state) {
+      case State.NOTIFICATION:
+      case State.DONE:
+        return 'Info';
+      case State.WAITING:
+        return 'Queued';
+      case State.IN_PROGRESS:
+        return 'Task';
+      case State.ERROR:
+        return 'Error';
+    }
+  }
+
+  notificationIcon(notification: Notification): string {
+    switch (notification.state) {
+      case State.NOTIFICATION:
+      case State.DONE:
+        return 'pi-info-circle';
+      case State.WAITING:
+      case State.IN_PROGRESS:
+        return 'pi-spin pi-spinner';
+      case State.ERROR:
+        return 'pi-exclamation-triangle';
+    }
+  }
+
+  private showMessage(notification: Notification) {
+    switch (notification.state) {
+      case State.NOTIFICATION:
+      case State.DONE:
+        this.messageService.add({summary: 'Info', severity: 'info', detail: notification.text});
+        break;
+      case State.ERROR:
+        this.messageService.add({summary: 'Error', severity: 'error', detail: notification.text});
+        break;
+    }
   }
 }

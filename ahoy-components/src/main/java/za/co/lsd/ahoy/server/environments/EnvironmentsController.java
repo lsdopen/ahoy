@@ -17,31 +17,33 @@
 package za.co.lsd.ahoy.server.environments;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.*;
 import za.co.lsd.ahoy.server.security.Role;
+import za.co.lsd.ahoy.server.task.TaskExecutor;
 
-@RepositoryRestController
-@RequestMapping("/environments")
+@RestController
+@RequestMapping("/api/environments")
 @Slf4j
 @Secured({Role.admin, Role.releasemanager})
 public class EnvironmentsController {
 	private final EnvironmentService environmentService;
+	private final TaskExecutor taskExecutor;
 
-	public EnvironmentsController(EnvironmentService environmentService) {
+	public EnvironmentsController(EnvironmentService environmentService, TaskExecutor taskExecutor) {
 		this.environmentService = environmentService;
+		this.taskExecutor = taskExecutor;
 	}
 
 	@DeleteMapping("/delete/{environmentId}")
-	public ResponseEntity<Environment> delete(@PathVariable Long environmentId) {
+	public ListenableFuture<Environment> delete(@PathVariable Long environmentId,
+												@RequestBody DeleteOptions deleteOptions) {
 
-		Environment environment = environmentService.delete(environmentId);
-
-		return new ResponseEntity<>(environment, new HttpHeaders(), HttpStatus.OK);
+		return taskExecutor.executeAsync(() -> environmentService.delete(environmentId), deleteOptions.getProgressMessages());
 	}
 
 	@PostMapping("/duplicate/{sourceEnvironmentId}/{destEnvironmentId}")
@@ -54,12 +56,10 @@ public class EnvironmentsController {
 	}
 
 	@PostMapping("/{environmentId}/move")
-	public ResponseEntity<Environment> move(@PathVariable Long environmentId,
-											@RequestBody MoveOptions moveOptions) {
+	public ListenableFuture<Environment> move(@PathVariable Long environmentId,
+											  @RequestBody MoveOptions moveOptions) {
 
-		Environment destEnvironment = environmentService.move(environmentId, moveOptions);
-
-		return new ResponseEntity<>(destEnvironment, new HttpHeaders(), HttpStatus.OK);
+		return taskExecutor.executeSync(() -> environmentService.move(environmentId, moveOptions), moveOptions.getProgressMessages());
 	}
 
 	@PutMapping("/{environmentId}/updateOrderIndex")

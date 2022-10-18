@@ -14,29 +14,57 @@
  *    limitations under the License.
  */
 
-import {HttpErrorResponse} from '@angular/common/http';
+import {State, TaskProgressEvent} from '../task/task';
+import {ErrorUtil} from '../util/error-util';
 
 export class Notification {
   text: string;
   viewed: boolean;
   time: Date;
-  error: any;
   errorMessage: string;
   errorTrace: string;
+
+  id: string;
+  message: string;
+  state: State;
 
   constructor(text: string, error?: any) {
     this.text = text;
     this.viewed = false;
-    this.error = error;
     this.time = new Date();
+    this.id = this.time.getTime().toString();
 
-    if (error instanceof HttpErrorResponse && error.status === 500 && error.error) {
+    if (ErrorUtil.is500Error(error) && error.error) {
       error = error.error;
     }
 
     if (error) {
+      this.state = State.ERROR;
       this.errorMessage = ('message' in error) ? error.message : `Unknown error:  ${error.toString()}`;
       this.errorTrace = ('trace' in error) ? error.trace : undefined;
+
+    } else {
+      this.state = State.NOTIFICATION;
+    }
+  }
+
+  public static createFromProgress(taskProgressEvent: TaskProgressEvent): Notification {
+    const notification = new Notification(taskProgressEvent.status, null);
+    notification.id = taskProgressEvent.id;
+    notification.state = taskProgressEvent.state;
+    notification.time = new Date(taskProgressEvent.time);
+    return notification;
+  }
+
+  public setProgress(taskProgressEvent: TaskProgressEvent): void {
+    this.state = taskProgressEvent.state;
+    if (taskProgressEvent.status) {
+      this.text = taskProgressEvent.status;
+    }
+    this.message = taskProgressEvent.message;
+    if (this.state === State.ERROR) {
+      this.errorMessage = taskProgressEvent.status;
+      this.errorTrace = taskProgressEvent.trace;
     }
   }
 

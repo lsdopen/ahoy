@@ -30,8 +30,9 @@ import {TaskEvent} from '../taskevents/task-events';
 import {Role} from '../util/auth';
 import {LoggerService} from '../util/logger.service';
 import {AddReleaseDialogComponent} from './add-release-dialog/add-release-dialog.component';
-import {EnvironmentRelease, EnvironmentReleaseId} from './environment-release';
+import {EnvironmentRelease, EnvironmentReleaseId, RemoveOptions} from './environment-release';
 import {EnvironmentReleaseService} from './environment-release.service';
+import {ProgressMessages} from '../task/task';
 
 @Component({
   selector: 'app-environment-releases',
@@ -110,7 +111,14 @@ export class EnvironmentReleasesComponent implements OnInit {
       message: `Are you sure you want to remove ${(environmentRelease.release as Release).name} from ${(environmentRelease.environment as Environment).name}?`,
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.releaseManageService.remove(environmentRelease).pipe(
+        const relFromEnv = `${(environmentRelease.release as Release).name} from environment ${(environmentRelease.environment as Environment).name}`;
+        const removeOptions = new RemoveOptions(
+          new ProgressMessages(
+            `Removing ${relFromEnv}`,
+            `Removed ${relFromEnv}`,
+            `Failed to remove ${relFromEnv}`
+          ));
+        this.releaseManageService.remove(environmentRelease, removeOptions).pipe(
           mergeMap(() => this.loadReleasesForEnvironment())
         ).subscribe();
       }

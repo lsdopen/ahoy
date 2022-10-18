@@ -49,6 +49,7 @@ public class ApplicationVersion {
 	@Convert(converter = ApplicationSpecConverter.class)
 	@Column(length = 10485760)
 	@JsonProperty(access = WRITE_ONLY)
+	@ToString.Exclude
 	private ApplicationSpec spec;
 
 	@NotNull

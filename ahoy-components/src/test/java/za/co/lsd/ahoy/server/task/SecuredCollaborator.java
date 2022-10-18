@@ -14,20 +14,19 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server;
+package za.co.lsd.ahoy.server.task;
 
-import lombok.Getter;
-import org.springframework.context.ApplicationEvent;
-import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.stereotype.Component;
+import za.co.lsd.ahoy.server.security.Role;
 
-@Getter
-public class ReleaseStatusChangedEvent extends ApplicationEvent {
-	private final EnvironmentReleaseId environmentReleaseId;
-	private final Long releaseVersionId;
+@Component
+@Slf4j
+public class SecuredCollaborator {
 
-	public ReleaseStatusChangedEvent(Object source, EnvironmentReleaseId environmentReleaseId, Long releaseVersionId) {
-		super(source);
-		this.environmentReleaseId = environmentReleaseId;
-		this.releaseVersionId = releaseVersionId;
+	@Secured(Role.admin)
+	public void secureMethod() {
+		log.info("Executed secured collaborator method");
 	}
 }

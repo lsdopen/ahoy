@@ -16,7 +16,7 @@
 
 import {AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import {PrimeNGConfig} from 'primeng/api';
-import {AppearanceSettingsService, ProgressService} from 'projects/ahoy-components/src/public-api';
+import {AppearanceSettingsService} from 'projects/ahoy-components/src/public-api';
 import {AppComponent} from './app.component';
 import {MenuService} from './app.menu.service';
 
@@ -69,7 +69,6 @@ export class AppMainComponent implements AfterViewInit, OnInit, OnDestroy {
   constructor(public renderer: Renderer2,
               private menuService: MenuService,
               private primengConfig: PrimeNGConfig,
-              private progressService: ProgressService,
               public app: AppComponent,
               public appearanceSettingsService: AppearanceSettingsService) {
   }
@@ -255,10 +254,6 @@ export class AppMainComponent implements AfterViewInit, OnInit, OnDestroy {
       document.body.className = document.body.className.replace(new RegExp('(^|\\b)' +
         'blocked-scroll'.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
     }
-  }
-
-  showProgress(): boolean {
-    return this.progressService.progress;
   }
 
   ngOnDestroy() {

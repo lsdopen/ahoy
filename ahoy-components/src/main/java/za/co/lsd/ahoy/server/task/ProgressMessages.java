@@ -14,16 +14,15 @@
  *    limitations under the License.
  */
 
-package za.co.lsd.ahoy.server.releases;
+package za.co.lsd.ahoy.server.task;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class UpgradeOptions {
-	private String version;
-	private boolean copyEnvironmentConfig;
+public class ProgressMessages {
+	private String runningMessage;
+	private String successMessage;
+	private String failedMessage;
 }

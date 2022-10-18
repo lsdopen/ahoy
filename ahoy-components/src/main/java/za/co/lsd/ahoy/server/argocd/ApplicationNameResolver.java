@@ -16,6 +16,7 @@
 
 package za.co.lsd.ahoy.server.argocd;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import za.co.lsd.ahoy.server.cluster.Cluster;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
@@ -29,6 +30,6 @@ public class ApplicationNameResolver {
 		Environment environment = environmentRelease.getEnvironment();
 		Cluster cluster = environment.getCluster();
 		Release release = environmentRelease.getRelease();
-		return cluster.getName() + "-" + environment.getName() + "-" + release.getName();
+		return StringUtils.truncate(cluster.getName() + "-" + environment.getName() + "-" + release.getName(), 53);
 	}
 }

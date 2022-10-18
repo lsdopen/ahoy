@@ -36,6 +36,7 @@
             <input pInputText id="applicationName" [(ngModel)]="application.name" name="applicationName"
                    required
                    pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
+                   maxlength="53"
                    [appNameUnique]="applicationsForValidation"
                    [ignoreOwnId]="application.id">
             <label for="applicationName">Name</label>
