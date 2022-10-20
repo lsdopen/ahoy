@@ -12,8 +12,11 @@ RUN apt-get -yq update
 RUN apt-get -yqq install kubectl
 
 # kubeseal
-RUN wget -nv https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.15.0/kubeseal-linux-amd64 -O kubeseal --no-check-certificate
-RUN install -m 755 kubeseal /usr/local/bin/kubeseal
+RUN wget -nv https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.19.1/kubeseal-0.19.1-linux-amd64.tar.gz --no-check-certificate \
+    && tar -xvzf kubeseal-0.19.1-linux-amd64.tar.gz kubeseal \
+    && install -m 755 kubeseal /usr/local/bin/kubeseal \
+    && rm kubeseal-0.19.1-linux-amd64.tar.gz \
+    && rm kubeseal
 
 WORKDIR /tmp
 
