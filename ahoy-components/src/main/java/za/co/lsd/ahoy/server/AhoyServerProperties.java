@@ -31,7 +31,6 @@ public class AhoyServerProperties {
 	private String releaseName = "ahoy";
 	private String releaseNamespace = "ahoy";
 	private String host = "default.host";
-	private String clusterType = "kubernetes";
 	private String repoPath;
 	private Auth auth;
 	private SealedSecrets sealedSecrets = new SealedSecrets();

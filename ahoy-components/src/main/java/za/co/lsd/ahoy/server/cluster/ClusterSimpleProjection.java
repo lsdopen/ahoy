@@ -28,6 +28,4 @@ public interface ClusterSimpleProjection {
 	String getHost();
 
 	boolean getInCluster();
-
-	ClusterType getType();
 }

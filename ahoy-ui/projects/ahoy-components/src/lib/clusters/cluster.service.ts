@@ -109,22 +109,6 @@ export class ClusterService {
     );
   }
 
-  testConnection(cluster: Cluster): Observable<Cluster> {
-    const url = `/data/clusters/test`;
-    return this.restClient.post<null>(url, cluster, true).pipe(
-      tap(() => {
-        this.log.debug('tested connection to cluster', cluster);
-        const text = `Successfully connected to cluster '${cluster.name}'`;
-        this.notificationsService.notification(new Notification(text));
-      }),
-      catchError((error) => {
-        const text = `Failed to connect to cluster ${cluster.name}`;
-        this.notificationsService.notification(new Notification(text, error));
-        return EMPTY;
-      })
-    );
-  }
-
   link(id: number): string {
     return this.restClient.getLink('/data/clusters', id);
   }

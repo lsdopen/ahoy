@@ -36,7 +36,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import za.co.lsd.ahoy.server.AhoyTestServerApplication;
 import za.co.lsd.ahoy.server.argocd.model.ArgoEvents;
 import za.co.lsd.ahoy.server.cluster.Cluster;
-import za.co.lsd.ahoy.server.cluster.ClusterType;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseId;
 import za.co.lsd.ahoy.server.environments.Environment;
@@ -464,7 +463,7 @@ public class ReleaseControllerTest {
 	}
 
 	private EnvironmentRelease testEnvRelease(Long clusterId, Long environmentId, Long releaseId) {
-		Cluster cluster = new Cluster(clusterId, "test-cluster-1", "https://kubernetes1.default.svc", ClusterType.KUBERNETES);
+		Cluster cluster = new Cluster(clusterId, "test-cluster-1", "https://kubernetes1.default.svc");
 		Environment environment = new Environment(environmentId, "dev");
 		cluster.addEnvironment(environment);
 		Release release = new Release(releaseId, "release1");

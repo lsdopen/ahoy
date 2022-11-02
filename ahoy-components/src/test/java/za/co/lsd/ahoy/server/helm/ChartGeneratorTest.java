@@ -30,7 +30,6 @@ import org.yaml.snakeyaml.Yaml;
 import za.co.lsd.ahoy.server.AhoyTestServerApplication;
 import za.co.lsd.ahoy.server.applications.*;
 import za.co.lsd.ahoy.server.cluster.Cluster;
-import za.co.lsd.ahoy.server.cluster.ClusterType;
 import za.co.lsd.ahoy.server.docker.DockerRegistry;
 import za.co.lsd.ahoy.server.docker.DockerRegistryProvider;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
@@ -85,7 +84,7 @@ public class ChartGeneratorTest {
 	@Test
 	public void generateBasic() throws Exception {
 		// given
-		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
+		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
 		Environment environment = new Environment("dev");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
@@ -165,7 +164,7 @@ public class ChartGeneratorTest {
 	@Test
 	public void generateBasicMultiContainer() throws Exception {
 		// given
-		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
+		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
 		Environment environment = new Environment("dev");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
@@ -257,7 +256,7 @@ public class ChartGeneratorTest {
 	@Test
 	public void generateBasicInitContainer() throws Exception {
 		// given
-		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
+		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
 		Environment environment = new Environment("dev");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
@@ -346,7 +345,7 @@ public class ChartGeneratorTest {
 	@Test
 	public void generateFull() throws Exception {
 		// given
-		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
+		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
 		cluster.setHost("my-host");
 		Environment environment = new Environment("dev");
 		cluster.addEnvironment(environment);
@@ -551,7 +550,7 @@ public class ChartGeneratorTest {
 	@Test
 	public void generateFullMultiContainer() throws Exception {
 		// given
-		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
+		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
 		cluster.setHost("my-host");
 		Environment environment = new Environment("dev");
 		cluster.addEnvironment(environment);
@@ -791,7 +790,7 @@ public class ChartGeneratorTest {
 	@Test
 	public void generateFullInitContainer() throws Exception {
 		// given
-		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
+		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
 		cluster.setHost("my-host");
 		Environment environment = new Environment("dev");
 		cluster.addEnvironment(environment);
@@ -1029,7 +1028,7 @@ public class ChartGeneratorTest {
 	@Test
 	public void generateEnvConfigOnly() throws Exception {
 		// given
-		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
+		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
 		cluster.setHost("my-host");
 		Environment environment = new Environment("dev");
 		cluster.addEnvironment(environment);
@@ -1183,7 +1182,7 @@ public class ChartGeneratorTest {
 	@Test
 	public void generateBasicPruneTemplateFiles() throws Exception {
 		// given
-		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
+		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
 		Environment environment = new Environment("dev");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");

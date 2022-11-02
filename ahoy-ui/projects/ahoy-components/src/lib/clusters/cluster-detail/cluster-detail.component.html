@@ -25,19 +25,12 @@
       <p-toolbar>
         <ng-template pTemplate="left">
           <button pButton pRipple label="Save" icon="pi pi-save" class="p-button-success mr-2 mb-2" (click)="save()" [disabled]="clusterForm.invalid"></button>
-          <button pButton pRipple label="Test" icon="pi pi-question" class="p-button-info mr-2 mb-2" (click)="test()" [disabled]="clusterForm.invalid"></button>
           <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-plain mb-2" (click)="cancel()"></button>
         </ng-template>
       </p-toolbar>
 
       <form #clusterForm="ngForm">
         <div class="p-fluid col-12 md:col-5">
-
-          <div class="field p-float-label">
-            <p-dropdown id="clusterType" [options]="types" [(ngModel)]="cluster.type" [autoDisplayFirst]="false" [showClear]="true"
-                        optionLabel="viewValue" optionValue="value" name="clusterType" required></p-dropdown>
-            <label for="clusterType">Type</label>
-          </div>
 
           <div class="field p-float-label">
             <input pInputText id="clusterName" [(ngModel)]="cluster.name" name="clusterName" required
@@ -59,22 +52,6 @@
           </div>
         </div>
 
-        <div class="p-fluid col-12">
-          <i class="pi {{hideToken ? 'pi-eye-slash':'pi-eye'}}" style="cursor: pointer; width: 10px" (click)="hideToken = !hideToken"></i>
-
-          <div class="field p-float-label">
-            <input pInputText id="clusterToken" [(ngModel)]="cluster.token" name="clusterToken"
-                   [type]="hideToken ? 'password' : 'text'"
-                   required/>
-            <label for="clusterToken">Token</label>
-          </div>
-
-          <div class="field p-float-label">
-            <textarea rows="20" cols="60" pInputTextarea id="caCertData" [(ngModel)]="cluster.caCertData" name="caCertData" required></textarea>
-            <label for="caCertData">CA Certificate</label>
-          </div>
-
-        </div>
       </form>
 
     </div>

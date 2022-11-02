@@ -19,7 +19,6 @@ package za.co.lsd.ahoy.server.helm.values;
 import org.junit.jupiter.api.Test;
 import za.co.lsd.ahoy.server.applications.Application;
 import za.co.lsd.ahoy.server.cluster.Cluster;
-import za.co.lsd.ahoy.server.cluster.ClusterType;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.releases.Release;
@@ -32,7 +31,7 @@ class RouteHostnameResolverTest {
 	@Test
 	void resolve() {
 		// given
-		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
+		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
 		cluster.setHost("minikube.host");
 		Environment environment = new Environment("dev");
 		cluster.addEnvironment(environment);
@@ -51,7 +50,7 @@ class RouteHostnameResolverTest {
 	@Test
 	void resolveNull() {
 		// given
-		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
+		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
 		cluster.setHost("minikube.host");
 		Environment environment = new Environment("dev");
 		cluster.addEnvironment(environment);
@@ -70,7 +69,7 @@ class RouteHostnameResolverTest {
 	@Test
 	void resolveIncorrectKey() {
 		// given
-		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
+		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
 		cluster.setHost("minikube.host");
 		Environment environment = new Environment("dev");
 		cluster.addEnvironment(environment);

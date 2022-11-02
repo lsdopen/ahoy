@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.Type;
 import za.co.lsd.ahoy.server.environments.Environment;
 
 import javax.persistence.*;
@@ -53,24 +52,9 @@ public class Cluster {
 	@JsonProperty(access = WRITE_ONLY)
 	private String masterUrl;
 	@NotNull
-	@Lob
-	@Type(type = "org.hibernate.type.TextType")
-	@JsonProperty(access = WRITE_ONLY)
-	@ToString.Exclude
-	private String token;
-	@NotNull
-	@Lob
-	@Type(type = "org.hibernate.type.TextType")
-	@JsonProperty(access = WRITE_ONLY)
-	@ToString.Exclude
-	private String caCertData;
-	@NotNull
 	private String host;
 	@NotNull
 	private boolean inCluster;
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	private ClusterType type;
 
 	@OneToMany(mappedBy = "cluster", cascade = CascadeType.REMOVE)
 	@OrderBy("id")
@@ -78,28 +62,23 @@ public class Cluster {
 	@ToString.Exclude
 	private List<Environment> environments = new ArrayList<>();
 
-	public Cluster(@NotNull String name, @NotNull String masterUrl, @NotNull ClusterType type) {
+	public Cluster(@NotNull String name, @NotNull String masterUrl) {
 		this.name = name;
 		this.masterUrl = masterUrl;
-		this.type = type;
 	}
 
-	public Cluster(Long id, @NotNull String name, @NotNull String masterUrl, @NotNull ClusterType type) {
+	public Cluster(Long id, @NotNull String name, @NotNull String masterUrl) {
 		this.id = id;
 		this.name = name;
 		this.masterUrl = masterUrl;
-		this.type = type;
 	}
 
 	public Cluster(ClusterDTO dto) {
 		this.id = dto.getId();
 		this.name = dto.getName();
 		this.masterUrl = dto.getMasterUrl();
-		this.token = dto.getToken();
-		this.caCertData = dto.getCaCertData();
 		this.host = dto.getHost();
 		this.inCluster = dto.isInCluster();
-		this.type = dto.getType();
 	}
 
 	public void addEnvironment(Environment environment) {

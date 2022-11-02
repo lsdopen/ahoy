@@ -21,5 +21,5 @@ VALUES ('ARGO', '{"type":"ARGO","argoServer":"https://argocd.minikube.host:443/"
 INSERT INTO PUBLIC.SETTINGS (TYPE, SETTINGS)
 VALUES ('DOCKER', '{"type":"DOCKER","dockerRegistries":[{"name":"my-docker-hub","server":"https://docker.io/","username":"docker-server","password":"docker-password","secure":true}]}');
 
-INSERT INTO PUBLIC.CLUSTER (ID, NAME, TYPE, MASTER_URL, HOST, TOKEN, CA_CERT_DATA, IN_CLUSTER)
-VALUES (1, 'minikube', 'KUBERNETES', 'https://minikube:8443', 'minikube.host', 'cluster-token', 'cluster-cert', true);
+INSERT INTO PUBLIC.CLUSTER (ID, NAME, MASTER_URL, HOST, IN_CLUSTER)
+VALUES (1, 'minikube', 'https://minikube:8443', 'minikube.host', true);

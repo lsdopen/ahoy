@@ -72,10 +72,6 @@ export class ClusterDetailComponent implements OnInit {
       .subscribe(() => this.location.back());
   }
 
-  test() {
-    this.clusterService.testConnection(this.cluster).subscribe();
-  }
-
   cancel() {
     this.cluster = undefined;
     this.location.back();

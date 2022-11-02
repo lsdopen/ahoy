@@ -25,9 +25,6 @@ public class ClusterDTO {
 	private Long id;
 	private String name;
 	private String masterUrl;
-	private String token;
-	private String caCertData;
 	private String host;
 	private boolean inCluster;
-	private ClusterType type;
 }

@@ -2,12 +2,14 @@
 
 Ahoy makes use of [Keycloak](https://www.keycloak.org/) for authentication and authorisation.
 
-Use the default user credentials to log in for the first time:
+Use the default admin user credentials to log in for the first time:
 ```text
-Username: ahoy
-Password: ahoy
+Username: admin
+Password: admin
 ```
 Note: on first login you'll be required to update the password for the default ahoy user.
+
+Please refer to [Users and Roles](./users_roles.md) for other users available.
 
 ## Setup
 

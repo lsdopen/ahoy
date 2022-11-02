@@ -8,7 +8,7 @@ For each new cluster you would like to manage, setup the following:
 
 Each cluster you'd like to manage with Ahoy needs to be added under Clusters.
 
-Add a new cluster and enter the type, name, master url, host and authentication details.
+Add a new cluster and enter the name, master url and host.
 
 Your `kubectl` context needs to be setup for the current cluster you're adding.
 
@@ -17,16 +17,9 @@ To get the master url:
 ```shell
 kubectl cluster-info
 ```
+Please note; the master url needs to match the cluster URL in ArgoCD in order to deploy releases to the cluster.
 
 The host is the suffix that Ahoy uses to suggest an ingress/route path for each application that is deployed to this cluster.
-
-Refer to Kubernetes and OpenShift sections to create a ahoy service account and retrieve the token.
-
-Getting CA Certificate from kubectl:
-
-```shell
-kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}' | base64 --decode
-```
 
 ## ArgoCD
 
@@ -54,23 +47,3 @@ kubectl create -f sealed-secret.keys -n kube-system
 ```
 
 [Install Sealed Secrets CRD and controller](https://github.com/bitnami-labs/sealed-secrets/releases)
-
-## Kubernetes
-
-Ahoy requires a service account to manage the Kubernetes cluster, to create this service account and get a token for the service account, follow these instructions:
-
-```shell
-kubectl create serviceaccount -n ahoy ahoy
-kubectl create clusterrolebinding ahoy --clusterrole cluster-admin --serviceaccount=ahoy:ahoy
-kubectl describe secrets -n ahoy ahoy-token-*****
-```
-
-## OpenShift
-
-Ahoy requires a service account to manage the OpenShift cluster, to create this service account and get a token for the service account, follow these instructions:
-
-```shell
-oc create serviceaccount ahoy -n ahoy
-oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:ahoy:ahoy
-oc serviceaccounts get-token -n ahoy ahoy
-```

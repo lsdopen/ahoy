@@ -20,8 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import za.co.lsd.ahoy.server.clustermanager.ClusterManager;
-import za.co.lsd.ahoy.server.clustermanager.ClusterManagerFactory;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.environments.EnvironmentService;
 
@@ -30,12 +28,10 @@ import za.co.lsd.ahoy.server.environments.EnvironmentService;
 public class ClusterService {
 	private final ClusterRepository clusterRepository;
 	private final EnvironmentService environmentService;
-	private final ClusterManagerFactory clusterManagerFactory;
 
-	public ClusterService(ClusterRepository clusterRepository, EnvironmentService environmentService, ClusterManagerFactory clusterManagerFactory) {
+	public ClusterService(ClusterRepository clusterRepository, EnvironmentService environmentService) {
 		this.clusterRepository = clusterRepository;
 		this.environmentService = environmentService;
-		this.clusterManagerFactory = clusterManagerFactory;
 	}
 
 	public Long count() {
@@ -55,10 +51,5 @@ public class ClusterService {
 		}
 
 		return cluster;
-	}
-
-	public void testConnection(Cluster cluster) {
-		ClusterManager clusterManager = clusterManagerFactory.newManager(cluster);
-		clusterManager.testConnection();
 	}
 }

@@ -12,13 +12,13 @@ helm repo add ahoy https://lsdopen.github.io/ahoy-helm
 helm repo update
 ```
 
-Customise the Ahoy installation by editing the values in values-k8s.yaml.
+Customise the Ahoy installation by editing the values in values.yaml.
 
 Example value files available at: https://github.com/lsdopen/ahoy-helm/tree/main/charts/ahoy
 
 We are now ready to install Ahoy:
 ```shell
-helm install ahoy --namespace ahoy --create-namespace --values values-k8s.yaml ahoy/ahoy
+helm install ahoy --namespace ahoy --create-namespace --values values.yaml ahoy/ahoy
 ```
 
 Note for GKE installation; you need to create a TLS secret and supply the secret name in the values file:
@@ -31,7 +31,7 @@ Hint: to create a self-signed certificate if you don't already have a certificat
 openssl req -newkey rsa:2048 -nodes -keyout ahoy.key -x509 -days 365 -out ahoy.crt
 ```
 
-Similarly, if you are installing Keycloak and ArgoCd in GKE with Ingress enabled (by default in values-gke.yaml), you will need to create a secret for both as well:
+Similarly, if you are installing Keycloak and ArgoCd in GKE with Ingress enabled, you will need to create a secret for both as well:
 
 kubectl create secret tls keycloak-tls -n ahoy --cert keycloak.crt --key keycloak.key
 kubectl create secret tls argocd-tls-certificate -n ahoy --cert argocd.crt --key argocd.key
@@ -49,9 +49,7 @@ Create Ahoy project:
 oc new-project ahoy --display-name="Ahoy" --description="Ahoy, your Kubernetes release management tool"
 ```
 
-Customise the Ahoy installation by editing the values in values-ocp.yaml.
-
-Example value files available at: https://github.com/lsdopen/ahoy-helm/tree/main/charts/ahoy
+Customise the Ahoy installation by editing the values in values.yaml. You may want to enable a route instead of an ingress.
 
 OpenShift restricts the use of UID by default.
 
@@ -63,7 +61,7 @@ oc adm policy add-scc-to-user anyuid -z ahoy-keycloak -n ahoy
 
 We are now ready to install Ahoy:
 ```shell
-helm install ahoy --namespace ahoy --values values-ocp.yaml ahoy/ahoy
+helm install ahoy --namespace ahoy --values values.yaml ahoy/ahoy
 ```
 
 ## Uninstall

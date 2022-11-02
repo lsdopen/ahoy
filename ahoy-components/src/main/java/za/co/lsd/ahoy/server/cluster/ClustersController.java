@@ -22,7 +22,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import za.co.lsd.ahoy.server.security.Role;
 
 @RepositoryRestController
@@ -47,11 +50,5 @@ public class ClustersController {
 		Cluster cluster = clusterService.delete(clusterId);
 
 		return new ResponseEntity<>(cluster, new HttpHeaders(), HttpStatus.OK);
-	}
-
-	@PostMapping("/test")
-	@ResponseStatus(value = HttpStatus.OK)
-	public void test(@RequestBody ClusterDTO clusterDTO) {
-		clusterService.testConnection(new Cluster(clusterDTO));
 	}
 }
