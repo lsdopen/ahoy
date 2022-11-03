@@ -28,4 +28,4 @@ ADD ${JAR_FILE} app.jar
 ENV SPRING_PROFILES=prod,keycloak
 EXPOSE 8080
 
-ENTRYPOINT ["sh","-c","java -Dspring.profiles.active=$SPRING_PROFILES -jar app.jar", "--spring.config.location=/tmp/config/"]
+ENTRYPOINT exec java -Dspring.profiles.active=$SPRING_PROFILES -jar app.jar --spring.config.location=/tmp/config/
