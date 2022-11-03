@@ -45,6 +45,7 @@ public class AhoyServerProperties {
 		private String clientId;
 		private String issuer;
 		private String jwkSetUri;
+		private String accountUri;
 	}
 
 	@Data
