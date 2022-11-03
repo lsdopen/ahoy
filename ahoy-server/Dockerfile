@@ -25,7 +25,9 @@ ARG JAR_FILE
 ADD ${JAR_FILE} app.jar
 
 # setup environment
-ENV SPRING_PROFILES=prod,keycloak
+ENV JAVA_OPTS=""
+ENV PROFILES=prod,keycloak
+ENV ARGS=""
 EXPOSE 8080
 
-ENTRYPOINT exec java -Dspring.profiles.active=$SPRING_PROFILES -jar app.jar --spring.config.location=/tmp/config/
+ENTRYPOINT exec java $JAVA_OPTS -Dspring.profiles.active=$PROFILES -jar app.jar $ARGS
