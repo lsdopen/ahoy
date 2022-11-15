@@ -46,3 +46,7 @@ Think Helm, Git, GitOps, Continuous Deployment using ArgoCD awesomeness, all don
 - [Additional cluster setup](./docs/add-cluster.md)
 - [Users and Roles](./docs/users_roles.md)
 - [Notes](./docs/notes.md)
+
+## Development
+
+- [DB migration](./docs/db-migration.md)
