@@ -22,7 +22,7 @@
 
   <div class="field p-float-label col-12 md:col-8">
     <input pInputText id="routeHostname{{i}}" name="routeHostname{{i}}" [(ngModel)]="route.hostname"
-           required pTooltip="Available variables: ${release_name} ${application_name} ${environment_name} ${cluster_host}">
+           required pTooltip="Available variables: ${release_name} ${application_name} ${environment_key} ${cluster_host}">
     <label for="routeHostname{{i}}">Hostname</label>
     <input pInputText id="routeHostnameResolved{{i}}" name="routeHostnameResolved{{i}}" ngModel="{{resolveRouteHostname(route)}}"
            pattern="(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])"

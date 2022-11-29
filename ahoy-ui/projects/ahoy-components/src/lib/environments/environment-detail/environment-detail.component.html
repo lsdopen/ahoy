@@ -15,7 +15,7 @@
   -->
 
 <div class="grid">
-  <div class="col-12" *ngIf="environment && environmentsForValidation">
+  <div class="col-12" *ngIf="environment && environmentsForValidation && clusters">
 
     <div class="card">
       <div class="card-header">
@@ -34,14 +34,26 @@
         <div class="p-fluid col-12 md:col-5">
 
           <div class="field p-float-label">
-            <input pInputText id="environmentName" [(ngModel)]="environment.name" name="environmentName" required
+            <input pInputText id="environmentKey" [(ngModel)]="environment.key" name="environmentKey" required
                    pattern="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
+                   maxlength="9"
+                   [disabled]="editMode"
+                   [appEnvironmentKeyUnique]="environmentsForValidation"
+                   [ignoreOwnId]="environment.id">
+            <label for="environmentKey">Key</label>
+            <small class="p-error" *ngIf="environmentForm.form.controls.environmentKey?.hasError('pattern')">
+              Key invalid: should start with and use lower case letters and numbers
+            </small>
+            <small class="p-error" *ngIf="environmentForm.form.controls.environmentKey?.hasError('environmentKeyNotUnique')">
+              Environment already exists
+            </small>
+          </div>
+
+          <div class="field p-float-label">
+            <input pInputText id="environmentName" [(ngModel)]="environment.name" name="environmentName" required
                    [appEnvironmentNameUnique]="environmentsForValidation"
                    [ignoreOwnId]="environment.id">
             <label for="environmentName">Name</label>
-            <small class="p-error" *ngIf="environmentForm.form.controls.environmentName?.hasError('pattern')">
-              Name invalid: should start with and use lower case letters and numbers
-            </small>
             <small class="p-error" *ngIf="environmentForm.form.controls.environmentName?.hasError('environmentNameNotUnique')">
               Environment already exists
             </small>
@@ -49,7 +61,8 @@
 
           <div class="field">
             <p-dropdown id="cluster" name="cluster" [options]="clusters" [(ngModel)]="cluster"
-                        placeholder="Cluster" optionLabel="name" required></p-dropdown>
+                        [disabled]="editMode"
+                        placeholder="Cluster" optionLabel="name" dataKey="id" required ></p-dropdown>
           </div>
 
           <div class="field-checkbox" *ngIf="showCopyEnvironmentConfig()">

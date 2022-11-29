@@ -114,6 +114,7 @@ import {UserRoleDirective} from './util/user-role.directive';
 import {ContainerDetailComponent} from './applications/container-detail/container-detail.component';
 import {ContainerLogsComponent} from './release-manage/release-resources/container-logs/container-logs.component';
 import {ApplicationRoutesComponent} from './release-manage/release-application-environment-config/application-routes/application-routes.component';
+import {EnvironmentKeyUniqueValidatorDirective} from './environments/environment-key-unique-validator.directive';
 
 @NgModule({
   declarations: [
@@ -152,6 +153,7 @@ import {ApplicationRoutesComponent} from './release-manage/release-application-e
     DockerSettingsComponent,
     EnvironmentDetailComponent,
     EnvironmentNameUniqueValidatorDirective,
+    EnvironmentKeyUniqueValidatorDirective,
     EnvironmentReleaseApplicationsStatusComponent,
     EnvironmentReleaseDeploymentStatusComponent,
     EnvironmentReleaseStatusComponent,

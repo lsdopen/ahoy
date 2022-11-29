@@ -85,7 +85,7 @@ public class ChartGeneratorTest {
 	public void generateBasic() throws Exception {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -101,7 +101,7 @@ public class ChartGeneratorTest {
 
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.empty());
 
-		Path basePath = repoPath.resolve(cluster.getName()).resolve(environment.getName()).resolve(release.getName());
+		Path basePath = resolveChartPath(cluster, environment, release);
 		Path templatesPath = basePath.resolve("templates");
 
 		// when
@@ -165,7 +165,7 @@ public class ChartGeneratorTest {
 	public void generateBasicMultiContainer() throws Exception {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -183,7 +183,7 @@ public class ChartGeneratorTest {
 
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.empty());
 
-		Path basePath = repoPath.resolve(cluster.getName()).resolve(environment.getName()).resolve(release.getName());
+		Path basePath = resolveChartPath(cluster, environment, release);
 		Path templatesPath = basePath.resolve("templates");
 
 		// when
@@ -257,7 +257,7 @@ public class ChartGeneratorTest {
 	public void generateBasicInitContainer() throws Exception {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -276,7 +276,7 @@ public class ChartGeneratorTest {
 
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.empty());
 
-		Path basePath = repoPath.resolve(cluster.getName()).resolve(environment.getName()).resolve(release.getName());
+		Path basePath = resolveChartPath(cluster, environment, release);
 		Path templatesPath = basePath.resolve("templates");
 
 		// when
@@ -347,7 +347,7 @@ public class ChartGeneratorTest {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
 		cluster.setHost("my-host");
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -435,7 +435,7 @@ public class ChartGeneratorTest {
 		when(dockerRegistryProvider.dockerRegistryFor(eq("docker-registry"))).thenReturn(Optional.of(dockerRegistry));
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.of(environmentConfig));
 
-		Path basePath = repoPath.resolve(cluster.getName()).resolve(environment.getName()).resolve(release.getName());
+		Path basePath = resolveChartPath(cluster, environment, release);
 		Path templatesPath = basePath.resolve("templates");
 
 		// when
@@ -552,7 +552,7 @@ public class ChartGeneratorTest {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
 		cluster.setHost("my-host");
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -657,7 +657,7 @@ public class ChartGeneratorTest {
 		when(dockerRegistryProvider.dockerRegistryFor(eq("docker-registry"))).thenReturn(Optional.of(dockerRegistry));
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.of(environmentConfig));
 
-		Path basePath = repoPath.resolve(cluster.getName()).resolve(environment.getName()).resolve(release.getName());
+		Path basePath = resolveChartPath(cluster, environment, release);
 		Path templatesPath = basePath.resolve("templates");
 
 		// when
@@ -792,7 +792,7 @@ public class ChartGeneratorTest {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
 		cluster.setHost("my-host");
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -899,7 +899,7 @@ public class ChartGeneratorTest {
 		when(dockerRegistryProvider.dockerRegistryFor(eq("docker-registry"))).thenReturn(Optional.of(dockerRegistry));
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.of(environmentConfig));
 
-		Path basePath = repoPath.resolve(cluster.getName()).resolve(environment.getName()).resolve(release.getName());
+		Path basePath = resolveChartPath(cluster, environment, release);
 		Path templatesPath = basePath.resolve("templates");
 
 		// when
@@ -1030,7 +1030,7 @@ public class ChartGeneratorTest {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
 		cluster.setHost("my-host");
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -1085,7 +1085,7 @@ public class ChartGeneratorTest {
 
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.of(environmentConfig));
 
-		Path basePath = repoPath.resolve(cluster.getName()).resolve(environment.getName()).resolve(release.getName());
+		Path basePath = resolveChartPath(cluster, environment, release);
 		Path templatesPath = basePath.resolve("templates");
 
 		// when
@@ -1183,7 +1183,7 @@ public class ChartGeneratorTest {
 	public void generateBasicPruneTemplateFiles() throws Exception {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -1196,7 +1196,7 @@ public class ChartGeneratorTest {
 
 		when(environmentConfigProvider.environmentConfigFor(any(), any(), any())).thenReturn(Optional.empty());
 
-		Path basePath = repoPath.resolve(cluster.getName()).resolve(environment.getName()).resolve(release.getName());
+		Path basePath = resolveChartPath(cluster, environment, release);
 		Path templatesPath = basePath.resolve("templates");
 		Files.createDirectories(templatesPath);
 		Path extraTemplatePath = templatesPath.resolve("extratemplate.yaml");
@@ -1222,6 +1222,10 @@ public class ChartGeneratorTest {
 			"service.yaml",
 			"secret-dockerconfig.yaml",
 			"secret-generic.yaml");
+	}
+
+	private Path resolveChartPath(Cluster cluster, Environment environment, Release release) {
+		return repoPath.resolve(cluster.getName()).resolve(environment.getKey()).resolve(release.getName());
 	}
 
 	private void assertFilesExist(Path path, String fileType, String... files) throws IOException {

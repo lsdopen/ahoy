@@ -81,7 +81,7 @@ public class EnvironmentRelease {
 	}
 
 	public String getNamespace() {
-		return (release.getName() + "-" + environment.getName()).toLowerCase();
+		return (release.getName() + "-" + environment.getKey()).toLowerCase();
 	}
 
 	public boolean hasCurrentReleaseVersion() {

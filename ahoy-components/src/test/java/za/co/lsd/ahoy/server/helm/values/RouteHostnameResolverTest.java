@@ -33,12 +33,12 @@ class RouteHostnameResolverTest {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
 		cluster.setHost("minikube.host");
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 		Application application = new Application("app1");
-		String routeHostname = "${release_name}-${application_name}-${environment_name}.${cluster_host}";
+		String routeHostname = "${release_name}-${application_name}-${environment_key}.${cluster_host}";
 
 		// when
 		String resolvedRouteHostname = resolver.resolve(environmentRelease, application, routeHostname);
@@ -52,7 +52,7 @@ class RouteHostnameResolverTest {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
 		cluster.setHost("minikube.host");
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -71,12 +71,12 @@ class RouteHostnameResolverTest {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
 		cluster.setHost("minikube.host");
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 		Application application = new Application("app1");
-		String routeHostname = "${releaseXX_name}-${application_name}-${environment_name}.${cluster_host}";
+		String routeHostname = "${releaseXX_name}-${application_name}-${environment_key}.${cluster_host}";
 
 		// when
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -84,7 +84,7 @@ class RouteHostnameResolverTest {
 		});
 
 		// then
-		assertEquals("Failed to resolve route hostname for app1: ${releaseXX_name}-${application_name}-${environment_name}.${cluster_host}, reason: Cannot resolve variable 'releaseXX_name' (enableSubstitutionInVariables=false).",
+		assertEquals("Failed to resolve route hostname for app1: ${releaseXX_name}-${application_name}-${environment_key}.${cluster_host}, reason: Cannot resolve variable 'releaseXX_name' (enableSubstitutionInVariables=false).",
 			exception.getMessage());
 	}
 }

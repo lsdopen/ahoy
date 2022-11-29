@@ -137,7 +137,7 @@ class ReleaseServiceIntegrationTest {
 	void deploy() throws Exception {
 		// given
 		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		environment = environmentRepository.save(environment);
 		Release release = releaseRepository.save(new Release("release1"));
@@ -205,7 +205,7 @@ class ReleaseServiceIntegrationTest {
 	void deployUpgrade() throws Exception {
 		// given
 		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		environment = environmentRepository.save(environment);
 		Release release = releaseRepository.save(new Release("release1"));
@@ -285,7 +285,7 @@ class ReleaseServiceIntegrationTest {
 	void deployRedeploy() throws Exception {
 		// given
 		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		environment = environmentRepository.save(environment);
 		Release release = releaseRepository.save(new Release("release1"));
@@ -359,7 +359,7 @@ class ReleaseServiceIntegrationTest {
 	void undeploy() throws Exception {
 		// given
 		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		environment = environmentRepository.save(environment);
 		Release release = releaseRepository.save(new Release("release1"));
@@ -420,7 +420,7 @@ class ReleaseServiceIntegrationTest {
 	void undeployDoesNotExist() throws Exception {
 		// given
 		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		environment = environmentRepository.save(environment);
 		Release release = releaseRepository.save(new Release("release1"));
@@ -523,11 +523,11 @@ class ReleaseServiceIntegrationTest {
 	void promote() {
 		// given
 		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		environment = environmentRepository.save(environment);
 
-		Environment destEnvironment = new Environment("qa");
+		Environment destEnvironment = new Environment("qa", "qualityassurance");
 		cluster.addEnvironment(destEnvironment);
 		destEnvironment = environmentRepository.save(destEnvironment);
 
@@ -576,7 +576,7 @@ class ReleaseServiceIntegrationTest {
 	void deleteEnvironmentWithDeployedRelease() throws Exception {
 		// given
 		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		environment = environmentRepository.save(environment);
 		Release release = releaseRepository.save(new Release("release1"));

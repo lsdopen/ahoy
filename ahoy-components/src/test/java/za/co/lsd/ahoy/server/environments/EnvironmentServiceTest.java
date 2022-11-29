@@ -73,8 +73,8 @@ class EnvironmentServiceTest {
 		// given
 		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes1.default.svc");
 
-		Environment sourceEnvironment = new Environment(1L, "dev");
-		Environment destEnvironment = new Environment(2L, "qa");
+		Environment sourceEnvironment = new Environment(1L, "dev", "development");
+		Environment destEnvironment = new Environment(2L, "qa", "qualityassurance");
 		cluster.addEnvironment(sourceEnvironment);
 
 		Release release = new Release(1L, "release1");
@@ -101,8 +101,8 @@ class EnvironmentServiceTest {
 		// given
 		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes1.default.svc");
 
-		Environment sourceEnvironment = new Environment(1L, "dev");
-		Environment destEnvironment = new Environment(2L, "qa");
+		Environment sourceEnvironment = new Environment(1L, "dev", "development");
+		Environment destEnvironment = new Environment(2L, "qa", "qualityassurance");
 		cluster.addEnvironment(sourceEnvironment);
 
 		Release release = new Release(1L, "release1");
@@ -132,7 +132,7 @@ class EnvironmentServiceTest {
 		Cluster cluster1 = new Cluster(1L, "test-cluster-1", "https://kubernetes1.default.svc");
 		Cluster cluster2 = new Cluster(2L, "test-cluster-2", "https://kubernetes2.default.svc");
 
-		Environment environment = new Environment(1L, "dev");
+		Environment environment = new Environment(1L, "dev", "development");
 		cluster1.addEnvironment(environment);
 
 		Release release = new Release(1L, "release1");
@@ -162,7 +162,7 @@ class EnvironmentServiceTest {
 		Cluster cluster1 = new Cluster(1L, "test-cluster-1", "https://kubernetes1.default.svc");
 		Cluster cluster2 = new Cluster(2L, "test-cluster-2", "https://kubernetes2.default.svc");
 
-		Environment environment = new Environment(1L, "dev");
+		Environment environment = new Environment(1L, "dev", "development");
 		cluster1.addEnvironment(environment);
 
 		Release release = new Release(1L, "release1");
@@ -204,7 +204,7 @@ class EnvironmentServiceTest {
 		Cluster cluster1 = new Cluster(1L, "test-cluster-1", "https://kubernetes1.default.svc");
 		Cluster cluster2 = new Cluster(2L, "test-cluster-2", "https://kubernetes2.default.svc");
 
-		Environment environment = new Environment(1L, "dev");
+		Environment environment = new Environment(1L, "dev", "development");
 		cluster1.addEnvironment(environment);
 
 		Release release = new Release(1L, "release1");

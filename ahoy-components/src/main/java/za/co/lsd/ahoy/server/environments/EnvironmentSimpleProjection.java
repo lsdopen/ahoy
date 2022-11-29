@@ -25,6 +25,8 @@ public interface EnvironmentSimpleProjection {
 
 	String getName();
 
+	String getKey();
+
 	Double getOrderIndex();
 
 	ClusterSimpleProjection getCluster();

@@ -54,7 +54,7 @@ export class EnvironmentService {
   }
 
   get(id: number): Observable<Environment> {
-    const url = `/data/environments/${id}`;
+    const url = `/data/environments/${id}?projection=environmentSimple`;
     return this.restClient.get<Environment>(url).pipe(
       tap((env) => {
         this.log.debug('fetched environment', env);

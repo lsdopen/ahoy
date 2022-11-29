@@ -30,6 +30,6 @@ public class ApplicationNameResolver {
 		Environment environment = environmentRelease.getEnvironment();
 		Cluster cluster = environment.getCluster();
 		Release release = environmentRelease.getRelease();
-		return StringUtils.truncate(cluster.getName() + "-" + environment.getName() + "-" + release.getName(), 53);
+		return StringUtils.truncate(cluster.getName() + "-" + environment.getKey() + "-" + release.getName(), 53);
 	}
 }

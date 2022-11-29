@@ -66,6 +66,9 @@
             <th pSortableColumn="name">Environment
               <p-sortIcon field="name"></p-sortIcon>
             </th>
+            <th pSortableColumn="key">Key
+              <p-sortIcon field="key"></p-sortIcon>
+            </th>
             <th pSortableColumn="cluster.name">Cluster
               <p-sortIcon field="cluster.name"></p-sortIcon>
             </th>
@@ -82,6 +85,10 @@
               {{environment.name}}
             </td>
             <td>
+              <span class="p-column-title">Key</span>
+              {{environment.key}}
+            </td>
+            <td>
               <span class="p-column-title">Cluster</span>
               {{environment.cluster.name}}
             </td>
@@ -89,6 +96,10 @@
               <button pButton pRipple icon="pi pi-chevron-circle-right" class="p-button-rounded p-button-info mr-2"
                       routerLink="/environmentreleases/{{environment.id}}"
                       pTooltip="Manage environment"></button>
+              <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-plain mr-2"
+                      routerLink="/environment/{{environment.id}}"
+                      pTooltip="Edit environment"
+                      *appUserRole="[Role.admin, Role.releasemanager, Role.developer]"></button>
               <button pButton pRipple icon="pi pi-copy" class="p-button-rounded p-button-plain mr-2"
                       routerLink="/environment/new" [queryParams]="{sourceEnvironmentId: environment.id}"
                       pTooltip="Duplicate environment to a new environment"

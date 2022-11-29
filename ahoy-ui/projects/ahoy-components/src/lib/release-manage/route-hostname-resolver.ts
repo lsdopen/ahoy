@@ -29,7 +29,7 @@ export class RouteHostnameResolver {
 
     return routeHostname
       .replaceAll('${cluster_host}', ((environmentRelease.environment as Environment).cluster as Cluster).host)
-      .replaceAll('${environment_name}', (environmentRelease.environment as Environment).name)
+      .replaceAll('${environment_key}', (environmentRelease.environment as Environment).key)
       .replaceAll('${release_name}', (environmentRelease.release as Release).name)
       .replaceAll('${application_name}', (applicationVersion.application as Application).name);
   }

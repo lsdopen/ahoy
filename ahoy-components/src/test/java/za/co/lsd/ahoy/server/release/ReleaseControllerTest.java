@@ -464,7 +464,7 @@ public class ReleaseControllerTest {
 
 	private EnvironmentRelease testEnvRelease(Long clusterId, Long environmentId, Long releaseId) {
 		Cluster cluster = new Cluster(clusterId, "test-cluster-1", "https://kubernetes1.default.svc");
-		Environment environment = new Environment(environmentId, "dev");
+		Environment environment = new Environment(environmentId, "dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release(releaseId, "release1");
 		return new EnvironmentRelease(environment, release);

@@ -72,7 +72,7 @@ public class ReleaseManagerTest {
 	public void deployCreateApplication() throws Exception {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -114,7 +114,7 @@ public class ReleaseManagerTest {
 		assertEquals(5, labels.size());
 		assertEquals(AhoyConstants.MANAGED_BY_LABEL_VALUE, labels.get(ArgoMetadata.MANAGED_BY_LABEL));
 		assertEquals("test-cluster", labels.get(ArgoMetadata.CLUSTER_NAME_LABEL));
-		assertEquals("dev", labels.get(ArgoMetadata.ENVIRONMENT_NAME_LABEL));
+		assertEquals("development", labels.get(ArgoMetadata.ENVIRONMENT_NAME_LABEL));
 		assertEquals("release1", labels.get(ArgoMetadata.RELEASE_NAME_LABEL));
 		assertEquals("1.0.0", labels.get(ArgoMetadata.RELEASE_VERSION_LABEL));
 
@@ -142,7 +142,7 @@ public class ReleaseManagerTest {
 	public void deployUpdateApplication() throws Exception {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -184,7 +184,7 @@ public class ReleaseManagerTest {
 		assertEquals(5, labels.size());
 		assertEquals(AhoyConstants.MANAGED_BY_LABEL_VALUE, labels.get(ArgoMetadata.MANAGED_BY_LABEL));
 		assertEquals("test-cluster", labels.get(ArgoMetadata.CLUSTER_NAME_LABEL));
-		assertEquals("dev", labels.get(ArgoMetadata.ENVIRONMENT_NAME_LABEL));
+		assertEquals("development", labels.get(ArgoMetadata.ENVIRONMENT_NAME_LABEL));
 		assertEquals("release1", labels.get(ArgoMetadata.RELEASE_NAME_LABEL));
 		assertEquals("1.0.0", labels.get(ArgoMetadata.RELEASE_VERSION_LABEL));
 
@@ -212,7 +212,7 @@ public class ReleaseManagerTest {
 	public void undeployExists() {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -231,7 +231,7 @@ public class ReleaseManagerTest {
 	public void undeployDoesNotExist() {
 		// given
 		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);

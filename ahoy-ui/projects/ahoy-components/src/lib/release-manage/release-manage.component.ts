@@ -185,16 +185,17 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
 
   undeploy() {
     const environmentName = (this.environmentRelease.environment as Environment).name;
+    const environmentKey = (this.environmentRelease.environment as Environment).key;
     const releaseName = (this.environmentRelease.release as Release).name;
     const confirmation = new Confirmation(`Are you sure you want to undeploy ${releaseName}:${this.releaseVersion.version} from ` +
       `${environmentName}?`);
     confirmation.verify = true;
-    confirmation.verifyText = `${environmentName}/${releaseName}`;
+    confirmation.verifyText = `${environmentKey}/${releaseName}`;
     // TODO nested subscribes
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
-      const relFromEnv = `${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} from environment ${(this.environmentRelease.environment as Environment).name}`;
+      const relFromEnv = `${releaseName}:${this.releaseVersion.version} from environment ${environmentName}`;
       const undeployOptions = new UndeployOptions(
         new ProgressMessages(
           `Undeploying ${relFromEnv}`,

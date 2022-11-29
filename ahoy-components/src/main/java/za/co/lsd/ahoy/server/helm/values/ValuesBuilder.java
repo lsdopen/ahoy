@@ -70,7 +70,7 @@ public class ValuesBuilder {
 
 		Values.ValuesBuilder valuesBuilder = Values.builder()
 			.host(cluster.getHost())
-			.environment(environment.getName())
+			.environment(environment.getKey())
 			.releaseName(releaseVersion.getRelease().getName())
 			.releaseVersion(releaseVersion.getVersion());
 

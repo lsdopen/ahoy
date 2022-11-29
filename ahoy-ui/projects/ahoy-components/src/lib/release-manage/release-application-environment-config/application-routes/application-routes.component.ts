@@ -31,7 +31,7 @@ export class ApplicationRoutesComponent implements AfterContentChecked {
   @Input() environmentRelease: EnvironmentRelease;
   @Input() applicationVersion: ApplicationVersion;
   @Input() routes: ApplicationRoute[];
-  exampleRouteHost = '${release_name}-${application_name}-${environment_name}.${cluster_host}';
+  exampleRouteHost = '${release_name}-${application_name}-${environment_key}.${cluster_host}';
 
   constructor(private cd: ChangeDetectorRef) {
   }

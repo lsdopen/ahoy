@@ -81,6 +81,7 @@ export class EnvironmentDetailComponent implements OnInit {
       this.environmentService.get(+id)
         .subscribe((env) => {
           this.environment = env;
+          this.cluster = env.cluster as Cluster;
           this.setBreadcrumb();
         });
     }
@@ -121,29 +122,29 @@ export class EnvironmentDetailComponent implements OnInit {
   save() {
     if (!this.editMode) {
       this.environment.orderIndex = OrderUtil.appendIndex(this.environmentsForValidation);
-
       this.environment.cluster = this.clusterService.link(this.cluster.id);
-      this.environmentService.save(this.environment).pipe(
-        mergeMap((environment: Environment) => {
-          if (this.sourceEnvironment) {
-            // we're duplicating a source environment
-            const duplicateOptions = new DuplicateOptions(this.copyEnvironmentConfig);
-            return this.environmentService.duplicate(this.sourceEnvironment, environment, duplicateOptions);
-          }
-          return of(environment);
-        }),
-        mergeMap((environment: Environment) => {
-          if (this.promoteEnvironmentReleaseId) {
-            // we're promoting to this new environment
-            const promoteOptions = new PromoteOptions(environment.id, this.copyEnvironmentConfig);
-            return this.releaseManageService.promote(this.promoteEnvironmentReleaseId, promoteOptions);
-          }
-          return of(environment);
-        })
-      ).subscribe(() => this.location.back());
     } else {
-      this.location.back();
+      this.environment.cluster = undefined;
     }
+
+    this.environmentService.save(this.environment).pipe(
+      mergeMap((environment: Environment) => {
+        if (this.sourceEnvironment) {
+          // we're duplicating a source environment
+          const duplicateOptions = new DuplicateOptions(this.copyEnvironmentConfig);
+          return this.environmentService.duplicate(this.sourceEnvironment, environment, duplicateOptions);
+        }
+        return of(environment);
+      }),
+      mergeMap((environment: Environment) => {
+        if (this.promoteEnvironmentReleaseId) {
+          // we're promoting to this new environment
+          const promoteOptions = new PromoteOptions(environment.id, this.copyEnvironmentConfig);
+          return this.releaseManageService.promote(this.promoteEnvironmentReleaseId, promoteOptions);
+        }
+        return of(environment);
+      })
+    ).subscribe(() => this.location.back());
   }
 
   cancel() {
