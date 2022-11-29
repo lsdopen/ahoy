@@ -235,13 +235,16 @@ describe('EnvironmentDetailComponent', () => {
       expect(component.copyEnvironmentConfig).toBeFalsy();
 
       // given
-      const save = spyOn(environmentService, 'save');
+      const savedEnvironment = new Environment();
+      savedEnvironment.id = 1;
+      savedEnvironment.name = 'edited-environment';
+      const save = spyOn(environmentService, 'save').and.returnValue(of(savedEnvironment));
 
       // when
       component.save();
 
       // then
-      expect(save).toHaveBeenCalledTimes(0);
+      expect(save).toHaveBeenCalledTimes(1);
     });
   });
 });
