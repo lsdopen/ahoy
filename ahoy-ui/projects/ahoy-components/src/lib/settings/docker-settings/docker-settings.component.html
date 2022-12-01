@@ -54,18 +54,43 @@
               <label for="dockerServerSecure{{i}}">Secure</label>
             </div>
 
-            <div class="field p-float-label" *ngIf="dockerRegistry.secure">
-              <input pInputText id="dockerUsername{{i}}" [(ngModel)]="dockerRegistry.username" name="dockerUsername{{i}}" required>
-              <label for="dockerUsername{{i}}">Username</label>
-            </div>
-            <i class="pi {{hideDockerPassword ? 'pi-eye-slash':'pi-eye'}}" *ngIf="dockerRegistry.secure" style="cursor: pointer; width: 10px" (click)="hideDockerPassword = !hideDockerPassword"></i>
-            <div class="field p-float-label" *ngIf="dockerRegistry.secure">
-              <input pInputText id="dockerPassword{{i}}" [(ngModel)]="dockerRegistry.password" name="dockerPassword{{i}}"
-                     [type]="hideDockerPassword ? 'password' : 'text'"
-                     required>
-              <label for="dockerPassword{{i}}">Password</label>
+            <div *ngIf="dockerRegistry.secure">
+
+              <div class="p-d-inline-flex">
+                <div class="field-radiobutton mr-3">
+                  <p-radioButton name="dockerRegistryCredentialsUsernamePassword{{i}}" value="USERNAME_PASSWORD" [(ngModel)]="dockerRegistry.credentials" id="dockerRegistryCredentialsUsernamePassword{{i}}"></p-radioButton>
+                  <label for="dockerRegistryCredentialsUsernamePassword{{i}}">Username/Password</label>
+                </div>
+                <div class="field-radiobutton">
+                  <p-radioButton name="dockerRegistryCredentialsDockerConfigJson{{i}}" value="DOCKER_CONFIG_JSON" [(ngModel)]="dockerRegistry.credentials" id="dockerRegistryCredentialsDockerConfigJson{{i}}"></p-radioButton>
+                  <label for="dockerRegistryCredentialsDockerConfigJson{{i}}">Docker config JSON</label>
+                </div>
+              </div>
+
+              <div *ngIf="dockerRegistry.credentials === 'USERNAME_PASSWORD'">
+                <div class="field p-float-label">
+                  <input pInputText id="dockerUsername{{i}}" [(ngModel)]="dockerRegistry.username" name="dockerUsername{{i}}" required>
+                  <label for="dockerUsername{{i}}">Username</label>
+                </div>
+                <i class="pi {{hideDockerPassword ? 'pi-eye-slash':'pi-eye'}}" style="cursor: pointer; width: 10px" (click)="hideDockerPassword = !hideDockerPassword"></i>
+                <div class="field p-float-label">
+                  <input pInputText id="dockerPassword{{i}}" [(ngModel)]="dockerRegistry.password" name="dockerPassword{{i}}"
+                         [type]="hideDockerPassword ? 'password' : 'text'"
+                         required>
+                  <label for="dockerPassword{{i}}">Password</label>
+                </div>
+              </div>
+
+              <div *ngIf="dockerRegistry.credentials === 'DOCKER_CONFIG_JSON'">
+                <div class="field p-float-label">
+                  <textarea rows="10" cols="60" class="json-text" pInputTextarea id="dockerConfigJson{{i}}" [(ngModel)]="dockerRegistry.dockerConfigJson" name="dockerConfigJson{{i}}" required></textarea>
+                  <label for="dockerConfigJson{{i}}">JSON</label>
+                </div>
+              </div>
+
             </div>
           </div>
+
         </ng-template>
 
       </app-multi-tab>
