@@ -158,7 +158,7 @@ public class ReleaseManager {
 		Map<String, String> labels = new HashMap<>();
 		labels.put(ArgoMetadata.MANAGED_BY_LABEL, AhoyConstants.MANAGED_BY_LABEL_VALUE);
 		labels.put(ArgoMetadata.CLUSTER_NAME_LABEL, environment.getCluster().getName());
-		labels.put(ArgoMetadata.ENVIRONMENT_NAME_LABEL, environment.getName());
+		labels.put(ArgoMetadata.ENVIRONMENT_NAME_LABEL, environment.getKey());
 		labels.put(ArgoMetadata.RELEASE_NAME_LABEL, release.getName());
 		labels.put(ArgoMetadata.RELEASE_VERSION_LABEL, releaseVersion.getVersion());
 
