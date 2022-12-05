@@ -1,8 +1,6 @@
 # Running Ahoy
 
-In order to run Ahoy in development, some prerequisites are required.
-
-Ahoy makes use of Keycloak, ArgoCD and Sealed Secrets in order to manage releases.
+In order to run Ahoy in development, some prerequisites are required, namely Keycloak, ArgoCD and Sealed Secrets.
 
 ## Ahoy helm chart
 
@@ -27,6 +25,15 @@ npm run start
 ```shell
 cd ahoy-server
 mvn spring-boot:run
+```
+
+### Overriding run properties
+
+You can override the run properties by supplying the property as a system property.
+
+For example, if you'd like to move the db out of the target directory so that it is not deleted on `mvn clean` executions, then run the server with the following:
+```shell
+mvn spring-boot:run -Dapp.db.location=/path/to/db
 ```
 
 ### Keycloak certificate
@@ -69,3 +76,7 @@ Import certificate into Ahoy's truststore:
 ```shell
 keytool -import -trustcacerts -alias keycloak-minikube -file keycloak-minikube.crt -keystore ahoy-truststore.jks -keypass changeit
 ```
+
+## Setting up Ahoy
+
+Setup ahoy as per these [instructions](./setup.md)
