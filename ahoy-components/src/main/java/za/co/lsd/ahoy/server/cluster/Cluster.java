@@ -73,14 +73,6 @@ public class Cluster {
 		this.masterUrl = masterUrl;
 	}
 
-	public Cluster(ClusterDTO dto) {
-		this.id = dto.getId();
-		this.name = dto.getName();
-		this.masterUrl = dto.getMasterUrl();
-		this.host = dto.getHost();
-		this.inCluster = dto.isInCluster();
-	}
-
 	public void addEnvironment(Environment environment) {
 		environments.add(environment);
 		environment.setCluster(this);

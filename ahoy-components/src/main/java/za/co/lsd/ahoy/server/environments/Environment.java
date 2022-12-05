@@ -84,13 +84,6 @@ public class Environment {
 		this.name = name;
 	}
 
-	public Environment(EnvironmentDTO dto) {
-		this.id = dto.getId();
-		this.name = dto.getName();
-		this.cluster = new Cluster(dto.getCluster());
-		this.orderIndex = dto.getOrderIndex();
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
