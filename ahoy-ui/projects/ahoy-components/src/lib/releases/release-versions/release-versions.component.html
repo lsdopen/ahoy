@@ -58,7 +58,7 @@
             </td>
             <td><span class="p-column-title">Deployed to</span>
               <span *ngFor="let environmentRelease of release.environmentReleases">
-                <p-chip *ngIf="isDeployedInEnvironment(releaseVersion, environmentRelease)" styleClass="mr-1 mb-1 chip-environment status-deployed" label="{{environmentRelease.environment.name}}"
+                <p-chip *ngIf="isDeployedInEnvironment(releaseVersion, environmentRelease)" styleClass="mr-1 mb-1 chip-environment status-deployed" label="{{environmentRelease.environment.key}}"
                         routerLink="/release/{{environmentRelease.id.environmentId}}/{{environmentRelease.id.releaseId}}/version/{{releaseVersion.id}}">
                 </p-chip>
               </span>

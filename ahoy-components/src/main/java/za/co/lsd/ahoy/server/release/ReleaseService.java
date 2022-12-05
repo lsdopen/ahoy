@@ -161,7 +161,7 @@ public class ReleaseService {
 		log.info("Removing environment release: {}", environmentRelease);
 
 		if (environmentRelease.hasCurrentReleaseVersion()) {
-			log.info("{} is currently deployed in {}, undeploying...", environmentRelease.getRelease().getName(), environmentRelease.getEnvironment().getName());
+			log.info("{} is currently deployed in {}, undeploying...", environmentRelease.getRelease().getName(), environmentRelease.getEnvironment().getKey());
 			try {
 				undeploy(environmentReleaseId);
 			} catch (Exception e) {
@@ -454,7 +454,7 @@ public class ReleaseService {
 		if (environmentRelease.hasCurrentReleaseVersion()) {
 			ReleaseVersion currentReleaseVersion = environmentRelease.getCurrentReleaseVersion();
 
-			String environmentName = environmentRelease.getEnvironment().getName();
+			String environmentKey = environmentRelease.getEnvironment().getKey();
 			String releaseName = environmentRelease.getRelease().getName();
 			ArgoApplication.Status argoApplicationStatus = application.getStatus();
 			int applicationsHealthy = 0;
@@ -478,7 +478,7 @@ public class ReleaseService {
 				boolean changed = status.hash() != statusHash;
 				if (changed) {
 					applicationReleaseStatusRepository.save(status);
-					log.trace("Status changed for application {} in release {} in environment {}: {}", applicationName, releaseName, environmentName, status);
+					log.trace("Status changed for application {} in release {} in environment {}: {}", applicationName, releaseName, environmentKey, status);
 					environmentReleaseChanged = true;
 				}
 

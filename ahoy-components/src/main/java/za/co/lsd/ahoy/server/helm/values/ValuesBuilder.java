@@ -82,7 +82,7 @@ public class ValuesBuilder {
 					.orElse(null);
 			apps.put(HelmUtils.valuesName(application), buildApplicationValues(environmentRelease, applicationVersion, applicationEnvironmentConfig));
 
-			log.debug("Added values for application '{}' in environment '{}'", application.getName(), environment.getName());
+			log.debug("Added values for application '{}' in environment '{}'", application.getName(), environment.getKey());
 		}
 		valuesBuilder.applications(apps);
 

@@ -91,7 +91,7 @@ export class EnvironmentService {
       }),
       catchError((error) => {
         if (!ErrorUtil.is500Error(error)) {
-          const text = `Failed to delete environment ${environment.name}`;
+          const text = `Failed to delete environment ${environment.key}`;
           this.notificationsService.notification(new Notification(text, error));
         }
         return EMPTY;
@@ -100,7 +100,7 @@ export class EnvironmentService {
   }
 
   move(environment: Environment, moveOptions: MoveOptions): Observable<Environment> {
-    this.log.debug(`moving environment: ${environment.name} to cluster: ${moveOptions.destClusterId}`);
+    this.log.debug(`moving environment: ${environment.key} to cluster: ${moveOptions.destClusterId}`);
 
     const url = `/api/environments/${environment.id}/move`;
 
@@ -110,7 +110,7 @@ export class EnvironmentService {
       }),
       catchError((error) => {
         if (!ErrorUtil.is500Error(error)) {
-          const text = `Failed to move environment ${environment.name} to cluster`;
+          const text = `Failed to move environment ${environment.key} to cluster`;
           this.notificationsService.notification(new Notification(text, error));
         }
         return EMPTY;
@@ -126,11 +126,11 @@ export class EnvironmentService {
     return this.restClient.post<Environment>(url, duplicateOptions, true).pipe(
       tap((duplicatedEnvironment) => {
         this.log.debug('duplicated environment', duplicatedEnvironment);
-        const text = `${duplicatedEnvironment.name} ` + `was duplicated in cluster ${(duplicatedEnvironment.cluster as Cluster).name}`;
+        const text = `${duplicatedEnvironment.key} ` + `was duplicated in cluster ${(duplicatedEnvironment.cluster as Cluster).name}`;
         this.notificationsService.notification(new Notification(text));
       }),
       catchError((error) => {
-        const text = `Failed to duplicate environment ${destEnvironment.name} from environment: ${sourceEnvironment.name}`;
+        const text = `Failed to duplicate environment ${destEnvironment.key} from environment: ${sourceEnvironment.key}`;
         this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })
@@ -147,7 +147,7 @@ export class EnvironmentService {
         this.log.debug('updated environment orderIndex', environment);
       }),
       catchError((error) => {
-        const text = `Failed to update environment ${environment.name} order`;
+        const text = `Failed to update environment ${environment.key} order`;
         this.notificationsService.notification(new Notification(text, error));
         return EMPTY;
       })

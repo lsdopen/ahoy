@@ -98,13 +98,13 @@ export class EnvironmentDetailComponent implements OnInit {
     if (this.editMode) {
       this.breadcrumbService.setItems([
         {label: 'environments', routerLink: '/environments'},
-        {label: this.environment.name},
+        {label: this.environment.key},
         {label: 'edit'}
       ]);
     } else if (this.sourceEnvironment) {
       this.breadcrumbService.setItems([
         {label: 'environments', routerLink: '/environments'},
-        {label: this.sourceEnvironment.name},
+        {label: this.sourceEnvironment.key},
         {label: 'duplicate'}
       ]);
     } else {

@@ -99,7 +99,7 @@ export class ReleaseApplicationVersionsComponent implements OnInit {
 
   addApplication() {
     const dialogConfig = new DynamicDialogConfig();
-    dialogConfig.header = `Add application to ${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} in ${(this.environmentRelease.environment as Environment).name}:`;
+    dialogConfig.header = `Add application to ${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} in ${(this.environmentRelease.environment as Environment).key}:`;
     dialogConfig.data = {environmentRelease: this.environmentRelease, releaseVersion: this.releaseVersion, applicationVersions: this.applicationVersions};
     // TODO nested subscribes
     const dialogRef = this.dialogService.open(AddApplicationDialogComponent, dialogConfig);

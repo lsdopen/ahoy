@@ -136,7 +136,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     const env = (this.environmentRelease.environment as Environment);
     const rel = (this.environmentRelease.release as Release);
     this.breadcrumbService.setItems([
-      {label: env.name, routerLink: '/environments'},
+      {label: env.key, routerLink: '/environments'},
       {label: rel.name},
       {label: this.releaseVersion.version}
     ]);
@@ -161,7 +161,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   deploy() {
     const commitMessage = `Deployed ` +
       `${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} to ` +
-      `${(this.environmentRelease.environment as Environment).name} in ` +
+      `${(this.environmentRelease.environment as Environment).key} in ` +
       `${((this.environmentRelease.environment as Environment).cluster as Cluster).name}`;
 
     const confirmation = new Confirmation('Please enter a commit message:');
@@ -172,7 +172,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe((conf) => {
-      const relToEnv = `${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} to environment ${(this.environmentRelease.environment as Environment).name}`;
+      const relToEnv = `${(this.environmentRelease.release as Release).name}:${this.releaseVersion.version} to environment ${(this.environmentRelease.environment as Environment).key}`;
       const deployOptions = new DeployOptions(this.releaseVersion.id, conf.input,
         new ProgressMessages(
           `Deploying ${relToEnv}`,
@@ -184,18 +184,17 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
   }
 
   undeploy() {
-    const environmentName = (this.environmentRelease.environment as Environment).name;
     const environmentKey = (this.environmentRelease.environment as Environment).key;
     const releaseName = (this.environmentRelease.release as Release).name;
     const confirmation = new Confirmation(`Are you sure you want to undeploy ${releaseName}:${this.releaseVersion.version} from ` +
-      `${environmentName}?`);
+      `${environmentKey}?`);
     confirmation.verify = true;
     confirmation.verifyText = `${environmentKey}/${releaseName}`;
     // TODO nested subscribes
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
-      const relFromEnv = `${releaseName}:${this.releaseVersion.version} from environment ${environmentName}`;
+      const relFromEnv = `${releaseName}:${this.releaseVersion.version} from environment ${environmentKey}`;
       const undeployOptions = new UndeployOptions(
         new ProgressMessages(
           `Undeploying ${relFromEnv}`,
@@ -278,7 +277,7 @@ export class ReleaseManageComponent implements OnInit, OnDestroy {
     const commitMessage = `Rolled back deployment ` +
       `${(this.environmentRelease.release as Release).name}:${this.environmentRelease.currentReleaseVersion.version} to ` +
       `${(this.environmentRelease.release as Release).name}:${this.environmentRelease.previousReleaseVersion.version} in ` +
-      `${(this.environmentRelease.environment as Environment).name} in ` +
+      `${(this.environmentRelease.environment as Environment).key} in ` +
       `${((this.environmentRelease.environment as Environment).cluster as Cluster).name}`;
 
     const confirmation = new Confirmation('Please enter a commit message:');

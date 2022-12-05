@@ -189,7 +189,7 @@ public class ReleaseHistoryAspect {
 
 			releaseHistoryService.save(historyBuilder
 				.status(SUCCESS)
-				.description("Promote to environment " + destEnvironment.getName() + " successful")
+				.description("Promote to environment " + destEnvironment.getKey() + " successful")
 				.build());
 
 			return retVal;
@@ -197,7 +197,7 @@ public class ReleaseHistoryAspect {
 
 			releaseHistoryService.save(historyBuilder
 				.status(FAILED)
-				.description("Promote to environment " + destEnvironment.getName() + " failed: \n" + t.getMessage())
+				.description("Promote to environment " + destEnvironment.getKey() + " failed: \n" + t.getMessage())
 				.build());
 
 			throw t;

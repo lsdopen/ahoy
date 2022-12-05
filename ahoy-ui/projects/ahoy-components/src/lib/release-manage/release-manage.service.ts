@@ -49,7 +49,7 @@ export class ReleaseManageService {
       catchError((error) => {
         if (!ErrorUtil.is500Error(error)) {
           const text = `Failed to deploy ${(environmentRelease.release as Release).name} : ${releaseVersion.version} `
-            + `to environment ${(environmentRelease.environment as Environment).name}`;
+            + `to environment ${(environmentRelease.environment as Environment).key}`;
           this.notificationsService.notification(new Notification(text, error));
         }
         return EMPTY;
@@ -64,7 +64,7 @@ export class ReleaseManageService {
       catchError((error) => {
         if (!ErrorUtil.is500Error(error)) {
           const text = `Failed to undeploy ${(environmentRelease.release as Release).name} `
-            + `from environment ${(environmentRelease.environment as Environment).name}`;
+            + `from environment ${(environmentRelease.environment as Environment).key}`;
           this.notificationsService.notification(new Notification(text, error));
         }
         return EMPTY;
@@ -83,7 +83,7 @@ export class ReleaseManageService {
       catchError((error) => {
         if (!ErrorUtil.is500Error(error)) {
           const text = `Failed to remove ${(environmentRelease.release as Release).name} `
-            + `from environment ${(environmentRelease.environment as Environment).name}`;
+            + `from environment ${(environmentRelease.environment as Environment).key}`;
           this.notificationsService.notification(new Notification(text, error));
         }
         return EMPTY;
@@ -98,7 +98,7 @@ export class ReleaseManageService {
       tap((environmentRelease) => {
         this.log.debug('promoted release to new environment', environmentRelease);
         const text = `${(environmentRelease.release as Release).name} `
-          + `was promoted to environment ${(environmentRelease.environment as Environment).name}`;
+          + `was promoted to environment ${(environmentRelease.environment as Environment).key}`;
         this.notificationsService.notification(new Notification(text));
       }),
       catchError((error) => {
