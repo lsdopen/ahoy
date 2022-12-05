@@ -38,7 +38,7 @@ export class ErrorService implements ErrorHandler {
           this.router.navigate(['/notfound']).then();
         });
 
-      } else if (error.status === 403) {
+      } else if (error.status === 403 || error.status === 401) {
         this.zone.run(() => {
           this.router.navigate(['/access']).then();
         });
