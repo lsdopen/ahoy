@@ -49,4 +49,5 @@ Think Helm, Git, GitOps, Continuous Deployment using ArgoCD awesomeness, all don
 
 ## Development
 
+- [Running Ahoy](./docs/running.md)
 - [DB migration](./docs/db-migration.md)
