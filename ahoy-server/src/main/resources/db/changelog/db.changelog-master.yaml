@@ -1,6 +1,6 @@
 databaseChangeLog:
 - changeSet:
-    id: 1668499687933-1
+    id: 1670318455675-1
     author: clive (generated)
     changes:
     - createTable:
@@ -35,7 +35,7 @@ databaseChangeLog:
             type: VARCHAR(255)
         tableName: cluster
 - changeSet:
-    id: 1668499687933-2
+    id: 1670318455675-2
     author: clive (generated)
     changes:
     - createTable:
@@ -51,6 +51,11 @@ databaseChangeLog:
         - column:
             constraints:
               nullable: false
+            name: key
+            type: VARCHAR(9)
+        - column:
+            constraints:
+              nullable: false
             name: name
             type: VARCHAR(255)
         - column:
@@ -63,7 +68,7 @@ databaseChangeLog:
             type: BIGINT
         tableName: environment
 - changeSet:
-    id: 1668499687933-3
+    id: 1670318455675-3
     author: clive (generated)
     changes:
     - createTable:
@@ -83,7 +88,7 @@ databaseChangeLog:
             type: VARCHAR(53)
         tableName: release
 - changeSet:
-    id: 1668499687933-4
+    id: 1670318455675-4
     author: clive (generated)
     changes:
     - createTable:
@@ -103,7 +108,7 @@ databaseChangeLog:
             type: VARCHAR(53)
         tableName: application
 - changeSet:
-    id: 1668499687933-5
+    id: 1670318455675-5
     author: clive (generated)
     changes:
     - addUniqueConstraint:
@@ -111,7 +116,7 @@ databaseChangeLog:
         constraintName: uk_9ig73x9wropf95ogrffcvyahk
         tableName: cluster
 - changeSet:
-    id: 1668499687933-6
+    id: 1670318455675-6
     author: clive (generated)
     changes:
     - addUniqueConstraint:
@@ -119,7 +124,15 @@ databaseChangeLog:
         constraintName: uk_fdb0ohhfysiwxy88s7k80bx90
         tableName: environment
 - changeSet:
-    id: 1668499687933-7
+    id: 1670318455675-7
+    author: clive (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: key
+        constraintName: uk_kgk4gun75jjv7t7chd7ur9oav
+        tableName: environment
+- changeSet:
+    id: 1670318455675-8
     author: clive (generated)
     changes:
     - addUniqueConstraint:
@@ -127,7 +140,7 @@ databaseChangeLog:
         constraintName: uk_go29nfawx4newoi1v9j555g8y
         tableName: release
 - changeSet:
-    id: 1668499687933-8
+    id: 1670318455675-9
     author: clive (generated)
     changes:
     - addUniqueConstraint:
@@ -135,7 +148,7 @@ databaseChangeLog:
         constraintName: uk_lspnba25gpku3nx3oecprrx8c
         tableName: application
 - changeSet:
-    id: 1668499687933-9
+    id: 1670318455675-10
     author: clive (generated)
     changes:
     - createTable:
@@ -175,7 +188,7 @@ databaseChangeLog:
             type: VARCHAR(10485760)
         tableName: application_environment_config
 - changeSet:
-    id: 1668499687933-10
+    id: 1670318455675-11
     author: clive (generated)
     changes:
     - createTable:
@@ -213,7 +226,7 @@ databaseChangeLog:
             type: VARCHAR(255)
         tableName: application_release_status
 - changeSet:
-    id: 1668499687933-11
+    id: 1670318455675-12
     author: clive (generated)
     changes:
     - createTable:
@@ -243,7 +256,7 @@ databaseChangeLog:
             type: BIGINT
         tableName: application_version
 - changeSet:
-    id: 1668499687933-12
+    id: 1670318455675-13
     author: clive (generated)
     changes:
     - createTable:
@@ -282,7 +295,7 @@ databaseChangeLog:
             type: BIGINT
         tableName: environment_release
 - changeSet:
-    id: 1668499687933-13
+    id: 1670318455675-14
     author: clive (generated)
     changes:
     - createTable:
@@ -324,7 +337,7 @@ databaseChangeLog:
             type: BIGINT
         tableName: release_history
 - changeSet:
-    id: 1668499687933-14
+    id: 1670318455675-15
     author: clive (generated)
     changes:
     - createTable:
@@ -349,7 +362,7 @@ databaseChangeLog:
             type: BIGINT
         tableName: release_version
 - changeSet:
-    id: 1668499687933-15
+    id: 1670318455675-16
     author: clive (generated)
     changes:
     - createTable:
@@ -366,7 +379,7 @@ databaseChangeLog:
             type: BIGINT
         tableName: release_version_application_versions
 - changeSet:
-    id: 1668499687933-16
+    id: 1670318455675-17
     author: clive (generated)
     changes:
     - createTable:
@@ -385,7 +398,7 @@ databaseChangeLog:
             type: VARCHAR(10485760)
         tableName: settings
 - changeSet:
-    id: 1668499687933-17
+    id: 1670318455675-18
     author: clive (generated)
     changes:
     - addForeignKeyConstraint:
@@ -400,7 +413,7 @@ databaseChangeLog:
         referencedTableName: release_version
         validate: true
 - changeSet:
-    id: 1668499687933-18
+    id: 1670318455675-19
     author: clive (generated)
     changes:
     - addForeignKeyConstraint:
@@ -415,7 +428,7 @@ databaseChangeLog:
         referencedTableName: release
         validate: true
 - changeSet:
-    id: 1668499687933-19
+    id: 1670318455675-20
     author: clive (generated)
     changes:
     - addForeignKeyConstraint:
@@ -430,7 +443,7 @@ databaseChangeLog:
         referencedTableName: release
         validate: true
 - changeSet:
-    id: 1668499687933-20
+    id: 1670318455675-21
     author: clive (generated)
     changes:
     - addForeignKeyConstraint:
@@ -445,7 +458,7 @@ databaseChangeLog:
         referencedTableName: release_version
         validate: true
 - changeSet:
-    id: 1668499687933-21
+    id: 1670318455675-22
     author: clive (generated)
     changes:
     - addForeignKeyConstraint:
@@ -460,7 +473,7 @@ databaseChangeLog:
         referencedTableName: release
         validate: true
 - changeSet:
-    id: 1668499687933-22
+    id: 1670318455675-23
     author: clive (generated)
     changes:
     - addForeignKeyConstraint:
@@ -475,7 +488,7 @@ databaseChangeLog:
         referencedTableName: cluster
         validate: true
 - changeSet:
-    id: 1668499687933-23
+    id: 1670318455675-24
     author: clive (generated)
     changes:
     - addForeignKeyConstraint:
@@ -490,7 +503,7 @@ databaseChangeLog:
         referencedTableName: release_version
         validate: true
 - changeSet:
-    id: 1668499687933-24
+    id: 1670318455675-25
     author: clive (generated)
     changes:
     - addForeignKeyConstraint:
@@ -505,7 +518,7 @@ databaseChangeLog:
         referencedTableName: environment
         validate: true
 - changeSet:
-    id: 1668499687933-25
+    id: 1670318455675-26
     author: clive (generated)
     changes:
     - addForeignKeyConstraint:
@@ -520,7 +533,7 @@ databaseChangeLog:
         referencedTableName: application
         validate: true
 - changeSet:
-    id: 1668499687933-26
+    id: 1670318455675-27
     author: clive (generated)
     changes:
     - addForeignKeyConstraint:
@@ -535,7 +548,7 @@ databaseChangeLog:
         referencedTableName: release_version
         validate: true
 - changeSet:
-    id: 1668499687933-27
+    id: 1670318455675-28
     author: clive (generated)
     changes:
     - addForeignKeyConstraint:
@@ -550,7 +563,7 @@ databaseChangeLog:
         referencedTableName: environment
         validate: true
 - changeSet:
-    id: 1668499687933-28
+    id: 1670318455675-29
     author: clive (generated)
     changes:
     - addForeignKeyConstraint:
@@ -564,3 +577,4 @@ databaseChangeLog:
         referencedColumnNames: id
         referencedTableName: application_version
         validate: true
+
