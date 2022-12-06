@@ -20,7 +20,7 @@
     <div class="card">
       <div class="card-header">
         <h5 *ngIf="environmentRelease && releaseVersion && applicationVersion"
-            pTooltip="... in {{environmentRelease.release.name}}:{{releaseVersion.version}} in {{environmentRelease.environment.name}} - {{environmentRelease.environment.cluster.name}}">
+            pTooltip="... in {{environmentRelease.release.name}}:{{releaseVersion.version}} in {{environmentRelease.environment.key}} - {{environmentRelease.environment.cluster.name}}">
           Environment configuration of {{applicationVersion.application.name}}:{{applicationVersion.version}}
         </h5>
       </div>

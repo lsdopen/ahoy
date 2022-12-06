@@ -30,7 +30,10 @@ public class DockerRegistry {
 	@ToString.Exclude
 	private String password;
 	@ToString.Exclude
+	private String dockerConfigJson;
+	@ToString.Exclude
 	private boolean secure;
+	private Credentials credentials;
 
 	public DockerRegistry(String name, String server, String username, String password) {
 		this.name = name;
@@ -38,5 +41,10 @@ public class DockerRegistry {
 		this.username = username;
 		this.password = password;
 		this.secure = true;
+	}
+
+	public enum Credentials {
+		USERNAME_PASSWORD,
+		DOCKER_CONFIG_JSON
 	}
 }

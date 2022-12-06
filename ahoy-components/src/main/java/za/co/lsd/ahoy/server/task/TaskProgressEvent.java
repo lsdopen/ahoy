@@ -20,7 +20,8 @@ import lombok.Getter;
 import lombok.ToString;
 import org.springframework.context.ApplicationEvent;
 
-import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 @Getter
 @ToString
@@ -31,7 +32,7 @@ public class TaskProgressEvent extends ApplicationEvent {
 	private final String message;
 	@ToString.Exclude
 	private final String trace;
-	private final LocalDateTime time;
+	private final ZonedDateTime time;
 
 	private TaskProgressEvent(Object source, String id, State state, String status, String message, String trace) {
 		super(source);
@@ -40,7 +41,7 @@ public class TaskProgressEvent extends ApplicationEvent {
 		this.status = status;
 		this.message = message;
 		this.trace = trace;
-		this.time = LocalDateTime.now();
+		this.time = ZonedDateTime.now(ZoneOffset.UTC);
 	}
 
 	public static TaskProgressEvent createWaiting(Object source, String id, String status, String message) {

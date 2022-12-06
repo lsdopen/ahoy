@@ -121,10 +121,10 @@ public class EnvironmentService {
 	private Map<EnvironmentReleaseId, ReleaseVersion> undeployReleasesFrom(Environment environment) {
 		Map<EnvironmentReleaseId, ReleaseVersion> previouslyDeployedReleases = new HashMap<>();
 
-		log.info("Checking if there are deployed releases in {}", environment.getName());
+		log.info("Checking if there are deployed releases in {}", environment.getKey());
 		environment.getEnvironmentReleases().forEach((environmentRelease) -> {
 			if (environmentRelease.hasCurrentReleaseVersion()) {
-				log.info("Release {} is currently deployed in {}, undeploying...", environmentRelease.getRelease().getName(), environment.getName());
+				log.info("Release {} is currently deployed in {}, undeploying...", environmentRelease.getRelease().getName(), environment.getKey());
 
 				previouslyDeployedReleases.put(environmentRelease.getId(), environmentRelease.getCurrentReleaseVersion());
 
@@ -144,13 +144,13 @@ public class EnvironmentService {
 			if (previouslyDeployedReleases.containsKey(environmentRelease.getId())) {
 				ReleaseVersion releaseVersion = previouslyDeployedReleases.get(environmentRelease.getId());
 
-				log.debug("Release {}:{} was previously deployed in {}, redeploying...", environmentRelease.getRelease().getName(), releaseVersion.getVersion(), environment.getName());
+				log.debug("Release {}:{} was previously deployed in {}, redeploying...", environmentRelease.getRelease().getName(), releaseVersion.getVersion(), environment.getKey());
 
 				try {
 					String message = String.format("Redeployed %s:%s to %s in %s after moving environment to new cluster",
 						environmentRelease.getRelease().getName(),
 						releaseVersion.getVersion(),
-						environment.getName(),
+						environment.getKey(),
 						environment.getCluster().getName());
 
 					DeployOptions deployOptions = new DeployOptions(releaseVersion.getId(), message);

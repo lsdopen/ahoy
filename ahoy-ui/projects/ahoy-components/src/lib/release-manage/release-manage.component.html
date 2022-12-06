@@ -91,7 +91,7 @@
           <ng-template pTemplate="body" let-er>
             <tr [pSelectableRow]="er">
               <td><span class="p-column-title">Environment</span>
-                {{er.environment.name}}
+                {{er.environment.key}}
               </td>
               <td><span class="p-column-title">Version</span>
                 <app-environment-release-versions [environmentRelease]="er"></app-environment-release-versions>

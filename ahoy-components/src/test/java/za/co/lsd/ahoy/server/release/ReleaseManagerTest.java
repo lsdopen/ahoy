@@ -32,8 +32,6 @@ import za.co.lsd.ahoy.server.argocd.ArgoClient;
 import za.co.lsd.ahoy.server.argocd.model.ArgoApplication;
 import za.co.lsd.ahoy.server.argocd.model.ArgoMetadata;
 import za.co.lsd.ahoy.server.cluster.Cluster;
-import za.co.lsd.ahoy.server.cluster.ClusterType;
-import za.co.lsd.ahoy.server.clustermanager.KubernetesClusterManager;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environments.Environment;
 import za.co.lsd.ahoy.server.git.GitSettings;
@@ -66,8 +64,6 @@ public class ReleaseManagerTest {
 	@MockBean
 	private SettingsProvider settingsProvider;
 	@MockBean
-	private KubernetesClusterManager kubernetesClusterManager;
-	@MockBean
 	private TaskProgressService taskProgressService;
 	@Autowired
 	private ReleaseManager releaseManager;
@@ -75,8 +71,8 @@ public class ReleaseManagerTest {
 	@Test
 	public void deployCreateApplication() throws Exception {
 		// given
-		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment("dev");
+		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -145,8 +141,8 @@ public class ReleaseManagerTest {
 	@Test
 	public void deployUpdateApplication() throws Exception {
 		// given
-		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment("dev");
+		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -215,8 +211,8 @@ public class ReleaseManagerTest {
 	@Test
 	public void undeployExists() {
 		// given
-		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment("dev");
+		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -234,8 +230,8 @@ public class ReleaseManagerTest {
 	@Test
 	public void undeployDoesNotExist() {
 		// given
-		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment("dev");
+		Cluster cluster = new Cluster("test-cluster", "https://kubernetes.default.svc");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release("release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);

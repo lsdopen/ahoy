@@ -23,5 +23,7 @@ export class DockerRegistry {
   server: string;
   username: string;
   password: string;
+  dockerConfigJson: string;
   secure: boolean;
+  credentials = 'USERNAME_PASSWORD';
 }

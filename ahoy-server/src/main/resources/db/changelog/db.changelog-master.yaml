@@ -1,0 +1,580 @@
+databaseChangeLog:
+- changeSet:
+    id: 1670318455675-1
+    author: clive (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: cluster_pkey
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: host
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: in_cluster
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: master_url
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        tableName: cluster
+- changeSet:
+    id: 1670318455675-2
+    author: clive (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: environment_pkey
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: key
+            type: VARCHAR(9)
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            name: order_index
+            type: FLOAT8
+        - column:
+            constraints:
+              nullable: false
+            name: cluster_id
+            type: BIGINT
+        tableName: environment
+- changeSet:
+    id: 1670318455675-3
+    author: clive (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: release_pkey
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(53)
+        tableName: release
+- changeSet:
+    id: 1670318455675-4
+    author: clive (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: application_pkey
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(53)
+        tableName: application
+- changeSet:
+    id: 1670318455675-5
+    author: clive (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: name
+        constraintName: uk_9ig73x9wropf95ogrffcvyahk
+        tableName: cluster
+- changeSet:
+    id: 1670318455675-6
+    author: clive (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: name
+        constraintName: uk_fdb0ohhfysiwxy88s7k80bx90
+        tableName: environment
+- changeSet:
+    id: 1670318455675-7
+    author: clive (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: key
+        constraintName: uk_kgk4gun75jjv7t7chd7ur9oav
+        tableName: environment
+- changeSet:
+    id: 1670318455675-8
+    author: clive (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: name
+        constraintName: uk_go29nfawx4newoi1v9j555g8y
+        tableName: release
+- changeSet:
+    id: 1670318455675-9
+    author: clive (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: name
+        constraintName: uk_lspnba25gpku3nx3oecprrx8c
+        tableName: application
+- changeSet:
+    id: 1670318455675-10
+    author: clive (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: application_environment_config_pkey
+            name: application_version_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: application_environment_config_pkey
+            name: environment_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: application_environment_config_pkey
+            name: release_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: application_environment_config_pkey
+            name: release_version_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: spec
+            type: VARCHAR(10485760)
+        tableName: application_environment_config
+- changeSet:
+    id: 1670318455675-11
+    author: clive (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: application_release_status_pkey
+            name: application_version_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: application_release_status_pkey
+            name: environment_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: application_release_status_pkey
+            name: release_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: application_release_status_pkey
+            name: release_version_id
+            type: BIGINT
+        - column:
+            name: status
+            type: VARCHAR(255)
+        tableName: application_release_status
+- changeSet:
+    id: 1670318455675-12
+    author: clive (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: application_version_pkey
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: spec
+            type: VARCHAR(10485760)
+        - column:
+            constraints:
+              nullable: false
+            name: version
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: application_id
+            type: BIGINT
+        tableName: application_version
+- changeSet:
+    id: 1670318455675-13
+    author: clive (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: environment_release_pkey
+            name: environment_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: environment_release_pkey
+            name: release_id
+            type: BIGINT
+        - column:
+            name: applications_ready
+            type: INTEGER
+        - column:
+            name: argo_cd_name
+            type: VARCHAR(255)
+        - column:
+            name: argo_cd_uid
+            type: VARCHAR(255)
+        - column:
+            name: status
+            type: VARCHAR(255)
+        - column:
+            name: current_release_version_id
+            type: BIGINT
+        - column:
+            name: previous_release_version_id
+            type: BIGINT
+        tableName: environment_release
+- changeSet:
+    id: 1670318455675-14
+    author: clive (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: release_history_pkey
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: action
+            type: VARCHAR(255)
+        - column:
+            name: description
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            name: status
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: time
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: environment_id
+            type: BIGINT
+        - column:
+            name: release_id
+            type: BIGINT
+        - column:
+            name: release_version_id
+            type: BIGINT
+        tableName: release_history
+- changeSet:
+    id: 1670318455675-15
+    author: clive (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: release_version_pkey
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: version
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: release_id
+            type: BIGINT
+        tableName: release_version
+- changeSet:
+    id: 1670318455675-16
+    author: clive (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: release_version_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: application_versions_id
+            type: BIGINT
+        tableName: release_version_application_versions
+- changeSet:
+    id: 1670318455675-17
+    author: clive (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: settings_pkey
+            name: type
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: settings
+            type: VARCHAR(10485760)
+        tableName: settings
+- changeSet:
+    id: 1670318455675-18
+    author: clive (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: previous_release_version_id
+        baseTableName: environment_release
+        constraintName: fk1ahmajl0bsn8ntp27qq73p2jt
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: release_version
+        validate: true
+- changeSet:
+    id: 1670318455675-19
+    author: clive (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: release_id
+        baseTableName: release_history
+        constraintName: fk5o562ttkprtqmys80unk5mn85
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: release
+        validate: true
+- changeSet:
+    id: 1670318455675-20
+    author: clive (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: release_id
+        baseTableName: environment_release
+        constraintName: fk6hv2kos5241kwdfulkv9dd68k
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: release
+        validate: true
+- changeSet:
+    id: 1670318455675-21
+    author: clive (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: release_version_id
+        baseTableName: release_history
+        constraintName: fk7ngxlydw209a5qja1f8f1xfkl
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: release_version
+        validate: true
+- changeSet:
+    id: 1670318455675-22
+    author: clive (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: release_id
+        baseTableName: release_version
+        constraintName: fkaj4tjct4j0v7qyo4ortblybil
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: release
+        validate: true
+- changeSet:
+    id: 1670318455675-23
+    author: clive (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: cluster_id
+        baseTableName: environment
+        constraintName: fkc09xlkwb4a6kmmdncus9985ee
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: cluster
+        validate: true
+- changeSet:
+    id: 1670318455675-24
+    author: clive (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: current_release_version_id
+        baseTableName: environment_release
+        constraintName: fkd1c2yjrw4yf9tbg5qtcxy49pk
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: release_version
+        validate: true
+- changeSet:
+    id: 1670318455675-25
+    author: clive (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: environment_id
+        baseTableName: release_history
+        constraintName: fkfpi2pylc01ngsf84rtppr29tu
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: environment
+        validate: true
+- changeSet:
+    id: 1670318455675-26
+    author: clive (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: application_id
+        baseTableName: application_version
+        constraintName: fkhfvphvt4y62yj3fcftrmpt8f8
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: application
+        validate: true
+- changeSet:
+    id: 1670318455675-27
+    author: clive (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: release_version_id
+        baseTableName: release_version_application_versions
+        constraintName: fklhly76q4frn2ssbhdtg9p03yj
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: release_version
+        validate: true
+- changeSet:
+    id: 1670318455675-28
+    author: clive (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: environment_id
+        baseTableName: environment_release
+        constraintName: fkreu1coomaucgl937tfkabw846
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: environment
+        validate: true
+- changeSet:
+    id: 1670318455675-29
+    author: clive (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: application_versions_id
+        baseTableName: release_version_application_versions
+        constraintName: fks1shj38rfbvtegjgri0ajnlrr
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: application_version
+        validate: true
+

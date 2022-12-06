@@ -32,7 +32,5 @@ public interface ClusterSummaryProjection {
 
 	boolean getInCluster();
 
-	ClusterType getType();
-
 	List<EnvironmentSimpleProjection> getEnvironments();
 }

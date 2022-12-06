@@ -42,15 +42,8 @@ public class DockerConfigSealedSecretProducer {
 		try {
 			log.info("Producing docker registry sealed secret for registry: {}", dockerRegistry);
 			List<Process> processes = ProcessBuilder.startPipeline(Arrays.asList(
-				new ProcessBuilder("kubectl", "create", "secret", "docker-registry",
-					"docker-registry",
-					"--docker-server=" + dockerRegistry.getServer(),
-					"--docker-username=" + dockerRegistry.getUsername(),
-					"--docker-password=" + dockerRegistry.getPassword(),
-					"--dry-run", "-o", "json"),
-				new ProcessBuilder("kubeseal", "-o", "json", "--scope", "cluster-wide",
-					"--controller-name=" + serverProperties.getSealedSecrets().getControllerName(),
-					"--controller-namespace=" + serverProperties.getSealedSecrets().getControllerNamespace())
+				newDockerRegistrySecretProcessBuilder(dockerRegistry),
+				newSealedSecretProcessBuilder()
 			));
 
 			Process sealedSecretProcess = processes.get(processes.size() - 1);
@@ -66,6 +59,42 @@ public class DockerConfigSealedSecretProducer {
 		} catch (InterruptedException e) {
 			throw new RuntimeException("Failed to produce docker config sealed secret", e);
 		}
+	}
+
+	private static ProcessBuilder newDockerRegistrySecretProcessBuilder(DockerRegistry dockerRegistry) {
+		switch (dockerRegistry.getCredentials()) {
+			case USERNAME_PASSWORD:
+				log.debug("Producing docker config secret based on username and password credentials");
+				return newUsernamePasswordSecretProcessBuilder(dockerRegistry);
+			case DOCKER_CONFIG_JSON:
+				log.debug("Producing docker config secret based on docker config json credentials");
+				return newDockerConfigJsonSecretProcessBuilder(dockerRegistry);
+			default:
+				throw new IllegalStateException("Invalid docker registry credentials: " + dockerRegistry.getCredentials());
+		}
+	}
+
+	private static ProcessBuilder newUsernamePasswordSecretProcessBuilder(DockerRegistry dockerRegistry) {
+		return new ProcessBuilder("kubectl", "create", "secret", "docker-registry",
+			"docker-registry",
+			"--docker-server=" + dockerRegistry.getServer(),
+			"--docker-username=" + dockerRegistry.getUsername(),
+			"--docker-password=" + dockerRegistry.getPassword(),
+			"--dry-run", "-o", "json");
+	}
+
+	private static ProcessBuilder newDockerConfigJsonSecretProcessBuilder(DockerRegistry dockerRegistry) {
+		return new ProcessBuilder("kubectl", "create", "secret", "generic",
+			"docker-cred",
+			"--from-literal",
+			".dockerconfigjson=" + dockerRegistry.getDockerConfigJson(),
+			"--dry-run", "-o", "json");
+	}
+
+	private ProcessBuilder newSealedSecretProcessBuilder() {
+		return new ProcessBuilder("kubeseal", "-o", "json", "--scope", "cluster-wide",
+			"--controller-name=" + serverProperties.getSealedSecrets().getControllerName(),
+			"--controller-namespace=" + serverProperties.getSealedSecrets().getControllerNamespace());
 	}
 
 	private static String extractDockerConfigJson(String sealedSecret) throws IOException {

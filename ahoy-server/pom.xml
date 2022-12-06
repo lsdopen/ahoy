@@ -22,13 +22,24 @@
 	<parent>
 		<groupId>za.co.lsd.ahoy</groupId>
 		<artifactId>ahoy</artifactId>
-		<version>0.17.0</version>
+		<version>1.0.0</version>
 	</parent>
 	<artifactId>ahoy-server</artifactId>
 
 	<properties>
 		<maven.compiler.release>11</maven.compiler.release>
 		<ahoy-ui-dist-dir>${project.parent.basedir}/ahoy-ui/dist/ahoy-app/</ahoy-ui-dist-dir>
+		<liquibase.version>4.17.2</liquibase.version>
+
+		<app.profiles>dev,keycloak</app.profiles>
+		<app.trustStore>./dev/ahoy-truststore.jks</app.trustStore>
+		<app.trustStorePassword>changeit</app.trustStorePassword>
+		<app.auth.clientId>ahoy</app.auth.clientId>
+		<app.auth.keycloak.host>keycloak.minikube.host</app.auth.keycloak.host>
+		<app.auth.issuer>https://${app.auth.keycloak.host}/auth/realms/Ahoy</app.auth.issuer>
+		<app.auth.jwkSetUri>${app.auth.issuer}/protocol/openid-connect/certs</app.auth.jwkSetUri>
+		<app.auth.accountUri>${app.auth.issuer}/account/?referrer=ahoy</app.auth.accountUri>
+		<app.db.location>./target/data/db</app.db.location>
 	</properties>
 
 	<dependencies>
@@ -40,7 +51,30 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.3.3</version>
+			<version>42.5.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+			<version>${liquibase.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.mattbertolini</groupId>
+			<artifactId>liquibase-slf4j</artifactId>
+			<version>4.1.0</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-maven-plugin</artifactId>
+			<version>${liquibase.version}</version>
+			<exclusions>
+				<exclusion>
+					<!-- excluding h2 as a different version is included and not compatible with ours -->
+					<groupId>com.h2database</groupId>
+					<artifactId>h2</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -76,6 +110,59 @@
 					<target>11</target>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<profiles>${app.profiles}</profiles>
+					<systemPropertyVariables>
+						<javax.net.ssl.trustStore>${app.trustStore}</javax.net.ssl.trustStore>
+						<javax.net.ssl.trustStorePassword>${app.trustStorePassword}</javax.net.ssl.trustStorePassword>
+					</systemPropertyVariables>
+					<environmentVariables>
+						<AHOY_AUTH_CLIENTID>${app.auth.clientId}</AHOY_AUTH_CLIENTID>
+						<AHOY_AUTH_ISSUER>${app.auth.issuer}</AHOY_AUTH_ISSUER>
+						<AHOY_AUTH_JWK_SET_URI>${app.auth.jwkSetUri}</AHOY_AUTH_JWK_SET_URI>
+						<AHOY_AUTH_ACCOUNT_URI>${app.auth.accountUri}</AHOY_AUTH_ACCOUNT_URI>
+						<AHOY_DEV_DB_LOCATION>${app.db.location}</AHOY_DEV_DB_LOCATION>
+					</environmentVariables>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-maven-plugin</artifactId>
+				<version>${liquibase.version}</version>
+				<configuration>
+					<propertyFile>src/main/resources/liquibase.properties</propertyFile>
+					<diffChangeLogFile>src/main/resources/db/changelog/db.changelog-migrate-${project.version}.yaml</diffChangeLogFile>
+				</configuration>
+				<dependencies>
+					<!--set up any dependencies for Liquibase to function in your
+					environment for example, a database-specific plugin-->
+					<dependency>
+						<groupId>org.liquibase.ext</groupId>
+						<artifactId>liquibase-hibernate5</artifactId>
+						<version>${liquibase.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-beans</artifactId>
+						<version>${spring-framework.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.springframework.data</groupId>
+						<artifactId>spring-data-jpa</artifactId>
+						<version>2.4.5</version>
+					</dependency>
+					<dependency>
+						<groupId>javax.validation</groupId>
+						<artifactId>validation-api</artifactId>
+						<version>${javax-validation.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
 		</plugins>
 
 		<extensions>
@@ -97,11 +184,6 @@
 
 			<build>
 				<plugins>
-					<plugin>
-						<groupId>org.springframework.boot</groupId>
-						<artifactId>spring-boot-maven-plugin</artifactId>
-					</plugin>
-
 					<!-- Gather the "dist" directory from ahoy-ui project -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>

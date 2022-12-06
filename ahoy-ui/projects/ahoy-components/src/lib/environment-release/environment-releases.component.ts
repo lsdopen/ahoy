@@ -79,7 +79,7 @@ export class EnvironmentReleasesComponent implements OnInit {
 
   private setBreadcrumb() {
     this.breadcrumbService.setItems([
-      {label: this.environment.name, routerLink: '/environments'},
+      {label: this.environment.key, routerLink: '/environments'},
       {label: 'releases'}
     ]);
   }
@@ -108,10 +108,10 @@ export class EnvironmentReleasesComponent implements OnInit {
   removeRelease(event: Event, environmentRelease: EnvironmentRelease) {
     this.confirmationService.confirm({
       target: event.target,
-      message: `Are you sure you want to remove ${(environmentRelease.release as Release).name} from ${(environmentRelease.environment as Environment).name}?`,
+      message: `Are you sure you want to remove ${(environmentRelease.release as Release).name} from ${(environmentRelease.environment as Environment).key}?`,
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        const relFromEnv = `${(environmentRelease.release as Release).name} from environment ${(environmentRelease.environment as Environment).name}`;
+        const relFromEnv = `${(environmentRelease.release as Release).name} from environment ${(environmentRelease.environment as Environment).key}`;
         const removeOptions = new RemoveOptions(
           new ProgressMessages(
             `Removing ${relFromEnv}`,

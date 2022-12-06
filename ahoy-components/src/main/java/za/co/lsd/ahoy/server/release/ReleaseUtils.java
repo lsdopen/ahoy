@@ -36,7 +36,7 @@ public final class ReleaseUtils {
 		Cluster cluster = environment.getCluster();
 
 		return cluster.getName() + "/" +
-			environment.getName() + "/" +
+			environment.getKey() + "/" +
 			release.getName();
 	}
 }

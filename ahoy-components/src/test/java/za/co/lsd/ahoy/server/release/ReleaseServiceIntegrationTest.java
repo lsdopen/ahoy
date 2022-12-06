@@ -42,8 +42,6 @@ import za.co.lsd.ahoy.server.argocd.model.ArgoApplication;
 import za.co.lsd.ahoy.server.argocd.model.ArgoMetadata;
 import za.co.lsd.ahoy.server.cluster.Cluster;
 import za.co.lsd.ahoy.server.cluster.ClusterRepository;
-import za.co.lsd.ahoy.server.clustermanager.ClusterManager;
-import za.co.lsd.ahoy.server.clustermanager.ClusterManagerFactory;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
 import za.co.lsd.ahoy.server.environments.Environment;
@@ -105,9 +103,6 @@ class ReleaseServiceIntegrationTest {
 	private LocalRepo localRepo;
 
 	@MockBean
-	private ClusterManagerFactory clusterManagerFactory;
-	private ClusterManager clusterManager;
-	@MockBean
 	private ArgoClient argoClient;
 	@MockBean
 	private TaskProgressService taskProgressService;
@@ -126,9 +121,6 @@ class ReleaseServiceIntegrationTest {
 		GitSettings gitSettings = settingsProvider.getGitSettings();
 		gitSettings.setRemoteRepoUri(testRemoteRepoPath.toUri().toString());
 		settingsService.saveGitSettings(gitSettings);
-
-		clusterManager = mock(ClusterManager.class);
-		when(clusterManagerFactory.newManager(any())).thenReturn(clusterManager);
 	}
 
 	@AfterEach
@@ -145,7 +137,7 @@ class ReleaseServiceIntegrationTest {
 	void deploy() throws Exception {
 		// given
 		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		environment = environmentRepository.save(environment);
 		Release release = releaseRepository.save(new Release("release1"));
@@ -179,7 +171,7 @@ class ReleaseServiceIntegrationTest {
 		verify(argoClient, times(1)).upsertRepository();
 		verify(argoClient, times(1)).getApplication(eq(argoApplicationName));
 		verify(argoClient, times(1)).createApplication(any(ArgoApplication.class));
-		verifyNoMoreInteractions(clusterManager, argoClient);
+		verifyNoMoreInteractions(argoClient);
 
 		// verify environment release
 		EnvironmentRelease retrievedEnvironmentRelease = environmentReleaseRepository.findById(deployedEnvironmentRelease.getId()).orElseThrow();
@@ -213,7 +205,7 @@ class ReleaseServiceIntegrationTest {
 	void deployUpgrade() throws Exception {
 		// given
 		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		environment = environmentRepository.save(environment);
 		Release release = releaseRepository.save(new Release("release1"));
@@ -259,7 +251,7 @@ class ReleaseServiceIntegrationTest {
 		verify(argoClient, times(1)).getApplication(eq(argoApplicationName));
 		verify(argoClient, times(1)).updateApplication(any(ArgoApplication.class));
 		verify(argoClient, timeout(1000).times(1)).getApplication(eq(argoApplicationName), eq(true));
-		verifyNoMoreInteractions(clusterManager, argoClient);
+		verifyNoMoreInteractions(argoClient);
 
 		// verify environment release
 		EnvironmentRelease retrievedEnvironmentRelease = environmentReleaseRepository.findById(deployedEnvironmentRelease.getId()).orElseThrow();
@@ -293,7 +285,7 @@ class ReleaseServiceIntegrationTest {
 	void deployRedeploy() throws Exception {
 		// given
 		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		environment = environmentRepository.save(environment);
 		Release release = releaseRepository.save(new Release("release1"));
@@ -333,7 +325,7 @@ class ReleaseServiceIntegrationTest {
 		verify(argoClient, times(1)).getApplication(eq(argoApplicationName));
 		verify(argoClient, times(1)).updateApplication(any(ArgoApplication.class));
 		verify(argoClient, timeout(1000).times(1)).getApplication(eq(argoApplicationName), eq(true));
-		verifyNoMoreInteractions(clusterManager, argoClient);
+		verifyNoMoreInteractions(argoClient);
 
 		// verify environment release
 		EnvironmentRelease retrievedEnvironmentRelease = environmentReleaseRepository.findById(deployedEnvironmentRelease.getId()).orElseThrow();
@@ -367,7 +359,7 @@ class ReleaseServiceIntegrationTest {
 	void undeploy() throws Exception {
 		// given
 		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		environment = environmentRepository.save(environment);
 		Release release = releaseRepository.save(new Release("release1"));
@@ -400,7 +392,7 @@ class ReleaseServiceIntegrationTest {
 		// verify external collaborators
 		verify(argoClient, times(1)).getApplication(eq(argoApplicationName));
 		verify(argoClient, times(1)).deleteApplication(argoApplicationName);
-		verifyNoMoreInteractions(clusterManager, argoClient);
+		verifyNoMoreInteractions(argoClient);
 
 		// verify environment release
 		EnvironmentRelease retrievedEnvironmentRelease = environmentReleaseRepository.findById(undeployedEnvironmentRelease.getId()).orElseThrow();
@@ -428,7 +420,7 @@ class ReleaseServiceIntegrationTest {
 	void undeployDoesNotExist() throws Exception {
 		// given
 		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		environment = environmentRepository.save(environment);
 		Release release = releaseRepository.save(new Release("release1"));
@@ -457,7 +449,7 @@ class ReleaseServiceIntegrationTest {
 		// verify external collaborators
 		verify(argoClient, times(1)).getApplication(eq(argoApplicationName));
 		verify(argoClient, never()).deleteApplication(argoApplicationName);
-		verifyNoMoreInteractions(clusterManager, argoClient);
+		verifyNoMoreInteractions(argoClient);
 
 		// verify environment release
 		EnvironmentRelease retrievedEnvironmentRelease = environmentReleaseRepository.findById(undeployedEnvironmentRelease.getId()).orElseThrow();
@@ -501,7 +493,7 @@ class ReleaseServiceIntegrationTest {
 
 		// then
 		// verify external collaborators
-		verifyNoInteractions(clusterManager, argoClient);
+		verifyNoInteractions(argoClient);
 
 		// verify release
 		Release retrievedRelease = releaseRepository.findById(release.getId()).orElseThrow();
@@ -531,11 +523,11 @@ class ReleaseServiceIntegrationTest {
 	void promote() {
 		// given
 		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		environment = environmentRepository.save(environment);
 
-		Environment destEnvironment = new Environment("qa");
+		Environment destEnvironment = new Environment("qa", "qualityassurance");
 		cluster.addEnvironment(destEnvironment);
 		destEnvironment = environmentRepository.save(destEnvironment);
 
@@ -558,7 +550,7 @@ class ReleaseServiceIntegrationTest {
 
 		// then
 		// verify external collaborators
-		verifyNoInteractions(clusterManager, argoClient);
+		verifyNoInteractions(argoClient);
 
 		// verify environment release
 		EnvironmentRelease retrievedEnvironmentRelease = environmentReleaseRepository.findById(promotedEnvironmentRelease.getId()).orElseThrow();
@@ -584,7 +576,7 @@ class ReleaseServiceIntegrationTest {
 	void deleteEnvironmentWithDeployedRelease() throws Exception {
 		// given
 		Cluster cluster = clusterRepository.findById(1L).orElseThrow();
-		Environment environment = new Environment("dev");
+		Environment environment = new Environment("dev", "development");
 		cluster.addEnvironment(environment);
 		environment = environmentRepository.save(environment);
 		Release release = releaseRepository.save(new Release("release1"));
@@ -627,7 +619,7 @@ class ReleaseServiceIntegrationTest {
 		verify(argoClient, times(2)).getApplication(eq(argoApplicationName));
 		verify(argoClient, times(1)).createApplication(any(ArgoApplication.class));
 		verify(argoClient, times(1)).deleteApplication(argoApplicationName);
-		verifyNoMoreInteractions(clusterManager, argoClient);
+		verifyNoMoreInteractions(argoClient);
 
 		// verify environment release
 		Optional<EnvironmentRelease> retrievedEnvironmentRelease = environmentReleaseRepository.findById(environmentRelease.getId());

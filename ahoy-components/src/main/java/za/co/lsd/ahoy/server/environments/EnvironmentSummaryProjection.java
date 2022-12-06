@@ -28,6 +28,8 @@ public interface EnvironmentSummaryProjection {
 
 	String getName();
 
+	String getKey();
+
 	Double getOrderIndex();
 
 	ClusterSimpleProjection getCluster();

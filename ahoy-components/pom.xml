@@ -22,7 +22,7 @@
 	<parent>
 		<groupId>za.co.lsd.ahoy</groupId>
 		<artifactId>ahoy</artifactId>
-		<version>0.17.0</version>
+		<version>1.0.0</version>
 	</parent>
 	<artifactId>ahoy-components</artifactId>
 
@@ -82,7 +82,7 @@
 
 		<dependency>
 			<groupId>io.fabric8</groupId>
-			<artifactId>openshift-client</artifactId>
+			<artifactId>kubernetes-client</artifactId>
 			<version>4.13.3</version>
 		</dependency>
 		<dependency>
@@ -112,7 +112,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-text</artifactId>
-			<version>1.9</version>
+			<version>1.10.0</version>
 		</dependency>
 
 		<dependency>

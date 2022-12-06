@@ -116,7 +116,7 @@ export class ReleaseDetailComponent implements OnInit {
       ]);
     } else if (this.environment) {
       this.breadcrumbService.setItems([
-        {label: this.environment.name, routerLink: '/environments'},
+        {label: this.environment.key, routerLink: '/environments'},
         {label: 'new'}
       ]);
     } else {

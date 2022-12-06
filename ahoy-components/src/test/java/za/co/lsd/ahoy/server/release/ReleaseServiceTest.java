@@ -30,7 +30,6 @@ import za.co.lsd.ahoy.server.argocd.model.ArgoApplication;
 import za.co.lsd.ahoy.server.argocd.model.ArgoMetadata;
 import za.co.lsd.ahoy.server.argocd.model.HealthStatus;
 import za.co.lsd.ahoy.server.cluster.Cluster;
-import za.co.lsd.ahoy.server.cluster.ClusterType;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentRelease;
 import za.co.lsd.ahoy.server.environmentrelease.EnvironmentReleaseRepository;
 import za.co.lsd.ahoy.server.environments.Environment;
@@ -76,8 +75,8 @@ public class ReleaseServiceTest {
 	@Test
 	public void deploy() throws Exception {
 		// given
-		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev");
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc");
+		Environment environment = new Environment(1L, "dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release(1L, "release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -116,8 +115,8 @@ public class ReleaseServiceTest {
 	@Test
 	public void deployUpgrade() throws Exception {
 		// given
-		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev");
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc");
+		Environment environment = new Environment(1L, "dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release(1L, "release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -166,8 +165,8 @@ public class ReleaseServiceTest {
 	@Test
 	public void deployRedeploy() throws Exception {
 		// given
-		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev");
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc");
+		Environment environment = new Environment(1L, "dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release(1L, "release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -208,8 +207,8 @@ public class ReleaseServiceTest {
 	@Test
 	public void undeploy() throws Exception {
 		// given
-		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev");
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc");
+		Environment environment = new Environment(1L, "dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release(1L, "release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -279,8 +278,8 @@ public class ReleaseServiceTest {
 	@Test
 	public void upgradeWithCopyEnvironmentConfig() {
 		// given
-		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev");
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc");
+		Environment environment = new Environment(1L, "dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release(1L, "release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -387,8 +386,8 @@ public class ReleaseServiceTest {
 	@Test
 	public void duplicateWithEnvironment() {
 		// given
-		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev");
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc");
+		Environment environment = new Environment(1L, "dev", "development");
 		cluster.addEnvironment(environment);
 
 		Application application = new Application("app1");
@@ -461,8 +460,8 @@ public class ReleaseServiceTest {
 	@Test
 	public void duplicateWithEnvironmentAndEnvConfig() {
 		// given
-		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev");
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc");
+		Environment environment = new Environment(1L, "dev", "development");
 		cluster.addEnvironment(environment);
 
 		Application application = new Application("app1");
@@ -550,13 +549,13 @@ public class ReleaseServiceTest {
 	@Test
 	public void promote() {
 		// given
-		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev");
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc");
+		Environment environment = new Environment(1L, "dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release(1L, "release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
-		Environment destEnvironment = new Environment(2L, "qa");
+		Environment destEnvironment = new Environment(2L, "qa", "qualityassurance");
 		cluster.addEnvironment(destEnvironment);
 
 		PromoteOptions promoteOptions = new PromoteOptions(destEnvironment.getId(), false);
@@ -585,13 +584,13 @@ public class ReleaseServiceTest {
 	@Test
 	public void promoteAlreadyExists() {
 		// given
-		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev");
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc");
+		Environment environment = new Environment(1L, "dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release(1L, "release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
 
-		Environment destEnvironment = new Environment(2L, "qa");
+		Environment destEnvironment = new Environment(2L, "qa", "qualityassurance");
 		cluster.addEnvironment(destEnvironment);
 
 		PromoteOptions promoteOptions = new PromoteOptions(destEnvironment.getId(), false);
@@ -614,8 +613,8 @@ public class ReleaseServiceTest {
 	@Test
 	public void promoteWithCopyEnvironmentConfig() {
 		// given
-		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev");
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc");
+		Environment environment = new Environment(1L, "dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release(1L, "release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -627,7 +626,7 @@ public class ReleaseServiceTest {
 		releaseVersion.setApplicationVersions(Collections.singletonList(applicationVersion));
 		release.setReleaseVersions(Collections.singletonList(releaseVersion));
 
-		Environment destEnvironment = new Environment(2L, "qa");
+		Environment destEnvironment = new Environment(2L, "qa", "qualityassurance");
 		cluster.addEnvironment(destEnvironment);
 
 		PromoteOptions promoteOptions = new PromoteOptions(destEnvironment.getId(), true);
@@ -670,8 +669,8 @@ public class ReleaseServiceTest {
 	@Test
 	public void copyApplicationVersionEnvConfig() {
 		// given
-		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev");
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc");
+		Environment environment = new Environment(1L, "dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release(1L, "release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);
@@ -711,8 +710,8 @@ public class ReleaseServiceTest {
 	@Test
 	public void copyApplicationVersionEnvConfigExistingConfig() {
 		// given
-		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc", ClusterType.KUBERNETES);
-		Environment environment = new Environment(1L, "dev");
+		Cluster cluster = new Cluster(1L, "test-cluster", "https://kubernetes.default.svc");
+		Environment environment = new Environment(1L, "dev", "development");
 		cluster.addEnvironment(environment);
 		Release release = new Release(1L, "release1");
 		EnvironmentRelease environmentRelease = new EnvironmentRelease(environment, release);

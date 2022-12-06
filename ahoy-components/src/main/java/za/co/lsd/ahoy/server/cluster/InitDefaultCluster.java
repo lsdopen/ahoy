@@ -17,17 +17,12 @@
 package za.co.lsd.ahoy.server.cluster;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.stereotype.Component;
 import za.co.lsd.ahoy.server.AhoyServerProperties;
 import za.co.lsd.ahoy.server.security.AuthUtility;
 import za.co.lsd.ahoy.server.security.Role;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 @Component
 @Slf4j
@@ -43,32 +38,14 @@ public class InitDefaultCluster {
 	@PostConstruct
 	public void init() {
 		AuthUtility.runAs(Role.admin, () -> {
-			try {
-				if (clusterRepository.count() == 0) {
-					log.info("Detected no clusters setup, initializing default cluster..");
+			if (clusterRepository.count() == 0) {
+				log.info("Detected no clusters setup, initializing default cluster..");
 
-					Path token = Paths.get("/var/run/secrets/kubernetes.io/serviceaccount/token");
-					Path caCrt = Paths.get("/var/run/secrets/kubernetes.io/serviceaccount/ca.crt");
-
-					if (Files.exists(token) && Files.exists(caCrt)) {
-						log.info("Found token and ca.crt files");
-
-						ClusterType clusterType = ClusterType.KUBERNETES;
-						if ("openshift".equals(serverProperties.getClusterType())) {
-							clusterType = ClusterType.OPENSHIFT;
-						}
-
-						Cluster cluster = new Cluster("in-cluster", "https://kubernetes.default.svc", clusterType);
-						cluster.setHost(serverProperties.getHost());
-						cluster.setToken(Files.readString(token));
-						cluster.setCaCertData(Files.readString(caCrt));
-						cluster.setInCluster(true);
-						log.info("Saving default cluster: {}", cluster);
-						clusterRepository.save(cluster);
-					}
-				}
-			} catch (IOException e) {
-				throw new BeanInitializationException("Failed to read token or CA cert whilst initializing default cluster");
+				Cluster cluster = new Cluster("in-cluster", "https://kubernetes.default.svc");
+				cluster.setHost(serverProperties.getHost());
+				cluster.setInCluster(true);
+				log.info("Saving default cluster: {}", cluster);
+				clusterRepository.save(cluster);
 			}
 		});
 	}

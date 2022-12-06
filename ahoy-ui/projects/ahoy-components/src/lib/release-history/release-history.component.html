@@ -82,7 +82,7 @@
               <span [class]="'status-badge status-' + (rh.status | lowercase)">{{rh.status}}</span>
             </td>
             <td><span class="p-column-title">Environment</span>
-              {{rh.environment ? rh.environment.name : '-'}}
+              {{rh.environment ? rh.environment.key : '-'}}
             </td>
             <td><span class="p-column-title">Cluster</span>
               {{rh.environment ? rh.environment.cluster.name : '-'}}

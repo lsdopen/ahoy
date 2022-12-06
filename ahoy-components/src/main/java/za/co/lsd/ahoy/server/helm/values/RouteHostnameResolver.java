@@ -37,7 +37,7 @@ public class RouteHostnameResolver {
 
 		Map<String, String> valuesMap = new HashMap<>();
 		valuesMap.put("cluster_host", environmentRelease.getEnvironment().getCluster().getHost());
-		valuesMap.put("environment_name", environmentRelease.getEnvironment().getName());
+		valuesMap.put("environment_key", environmentRelease.getEnvironment().getKey());
 		valuesMap.put("release_name", environmentRelease.getRelease().getName());
 		valuesMap.put("application_name", application.getName());
 

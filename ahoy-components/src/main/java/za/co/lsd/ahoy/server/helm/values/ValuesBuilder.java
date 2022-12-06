@@ -70,7 +70,7 @@ public class ValuesBuilder {
 
 		Values.ValuesBuilder valuesBuilder = Values.builder()
 			.host(cluster.getHost())
-			.environment(environment.getName())
+			.environment(environment.getKey())
 			.releaseName(releaseVersion.getRelease().getName())
 			.releaseVersion(releaseVersion.getVersion());
 
@@ -82,7 +82,7 @@ public class ValuesBuilder {
 					.orElse(null);
 			apps.put(HelmUtils.valuesName(application), buildApplicationValues(environmentRelease, applicationVersion, applicationEnvironmentConfig));
 
-			log.debug("Added values for application '{}' in environment '{}'", application.getName(), environment.getName());
+			log.debug("Added values for application '{}' in environment '{}'", application.getName(), environment.getKey());
 		}
 		valuesBuilder.applications(apps);
 

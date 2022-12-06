@@ -27,13 +27,7 @@ public interface ClusterFullProjection {
 
 	String getMasterUrl();
 
-	String getToken();
-
-	String getCaCertData();
-
 	String getHost();
 
 	boolean getInCluster();
-
-	ClusterType getType();
 }

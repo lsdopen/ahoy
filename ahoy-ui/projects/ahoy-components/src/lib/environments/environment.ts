@@ -20,6 +20,7 @@ import {ProgressMessages} from '../task/task';
 export class Environment {
   id: number;
   name: string;
+  key: string;
   cluster: Cluster | string;
   orderIndex: number;
 }

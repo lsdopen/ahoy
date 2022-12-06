@@ -17,8 +17,9 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
 import {Observable, of} from 'rxjs';
-import {mergeMap} from 'rxjs/operators';
+import {catchError, mergeMap} from 'rxjs/operators';
 import {SettingsService} from './settings.service';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +38,7 @@ export class SettingsGuard implements CanActivate {
         .pipe(
           mergeMap((exists: boolean) => {
             if (!exists) {
-              this.router.navigate(['/settings/git'], {queryParams: {setup: 'true'}});
+              this.router.navigate(['/settings/git'], {queryParams: {setup: 'true'}}).then();
             } else {
               return this.settingsService.argoSettingsExists();
             }
@@ -46,10 +47,19 @@ export class SettingsGuard implements CanActivate {
           mergeMap((exists: boolean) => {
             this.settingsConfigured = exists;
             if (!exists) {
-              this.router.navigate(['/settings/argo'], {queryParams: {setup: 'true'}});
+              this.router.navigate(['/settings/argo'], {queryParams: {setup: 'true'}}).then();
             }
             return of(exists);
-          }));
+          }),
+          catchError((error) => {
+            if (error instanceof HttpErrorResponse) {
+              if (error.status === 401 || error.status === 403) {
+                this.router.navigate(['/access']).then();
+              }
+            }
+            throw error;
+          })
+        );
     }
 
     return true;

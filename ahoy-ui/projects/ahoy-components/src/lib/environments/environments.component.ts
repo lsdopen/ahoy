@@ -75,15 +75,15 @@ export class EnvironmentsComponent implements OnInit {
   }
 
   delete(event: Event, environment: Environment) {
-    const confirmation = new Confirmation(`Are you sure you want to delete ${environment.name}?`);
+    const confirmation = new Confirmation(`Are you sure you want to delete ${environment.key}?`);
     confirmation.infoText = 'Please note: all deployed releases will be undeployed';
     confirmation.verify = true;
-    confirmation.verifyText = environment.name;
+    confirmation.verifyText = environment.key;
     // TODO nested subscribes
     this.dialogUtilService.showConfirmDialog(confirmation).pipe(
       filter((conf) => conf !== undefined)
     ).subscribe(() => {
-      const envFromCluster = `${environment.name} from cluster ${(environment.cluster as Cluster).name}`;
+      const envFromCluster = `${environment.key} from cluster ${(environment.cluster as Cluster).name}`;
       const deleteOptions = new DeleteOptions(
         new ProgressMessages(
           `Deleting ${envFromCluster}`,
@@ -97,7 +97,7 @@ export class EnvironmentsComponent implements OnInit {
 
   move(event: Event, environment: Environment) {
     const dialogConfig = new DynamicDialogConfig();
-    dialogConfig.header = `Move ${(environment.name)} from cluster ${(environment.cluster as Cluster).name} to cluster:`;
+    dialogConfig.header = `Move ${(environment.key)} from cluster ${(environment.cluster as Cluster).name} to cluster:`;
     dialogConfig.data = {environment};
 
     const dialogRef = this.dialogService.open(MoveDialogComponent, dialogConfig);
@@ -106,7 +106,7 @@ export class EnvironmentsComponent implements OnInit {
       mergeMap((result: Result) => {
         this.log.debug('moving environment to destination cluster', result.destCluster);
         const destCluster = result.destCluster;
-        const envFromXtoY = `${(environment.name)} from ${(environment.cluster as Cluster).name} to ${destCluster.name}`;
+        const envFromXtoY = `${(environment.key)} from ${(environment.cluster as Cluster).name} to ${destCluster.name}`;
         const moveOptions = new MoveOptions(result.destCluster.id, result.redeployReleases,
           new ProgressMessages(
             `Moving ${envFromXtoY}`,

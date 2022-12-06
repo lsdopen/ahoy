@@ -29,6 +29,7 @@ import za.co.lsd.ahoy.server.releases.ReleaseHistory;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -44,9 +45,14 @@ public class Environment {
 	private Long id;
 	@Column(unique = true)
 	@NotNull
-	@Pattern(regexp = "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
-		message = "Name invalid: should start with and use lower case letters and numbers")
 	private String name;
+
+	@Column(unique = true)
+	@NotNull
+	@Pattern(regexp = "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
+		message = "Key invalid: should start with and use lower case letters and numbers")
+	@Size(min = 1, max = 9)
+	private String key;
 
 	private Double orderIndex;
 
@@ -67,20 +73,15 @@ public class Environment {
 	@ToString.Exclude
 	private List<ReleaseHistory> releaseHistories = new ArrayList<>();
 
-	public Environment(@NotNull String name) {
+	public Environment(@NotNull String key, @NotNull String name) {
+		this.key = key;
 		this.name = name;
 	}
 
-	public Environment(Long id, @NotNull String name) {
+	public Environment(Long id, @NotNull String key, @NotNull String name) {
 		this.id = id;
+		this.key = key;
 		this.name = name;
-	}
-
-	public Environment(EnvironmentDTO dto) {
-		this.id = dto.getId();
-		this.name = dto.getName();
-		this.cluster = new Cluster(dto.getCluster());
-		this.orderIndex = dto.getOrderIndex();
 	}
 
 	@Override
